@@ -9,17 +9,31 @@
     "lint": "eslint"
   },
   "dependencies": {
+<<<<<<< Updated upstream
+    "next": "15.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@opennextjs/cloudflare": "^1.9.1",
+=======
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "next": "15.5.4"
   },
   "devDependencies": {
     "typescript": "^5",
+>>>>>>> Stashed changes
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+<<<<<<< Updated upstream
+    "typescript": "^5"
+=======
     "@eslint/eslintrc": "^3"
+>>>>>>> Stashed changes
   }
 }
