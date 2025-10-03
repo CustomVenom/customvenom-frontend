@@ -11,6 +11,7 @@
   "dependencies": {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -21,6 +22,8 @@
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "next": "15.5.4"
@@ -28,6 +31,9 @@
   "devDependencies": {
     "typescript": "^5",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -38,7 +44,11 @@
     "eslint-config-next": "15.5.4",
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "typescript": "^5"
+=======
+    "@eslint/eslintrc": "^3"
+>>>>>>> Stashed changes
 =======
     "@eslint/eslintrc": "^3"
 >>>>>>> Stashed changes
