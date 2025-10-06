@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# open-next cache
+.open-next/
+
+# optional editor/OS noise
+.vscode/
+Thumbs.db
+desktop.ini
+
+# optional build output
+/dist/
