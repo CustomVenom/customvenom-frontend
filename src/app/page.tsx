@@ -32,6 +32,15 @@ export default function Home() {
         <div className={styles.ctas}>
           <a
             className={styles.primary}
+            href="/projections"
+          >
+            View Projections
+          </a>
+        </div>
+
+        <div className={styles.ctas}>
+          <a
+            className={styles.primary}
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
