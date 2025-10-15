@@ -1,9 +1,11 @@
 # Cloudflare Front‑door (Pages + DNS + SSL) — TL;DR
 
 Purpose
+
 - Ensure the frontend serves securely and consistently across preview and production with correct DNS, SSL/TLS, CORS, and caching.
 
 What "good" looks like
+
 - Apex and www resolve to Pages and load over HTTPS without warnings
 - Strict-Transport-Security present
 - API calls succeed with CORS and expected cache headers
@@ -29,6 +31,7 @@ What "good" looks like
 - NOTION_*: Secret (if used by any server-side tooling)
 
 Rule of thumb
+
 - Client-visible → Text var
 - Server-only or credentials → Secret
 
@@ -45,7 +48,7 @@ Rule of thumb
 
 ## Quick smokes
 
-```
+```bash
 # Health JSON shape
 curl -s "$API_BASE/health" | jq '{ok, schema_version, last_refresh}'
 
