@@ -1,7 +1,16 @@
+'use client';
 import Image from "next/image";
+import { useEffect } from 'react';
 import styles from "./page.module.css";
 
 export default function Home() {
+  useEffect(() => {
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(console.log)
+      .catch(console.error);
+  }, []);
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
