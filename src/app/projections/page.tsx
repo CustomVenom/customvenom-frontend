@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
+import GoProButton from '@/components/GoProButton';
+import { getEntitlements, type Entitlements } from '@/lib/entitlements';
 
 interface ProjectionData {
   player_id: string;
@@ -30,14 +32,18 @@ interface ImportantDecision {
 interface TrustBadgeProps {
   lastRefresh: string;
   schemaVersion: string;
+  isStale?: boolean;
 }
 
-function TrustBadge({ lastRefresh, schemaVersion }: TrustBadgeProps) {
+function TrustBadge({ lastRefresh, schemaVersion, isStale = false }: TrustBadgeProps) {
   return (
     <div className={styles.trustBadge}>
       <div className={styles.trustBadgeHeader}>
         <span className={styles.trustIcon}>🛡️</span>
         <span className={styles.trustTitle}>Trust</span>
+        {isStale && (
+          <span className={styles.staleBadge}>⚠️ Stale</span>
+        )}
       </div>
       <div className={styles.trustDetails}>
         <div className={styles.trustItem}>
@@ -88,7 +94,33 @@ interface ImportantDecisionsProps {
   decisions: ImportantDecision[];
 }
 
-function ImportantDecisions({ decisions }: ImportantDecisionsProps) {
+interface ProFeatureProps {
+  isPro: boolean;
+  feature: string;
+  children: React.ReactNode;
+}
+
+function ProFeature({ isPro, feature, children }: ProFeatureProps) {
+  if (isPro) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className={styles.proFeature}>
+      <div className={styles.proFeatureContent}>
+        {children}
+      </div>
+      <div className={styles.proFeatureOverlay}>
+        <div className={styles.proFeatureLock}>
+          <span className={styles.lockIcon}>🔒</span>
+          <span className={styles.lockText}>Pro Feature</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { isPro: boolean }) {
   if (decisions.length === 0) {
     return (
       <div className={styles.decisionsStrip}>
@@ -109,28 +141,30 @@ function ImportantDecisions({ decisions }: ImportantDecisionsProps) {
         <h2 className={styles.decisionsTitle}>Important Decisions</h2>
         <span className={styles.decisionsCount}>{decisions.length} decisions</span>
       </div>
-      <div className={styles.decisionsList}>
-        {decisions.map((decision, index) => (
-          <div key={index} className={styles.decisionItem}>
-            <div className={styles.decisionHeader}>
-              <span className={styles.decisionPlayer}>{decision.player_id}</span>
-              <span className={styles.decisionStat}>{decision.stat_name}</span>
-              <span className={styles.decisionProjection}>{decision.projection}</span>
+      <ProFeature isPro={isPro} feature="compareView">
+        <div className={styles.decisionsList}>
+          {decisions.map((decision, index) => (
+            <div key={index} className={styles.decisionItem}>
+              <div className={styles.decisionHeader}>
+                <span className={styles.decisionPlayer}>{decision.player_id}</span>
+                <span className={styles.decisionStat}>{decision.stat_name}</span>
+                <span className={styles.decisionProjection}>{decision.projection}</span>
+              </div>
+              <div className={styles.decisionReason}>
+                {decision.reasons[0] || 'High confidence projection'}
+              </div>
+              <div className={styles.decisionFooter}>
+                <span className={styles.decisionConfidence}>
+                  {(decision.confidence * 100).toFixed(1)}% confidence
+                </span>
+                <span className={styles.decisionRefresh}>
+                  Updated: {new Date(decision.last_refresh).toLocaleDateString()}
+                </span>
+              </div>
             </div>
-            <div className={styles.decisionReason}>
-              {decision.reasons[0] || 'High confidence projection'}
-            </div>
-            <div className={styles.decisionFooter}>
-              <span className={styles.decisionConfidence}>
-                {(decision.confidence * 100).toFixed(1)}% confidence
-              </span>
-              <span className={styles.decisionRefresh}>
-                Updated: {new Date(decision.last_refresh).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </ProFeature>
     </div>
   );
 }
@@ -139,6 +173,8 @@ export default function ProjectionsPage() {
   const [projections, setProjections] = useState<ProjectionData[]>([]);
   const [schemaVersion, setSchemaVersion] = useState<string>('');
   const [lastRefresh, setLastRefresh] = useState<string>('');
+  const [isStale, setIsStale] = useState<boolean>(false);
+  const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -156,6 +192,10 @@ export default function ProjectionsPage() {
 
         const data: ProjectionsResponse = await response.json();
         
+        // Check for stale header
+        const staleHeader = response.headers.get('x-stale');
+        setIsStale(staleHeader === 'true');
+        
         setProjections(data.projections);
         setSchemaVersion(data.schema_version);
         setLastRefresh(data.last_refresh);
@@ -166,7 +206,23 @@ export default function ProjectionsPage() {
       }
     };
 
+    const loadEntitlements = async () => {
+      // Check for session_id in URL params (from Stripe success redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+      
+      const userEntitlements = await getEntitlements(sessionId || undefined);
+      setEntitlements(userEntitlements);
+      
+      // Clear session_id from URL after processing
+      if (sessionId) {
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
+    };
+
     fetchProjections();
+    loadEntitlements();
   }, []);
 
   if (loading) {
@@ -219,6 +275,7 @@ export default function ProjectionsPage() {
   };
 
   const importantDecisions = deriveImportantDecisions(projections, lastRefresh);
+  const isPro = entitlements?.isPro || false;
 
   // Group projections by player
   const groupedProjections = projections.reduce((acc, projection) => {
@@ -234,16 +291,38 @@ export default function ProjectionsPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Projections</h1>
-        <TrustBadge lastRefresh={lastRefresh} schemaVersion={schemaVersion} />
+        <div className={styles.headerRight}>
+          <TrustBadge lastRefresh={lastRefresh} schemaVersion={schemaVersion} isStale={isStale} />
+          {!isPro && (
+            <div className={styles.proPrompt}>
+              <GoProButton 
+                priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || 'price_pro_season'} 
+                onSuccess={() => window.location.reload()}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      <ImportantDecisions decisions={importantDecisions} />
+      <ImportantDecisions decisions={importantDecisions} isPro={isPro} />
 
       <div className={styles.projectionsGrid}>
         {Object.entries(groupedProjections).map(([playerId, playerProjections]) => (
           <div key={playerId} className={styles.playerCard}>
             <div className={styles.playerHeader}>
               <h3 className={styles.playerId}>{playerId}</h3>
+              <div className={styles.playerActions}>
+                <ProFeature isPro={isPro} feature="csvExport">
+                  <button className={styles.actionButton}>
+                    📊 Export CSV
+                  </button>
+                </ProFeature>
+                <ProFeature isPro={isPro} feature="recapEmail">
+                  <button className={styles.actionButton}>
+                    📧 Email Recap
+                  </button>
+                </ProFeature>
+              </div>
             </div>
             
             <div className={styles.projectionsList}>
