@@ -30,36 +30,6 @@ interface ImportantDecision {
   last_refresh: string;
 }
 
-interface TrustBadgeProps {
-  lastRefresh: string;
-  schemaVersion: string;
-  isStale?: boolean;
-}
-
-function TrustBadge({ lastRefresh, schemaVersion, isStale = false }: TrustBadgeProps) {
-  return (
-    <div className={styles.trustBadge}>
-      <div className={styles.trustBadgeHeader}>
-        <span className={styles.trustIcon}>🛡️</span>
-        <span className={styles.trustTitle}>Trust</span>
-        {isStale && (
-          <span className={styles.staleBadge}>⚠️ Stale</span>
-        )}
-      </div>
-      <div className={styles.trustDetails}>
-        <div className={styles.trustItem}>
-          <span className={styles.trustLabel}>Last Refresh:</span>
-          <span className={styles.trustValue}>{new Date(lastRefresh).toLocaleString()}</span>
-        </div>
-        <div className={styles.trustItem}>
-          <span className={styles.trustLabel}>Schema Version:</span>
-          <span className={styles.trustValue}>{schemaVersion}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 interface ReasonsDisplayProps {
   reasons: string[];
   confidence: number;
