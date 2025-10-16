@@ -1,0 +1,182 @@
+.container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+.lastRefresh {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.dialContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dial {
+  position: relative;
+}
+
+.progressCircle {
+  transition: stroke-dasharray 0.6s ease-out, stroke 0.3s ease;
+}
+
+.info {
+  text-align: center;
+  max-width: 500px;
+}
+
+.riskBadge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.badgeLow {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badgeModerate {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badgeHigh {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.recommendation {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.factorsSection {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+
+.expandButton:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.factorsList {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.factorItem {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.factorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.factorName {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.factorScore {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.factorBar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.factorProgress {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease-out, background-color 0.3s ease;
+}
+
+.factorWeight {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.loading,
+.error {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
+
+.error {
+  color: #dc2626;
+}
+
+@media (min-width: 768px) {
+  .dialContainer {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .info {
+    text-align: left;
+    max-width: 400px;
+  }
+}
+

@@ -97,3 +97,6 @@ curl "http://localhost:3000/api/projections?week=2025-06"
 - `NEXT_PUBLIC_*` variables are exposed to the browser
 - Regular environment variables (without `NEXT_PUBLIC_`) are server-side only
 
+
+
+

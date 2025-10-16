@@ -5,6 +5,12 @@ import GoProButton from '@/components/GoProButton';
 import { getEntitlements, type Entitlements } from '@/lib/entitlements';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 import { FaabBands } from '@/components/FaabBands';
+import { RiskDial } from '@/components/RiskDial';
+import { ReasonChips } from '@/components/ReasonChips';
+import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { Reason } from '@/lib/reasonsClamp';
 
 interface ProjectionData {
   player_id: string;
@@ -13,7 +19,7 @@ interface ProjectionData {
   method: string;
   sources_used: number;
   confidence?: number;
-  reasons?: string[];
+  reasons?: Reason[]; // Updated to use Reason type
 }
 
 interface ProjectionsResponse {
@@ -27,40 +33,11 @@ interface ImportantDecision {
   stat_name: string;
   projection: number;
   confidence: number;
-  reasons: string[];
+  reasons: Reason[]; // Updated to use Reason type
   last_refresh: string;
 }
 
-interface ReasonsDisplayProps {
-  reasons: string[];
-  confidence: number;
-}
-
-function ReasonsDisplay({ reasons, confidence }: ReasonsDisplayProps) {
-  if (confidence < 0.65) {
-    return null;
-  }
-
-  const displayReasons = reasons.slice(0, 2); // Show max 2 reasons
-
-  return (
-    <div className={styles.reasonsContainer}>
-      <div className={styles.reasonsHeader}>
-        <span className={styles.reasonsTitle}>Reasons</span>
-        <span className={styles.confidenceBadge}>
-          Confidence: {(confidence * 100).toFixed(1)}%
-        </span>
-      </div>
-      <ul className={styles.reasonsList}>
-        {displayReasons.map((reason, index) => (
-          <li key={index} className={styles.reasonItem}>
-            {reason}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+// ReasonsDisplay removed - replaced by ReasonChips component
 
 interface ImportantDecisionsProps {
   decisions: ImportantDecision[];
@@ -123,7 +100,7 @@ function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { is
                 <span className={styles.decisionProjection}>{decision.projection}</span>
               </div>
               <div className={styles.decisionReason}>
-                {decision.reasons[0] || 'High confidence projection'}
+                <ReasonChipsAdapter reasons={decision.reasons} />
               </div>
               <div className={styles.decisionFooter}>
                 <span className={styles.decisionConfidence}>
@@ -150,6 +127,7 @@ export default function ProjectionsPage() {
   const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0); // For triggering manual reloads
 
   useEffect(() => {
     const fetchProjections = async () => {
@@ -198,12 +176,22 @@ export default function ProjectionsPage() {
 
     fetchProjections();
     loadEntitlements();
-  }, []);
+  }, [reloadKey]); // Re-run when reloadKey changes
+
+  const handleReload = () => {
+    setReloadKey(prev => prev + 1);
+  };
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Loading projections...</div>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Projections</h1>
+        </div>
+        <div className={styles.loadingContainer}>
+          <p className={styles.loadingText}>Loading projections...</p>
+          <TableSkeleton rows={8} cols={4} />
+        </div>
       </div>
     );
   }
@@ -265,7 +253,18 @@ export default function ProjectionsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Projections</h1>
+        <div>
+          <h1 className={styles.title}>
+            <GlossaryTip term="Baseline">Projections</GlossaryTip>
+          </h1>
+          <button 
+            onClick={handleReload}
+            className={styles.reloadButton}
+            aria-label="Reload projections data"
+          >
+            🔄 Reload Data
+          </button>
+        </div>
         <div className={styles.headerRight}>
           <TrustSnapshot 
             lastRefresh={lastRefresh} 
@@ -285,6 +284,8 @@ export default function ProjectionsPage() {
       </div>
 
       <ImportantDecisions decisions={importantDecisions} isPro={isPro} />
+
+      <RiskDial week="2025-06" />
 
       <FaabBands week="2025-06" />
 
@@ -317,14 +318,15 @@ export default function ProjectionsPage() {
                   
                   <div className={styles.projectionDetails}>
                     <span className={styles.method}>{projection.method}</span>
-                    <span className={styles.sources}>Sources: {projection.sources_used}</span>
+                    <span className={styles.sources}>
+                      <GlossaryTip term="Coverage">Sources</GlossaryTip>: {projection.sources_used}
+                    </span>
                   </div>
 
-                  {projection.confidence && projection.reasons && (
-                    <ReasonsDisplay 
-                      reasons={projection.reasons} 
-                      confidence={projection.confidence} 
-                    />
+                  {projection.reasons && (
+                    <div className={styles.reasonsChipsContainer}>
+                      <ReasonChipsAdapter reasons={projection.reasons} />
+                    </div>
                   )}
                 </div>
               ))}

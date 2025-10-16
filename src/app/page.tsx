@@ -1,113 +1,69 @@
-'use client';
-import Image from "next/image";
-import { useEffect } from 'react';
-import styles from "./page.module.css";
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { Tooltip } from '@/components/ui/Tooltip'
+import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table'
 
-export default function Home() {
-  useEffect(() => {
-    fetch('/api/health')
-      .then(r => r.json())
-      .then(console.log)
-      .catch(console.error);
-  }, []);
+export default function Page() {
+	return (
+		<div className="space-y-6">
+			<div className="flex items-center gap-3">
+				<Button>Primary</Button>
+				<Button variant="outline">Outline</Button>
+				<Button variant="subtle">Subtle</Button>
+				<Tooltip content="Confidence >= 0.65">
+					<Badge intent="positive">Reason: Market Delta</Badge>
+				</Tooltip>
+			</div>
 
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+			<div className="card p-4">
+				<h2 className="mb-3 text-lg font-semibold">Projections (demo)</h2>
+				<Table>
+					<THead>
+						<tr>
+							<Th>Player</Th>
+							<Th>Baseline</Th>
+							<Th>Range</Th>
+							<Th>Chips</Th>
+						</tr>
+					</THead>
+					<TBody>
+						<Tr>
+							<Td>Player A</Td>
+							<Td>15.2</Td>
+							<Td>13.0–17.8</Td>
+							<Td><Badge intent="positive">Usage ↑</Badge></Td>
+						</Tr>
+						<Tr>
+							<Td>Player B</Td>
+							<Td>12.1</Td>
+							<Td>10.4–14.3</Td>
+							<Td><Badge intent="warning">Volatility</Badge></Td>
+						</Tr>
+						<Tr>
+							<Td>Player C</Td>
+							<Td>18.7</Td>
+							<Td>16.2–21.4</Td>
+							<Td><Badge intent="neutral">Matchup OK</Badge></Td>
+						</Tr>
+					</TBody>
+				</Table>
+			</div>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="/projections"
-          >
-            View Projections
-          </a>
-        </div>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+			<div className="card p-4">
+				<h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Component Demo</h3>
+				<div className="space-y-3">
+					<div className="flex gap-2">
+						<Badge intent="positive">Positive</Badge>
+						<Badge intent="warning">Warning</Badge>
+						<Badge intent="danger">Danger</Badge>
+						<Badge intent="neutral">Neutral</Badge>
+					</div>
+					<div className="flex gap-2">
+						<Button size="sm">Small Button</Button>
+						<Button size="md">Medium Button</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
 }

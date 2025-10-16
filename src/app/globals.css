@@ -1,42 +1,44 @@
+@import "tailwindcss";
+
+/* Light/Dark surface variables (optional, handy for charts/cards) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--bg: 255 255 255;   /* rgb */
+	--fg: 17 24 39;
+	--card: 249 250 251;
+}
+.dark {
+	--bg: 17 24 39;
+	--fg: 243 244 246;
+	--card: 31 41 55;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body, #__next {
+	height: 100%;
 }
-
-html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+	background-color: rgb(var(--bg));
+	color: rgb(var(--fg));
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Utility helper for cards */
+.card {
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1);
+	background-color: white;
+}
+.dark .card {
+	background-color: rgb(var(--card));
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+/* Density tweaks for tables and lists */
+:root { 
+	--row-py: 0.5rem; 
+	--row-px: 0.75rem; 
 }
-
-a {
-  color: inherit;
-  text-decoration: none;
+[data-density='compact'] { 
+	--row-py: 0.25rem; 
+	--row-px: 0.5rem; 
 }
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+td, th { 
+	padding: var(--row-py) var(--row-px); 
 }

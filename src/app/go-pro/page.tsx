@@ -1,0 +1,132 @@
+// Go Pro Page
+// Displays Pro features and starts Stripe checkout
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { loadStripe } from '@stripe/stripe-js';
+import styles from './page.module.css';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+
+export default function GoProPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const { sessionId } = await response.json();
+      const stripe = await stripePromise;
+
+      if (!stripe) {
+        throw new Error('Stripe failed to load');
+      }
+
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+
+      if (error) {
+        throw error;
+      }
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.hero}>
+        <h1 className={styles.title}>Upgrade to Pro</h1>
+        <p className={styles.subtitle}>
+          Unlock advanced features and take your fantasy game to the next level
+        </p>
+      </div>
+
+      <div className={styles.features}>
+        <div className={styles.feature}>
+          <div className={styles.featureIcon}>📊</div>
+          <h3 className={styles.featureTitle}>Advanced Analytics</h3>
+          <p className={styles.featureDescription}>
+            Access detailed player projections, FAAB bands, and trend analysis
+          </p>
+        </div>
+
+        <div className={styles.feature}>
+          <div className={styles.featureIcon}>🎯</div>
+          <h3 className={styles.featureTitle}>Waiver Wire Insights</h3>
+          <p className={styles.featureDescription}>
+            Get AI-powered FAAB recommendations and pickup targets
+          </p>
+        </div>
+
+        <div className={styles.feature}>
+          <div className={styles.featureIcon}>⚡</div>
+          <h3 className={styles.featureTitle}>Real-time Updates</h3>
+          <p className={styles.featureDescription}>
+            Stay ahead with live injury reports and lineup changes
+          </p>
+        </div>
+
+        <div className={styles.feature}>
+          <div className={styles.featureIcon}>🏆</div>
+          <h3 className={styles.featureTitle}>Premium Support</h3>
+          <p className={styles.featureDescription}>
+            Get priority support and exclusive access to new features
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.pricing}>
+        <div className={styles.pricingCard}>
+          <h3 className={styles.planName}>Pro Plan</h3>
+          <div className={styles.price}>
+            <span className={styles.priceAmount}>$19.99</span>
+            <span className={styles.pricePeriod}>/season</span>
+          </div>
+          <ul className={styles.benefitsList}>
+            <li>✓ All features unlocked</li>
+            <li>✓ Advanced player projections</li>
+            <li>✓ FAAB bid guidance</li>
+            <li>✓ Waiver wire rankings</li>
+            <li>✓ Real-time injury updates</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <button
+            onClick={handleCheckout}
+            disabled={loading}
+            className={styles.checkoutButton}
+          >
+            {loading ? 'Loading...' : 'Start Checkout'}
+          </button>
+          {error && <p className={styles.error}>{error}</p>}
+        </div>
+      </div>
+
+      <div className={styles.guarantee}>
+        <p>💳 Secure payment powered by Stripe</p>
+        <p>🔒 Cancel anytime, no questions asked</p>
+      </div>
+    </div>
+  );
+}
+

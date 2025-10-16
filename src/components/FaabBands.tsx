@@ -39,7 +39,8 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
         }
 
         const data = await response.json();
-        setItems(data.items || []);
+        // Show top 5-10 items
+        setItems((data.items || []).slice(0, 10));
         setSchemaVersion(data.schema_version || 'v1');
         setLastRefresh(data.last_refresh || '');
       } catch (err) {
