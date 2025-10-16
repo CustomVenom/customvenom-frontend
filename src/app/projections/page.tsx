@@ -4,6 +4,7 @@ import styles from './page.module.css';
 import GoProButton from '@/components/GoProButton';
 import { getEntitlements, type Entitlements } from '@/lib/entitlements';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
+import { FaabBands } from '@/components/FaabBands';
 
 interface ProjectionData {
   player_id: string;
@@ -284,6 +285,8 @@ export default function ProjectionsPage() {
       </div>
 
       <ImportantDecisions decisions={importantDecisions} isPro={isPro} />
+
+      <FaabBands week="2025-06" />
 
       <div className={styles.projectionsGrid}>
         {Object.entries(groupedProjections).map(([playerId, playerProjections]) => (
