@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 export const ReasonSchema = z.object({
   key: z.string(),
@@ -41,9 +42,7 @@ export type ProjectionsPayload = z.infer<typeof ProjectionsPayloadSchema>;
 export function parseProjectionsPayload(input: unknown): ProjectionsPayload | null {
   const r = ProjectionsPayloadSchema.safeParse(input);
   if (!r.success) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[projections] invalid payload:', r.error.issues);
-    }
+    logger.warn('Invalid projections payload', { issues: r.error.issues });
     return null;
   }
   return r.data;

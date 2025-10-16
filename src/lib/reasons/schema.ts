@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 export const RawReasonSchema = z.object({
   key: z.string(),                 // e.g., "market_delta:up"
@@ -16,9 +17,7 @@ export const RawReasonsSchema = z.array(RawReasonSchema);
 export function parseRawReasons(input: unknown) {
   const result = RawReasonsSchema.safeParse(input);
   if (!result.success) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[reasons] invalid payload:', result.error.issues);
-    }
+    logger.warn('Invalid reasons payload', { issues: result.error.issues });
     return [];
   }
   return result.data;
