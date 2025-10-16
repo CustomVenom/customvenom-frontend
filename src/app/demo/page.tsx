@@ -1,10 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { ReasonChips } from '@/components/ReasonChips'
 import { GlossaryTip } from '@/components/ui/GlossaryTip'
 import { TableSkeleton } from '@/components/ui/TableSkeleton'
 import { Table } from '@/components/ui/Table'
-import { Reason } from '@/lib/reasonsClamp'
+import { ReasonChips, type Reason } from '@/components/ReasonChips'
 
 export default function DemoPage() {
 	const [isLoading, setIsLoading] = useState(true)
@@ -108,7 +107,7 @@ export default function DemoPage() {
 						<p className="text-sm font-medium mb-2">Patrick Mahomes</p>
 						<ReasonChips reasons={sampleReasons} />
 						<p className="text-xs text-gray-500 mt-2">
-							Note: "Def matchup" is filtered out (confidence 0.6 &lt; 0.65)
+							Note: &quot;Def matchup&quot; is filtered out (confidence 0.6 &lt; 0.65)
 						</p>
 					</div>
 					<div>

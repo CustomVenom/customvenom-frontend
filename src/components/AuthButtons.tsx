@@ -4,10 +4,11 @@
 'use client';
 
 import { signIn, signOut } from 'next-auth/react';
+import { Session } from 'next-auth';
 import styles from './AuthButtons.module.css';
 
 interface AuthButtonsProps {
-  session: any;
+  session: Session | null;
 }
 
 export function AuthButtons({ session }: AuthButtonsProps) {

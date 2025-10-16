@@ -4,11 +4,10 @@ import { loadStripe } from '@stripe/stripe-js';
 
 interface GoProButtonProps {
   priceId: string;
-  onSuccess?: () => void;
   className?: string;
 }
 
-export default function GoProButton({ priceId, onSuccess, className = '' }: GoProButtonProps) {
+export default function GoProButton({ priceId, className = '' }: GoProButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

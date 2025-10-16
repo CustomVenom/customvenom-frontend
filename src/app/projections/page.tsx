@@ -6,11 +6,10 @@ import { getEntitlements, type Entitlements } from '@/lib/entitlements';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 import { FaabBands } from '@/components/FaabBands';
 import { RiskDial } from '@/components/RiskDial';
-import { ReasonChips } from '@/components/ReasonChips';
 import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
-import { Reason } from '@/lib/reasonsClamp';
+import { type Reason } from '@/lib/reasonsClamp';
 import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
 
 interface ProjectionData {
@@ -46,11 +45,10 @@ interface ImportantDecisionsProps {
 
 interface ProFeatureProps {
   isPro: boolean;
-  feature: string;
   children: React.ReactNode;
 }
 
-function ProFeature({ isPro, feature, children }: ProFeatureProps) {
+function ProFeature({ isPro, children }: ProFeatureProps) {
   if (isPro) {
     return <>{children}</>;
   }
@@ -91,7 +89,7 @@ function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { is
         <h2 className={styles.decisionsTitle}>Important Decisions</h2>
         <span className={styles.decisionsCount}>{decisions.length} decisions</span>
       </div>
-      <ProFeature isPro={isPro} feature="compareView">
+      <ProFeature isPro={isPro}>
         <div className={styles.decisionsList}>
           {decisions.map((decision, index) => (
             <div key={index} className={styles.decisionItem}>
@@ -276,8 +274,7 @@ function ProjectionsPageInner() {
           {!isPro && (
             <div className={styles.proPrompt}>
               <GoProButton 
-                priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || 'price_pro_season'} 
-                onSuccess={() => window.location.reload()}
+                priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || 'price_pro_season'}
               />
             </div>
           )}
@@ -296,12 +293,12 @@ function ProjectionsPageInner() {
             <div className={styles.playerHeader}>
               <h3 className={styles.playerId}>{playerId}</h3>
               <div className={styles.playerActions}>
-                <ProFeature isPro={isPro} feature="csvExport">
+                <ProFeature isPro={isPro}>
                   <button className={styles.actionButton}>
                     📊 Export CSV
                   </button>
                 </ProFeature>
-                <ProFeature isPro={isPro} feature="recapEmail">
+                <ProFeature isPro={isPro}>
                   <button className={styles.actionButton}>
                     📧 Email Recap
                   </button>

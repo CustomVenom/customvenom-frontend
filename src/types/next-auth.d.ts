@@ -1,7 +1,7 @@
 // NextAuth type extensions
 // Extends session to include user role and Stripe customer ID
 
-import NextAuth, { DefaultSession } from 'next-auth';
+import { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {

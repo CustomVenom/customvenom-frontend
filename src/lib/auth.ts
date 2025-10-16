@@ -6,10 +6,11 @@ import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { Adapter } from 'next-auth/adapters';
 import { prisma } from './db';
 
 export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -28,10 +29,10 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     async session({ session, user }) {
       // Add user role to session for easy access
-      if (session.user) {
+      if (session.user && user) {
         session.user.id = user.id;
-        session.user.role = (user as any).role || 'free';
-        session.user.stripeCustomerId = (user as any).stripeCustomerId;
+        session.user.role = 'role' in user ? (user.role as string) || 'free' : 'free';
+        session.user.stripeCustomerId = 'stripeCustomerId' in user ? (user.stripeCustomerId as string | undefined) : undefined;
       }
       return session;
     },
