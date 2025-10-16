@@ -11,6 +11,7 @@ import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { Reason } from '@/lib/reasonsClamp';
+import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
 
 interface ProjectionData {
   player_id: string;
@@ -118,7 +119,7 @@ function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { is
   );
 }
 
-export default function ProjectionsPage() {
+function ProjectionsPageInner() {
   const [projections, setProjections] = useState<ProjectionData[]>([]);
   const [schemaVersion, setSchemaVersion] = useState<string>('');
   const [lastRefresh, setLastRefresh] = useState<string>('');
