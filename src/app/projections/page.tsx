@@ -338,3 +338,11 @@ function ProjectionsPageInner() {
     </div>
   );
 }
+
+export default function ProjectionsPage() {
+  return (
+    <ApiErrorBoundary>
+      <ProjectionsPageInner />
+    </ApiErrorBoundary>
+  );
+}
