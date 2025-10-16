@@ -1,10 +1,23 @@
 // API client with stale header detection
 
+export interface Projection {
+  player_id: string;
+  name?: string;
+  team?: string;
+  position?: string;
+  stat_name: string;
+  projection: number;
+  method: string;
+  sources_used: number;
+  confidence?: number;
+  reasons?: string[];
+}
+
 export interface ProjectionsResponse {
   data: {
     schema_version: string;
     last_refresh: string;
-    projections: any[];
+    projections: Projection[];
   };
   headers: {
     stale: boolean;
