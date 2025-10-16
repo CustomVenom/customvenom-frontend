@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import GoProButton from '@/components/GoProButton';
 import { getEntitlements, type Entitlements } from '@/lib/entitlements';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
 
 interface ProjectionData {
   player_id: string;
@@ -174,6 +175,7 @@ export default function ProjectionsPage() {
   const [schemaVersion, setSchemaVersion] = useState<string>('');
   const [lastRefresh, setLastRefresh] = useState<string>('');
   const [isStale, setIsStale] = useState<boolean>(false);
+  const [staleAge, setStaleAge] = useState<string | null>(null);
   const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -192,9 +194,11 @@ export default function ProjectionsPage() {
 
         const data: ProjectionsResponse = await response.json();
         
-        // Check for stale header
+        // Check for stale headers
         const staleHeader = response.headers.get('x-stale');
+        const staleAgeHeader = response.headers.get('x-stale-age');
         setIsStale(staleHeader === 'true');
+        setStaleAge(staleAgeHeader);
         
         setProjections(data.projections);
         setSchemaVersion(data.schema_version);
@@ -292,7 +296,12 @@ export default function ProjectionsPage() {
       <div className={styles.header}>
         <h1 className={styles.title}>Projections</h1>
         <div className={styles.headerRight}>
-          <TrustBadge lastRefresh={lastRefresh} schemaVersion={schemaVersion} isStale={isStale} />
+          <TrustSnapshot 
+            lastRefresh={lastRefresh} 
+            schemaVersion={schemaVersion} 
+            stale={isStale}
+            staleAge={staleAge}
+          />
           {!isPro && (
             <div className={styles.proPrompt}>
               <GoProButton 
