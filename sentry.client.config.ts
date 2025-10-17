@@ -9,8 +9,9 @@ Sentry.init({
   
   beforeSend(event, hint) {
     // Add request_id tag if available
-    const requestId = hint.originalException?.['requestId'] || 
-                      hint.syntheticException?.['requestId'];
+    const originalEx = hint.originalException as { requestId?: string } | undefined;
+    const syntheticEx = hint.syntheticException as { requestId?: string } | undefined;
+    const requestId = originalEx?.requestId || syntheticEx?.requestId;
     if (requestId) {
       event.tags = { ...event.tags, request_id: requestId };
     }
