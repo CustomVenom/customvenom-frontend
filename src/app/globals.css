@@ -222,3 +222,16 @@ table tr > td {
 	border-radius: 999px;
 	background: linear-gradient(90deg, rgba(14,124,69,.25), rgba(14,124,69,.6));
 }
+
+/* Sticky first column for tables */
+.sticky-first { 
+	position: sticky; 
+	left: 0; 
+	background: white; 
+	z-index: 1; 
+	box-shadow: 2px 0 4px rgba(0,0,0,0.03);
+}
+
+.dark .sticky-first { 
+	background: rgb(17, 24, 39); 
+}
