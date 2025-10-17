@@ -119,3 +119,106 @@ td, th {
 	height: 2px;
 	opacity: .8;
 }
+
+/* Spacing, container, and typography rhythm */
+:root {
+	--cv-space-1: .25rem;
+	--cv-space-2: .5rem;
+	--cv-space-3: .75rem;
+	--cv-space-4: 1rem;
+	--cv-space-6: 1.5rem;
+	--cv-space-8: 2rem;
+}
+
+.container { 
+	max-width: 72rem; 
+	margin-inline: auto; 
+	padding-inline: var(--cv-space-4); 
+}
+
+.section { 
+	padding-block: var(--cv-space-6); 
+}
+
+.h1 { 
+	font-size: clamp(1.5rem, 2vw + 1rem, 2rem); 
+	font-weight: 800; 
+	letter-spacing: -.02em; 
+}
+
+.h2 { 
+	font-size: clamp(1.125rem, 1.5vw + .75rem, 1.5rem); 
+	font-weight: 700; 
+	letter-spacing: -.01em; 
+}
+
+.text-muted { 
+	color: var(--cv-muted); 
+}
+
+/* Accessible focus and reduced motion */
+:focus-visible { 
+	outline: 2px solid var(--cv-accent); 
+	outline-offset: 2px; 
+	border-radius: 6px; 
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* { 
+		animation-duration: .01ms !important; 
+		animation-iteration-count: 1 !important; 
+		transition-duration: .01ms !important; 
+		scroll-behavior: auto !important; 
+	}
+}
+
+/* Table density and row tokens */
+:root { 
+	--row-py: .5rem; 
+	--row-px: .75rem; 
+}
+
+[data-density='compact'] { 
+	--row-py: .375rem; 
+	--row-px: .5rem; 
+}
+
+table tr > th, 
+table tr > td { 
+	padding: var(--row-py) var(--row-px); 
+}
+
+@media (max-width: 640px) {
+	.hide-sm { 
+		display: none !important; 
+	}
+}
+
+/* Chips and ribbons visual tightening */
+.cv-chip {
+	background: rgba(14,124,69,.06);
+	color: #0E7C45;
+	border-radius: 999px;
+	padding: 0.25rem 0.5rem;
+	font-size: 12px;
+	line-height: 1;
+	border: 1px solid rgba(14,124,69,.12);
+}
+
+.dark .cv-chip {
+	background: rgba(126,217,163,.12);
+	color: #7ED9A3;
+	border-color: rgba(126,217,163,.24);
+}
+
+.ribbons {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: .25rem;
+}
+
+.ribbon {
+	height: .35rem;
+	border-radius: 999px;
+	background: linear-gradient(90deg, rgba(14,124,69,.25), rgba(14,124,69,.6));
+}
