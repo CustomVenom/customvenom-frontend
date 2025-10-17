@@ -27,33 +27,33 @@ export default function OpsDashboard() {
 
   useEffect(() => {
     const fetchMetrics = async () => {
-      // Fetch from logs when available
-      const logMetrics = await fetchLogMetrics();
-      
-      if (logMetrics) {
+      try {
+        // Fetch from logs for 5xx and P95
+        const logMetrics = await fetchLogMetrics();
+        
+        // Fetch ops data for other tiles
+        const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+        const opsResponse = await fetch(`${apiBase}/ops-data`);
+        const opsData = await opsResponse.json();
+        
         setMetrics({
-          errors_5xx: logMetrics.errors_5xx,
-          p95_latency_ms: logMetrics.p95_latency_ms,
-          cache_hit_rate: logMetrics.cache_hit_rate,
-          coverage_pct: 0, // awaiting source
-          pinball_loss: 0, // awaiting source
-          chip_speak_vs_suppress: { speak: 0, suppress: 0 } // awaiting source
+          errors_5xx: logMetrics?.errors_5xx || 0,
+          p95_latency_ms: logMetrics?.p95_latency_ms || 0,
+          cache_hit_rate: opsData?.cache?.rate || null,
+          coverage_pct: opsData?.coverage?.overall || 0,
+          pinball_loss: opsData?.pinball?.overall || 0,
+          chip_speak_vs_suppress: {
+            speak: opsData?.chips?.speak || 0,
+            suppress: opsData?.chips?.suppress || 0
+          }
         });
-        setLogsAvailable(true);
-      } else {
-        // Logs not available yet - use placeholder values
-      setMetrics({
-          errors_5xx: 0,
-          p95_latency_ms: 0,
-          cache_hit_rate: null,
-          coverage_pct: 0,
-          pinball_loss: 0,
-          chip_speak_vs_suppress: { speak: 0, suppress: 0 }
-        });
-        setLogsAvailable(false);
+        
+        setLogsAvailable(!!logMetrics);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch metrics:', error);
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     fetchMetrics();
@@ -101,38 +101,38 @@ export default function OpsDashboard() {
         {/* Tile 3: Cache Hit Rate */}
         <Tile
           title="Cache Hit Rate"
-          value="awaiting source"
-          unit="%"
-          label="Wire when logs exist"
-          status="placeholder"
+          value={metrics.cache_hit_rate !== null ? metrics.cache_hit_rate : 'awaiting source'}
+          unit={metrics.cache_hit_rate !== null ? '%' : undefined}
+          label="R2 cache performance"
+          status={metrics.cache_hit_rate !== null ? 'live' : 'placeholder'}
           loading={loading}
         />
 
         {/* Tile 4: Coverage by Position */}
         <Tile
-          title="Coverage by Position"
-          value="awaiting source"
-          unit="%"
+          title="Coverage"
+          value={metrics.coverage_pct || 'awaiting source'}
+          unit={metrics.coverage_pct ? '%' : undefined}
           label="Players with projections"
-          status="placeholder"
+          status={metrics.coverage_pct ? 'live' : 'placeholder'}
           loading={loading}
         />
 
-        {/* Tile 5: Pinball by Position */}
+        {/* Tile 5: Pinball Loss */}
         <Tile
-          title="Pinball by Position"
-          value="awaiting source"
+          title="Pinball Loss"
+          value={metrics.pinball_loss || 'awaiting source'}
           label="Lower is better"
-          status="placeholder"
+          status={metrics.pinball_loss ? 'live' : 'placeholder'}
           loading={loading}
         />
 
         {/* Tile 6: Chip Speak vs Suppress */}
         <DualTile
           title="Chip Speak vs Suppress"
-          values={{ speak: 0, suppress: 0 }}
+          values={metrics.chip_speak_vs_suppress}
           label="Reason generation ratio"
-          status="placeholder"
+          status={(metrics.chip_speak_vs_suppress.speak > 0 || metrics.chip_speak_vs_suppress.suppress > 0) ? 'live' : 'placeholder'}
           loading={loading}
         />
       </div>
@@ -140,10 +140,11 @@ export default function OpsDashboard() {
       <div className={styles.notes}>
         <h3 className={styles.notesTitle}>Notes</h3>
         <ul className={styles.notesList}>
-          <li><strong>LIVE tiles</strong> (5xx, P95) display live values when logs are present</li>
-          <li><strong>Placeholder tiles</strong> show "awaiting source" until data is available</li>
-          <li>All metrics will be calculated from Cloudflare Workers logs</li>
+          <li><strong>LIVE tiles</strong> show data once logs exist</li>
+          <li><strong>5xx & P95:</strong> From Cloudflare Workers logs</li>
+          <li><strong>Cache, Coverage, Pinball, Chips:</strong> From /ops-data endpoint</li>
           <li>Dashboard auto-refreshes every 60 seconds</li>
+          <li>Aim: 5xx = 0, P95 &lt; 300ms, Cache &gt; 80%</li>
         </ul>
       </div>
     </div>
