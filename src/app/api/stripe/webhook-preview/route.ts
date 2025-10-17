@@ -9,6 +9,11 @@ export const runtime = 'nodejs'; // required for raw body
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  // Check if Stripe is configured
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });
+  }
+
   const sig = req.headers.get('stripe-signature');
   const whSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
@@ -17,7 +22,7 @@ export async function POST(req: NextRequest) {
   }
 
   const buf = Buffer.from(await req.arrayBuffer());
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
 
   let event: Stripe.Event;
   try {

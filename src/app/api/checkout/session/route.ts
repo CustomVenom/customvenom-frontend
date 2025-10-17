@@ -4,12 +4,15 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' });
+// Only initialize if Stripe is configured
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' })
+  : null;
 
 export async function POST() {
-  // Check for required price ID
-  if (!process.env.NEXT_PUBLIC_CHECKOUT_PRICE) {
-    return NextResponse.json({ error: 'price_missing' }, { status: 400 });
+  // Check if Stripe is configured
+  if (!stripe || !process.env.NEXT_PUBLIC_CHECKOUT_PRICE) {
+    return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });
   }
 
   try {
