@@ -9,7 +9,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' })
   : null;
 
-export async function POST(_request: NextRequest) {
+export async function POST() {
   // Check if Stripe is configured
   if (!stripe) {
     return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });

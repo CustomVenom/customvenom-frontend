@@ -3,9 +3,8 @@
 // Pro-only route protection moved to page-level guards (requirePro helper)
 
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
-export function middleware(_request: NextRequest) {
+export function middleware() {
   // No middleware logic needed - all auth checks happen at page/API level
   // This keeps the Edge Function bundle small (<1MB for Vercel free tier)
   return NextResponse.next();

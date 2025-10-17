@@ -2,6 +2,7 @@ import '@/../sentry.server.config';
 import '@/../sentry.client.config';
 import type { Metadata } from "next";
 import { Inter, Merriweather_Sans } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import ThemeToggle from '@/components/ThemeToggle'
 import DensityToggle from '@/components/DensityToggle'
@@ -34,9 +35,9 @@ export default function RootLayout({
       <body className="min-h-screen">
         <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
           <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-            <a href="/" aria-label="Home">
+            <Link href="/" aria-label="Home">
               <Brand size="lg" />
-            </a>
+            </Link>
             <div className="flex items-center gap-3">
               <ThemeToggle />
               <DensityToggle />
