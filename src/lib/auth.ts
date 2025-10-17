@@ -10,24 +10,42 @@ import { Adapter } from 'next-auth/adapters';
 import { prisma } from './db';
 import { YahooProvider } from './integrations/yahoo/provider';
 
+// Only include providers that have credentials configured
+const providers = [];
+
+// Google OAuth (required for now)
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }));
+}
+
+// Yahoo OAuth (Preview/Production when configured)
+if (process.env.YAHOO_CLIENT_ID && process.env.YAHOO_CLIENT_SECRET) {
+  providers.push(YahooProvider as any);
+}
+
+// Twitter OAuth (optional - add when needed)
+if (process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET) {
+  providers.push(TwitterProvider({
+    clientId: process.env.TWITTER_CLIENT_ID,
+    clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    version: '2.0',
+  }));
+}
+
+// Facebook OAuth (optional - add when needed)
+if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+  providers.push(FacebookProvider({
+    clientId: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  }));
+}
+
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma) as Adapter,
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    YahooProvider as any, // Yahoo Fantasy (Priority #1)
-    TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID!,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
-      version: '2.0', // Twitter API v2
-    }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
-    }),
-  ],
+  providers,
   callbacks: {
     async session({ session, user }) {
       // Add user role to session for easy access
