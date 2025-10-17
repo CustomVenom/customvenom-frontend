@@ -16,7 +16,7 @@
 
 ✅ **Correct Format:**
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
@@ -40,7 +40,7 @@ NEXTAUTH_URL=https://customvenom-frontend.vercel.app/   ← Trailing slash
 ✅ **Correct:**
 ```
 # Preview
-NEXTAUTH_URL=https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 
 # Production
 NEXTAUTH_URL=https://customvenom-frontend-incarcer-incarcers-projects.vercel.app
@@ -201,7 +201,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_51A...
 **Auth Flow:**
 ```bash
 # Visit in browser
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/signin
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/signin
 
 # Steps:
 1. Click "Sign in with Google"
@@ -243,7 +243,7 @@ curl -si "$NEXT_PUBLIC_API_BASE/projections?week=2025-06" | sed -n '1,20p' | gre
 **Issue: "redirect_uri_mismatch"**
 ```
 Fix: Verify Google Console redirect URI matches exactly
-Expected: https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+Expected: https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
 **Issue: "Invalid session"**
@@ -300,7 +300,7 @@ curl https://api.customvenom.com/health
 **Test Preview Auth:**
 ```powershell
 # Set base URL
-$PreviewURL = "https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app"
+$PreviewURL = "https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app"
 
 # Open sign in page
 start "$PreviewURL/api/auth/signin"

@@ -1,7 +1,7 @@
 # Diagnose NextAuth 404 Issue
 # Checks if NextAuth routes are accessible
 
-$PreviewURL = "https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app"
+$PreviewURL = "https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app"
 
 Write-Host "=====================================" -ForegroundColor Cyan
 Write-Host "NextAuth Diagnostics" -ForegroundColor Cyan

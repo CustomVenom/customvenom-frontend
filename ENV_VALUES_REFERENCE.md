@@ -13,7 +13,7 @@ mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 
 ### Preview URL
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 ### Production URL
@@ -34,7 +34,7 @@ Copy these to Vercel → Select "Preview" environment:
 
 ```bash
 # NextAuth
-NEXTAUTH_URL=https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 AUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 NEXTAUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 
@@ -104,7 +104,7 @@ NEXT_PUBLIC_SENTRY_DSN=<same-as-preview>
 
 ### Preview Redirect URI
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
 ### Production Redirect URI

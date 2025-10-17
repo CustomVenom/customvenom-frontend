@@ -1,7 +1,7 @@
 # Smoke Tests for Preview Environment
 # Run after setting up Vercel environment variables
 
-$PreviewURL = "https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app"
+$PreviewURL = "https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app"
 $APIBASE = "https://api.customvenom.com"
 
 Write-Host "=====================================" -ForegroundColor Cyan

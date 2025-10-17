@@ -8,7 +8,7 @@
 
 | Environment | URL | Use Case |
 |-------------|-----|----------|
-| **Preview** | `https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app` | Testing & OAuth setup |
+| **Preview** | `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app` | Testing & OAuth setup |
 | **Production** | `https://customvenom-frontend-incarcer-incarcers-projects.vercel.app` | Live deployment |
 | **Custom Domain** | `https://customvenom.com` | Future (after DNS setup) |
 
@@ -29,7 +29,7 @@ Click **"Add New"** for each variable below. Select **"Preview"** environment on
 #### 1. NextAuth URL (PREVIEW)
 ```
 Name:  NEXTAUTH_URL
-Value: https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+Value: https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 Environment: ☑️ Preview only
 ```
 
@@ -141,7 +141,7 @@ Environment: ☑️ Production only
 
 #### Preview Redirect URI
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
 #### Production Redirect URI
@@ -244,7 +244,7 @@ npx prisma db push
 
 **Preview:**
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 **Production:**
@@ -275,7 +275,7 @@ https://customvenom-frontend-incarcer-incarcers-projects.vercel.app
 
 **Preview NEXTAUTH_URL:**
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 **Production NEXTAUTH_URL:**
@@ -292,7 +292,7 @@ mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 
 **Preview:**
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
 **Production:**
@@ -320,7 +320,7 @@ https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/cal
 
 ✅ **Correct (copy these exactly):**
 ```
-https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google
+https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
@@ -334,12 +334,12 @@ https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/cal
 
 ✅ **Correct:**
 ```
-NEXTAUTH_URL=https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 ❌ **Wrong:**
 ```
-NEXTAUTH_URL=https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/  ← Trailing slash
+NEXTAUTH_URL=https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/  ← Trailing slash
 ```
 
 **3. Secrets Handling - NEVER Commit**
@@ -398,7 +398,7 @@ API_BASE=https://api-staging.customvenom.com
 **Cause:** Redirect URI not added to Google Console or doesn't match exactly  
 **Fix:** 
 1. Go to Google Console
-2. Add exact URI: `https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/callback/google`
+2. Add exact URI: `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google`
 3. Must include `/api/auth/callback/google`
 
 ### "Prisma Client not generated"
@@ -431,7 +431,7 @@ pwsh scripts/smoke-preview.ps1
 ```
 
 ### Manual Test - OAuth Flow
-1. Visit: `https://customvenom-frontend-npx2mvsgp-incarcers-projects.vercel.app/api/auth/signin`
+1. Visit: `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/signin`
 2. Click "Sign in with Google"
 3. Complete OAuth flow
 4. Visit `/settings` to see role and email
