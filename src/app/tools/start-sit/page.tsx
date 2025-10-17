@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Metadata } from 'next';
 import ToolsTabs from '@/components/ToolsTabs';
 import PlayerDrawer from '@/components/PlayerDrawer';
+import PlayerSearch from '@/components/PlayerSearch';
 import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
-import { type Row } from '@/lib/tools';
+import { type Row, fetchProjections } from '@/lib/tools';
 
 export default function StartSitPage() {
   const [playerA, setPlayerA] = useState('');
@@ -22,6 +23,12 @@ export default function StartSitPage() {
   
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
+  
+  const [suggestions, setSuggestions] = useState<Row[]>([]);
+
+  useEffect(() => { 
+    fetchProjections().then(setSuggestions).catch(() => {}); 
+  }, []);
 
   function openDrawer(row: Row) {
     setDrawerRow(row);
@@ -97,12 +104,18 @@ export default function StartSitPage() {
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Player A
             </label>
+            <PlayerSearch
+              rows={suggestions}
+              placeholder="Search Player A…"
+              onSelect={(row) => setPlayerA(row.player_name || '')}
+              className="mb-2"
+            />
             <input
               type="text"
               value={playerA}
               onChange={(e) => setPlayerA(e.target.value)}
-              placeholder="e.g., Patrick Mahomes"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              placeholder="Or type manually"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
             />
           </div>
 
@@ -110,12 +123,18 @@ export default function StartSitPage() {
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Player B
             </label>
+            <PlayerSearch
+              rows={suggestions}
+              placeholder="Search Player B…"
+              onSelect={(row) => setPlayerB(row.player_name || '')}
+              className="mb-2"
+            />
             <input
               type="text"
               value={playerB}
               onChange={(e) => setPlayerB(e.target.value)}
-              placeholder="e.g., Jalen Hurts"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              placeholder="Or type manually"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
             />
           </div>
         </div>
