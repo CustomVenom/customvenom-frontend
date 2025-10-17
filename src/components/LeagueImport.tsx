@@ -8,7 +8,7 @@ import { useState } from 'react';
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleImport = async (e: React.FormEvent) => {

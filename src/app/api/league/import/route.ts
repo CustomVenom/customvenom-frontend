@@ -4,7 +4,7 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => ({} as any));
+  const body = await req.json().catch(() => ({} as Record<string, unknown>));
   const { provider, league_id } = body || {};
   
   // Validate input

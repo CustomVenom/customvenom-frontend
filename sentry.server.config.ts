@@ -26,7 +26,7 @@ Sentry.init({
     
     // Add custom context from error
     if (hint.originalException) {
-      const error = hint.originalException as any;
+      const error = hint.originalException as Error & { statusCode?: number };
       if (error.statusCode) {
         event.tags = { ...event.tags, status_code: error.statusCode.toString() };
       }
