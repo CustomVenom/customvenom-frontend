@@ -18,31 +18,22 @@ export default function GoProPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/stripe/checkout', {
+      // Simple checkout session (Preview-friendly)
+      const response = await fetch('/api/checkout/session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
-        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to create checkout session');
       }
 
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
+      const { url } = await response.json();
 
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-
-      if (error) {
-        throw error;
+      // Redirect directly to Stripe checkout
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL received');
       }
     } catch (err) {
       console.error('Checkout error:', err);
