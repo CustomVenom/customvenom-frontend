@@ -1,7 +1,7 @@
 // Stripe Customer Portal
 // Creates a billing portal session for Pro users to manage their subscription
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getServerSession } from '@/lib/auth-helpers';
 
