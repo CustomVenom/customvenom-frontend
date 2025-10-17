@@ -2,8 +2,8 @@
 
 ## Current Status
 
-**Vercel Project:** https://vercel.com/incarcers-projects/customvenom-frontend-fop8  
-**Production URL:** https://customvenom-frontend-fop8.vercel.app
+**Vercel Project:** https://vercel.com/incarcers-projects/customvenom-frontend  
+**Production URL:** https://customvenom-frontend.vercel.app
 
 ## Why Deployment Shows Errors
 
@@ -13,7 +13,7 @@ Your app requires environment variables that aren't configured in Vercel yet.
 
 ## Required Environment Variables
 
-Go to: https://vercel.com/incarcers-projects/customvenom-frontend-fop8/settings/environment-variables
+Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 
 ### 1. Database (CRITICAL - Build will fail without this)
 
@@ -45,7 +45,7 @@ AUTH_SECRET=<your-random-32-char-secret>
 NEXTAUTH_SECRET=<same-as-above>
 
 # Required for production
-NEXTAUTH_URL=https://customvenom-frontend-fop8.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend.vercel.app
 ```
 
 **Generate AUTH_SECRET:**
@@ -135,7 +135,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
 
 3. **NEXTAUTH_URL**:
    ```
-   https://customvenom-frontend-fop8.vercel.app
+   https://customvenom-frontend.vercel.app
    ```
 
 4. **Google OAuth** (easiest provider):
@@ -144,7 +144,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
    2. Create project → APIs & Services → Credentials
    3. Create OAuth 2.0 Client ID
    4. Add authorized redirect:
-      https://customvenom-frontend-fop8.vercel.app/api/auth/callback/google
+      https://customvenom-frontend.vercel.app/api/auth/callback/google
    5. Copy Client ID and Secret to Vercel
    ```
 
@@ -173,7 +173,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
 
 ### 1. Set Environment Variables
 
-Go to: https://vercel.com/incarcers-projects/customvenom-frontend-fop8/settings/environment-variables
+Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 
 Add all required variables above. Use these environment settings:
 - Production ✅
@@ -228,12 +228,12 @@ Once deployed:
 
 ```bash
 # Health check
-curl https://customvenom-frontend-fop8.vercel.app/api/health
+curl https://customvenom-frontend.vercel.app/api/health
 
 # Should return: {"ok":true}
 ```
 
-Visit: https://customvenom-frontend-fop8.vercel.app
+Visit: https://customvenom-frontend.vercel.app
 
 ---
 
@@ -282,7 +282,7 @@ Copy this to Vercel Environment Variables page:
 
 - [ ] `DATABASE_URL` (PostgreSQL connection string)
 - [ ] `AUTH_SECRET` (32+ character random string)
-- [ ] `NEXTAUTH_URL` (https://customvenom-frontend-fop8.vercel.app)
+- [ ] `NEXTAUTH_URL` (https://customvenom-frontend.vercel.app)
 - [ ] `GOOGLE_CLIENT_ID` (from Google Console)
 - [ ] `GOOGLE_CLIENT_SECRET` (from Google Console)
 - [ ] `STRIPE_SECRET_KEY` (from Stripe Dashboard)
@@ -303,7 +303,7 @@ After deployment, set up Stripe webhook:
 
 1. Go to: https://dashboard.stripe.com/webhooks
 2. Click "Add endpoint"
-3. URL: `https://customvenom-frontend-fop8.vercel.app/api/stripe/webhook`
+3. URL: `https://customvenom-frontend.vercel.app/api/stripe/webhook`
 4. Events: Select:
    - `checkout.session.completed`
    - `customer.subscription.created`
@@ -317,17 +317,17 @@ After deployment, set up Stripe webhook:
 For each OAuth provider, add production callback URL:
 
 **Google:**
-- https://customvenom-frontend-fop8.vercel.app/api/auth/callback/google
+- https://customvenom-frontend.vercel.app/api/auth/callback/google
 
 **Twitter:**
-- https://customvenom-frontend-fop8.vercel.app/api/auth/callback/twitter
+- https://customvenom-frontend.vercel.app/api/auth/callback/twitter
 
 **Facebook:**
-- https://customvenom-frontend-fop8.vercel.app/api/auth/callback/facebook
+- https://customvenom-frontend.vercel.app/api/auth/callback/facebook
 
 ### 3. Test Full Flow
 
-1. Visit https://customvenom-frontend-fop8.vercel.app
+1. Visit https://customvenom-frontend.vercel.app
 2. Sign in with Google
 3. Try going Pro (test mode)
 4. Verify webhook works
