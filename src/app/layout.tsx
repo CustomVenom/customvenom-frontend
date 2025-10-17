@@ -2,11 +2,9 @@ import '@/../sentry.server.config';
 import '@/../sentry.client.config';
 import type { Metadata } from "next";
 import { Inter, Merriweather_Sans } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
-import ThemeToggle from '@/components/ThemeToggle'
-import DensityToggle from '@/components/DensityToggle'
-import Brand from '@/components/Brand'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -40,34 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${merri.variable}`}>
-      <body className="min-h-screen">
-        <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
-          <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-            <Link href="/" aria-label="Home">
-              <Brand size="lg" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <DensityToggle />
-            </div>
-          </div>
-        </header>
-        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-        <footer className="border-t border-gray-200 dark:border-gray-800 mt-12">
-          <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>
-              Follow updates on{' '}
-              <a 
-                href="https://bsky.app" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-brand-primary dark:text-brand-accent hover:underline"
-              >
-                Bluesky
-              </a>
-            </p>
-          </div>
-        </footer>
+      <body className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
+        <Footer />
       </body>
     </html>
   );
