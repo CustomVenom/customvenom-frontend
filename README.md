@@ -2,6 +2,23 @@
 
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
+## 🌐 Live Production URLs
+
+- **Main Site:** https://www.customvenom.com
+- **Ops Dashboard:** https://www.customvenom.com/ops (6 tiles, all LIVE!)
+- **Projections:** https://www.customvenom.com/projections
+- **Preview:** https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
+
+## ✨ Preview-Ready Features
+
+- ✅ **Stripe Checkout** - Test mode ready (needs test keys in Preview env vars)
+- ✅ **Yahoo OAuth** - Sign-in ready (needs Yahoo app credentials in Preview env vars)
+- ✅ **League Import Stub** - Test endpoint ready at `/api/league/import`
+
+**Setup Guides:**
+- [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
+- [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
+
 ## 🚀 Quick Start
 
 ```bash
