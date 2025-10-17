@@ -104,13 +104,15 @@ Environment: ☑️ Preview
 
 ---
 
-### 🔴 Variable 7: GOOGLE_CLIENT_ID (YOU NEED TO GET THIS!)
+### 🟢 Variable 7: GOOGLE_CLIENT_ID (READY - Copy this!)
 
 ```
 Name:        GOOGLE_CLIENT_ID
-Value:       ⚠️ GET FROM GOOGLE CONSOLE (see below)
+Value:       294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com
 Environment: ☑️ Preview ☑️ Production (check BOTH!)
 ```
+
+**Action:** Copy the value above and paste it exactly as-is.
 
 **How to get it:**
 
