@@ -208,3 +208,67 @@ One feature per PR with:
 - NEXT_PUBLIC_API_BASE must point to Workers API
 - Keep read endpoints artifact-first; no DB dependency
 
+---
+
+## Brand System & Metadata Standards
+
+### Brand Identity
+
+- **Primary title:** "Custom Venom" (Inter 800, deep field green #0E7C45)
+- **Tagline:** "Pick Your Poison" (Merriweather Sans italic, muted)
+- **Theme:** Reptilian football motif with subtle scale patterns
+- **Colors:** Deep field green (#0E7C45) + lime accent (#A3D977)
+
+### Metadata Standards
+
+**Global metadata** (src/app/layout.tsx):
+```typescript
+export const metadata: Metadata = {
+  title: 'Custom Venom — Pick Your Poison',
+  description: 'Fantasy football projections and decisions powered by explainable AI.',
+  openGraph: {
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+    type: 'website',
+    url: 'https://customvenom.com',
+    siteName: 'Custom Venom',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+  },
+};
+```
+
+**Per-page overrides** (when needed):
+```typescript
+// src/app/tools/page.tsx
+export const metadata: Metadata = {
+  title: 'Tools — Custom Venom',
+  description: 'Start/Sit, FAAB, and decisions built on explainable projections.',
+};
+```
+
+### Brand Component Usage
+
+```tsx
+import Brand from '@/components/Brand';
+
+// In headers
+<Brand size="lg" />  // Large for main header
+<Brand size="md" />  // Medium for section titles
+<Brand size="sm" />  // Small for footer
+
+// In titles
+<h1><Brand size="lg" /></h1>
+```
+
+### Brand Utilities
+
+- `.cv-btn-primary` - Deep green CTA button
+- `.cv-btn-secondary` - Lime accent button
+- `.bg-scales` - Subtle reptilian texture background
+- `.hr-grid` - Football yard-line divider
+- `.brand-title:hover` - Scale pattern reveal effect
+

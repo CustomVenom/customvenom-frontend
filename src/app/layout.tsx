@@ -21,8 +21,20 @@ const merri = Merriweather_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Custom Venom — Pick Your Poison",
-  description: "Fantasy football projections and decisions powered by explainable AI",
+  title: 'Custom Venom — Pick Your Poison',
+  description: 'Fantasy football projections and decisions powered by explainable AI.',
+  openGraph: {
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+    type: 'website',
+    url: 'https://customvenom.com',
+    siteName: 'Custom Venom',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+  },
 };
 
 export default function RootLayout({
