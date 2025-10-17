@@ -7,6 +7,7 @@ import PlayerDrawer from '@/components/PlayerDrawer';
 import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
 import { type Row } from '@/lib/tools';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 
 export default function DecisionsPage() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
@@ -108,6 +109,9 @@ export default function DecisionsPage() {
   return (
     <main className="container section space-y-4">
       <h1 className="h1">Important Decisions</h1>
+      <p className="text-sm text-muted">
+        <GlossaryTip term="driver chip" /> · <GlossaryTip term="coverage" />
+      </p>
       <ToolsTabs />
 
       <div>

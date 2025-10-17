@@ -11,6 +11,7 @@ import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { type Reason } from '@/lib/reasonsClamp';
 import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
+import DemoBadge from '@/components/DemoBadge';
 
 interface ProjectionData {
   player_id: string;
@@ -123,6 +124,7 @@ function ProjectionsPageInner() {
   const [lastRefresh, setLastRefresh] = useState<string>('');
   const [isStale, setIsStale] = useState<boolean>(false);
   const [staleAge, setStaleAge] = useState<string | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,8 +147,10 @@ function ProjectionsPageInner() {
         // Check for stale headers
         const staleHeader = response.headers.get('x-stale');
         const staleAgeHeader = response.headers.get('x-stale-age');
+        const demoModeHeader = response.headers.get('x-demo-mode');
         setIsStale(staleHeader === 'true');
         setStaleAge(staleAgeHeader);
+        setIsDemoMode(demoModeHeader === 'true');
         
         setProjections(data.projections);
         setSchemaVersion(data.schema_version);
@@ -265,6 +269,7 @@ function ProjectionsPageInner() {
           </button>
         </div>
         <div className={styles.headerRight}>
+          <DemoBadge show={isDemoMode} />
           <TrustSnapshot 
             lastRefresh={lastRefresh} 
             schemaVersion={schemaVersion} 

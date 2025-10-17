@@ -7,6 +7,8 @@ import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { faabSummary } from '@/lib/summary';
 
 export default function FaabPage() {
   const [player, setPlayer] = useState('');
@@ -36,14 +38,16 @@ export default function FaabPage() {
     });
   }
 
-  function copyBid(amount: number) {
+  function copyBid(amount: number, label: 'Min' | 'Likely' | 'Max') {
     navigator.clipboard.writeText(amount.toString());
-    setMsg(`Copied: $${amount}`);
+    setMsg(`${label} bid copied`);
   }
 
   return (
     <main className="container section space-y-4">
-      <h1 className="h1">FAAB Bid Helper</h1>
+      <h1 className="h1">
+        FAAB Bid Helper <GlossaryTip term="faab band" />
+      </h1>
       <ToolsTabs />
 
       {!result ? (
@@ -105,7 +109,7 @@ export default function FaabPage() {
                 ${result.min}
               </div>
               <button 
-                onClick={() => copyBid(result.min)}
+                onClick={() => copyBid(result.min, 'Min')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
                 Copy
@@ -118,7 +122,7 @@ export default function FaabPage() {
                 ${result.likely}
               </div>
               <button 
-                onClick={() => copyBid(result.likely)}
+                onClick={() => copyBid(result.likely, 'Likely')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
                 Copy
@@ -131,7 +135,7 @@ export default function FaabPage() {
                 ${result.max}
               </div>
               <button 
-                onClick={() => copyBid(result.max)}
+                onClick={() => copyBid(result.max, 'Max')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
                 Copy
@@ -142,6 +146,19 @@ export default function FaabPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rationale</div>
             <p className="text-sm text-gray-700 dark:text-gray-300">{result.reason}</p>
+          </div>
+          
+          <div className="mt-3">
+            <button
+              className="cv-btn-ghost"
+              onClick={() => {
+                const s = faabSummary(player, result.min, result.likely, result.max);
+                navigator.clipboard.writeText(s);
+                setMsg('FAAB summary copied');
+              }}
+            >
+              Copy all
+            </button>
           </div>
         </div>
       )}

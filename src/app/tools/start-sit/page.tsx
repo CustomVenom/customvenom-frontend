@@ -9,6 +9,9 @@ import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
 import { type Row, fetchProjections } from '@/lib/tools';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { useToast } from '@/components/Toast';
+import { startSitSummary } from '@/lib/summary';
 
 export default function StartSitPage() {
   const [playerA, setPlayerA] = useState('');
@@ -25,6 +28,8 @@ export default function StartSitPage() {
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
   
   const [suggestions, setSuggestions] = useState<Row[]>([]);
+  
+  const { setMsg, Toast } = useToast();
 
   useEffect(() => { 
     fetchProjections().then(setSuggestions).catch(() => {}); 
@@ -86,7 +91,12 @@ export default function StartSitPage() {
 
   return (
     <main className="container section space-y-4">
-      <h1 className="h1">Start / Sit Tie‑Breaker</h1>
+      <h1 className="h1">
+        Start / Sit Tie‑Breaker <GlossaryTip term="risk modes" />
+      </h1>
+      <p className="text-sm text-muted">
+        <GlossaryTip term="range band" /> · <GlossaryTip term="driver chip" />
+      </p>
       <ToolsTabs />
 
       {!result ? (
@@ -179,6 +189,19 @@ export default function StartSitPage() {
             Recommendation
           </h3>
           <p className="text-gray-700 dark:text-gray-300 mb-4">{result.recommendation}</p>
+          
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              className="cv-btn-ghost"
+              onClick={() => {
+                const s = startSitSummary(result.rowA, result.rowB, risk, result.winner === 'A' ? result.rowA.player_name || '' : result.rowB.player_name || '');
+                navigator.clipboard.writeText(s);
+                setMsg('Summary copied');
+              }}
+            >
+              Copy summary
+            </button>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
@@ -220,6 +243,7 @@ export default function StartSitPage() {
 
       <ActionBar />
       <PlayerDrawer open={drawerOpen} onClose={closeDrawer} row={drawerRow} />
+      <Toast />
     </main>
   );
 }
