@@ -3,6 +3,7 @@
 
 import { requireAuth } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
+import { LeagueImport } from '@/components/LeagueImport';
 import styles from './page.module.css';
 
 export const metadata = {
@@ -67,6 +68,11 @@ export default async function SettingsPage() {
               </a>
             </div>
           )}
+        </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>League Integration (Preview)</h2>
+          <LeagueImport />
         </div>
 
         <div className={styles.section}>
