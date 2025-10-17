@@ -1,6 +1,42 @@
-# 🎉 What's New: Production-Ready UI System
+# 🎉 What's New
 
-## TL;DR
+## Latest: UI Shell + Tools + Design Preview (2025-10-17)
+
+### 🚀 New Capabilities
+
+**Tools Hub** - Three interactive decision tools:
+- 🆚 **Start/Sit Tie-Breaker** - Compare players with risk preferences
+- 💰 **FAAB Bid Helper** - Smart waiver bid recommendations
+- ⭐ **Important Decisions** - Top 3 weekly actions
+
+**Design Preview Sandbox** (`/design-preview`):
+- Live theme customization (primary/accent colors)
+- Dark mode toggle
+- Density controls (compact/comfortable)
+- Corner radius adjustments
+- Persists to localStorage
+
+**Command Palette** (Ctrl/⌘+K):
+- Quick navigation to all tools
+- Theme and density toggles
+- Keyboard shortcuts
+
+### 🛡️ UI Guardrails
+
+- Max 2 reason chips per row
+- Confidence threshold ≥ 0.65
+- Effect clamp |Δ| ≤ 3-4%
+- CLS < 0.1 with proper skeletons
+
+### 📚 Documentation
+
+See `cursor-brief.md` and `CHANGELOG.md` for complete details.
+
+---
+
+## Previous: Production-Ready UI System
+
+### TL;DR
 
 ✅ **4 core UI features** + **Zod adapter** integrated into `/projections`  
 ✅ **12 unit tests** passing  
