@@ -33,7 +33,7 @@ export function LeagueImport() {
         }),
       });
 
-      const data = await response.json();
+      const data: { error?: string; message?: string; [key: string]: unknown } = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || data.message || 'Import failed');

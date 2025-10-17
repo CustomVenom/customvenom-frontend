@@ -22,9 +22,10 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(buf, sig, whSecret);
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
-    return NextResponse.json({ error: 'bad_sig', message: err.message }, { status: 400 });
+  } catch (err) {
+    const error = err as Error;
+    console.error('Webhook signature verification failed:', error.message);
+    return NextResponse.json({ error: 'bad_sig', message: error.message }, { status: 400 });
   }
 
   // Log event for Preview testing

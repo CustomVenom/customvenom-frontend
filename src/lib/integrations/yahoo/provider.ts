@@ -20,6 +20,7 @@ export const YahooProvider = {
   token: "https://api.login.yahoo.com/oauth2/get_token",
   userinfo: { 
     url: "https://api.login.yahoo.com/openid/v1/userinfo",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async request({ tokens }: any) {
       const response = await fetch("https://api.login.yahoo.com/openid/v1/userinfo", {
         headers: {
@@ -31,6 +32,7 @@ export const YahooProvider = {
   },
   clientId: process.env.YAHOO_CLIENT_ID!,
   clientSecret: process.env.YAHOO_CLIENT_SECRET!,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   profile(profile: any) {
     return {
       id: profile.sub ?? profile.user_id ?? "",

@@ -70,12 +70,12 @@ export default function Error({
             Try again
           </button>
           
-          <a
-            href="/"
+          <button
+            onClick={() => window.location.href = '/'}
             className="flex-1 px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-300 transition-colors text-center"
           >
             Go home
-          </a>
+          </button>
         </div>
       </div>
     </div>
