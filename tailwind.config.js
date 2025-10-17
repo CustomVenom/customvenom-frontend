@@ -13,6 +13,12 @@ const config = {
 	theme: {
 		extend: {
 			colors: {
+				brand: {
+					primary: '#0E7C45',
+					accent: '#A3D977',
+					ink: '#0F172A',
+					muted: '#6B7280',
+				},
 				primary: {
 					50: '#eff6ff',
 					100: '#dbeafe',
@@ -43,10 +49,11 @@ const config = {
 			},
 			borderRadius: {
 				lg: '0.5rem',
-				xl: '0.75rem',
+				xl: '10px',
 			},
 			boxShadow: {
 				card: '0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1)',
+				field: 'inset 0 0 0 1px rgba(0,0,0,0.04)',
 			},
 			spacing: {
 				18: '4.5rem',

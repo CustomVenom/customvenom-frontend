@@ -1,24 +1,27 @@
 import '@/../sentry.server.config';
 import '@/../sentry.client.config';
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Merriweather_Sans } from "next/font/google";
 import "./globals.css";
 import ThemeToggle from '@/components/ThemeToggle'
 import DensityToggle from '@/components/DensityToggle'
+import Brand from '@/components/Brand'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = Inter({ 
+  subsets: ['latin'], 
+  variable: '--font-title', 
+  weight: ['700','800'] 
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const merri = Merriweather_Sans({ 
+  subsets: ['latin'], 
+  variable: '--font-tag', 
+  weight: ['400','500'] 
 });
 
 export const metadata: Metadata = {
-  title: "CustomVenom",
-  description: "Fantasy football projections and decisions",
+  title: "Custom Venom — Pick Your Poison",
+  description: "Fantasy football projections and decisions powered by explainable AI",
 };
 
 export default function RootLayout({
@@ -27,11 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}>
+    <html lang="en" className={`${inter.variable} ${merri.variable}`}>
+      <body className="min-h-screen">
         <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
           <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-            <div className="font-semibold">CustomVenom</div>
+            <a href="/" aria-label="Home">
+              <Brand size="lg" />
+            </a>
             <div className="flex items-center gap-3">
               <ThemeToggle />
               <DensityToggle />

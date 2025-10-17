@@ -5,6 +5,14 @@
 	--bg: 255 255 255;   /* rgb */
 	--fg: 17 24 39;
 	--card: 249 250 251;
+	
+	/* Custom Venom brand tokens */
+	--cv-primary: #0E7C45;       /* deep field green */
+	--cv-accent:  #A3D977;       /* lime-green highlight */
+	--cv-ink:     #0F172A;       /* slate ink */
+	--cv-muted:   #6B7280;       /* muted gray */
+	--cv-radius:  10px;
+	--cv-scale:   conic-gradient(from 0deg, rgba(0,0,0,0.06) 0 25%, transparent 25% 50%, rgba(0,0,0,0.06) 50% 75%, transparent 75% 100%);
 }
 .dark {
 	--bg: 17 24 39;
@@ -41,4 +49,73 @@ body {
 }
 td, th { 
 	padding: var(--row-py) var(--row-px); 
+}
+
+/* Custom Venom Brand Styling */
+.brand-title {
+	font-family: var(--font-title), system-ui, sans-serif;
+	font-weight: 800;
+	color: var(--cv-primary);
+	letter-spacing: -0.02em;
+	text-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+.brand-tagline {
+	font-family: var(--font-tag), ui-sans-serif, sans-serif;
+	color: var(--cv-muted);
+	font-size: 0.55em;            /* smaller */
+	font-style: italic;           /* distinct voice */
+	letter-spacing: 0.02em;
+	position: relative;
+	top: 0.05em;
+}
+
+/* Subtle reptile hint on brand hover (scale-like pattern) */
+.brand-title:hover {
+	background: var(--cv-scale);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;            /* text takes on pattern */
+}
+
+/* Button tokens (optional) */
+.cv-btn-primary { 
+	background: var(--cv-primary); 
+	color:#fff; 
+	border-radius: var(--cv-radius); 
+	padding: 0.5rem 0.75rem; 
+}
+
+.cv-btn-secondary { 
+	background: var(--cv-accent); 
+	color:#0C2B1B; 
+	border-radius: var(--cv-radius); 
+	padding: 0.5rem 0.75rem; 
+}
+
+/* Dark mode brand tweaks */
+.dark .brand-title { 
+	color: #7ED9A3; 
+}
+
+.dark .brand-tagline { 
+	color: #9CA3AF; 
+}
+
+.dark .cv-btn-primary { 
+	background:#0B5C34; 
+}
+
+/* Subtle reptilian accents (optional) */
+.bg-scales {
+	background-image: radial-gradient(rgba(14,124,69,0.06) 1px, transparent 1px);
+	background-size: 10px 10px;
+	background-position: 0 0, 5px 5px;
+	border-radius: var(--cv-radius);
+}
+
+.hr-grid {
+	background-image: repeating-linear-gradient(to right, rgba(15,23,42,0.06) 0 1px, transparent 1px 24px);
+	height: 2px;
+	opacity: .8;
 }
