@@ -14,7 +14,7 @@ const stripeKey = process.env.STRIPE_SECRET_KEY;
 export async function getEntitlements(sessionId?: string): Promise<Entitlements> {
   try {
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY missing');
-    const stripe = new Stripe(stripeKey, { apiVersion: '2024-11-20.acacia' });
+    const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' });
 
     if (sessionId) {
       const session = await stripe.checkout.sessions.retrieve(sessionId);
