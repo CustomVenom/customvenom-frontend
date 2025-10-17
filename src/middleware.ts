@@ -1,39 +1,13 @@
 // Middleware for route protection
-// Protects Pro-only routes and redirects free users to /go-pro
+// Currently minimal to stay under Edge Function size limits
+// Pro-only route protection moved to page-level guards (requirePro helper)
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { auth } from './lib/auth';
 
-// Define Pro-only routes
-const PRO_ROUTES = [
-  '/pro',
-  // Add more Pro-only route patterns here
-];
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Check if current path requires Pro subscription
-  const requiresPro = PRO_ROUTES.some(route => pathname.startsWith(route));
-
-  if (requiresPro) {
-    // Get session
-    const session = await auth();
-
-    // Redirect to login if not authenticated
-    if (!session?.user) {
-      const url = new URL('/', request.url);
-      url.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(url);
-    }
-
-    // Redirect to go-pro if not Pro
-    if (session.user.role !== 'pro') {
-      return NextResponse.redirect(new URL('/go-pro', request.url));
-    }
-  }
-
+export function middleware(_request: NextRequest) {
+  // No middleware logic needed - all auth checks happen at page/API level
+  // This keeps the Edge Function bundle small (<1MB for Vercel free tier)
   return NextResponse.next();
 }
 
