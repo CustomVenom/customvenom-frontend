@@ -272,3 +272,48 @@ import Brand from '@/components/Brand';
 - `.hr-grid` - Football yard-line divider
 - `.brand-title:hover` - Scale pattern reveal effect
 
+### Meta Standard
+
+**Required fields:**
+- **title:** "Custom Venom — Pick Your Poison"
+- **description:** "Fantasy football projections and decisions powered by explainable AI."
+
+**OpenGraph:**
+- title: "Custom Venom — Pick Your Poison"
+- description: "Fantasy football projections and decisions powered by explainable AI."
+- type: website
+- url: https://customvenom.com
+- siteName: Custom Venom
+- images: [/og.png] // optional
+
+**Twitter:**
+- card: summary_large_image
+- title: "Custom Venom — Pick Your Poison"
+- description: "Fantasy football projections and decisions powered by explainable AI."
+- images: [/og.png] // optional
+
+### Next.js (App Router) Implementation
+
+In `src/app/layout.tsx`:
+
+```typescript
+export const metadata = {
+  title: 'Custom Venom — Pick Your Poison',
+  description: 'Fantasy football projections and decisions powered by explainable AI.',
+  openGraph: {
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+    type: 'website',
+    url: 'https://customvenom.com',
+    siteName: 'Custom Venom',
+    images: ['/og.png'], // optional
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Custom Venom — Pick Your Poison',
+    description: 'Fantasy football projections and decisions powered by explainable AI.',
+    images: ['/og.png'], // optional
+  },
+};
+```
+
