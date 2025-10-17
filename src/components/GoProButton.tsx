@@ -31,8 +31,13 @@ export default function GoProButton({ priceId, className = '' }: GoProButtonProp
 
       const { sessionId } = await response.json();
 
-      // Initialize Stripe
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+      // Initialize Stripe (check if configured)
+      const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+      if (!stripeKey) {
+        throw new Error('Stripe not configured');
+      }
+      
+      const stripe = await loadStripe(stripeKey);
       
       if (!stripe) {
         throw new Error('Stripe failed to load');
