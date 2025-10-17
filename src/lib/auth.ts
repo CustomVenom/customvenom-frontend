@@ -1,5 +1,5 @@
 // NextAuth.js configuration
-// Supports Google, Twitter (X), and Facebook social login
+// Supports Google, Yahoo, Twitter (X), and Facebook social login
 
 import NextAuth, { NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
@@ -8,6 +8,7 @@ import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Adapter } from 'next-auth/adapters';
 import { prisma } from './db';
+import { YahooProvider } from './integrations/yahoo/provider';
 
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -16,6 +17,7 @@ export const authConfig: NextAuthConfig = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+    YahooProvider as any, // Yahoo Fantasy (Priority #1)
     TwitterProvider({
       clientId: process.env.TWITTER_CLIENT_ID!,
       clientSecret: process.env.TWITTER_CLIENT_SECRET!,
