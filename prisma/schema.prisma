@@ -16,11 +16,20 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("free") // free | pro
-  stripeCustomerId String? @unique
   
+  // Business fields
+  role          String    @default("free") // free | pro | team
+  stripeCustomerId String? @unique
+  subscriptionStatus String? // trial | active | paused | canceled
+  tier          String?   // free | pro | team
+  paidUntil     DateTime?
+  
+  // Relations
   accounts      Account[]
   sessions      Session[]
+  preferences   UserPreferences?
+  leagues       League[]
+  events        AnalyticsEvent[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,5 +69,48 @@ model VerificationToken {
   expires    DateTime
   
   @@unique([identifier, token])
+}
+
+// User preferences (1:1 with User)
+model UserPreferences {
+  id                    String  @id @default(cuid())
+  userId                String  @unique
+  favoriteTeam          String?
+  notificationSettings  Json?
+  savedLineups          Json?
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// League imports (Yahoo, Sleeper, ESPN)
+model League {
+  id         String  @id @default(cuid())
+  userId     String
+  platform   String  // yahoo, sleeper, espn
+  leagueId   String  // External league ID from platform
+  leagueName String?
+  roster     Json?   // Player IDs on user's team
+  settings   Json?   // Scoring settings, roster spots
+  lastSync   DateTime @default(now())
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([userId, platform, leagueId])
+  @@index([userId])
+}
+
+// Analytics events (optional)
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  event      String
+  properties Json?
+  timestamp  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([userId, event])
+  @@index([timestamp])
 }
 
