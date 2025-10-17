@@ -30,8 +30,8 @@ export const YahooProvider = {
       return response.json();
     },
   },
-  clientId: process.env.YAHOO_CLIENT_ID!,
-  clientSecret: process.env.YAHOO_CLIENT_SECRET!,
+  clientId: process.env.YAHOO_CLIENT_ID || 'placeholder',
+  clientSecret: process.env.YAHOO_CLIENT_SECRET || 'placeholder',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   profile(profile: any) {
     return {
