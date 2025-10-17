@@ -1,6 +1,9 @@
 import { Badge } from '@/components/ui/Badge'
 import { clampReasons, Reason } from '@/lib/reasonsClamp'
 
+// Re-export Reason type for convenience
+export type { Reason } from '@/lib/reasonsClamp'
+
 export function ReasonChips({ reasons }: { reasons: Reason[] }) {
 	const clamped = clampReasons(reasons)
 	if (!clamped.length) return null
