@@ -29,11 +29,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://customvenom.com',
     siteName: 'Custom Venom',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Custom Venom — Pick Your Poison',
-    description: 'Fantasy football projections and decisions powered by explainable AI.',
+    images: ['/og.png'], // Add this when og.png is created
   },
 };
 
@@ -57,6 +53,21 @@ export default function RootLayout({
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+        <footer className="border-t border-gray-200 dark:border-gray-800 mt-12">
+          <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>
+              Follow updates on{' '}
+              <a 
+                href="https://bsky.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-brand-primary dark:text-brand-accent hover:underline"
+              >
+                Bluesky
+              </a>
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );

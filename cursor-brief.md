@@ -286,11 +286,7 @@ import Brand from '@/components/Brand';
 - siteName: Custom Venom
 - images: [/og.png] // optional
 
-**Twitter:**
-- card: summary_large_image
-- title: "Custom Venom — Pick Your Poison"
-- description: "Fantasy football projections and decisions powered by explainable AI."
-- images: [/og.png] // optional
+**Note:** Bluesky uses Open Graph tags for link previews. Twitter cards removed to focus on decentralized platforms.
 
 ### Next.js (App Router) Implementation
 
@@ -308,12 +304,38 @@ export const metadata = {
     siteName: 'Custom Venom',
     images: ['/og.png'], // optional
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Custom Venom — Pick Your Poison',
-    description: 'Fantasy football projections and decisions powered by explainable AI.',
-    images: ['/og.png'], // optional
-  },
 };
 ```
+
+### Share on Bluesky
+
+Bluesky share intent: `https://bsky.app/intent/compose?text=<ENCODED_TEXT>&url=<ENCODED_URL>`
+
+**ShareButtons component** (`src/components/ShareButtons.tsx`):
+
+```tsx
+'use client';
+
+export default function ShareButtons({ 
+  text = 'Check out Custom Venom — Pick Your Poison', 
+  url = 'https://customvenom.com' 
+}) {
+  const encodedText = encodeURIComponent(text);
+  const encodedUrl = encodeURIComponent(url);
+  const bsky = `https://bsky.app/intent/compose?text=${encodedText}&url=${encodedUrl}`;
+
+  return (
+    <div className="flex items-center gap-2">
+      <a href={bsky} target="_blank" rel="noopener" className="cv-btn-secondary">
+        Share on Bluesky
+      </a>
+      <button onClick={() => navigator.clipboard.writeText(`${text} ${url}`)}>
+        Copy link
+      </button>
+    </div>
+  );
+}
+```
+
+**Usage:** Add to Projections, Tools results, and Proof/Lift pages to encourage sharing.
 
