@@ -50,19 +50,12 @@ Connect `customvenom.com` to your Vercel frontend so users can access your app a
 
 **Add these records:**
 
-| Type | Name | Content | Proxy |
-|------|------|---------|-------|
-| A | @ | 76.76.2.13 | DNS only (gray cloud) |
-| CNAME | www | cname.vercel-dns.com | DNS only (gray cloud) |
+| Type | Name | Content | Proxy | TTL |
+|------|------|---------|-------|-----|
+| A | @ | 76.76.2.13 | DNS only (gray cloud) | 300-600 |
+| CNAME | www | b9eb6ad1e241f07c.vercel-dns-017.com. | DNS only (gray cloud) | 300-600 |
 
-**OR (Alternative using A records):**
-
-| Type | Name | Content | Proxy |
-|------|------|---------|-------|
-| A | @ | 76.76.2.13 | DNS only (gray cloud) |
-| A | @ | 76.76.21.21 | DNS only (gray cloud) |
-| A | www | 76.76.2.13 | DNS only (gray cloud) |
-| A | www | 76.76.21.21 | DNS only (gray cloud) |
+**Note:** Use the CNAME record provided by Vercel (see table above). Each domain gets a unique CNAME target.
 
 **Important:** 
 - Do NOT proxy through Cloudflare (keep cloud gray, not orange)
