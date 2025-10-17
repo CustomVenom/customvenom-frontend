@@ -93,6 +93,22 @@ td, th {
 	padding: 0.5rem 0.75rem; 
 }
 
+.cv-btn-ghost {
+	background: transparent;
+	color: var(--cv-primary);
+	border: 1px solid rgba(14,124,69,.2);
+	border-radius: var(--cv-radius);
+	padding: 0.5rem 0.75rem;
+}
+
+/* Focus styles for custom buttons (Batch 8 requirement) */
+.cv-btn-primary:focus-visible,
+.cv-btn-secondary:focus-visible,
+.cv-btn-ghost:focus-visible {
+	outline: 2px solid var(--cv-accent);
+	outline-offset: 2px;
+}
+
 /* Dark mode brand tweaks */
 .dark .brand-title { 
 	color: #7ED9A3; 
@@ -234,4 +250,34 @@ table tr > td {
 
 .dark .sticky-first { 
 	background: rgb(17, 24, 39); 
+}
+
+/* Dark mode tooltip styles (from frontend_changes.txt Batch 5) */
+.dark [role="tooltip"] {
+	background: #0f172a;
+	color: #e5e7eb;
+	border-color: rgba(255,255,255,.12);
+}
+
+/* Screen reader utilities (Batch 8 requirement) */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.focus\:not-sr-only:focus {
+	position: static;
+	width: auto;
+	height: auto;
+	margin: 0;
+	overflow: visible;
+	clip: auto;
+	white-space: normal;
 }
