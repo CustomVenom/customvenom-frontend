@@ -101,16 +101,39 @@ model League {
   @@index([userId])
 }
 
-// Analytics events (optional)
+// Analytics events - Enhanced for comprehensive tracking
 model AnalyticsEvent {
   id         String   @id @default(cuid())
   userId     String?
-  event      String
-  properties Json?
+  sessionId  String   // Required for session tracking
+  eventType  String   // tool_used, risk_mode_changed, feature_interaction, etc.
+  toolName   String?  // Start/Sit, FAAB, Decisions
+  action     String?  // viewed, compare, calculate, etc.
+  properties Json?    // Additional metadata
+  demoMode   Boolean  @default(true)
   timestamp  DateTime @default(now())
+  receivedAt DateTime @default(now()) // When server received it
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   
-  @@index([userId, event])
+  @@index([userId, eventType])
   @@index([timestamp])
+  @@index([sessionId])
+  @@index([eventType, timestamp])
+  @@index([toolName, timestamp])
+}
+
+// Hourly rollup for efficient analytics queries
+model HourlyRollup {
+  id               String   @id @default(cuid())
+  hour             DateTime @unique // Start of hour (e.g., "2025-10-18 01:00:00")
+  eventCounts      Json     // { "tool_used": 45, "cache_hit": 128, ... }
+  toolUsage        Json     // { "Start/Sit": 23, "FAAB": 15, ... }
+  riskDistribution Json     // { "protect": 12, "neutral": 18, "chase": 8 }
+  uniqueSessions   Int      @default(0)
+  totalEvents      Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  @@index([hour])
 }
 

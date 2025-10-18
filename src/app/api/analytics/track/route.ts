@@ -1,96 +1,105 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 import type { AnalyticsEvent } from '@/lib/analytics';
 
 /**
  * Analytics event tracking endpoint
- * Receives events from frontend and stores them
- * Phase 2.1: Server-side persistence with hourly rollups
+ * Phase 2.1b: Prisma/database persistence with hourly rollups
  */
 
-interface StoredEvent extends AnalyticsEvent {
-  id: string;
-  received_at: string;
-}
+const prisma = new PrismaClient();
 
-// In-memory storage for now (Phase 2.1a)
-// Phase 2.1b will use Prisma/database
-const eventStore: StoredEvent[] = [];
-const MAX_EVENTS = 10000; // Keep last 10k events
-
-// Hourly rollup storage
-interface HourlyRollup {
-  hour: string; // ISO hour (e.g., "2025-10-18T01:00:00.000Z")
+interface RollupData {
   event_counts: Record<string, number>;
   tool_usage: Record<string, number>;
   risk_distribution: Record<string, number>;
-  unique_sessions: Set<string>;
+  unique_sessions: string[];
   total_events: number;
 }
-
-const hourlyRollups = new Map<string, HourlyRollup>();
 
 /**
  * Get hour key for rollup (start of hour)
  */
-function getHourKey(timestamp: string): string {
+function getHourKey(timestamp: string): Date {
   const date = new Date(timestamp);
   date.setMinutes(0, 0, 0);
-  return date.toISOString();
+  return date;
 }
 
 /**
- * Add event to hourly rollup
+ * Update hourly rollup in database
  */
-function addToRollup(event: AnalyticsEvent): void {
-  const hourKey = getHourKey(event.timestamp);
-  
-  let rollup = hourlyRollups.get(hourKey);
-  if (!rollup) {
-    rollup = {
-      hour: hourKey,
-      event_counts: {},
-      tool_usage: {},
-      risk_distribution: {},
-      unique_sessions: new Set(),
-      total_events: 0,
-    };
-    hourlyRollups.set(hourKey, rollup);
-  }
-  
-  // Update counts
-  rollup.total_events += 1;
-  rollup.event_counts[event.event_type] = (rollup.event_counts[event.event_type] || 0) + 1;
-  rollup.unique_sessions.add(event.session_id);
-  
-  // Track tool usage
-  if (event.tool_name) {
-    rollup.tool_usage[event.tool_name] = (rollup.tool_usage[event.tool_name] || 0) + 1;
-  }
-  
-  // Track risk modes
-  if (event.event_type === 'risk_mode_changed' && event.properties?.risk_mode) {
-    const mode = event.properties.risk_mode;
-    rollup.risk_distribution[mode] = (rollup.risk_distribution[mode] || 0) + 1;
-  }
-}
-
-/**
- * Clean up old rollups (keep last 7 days)
- */
-function cleanupOldRollups(): void {
-  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  
-  for (const [hourKey, rollup] of hourlyRollups.entries()) {
-    const rollupTime = new Date(rollup.hour).getTime();
-    if (rollupTime < sevenDaysAgo) {
-      hourlyRollups.delete(hourKey);
+async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
+  try {
+    const hourKey = getHourKey(event.timestamp);
+    
+    // Get or create rollup
+    let rollup = await prisma.hourlyRollup.findUnique({
+      where: { hour: hourKey },
+    });
+    
+    if (!rollup) {
+      // Create new rollup
+      rollup = await prisma.hourlyRollup.create({
+        data: {
+          hour: hourKey,
+          eventCounts: {},
+          toolUsage: {},
+          riskDistribution: {},
+          uniqueSessions: 0,
+          totalEvents: 0,
+        },
+      });
     }
+    
+    // Parse existing JSON data
+    const eventCounts = rollup.eventCounts as Record<string, number>;
+    const toolUsage = rollup.toolUsage as Record<string, number>;
+    const riskDistribution = rollup.riskDistribution as Record<string, number>;
+    
+    // Update counts
+    eventCounts[event.event_type] = (eventCounts[event.event_type] || 0) + 1;
+    
+    if (event.tool_name) {
+      toolUsage[event.tool_name] = (toolUsage[event.tool_name] || 0) + 1;
+    }
+    
+    if (event.event_type === 'risk_mode_changed' && event.properties?.risk_mode) {
+      const mode = event.properties.risk_mode as string;
+      riskDistribution[mode] = (riskDistribution[mode] || 0) + 1;
+    }
+    
+    // Get unique sessions count (approximate - would need to track in separate table for exact count)
+    const sessionCount = await prisma.analyticsEvent.groupBy({
+      by: ['sessionId'],
+      where: {
+        timestamp: {
+          gte: hourKey,
+          lt: new Date(hourKey.getTime() + 60 * 60 * 1000),
+        },
+      },
+    });
+    
+    // Update rollup
+    await prisma.hourlyRollup.update({
+      where: { hour: hourKey },
+      data: {
+        eventCounts,
+        toolUsage,
+        riskDistribution,
+        uniqueSessions: sessionCount.length,
+        totalEvents: rollup.totalEvents + 1,
+      },
+    });
+  } catch (error) {
+    console.error('Failed to update hourly rollup:', error);
+    // Don't throw - rollup update failure shouldn't block event storage
   }
 }
 
 /**
  * POST /api/analytics/track
- * Receive and store analytics events
+ * Receive and store analytics events in database
  */
 export async function POST(request: NextRequest) {
   try {
@@ -106,27 +115,49 @@ export async function POST(request: NextRequest) {
     
     const event: AnalyticsEvent = body;
     
-    // Create stored event
-    const storedEvent: StoredEvent = {
-      ...event,
-      id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      received_at: new Date().toISOString(),
-    };
+    // Store event in database
+    const storedEvent = await prisma.analyticsEvent.create({
+      data: {
+        userId: event.user_id || null,
+        sessionId: event.session_id,
+        eventType: event.event_type,
+        toolName: event.tool_name || null,
+        action: event.action || null,
+        properties: event.properties || {},
+        demoMode: event.demo_mode ?? true,
+        timestamp: new Date(event.timestamp),
+      },
+    });
     
-    // Add to event store
-    eventStore.push(storedEvent);
+    // Update hourly rollup (async, non-blocking)
+    updateHourlyRollup(event).catch(err => {
+      console.error('Rollup update failed (non-critical):', err);
+    });
     
-    // Trim if exceeds max
-    if (eventStore.length > MAX_EVENTS) {
-      eventStore.splice(0, eventStore.length - MAX_EVENTS);
-    }
-    
-    // Add to hourly rollup
-    addToRollup(event);
-    
-    // Periodic cleanup (every 100 events)
-    if (eventStore.length % 100 === 0) {
-      cleanupOldRollups();
+    // Periodic cleanup: Delete events older than 30 days (every 100th request)
+    if (Math.random() < 0.01) { // ~1% of requests
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      prisma.analyticsEvent.deleteMany({
+        where: {
+          timestamp: {
+            lt: thirtyDaysAgo,
+          },
+        },
+      }).catch(err => {
+        console.error('Cleanup failed (non-critical):', err);
+      });
+      
+      // Also cleanup old rollups (>90 days)
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+      prisma.hourlyRollup.deleteMany({
+        where: {
+          hour: {
+            lt: ninetyDaysAgo,
+          },
+        },
+      }).catch(err => {
+        console.error('Rollup cleanup failed (non-critical):', err);
+      });
     }
     
     return NextResponse.json({
@@ -145,22 +176,39 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/analytics/track?hours=24
- * Retrieve events (for testing/debugging)
+ * Retrieve events from database (for testing/debugging)
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const hours = parseInt(searchParams.get('hours') || '24');
     
-    const cutoff = Date.now() - hours * 60 * 60 * 1000;
-    const recentEvents = eventStore.filter(e => 
-      new Date(e.timestamp).getTime() > cutoff
-    );
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
+    
+    const recentEvents = await prisma.analyticsEvent.findMany({
+      where: {
+        timestamp: {
+          gte: cutoff,
+        },
+      },
+      orderBy: {
+        timestamp: 'desc',
+      },
+      take: 1000, // Limit for performance
+    });
+    
+    const totalCount = await prisma.analyticsEvent.count({
+      where: {
+        timestamp: {
+          gte: cutoff,
+        },
+      },
+    });
     
     return NextResponse.json({
       ok: true,
       count: recentEvents.length,
-      total_stored: eventStore.length,
+      total_in_range: totalCount,
       events: recentEvents,
     });
     

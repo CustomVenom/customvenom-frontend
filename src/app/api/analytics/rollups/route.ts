@@ -1,27 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
 /**
  * GET /api/analytics/rollups?hours=168
- * Retrieve hourly rollup data
+ * Retrieve hourly rollup data from database
  * Default: last 7 days (168 hours)
  */
 
-// This would access the same hourlyRollups from track/route.ts
-// For now, returning placeholder until we have shared state
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const hours = parseInt(searchParams.get('hours') || '168');
     
-    // TODO: Access shared hourlyRollups from track route
-    // For now, return empty structure
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
+    
+    // Fetch rollups from database
+    const rollups = await prisma.hourlyRollup.findMany({
+      where: {
+        hour: {
+          gte: cutoff,
+        },
+      },
+      orderBy: {
+        hour: 'desc',
+      },
+    });
+    
+    // Calculate aggregate stats
+    const totalEvents = rollups.reduce((sum, r) => sum + r.totalEvents, 0);
+    const totalSessions = rollups.reduce((sum, r) => sum + r.uniqueSessions, 0);
     
     return NextResponse.json({
       ok: true,
-      rollups: [],
+      count: rollups.length,
       hours,
-      note: 'Hourly rollups available in track endpoint - shared state coming in Phase 2.1b',
+      total_events: totalEvents,
+      total_sessions: totalSessions,
+      rollups: rollups.map(r => ({
+        hour: r.hour,
+        event_counts: r.eventCounts,
+        tool_usage: r.toolUsage,
+        risk_distribution: r.riskDistribution,
+        unique_sessions: r.uniqueSessions,
+        total_events: r.totalEvents,
+      })),
     });
     
   } catch (error) {
