@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
 import { getEntitlements } from '@/lib/entitlements';
+import { getCacheStats } from '@/lib/cache';
 
 interface MetricsData {
   totalEvents: number;
@@ -15,6 +16,7 @@ interface MetricsData {
   };
   riskDistribution: Record<string, number>;
   recentEvents: AnalyticsEvent[];
+  cacheStats: ReturnType<typeof getCacheStats>;
 }
 
 export default function MetricsPage() {
@@ -48,6 +50,7 @@ export default function MetricsPage() {
         toolUsage: getToolUsageStats(events),
         riskDistribution: getRiskModeDistribution(events),
         recentEvents: events.slice(-10).reverse(), // Last 10 events
+        cacheStats: getCacheStats(),
       };
       
       setMetrics(data);
@@ -125,6 +128,76 @@ export default function MetricsPage() {
         </div>
       ) : metrics ? (
         <div className="space-y-6">
+          {/* Cache Performance Tile */}
+          {metrics.cacheStats && (
+            <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-6 bg-gradient-to-br from-brand-primary/5 to-brand-accent/5">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span>⚡</span>
+                Cache Performance
+              </h2>
+              
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Status</div>
+                  <div className="text-sm font-semibold">
+                    {metrics.cacheStats.exists ? (
+                      <span className={`inline-flex items-center gap-1 ${
+                        metrics.cacheStats.status === 'fresh' ? 'text-green-600' :
+                        metrics.cacheStats.status === 'stale' ? 'text-yellow-600' :
+                        'text-red-600'
+                      }`}>
+                        {metrics.cacheStats.status === 'fresh' && '🟢 Fresh'}
+                        {metrics.cacheStats.status === 'stale' && '🟡 Stale'}
+                        {metrics.cacheStats.status === 'expired' && '🔴 Expired'}
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">⚪ None</span>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Cache Age</div>
+                  <div className="text-sm font-semibold">
+                    {metrics.cacheStats.exists ? `${metrics.cacheStats.age_minutes} min` : 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Size</div>
+                  <div className="text-sm font-semibold">
+                    {metrics.cacheStats.exists ? `${metrics.cacheStats.size_kb} KB` : 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Week</div>
+                  <div className="text-sm font-semibold">
+                    {metrics.cacheStats.exists ? metrics.cacheStats.week : 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Hit Rate</div>
+                  <div className="text-sm font-semibold">
+                    {(() => {
+                      const hits = (metrics.eventsByType['cache_hit'] || 0);
+                      const misses = (metrics.eventsByType['cache_miss'] || 0);
+                      const total = hits + misses;
+                      if (total === 0) return 'N/A';
+                      const rate = ((hits / total) * 100).toFixed(1);
+                      return (
+                        <span className={rate >= '80' ? 'text-green-600' : 'text-yellow-600'}>
+                          {rate}%
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">

@@ -1,5 +1,10 @@
 // Analytics event tracking system
-// Phase 2: Logs to console and localStorage, future: send to backend
+// Phase 2: Logs to console and localStorage
+// Phase 2.1: Also sends to backend for persistence
+
+// Configuration
+const SEND_TO_BACKEND = true; // Set to false to disable server persistence
+const BACKEND_ENDPOINT = '/api/analytics/track';
 
 export interface AnalyticsEvent {
   event_type: string;
@@ -106,11 +111,19 @@ export function trackEvent(
     // Store in localStorage for dashboard
     storeEvent(event);
     
-    // Future: Send to backend API
-    // await fetch('/api/analytics/track', {
-    //   method: 'POST',
-    //   body: JSON.stringify(event)
-    // });
+    // Send to backend for persistence (non-blocking)
+    if (SEND_TO_BACKEND && typeof window !== 'undefined') {
+      fetch(BACKEND_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(event),
+      }).catch(error => {
+        // Silent failure - don't block user experience
+        console.warn('Failed to send analytics to backend:', error);
+      });
+    }
     
   } catch (error) {
     console.warn('Analytics tracking error:', error);
