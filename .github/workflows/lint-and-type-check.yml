@@ -1,0 +1,45 @@
+name: Lint and Type Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-type-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+      
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+      
+      - name: Check for 'any' types
+        run: |
+          if grep -r ": any" src/ --include="*.ts" --include="*.tsx" | grep -v "eslint-disable"; then
+            echo "❌ Found 'any' types in source code"
+            echo "Replace with 'unknown' or specific types"
+            exit 1
+          fi
+          echo "✅ No 'any' types found"
+      
+      - name: Prisma validation
+        run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+
