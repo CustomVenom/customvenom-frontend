@@ -24,10 +24,11 @@ export interface LogEntry {
  * Fetch operational metrics from logs API
  * Returns null when logs are not yet available
  */
-export async function fetchLogMetrics(timeWindowMs: number = 86400000): Promise<LogMetrics | null> {
+export async function fetchLogMetrics(timeWindowMs = 86400000): Promise<LogMetrics | null> {
   try {
     // TODO: Wire to actual Cloudflare Workers logs API
-    // timeWindowMs will be used to query logs within time range
+    // Query logs within the specified time window
+    console.debug(`Fetching logs for last ${timeWindowMs}ms`);
     // For now, return mock data to demonstrate live tiles
     
     // Simulate API call delay
@@ -97,12 +98,13 @@ export function parseLogMetrics(logs: LogEntry[]): Omit<LogMetrics, 'last_update
  * Fetch logs from Cloudflare Workers
  * This would connect to Cloudflare's Logpush or Analytics API
  */
-export async function fetchWorkerLogs(_timeWindowMs: number = 86400000): Promise<LogEntry[]> {
+export async function fetchWorkerLogs(timeWindowMs = 86400000): Promise<LogEntry[]> {
   // TODO: Implement actual Cloudflare Workers log fetching
   // Options:
-  // 1. Cloudflare GraphQL Analytics API
+  // 1. Cloudflare GraphQL Analytics API (query last timeWindowMs)
   // 2. Cloudflare Logpush to R2/S3, then query
   // 3. Custom logging endpoint that aggregates metrics
+  console.debug(`Fetching worker logs for last ${timeWindowMs}ms`);
   
   return [];
 }

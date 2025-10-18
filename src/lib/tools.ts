@@ -46,13 +46,14 @@ export function clampChips(explanations?: Row['explanations']): ChipDisplay[] {
  * Internal function to fetch projections from source
  * (mock data for now, API in production)
  */
-async function fetchProjectionsFromSource(_week: string = '2025-06'): Promise<Row[]> {
+async function fetchProjectionsFromSource(week = '2025-06'): Promise<Row[]> {
   // TODO: Wire to actual API
-  // const response = await fetch(`/api/projections?week=${_week}`);
+  // const response = await fetch(`/api/projections?week=${week}`);
   // const data = await response.json();
   // return data.projections;
   
-  // Mock data for development (week parameter will be used in production)
+  // Mock data for development - week parameter will be used when API is connected
+  console.debug(`Fetching projections for week: ${week}`);
   return [
       {
         player_id: 'patrick_mahomes',
