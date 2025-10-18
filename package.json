@@ -62,5 +62,8 @@
   "optionalDependencies": {
     "@parcel/watcher-linux-x64-glibc": "^2.5.0",
     "@parcel/watcher-linux-x64-musl": "^2.5.0"
+  },
+  "overrides": {
+    "lightningcss": "^1.30.2"
   }
 }
