@@ -92,9 +92,9 @@ function FaabContent() {
         </EmptyState>
       ) : null}
 
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800 space-y-4">
+      <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] space-y-4 border border-[rgba(148,163,184,0.1)]">
         <div>
-          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
             Player Name
           </label>
           <input
@@ -102,12 +102,12 @@ function FaabContent() {
             value={player}
             onChange={(e) => setPlayer(e.target.value)}
             placeholder="e.g., Jahmyr Gibbs"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
             Remaining Budget ($)
           </label>
           <input
@@ -115,7 +115,7 @@ function FaabContent() {
             value={budget}
             onChange={(e) => setBudget(e.target.value)}
             placeholder="100"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 rounded-lg"
           />
         </div>
 
@@ -127,7 +127,7 @@ function FaabContent() {
         >
           Calculate Bid Range
         </Button>
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center -mt-2">
+        <p className="text-xs text-[rgb(var(--text-dim))] text-center -mt-2">
           Keyboard shortcut: Press Enter to calculate
         </p>
       </div>
@@ -139,9 +139,9 @@ function FaabContent() {
           </h3>
 
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Min</div>
-              <div className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Min</div>
+              <div className="text-3xl font-bold text-[rgb(var(--text-primary))] mb-2">
                 ${result.min}
               </div>
               <button 
@@ -153,7 +153,7 @@ function FaabContent() {
             </div>
 
             <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-4 bg-brand-primary/10 dark:bg-brand-accent/20">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Likely</div>
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Likely</div>
               <div className="text-2xl font-semibold text-brand-primary dark:text-brand-accent mb-2">
                 ${result.likely}
               </div>
@@ -165,9 +165,9 @@ function FaabContent() {
               </button>
             </div>
 
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Max</div>
-              <div className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Max</div>
+              <div className="text-3xl font-bold text-[rgb(var(--text-primary))] mb-2">
                 ${result.max}
               </div>
               <button 
@@ -179,9 +179,9 @@ function FaabContent() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div className="bg-[rgb(var(--bg-elevated))] rounded-lg p-4 border border-[rgba(148,163,184,0.15)]">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rationale</div>
-            <p className="text-sm text-gray-700 dark:text-gray-300">{result.reason}</p>
+            <p className="text-sm text-[rgb(var(--text-secondary))]">{result.reason}</p>
           </div>
           
           <div className="mt-3">

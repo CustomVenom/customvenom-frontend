@@ -152,25 +152,25 @@ function DecisionsContent() {
       <ToolsTabs />
 
       <div>
-        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+        <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
           Risk Profile
         </label>
         <div className="flex gap-2">
           {(['protect', 'neutral', 'chase'] as const).map(r => (
             <button
               key={r}
-              onClick={() => setRisk(r)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                risk === r
-                  ? 'bg-brand-primary text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+                onClick={() => setRisk(r)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  risk === r
+                    ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
+                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)] hover:bg-[rgba(16,185,129,0.2)]'
+                }`}
             >
               {r.charAt(0).toUpperCase() + r.slice(1)}
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        <p className="text-xs text-[rgb(var(--text-dim))] mt-2">
           Keyboard shortcuts: 1/2/3 to select risk mode
         </p>
       </div>
@@ -179,7 +179,7 @@ function DecisionsContent() {
         {decisions.map((d, i) => (
           <div 
             key={i} 
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800"
+            className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]"
           >
             <div className="flex items-start justify-between mb-3">
               <h3 className="font-semibold text-lg">
@@ -198,16 +198,16 @@ function DecisionsContent() {
 
             <div className="space-y-2 text-sm">
               <div>
-                <span className="text-gray-500 dark:text-gray-400">Action:</span>{' '}
-                <span className="font-medium text-gray-900 dark:text-white">{d.action}</span>
+                <span className="text-[rgb(var(--text-dim))]">Action:</span>{' '}
+                <span className="font-semibold text-[rgb(var(--text-primary))]">{d.action}</span>
               </div>
               <div>
-                <span className="text-gray-500 dark:text-gray-400">Why:</span>{' '}
-                <span className="text-gray-700 dark:text-gray-300">{d.why}</span>
+                <span className="text-[rgb(var(--text-dim))]">Why:</span>{' '}
+                <span className="text-[rgb(var(--text-secondary))]">{d.why}</span>
               </div>
               <div>
-                <span className="text-gray-500 dark:text-gray-400">Next step:</span>{' '}
-                <span className="text-gray-700 dark:text-gray-300">{d.next_step}</span>
+                <span className="text-[rgb(var(--text-dim))]">Next step:</span>{' '}
+                <span className="text-[rgb(var(--text-secondary))]">{d.next_step}</span>
               </div>
             </div>
 

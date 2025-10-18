@@ -1,41 +1,73 @@
 @import "tailwindcss";
 
-/* Light/Dark surface variables (optional, handy for charts/cards) */
+/* Dark-First Fantasy Football Theme - Inspired by Sleeper/ESPN */
 :root {
-	--bg: 255 255 255;   /* rgb */
-	--fg: 17 24 39;
-	--card: 249 250 251;
+	/* Background layers (dark-first) */
+	--bg: 10 14 26;          /* rgb(10, 14, 26) - deep slate base */
+	--bg-elevated: 20 24 39; /* rgb(20, 24, 39) - elevated panels */
+	--bg-card: 30 41 59;     /* rgb(30, 41, 59) - cards */
+	--bg-hover: 45 55 72;    /* rgb(45, 55, 72) - hover state */
+	--bg-input: 15 23 42;    /* rgb(15, 23, 42) - input fields */
 	
-	/* Custom Venom brand tokens */
-	--cv-primary: #0E7C45;       /* deep field green */
-	--cv-accent:  #A3D977;       /* lime-green highlight */
-	--cv-ink:     #0F172A;       /* slate ink */
-	--cv-muted:   #6B7280;       /* muted gray */
-	--cv-radius:  10px;
-	--cv-scale:   conic-gradient(from 0deg, rgba(0,0,0,0.06) 0 25%, transparent 25% 50%, rgba(0,0,0,0.06) 50% 75%, transparent 75% 100%);
+	/* Text colors (high contrast for readability) */
+	--text-primary: 248 250 252;   /* rgb(248, 250, 252) - near white */
+	--text-secondary: 203 213 225; /* rgb(203, 213, 225) - light gray */
+	--text-muted: 148 163 184;     /* rgb(148, 163, 184) - medium gray */
+	--text-dim: 100 116 139;       /* rgb(100, 116, 139) - dim labels */
+	
+	/* Semantic colors (FF standard) */
+	--success: 34 197 94;    /* rgb(34, 197, 94) - green for positive */
+	--danger: 239 68 68;     /* rgb(239, 68, 68) - red for negative */
+	--warning: 245 158 11;   /* rgb(245, 158, 11) - orange for alerts */
+	--info: 59 130 246;      /* rgb(59, 130, 246) - blue for info */
+	
+	/* Custom Venom brand (adjusted for dark) */
+	--cv-primary: 16 185 129;    /* emerald green - brighter */
+	--cv-accent:  163 217 119;   /* lime-green highlight */
+	--cv-highlight: 251 191 36;  /* gold for premium */
+	--cv-ink:     15 23 42;
+	--cv-muted:   148 163 184;
+	--cv-radius:  8px;
+	--cv-scale:   conic-gradient(from 0deg, rgba(16,185,129,0.06) 0 25%, transparent 25% 50%, rgba(16,185,129,0.06) 50% 75%, transparent 75% 100%);
 }
-.dark {
-	--bg: 17 24 39;
-	--fg: 243 244 246;
-	--card: 31 41 55;
+
+/* Light mode (optional, minimal support) */
+html:not(.dark) {
+	--bg: 249 250 251;       /* Very light gray, not pure white */
+	--bg-elevated: 243 244 246;
+	--bg-card: 255 255 255;
+	--text-primary: 15 23 42;
+	--text-secondary: 51 65 85;
 }
 
 html, body, #__next {
 	height: 100%;
 }
-body {
-	background-color: rgb(var(--bg));
-	color: rgb(var(--fg));
+
+/* Force dark theme as default (fantasy football standard) */
+html {
+	color-scheme: dark;
 }
 
-/* Utility helper for cards */
-.card {
-	border-radius: 0.5rem;
-	box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1);
-	background-color: white;
+body {
+	background-color: rgb(var(--bg));
+	color: rgb(var(--text-primary));
+	font-size: 15px; /* Slightly smaller for data density */
+	line-height: 1.6;
 }
-.dark .card {
-	background-color: rgb(var(--card));
+
+/* Card system - NO white backgrounds */
+.card {
+	border-radius: var(--cv-radius);
+	box-shadow: 0 2px 4px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+	background-color: rgb(var(--bg-card));
+	border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* Elevated cards (for emphasis) */
+.card-elevated {
+	background-color: rgb(var(--bg-elevated));
+	box-shadow: 0 4px 8px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
 }
 
 /* Density tweaks for tables and lists */
@@ -78,58 +110,85 @@ td, th {
 	color: transparent;            /* text takes on pattern */
 }
 
-/* Button tokens (optional) */
+/* Button tokens - Dark-first, high contrast */
 .cv-btn-primary { 
-	background: var(--cv-primary); 
-	color:#fff; 
+	background: rgb(var(--cv-primary));
+	color: #0A0E1A; /* Dark text on bright button */
 	border-radius: var(--cv-radius); 
-	padding: 0.5rem 0.75rem; 
+	padding: 0.5rem 0.75rem;
+	font-weight: 600;
+	border: none;
+	transition: all 0.2s;
+}
+
+.cv-btn-primary:hover {
+	background: rgb(34 197 94); /* Brighter green on hover */
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
 }
 
 .cv-btn-secondary { 
-	background: var(--cv-accent); 
-	color:#0C2B1B; 
+	background: rgb(var(--cv-accent));
+	color: #0A0E1A; /* Dark text */
 	border-radius: var(--cv-radius); 
-	padding: 0.5rem 0.75rem; 
+	padding: 0.5rem 0.75rem;
+	font-weight: 600;
+	border: none;
 }
 
 .cv-btn-ghost {
-	background: transparent;
-	color: var(--cv-primary);
-	border: 1px solid rgba(14,124,69,.2);
+	background: rgba(16, 185, 129, 0.1);
+	color: rgb(var(--cv-primary));
+	border: 1px solid rgba(16, 185, 129, 0.3);
 	border-radius: var(--cv-radius);
 	padding: 0.5rem 0.75rem;
+	transition: all 0.2s;
 }
 
-/* Focus styles for custom buttons (Batch 8 requirement) */
+.cv-btn-ghost:hover {
+	background: rgba(16, 185, 129, 0.2);
+	border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Focus styles for custom buttons */
 .cv-btn-primary:focus-visible,
 .cv-btn-secondary:focus-visible,
 .cv-btn-ghost:focus-visible {
-	outline: 2px solid var(--cv-accent);
+	outline: 2px solid rgb(var(--cv-accent));
 	outline-offset: 2px;
 }
 
-/* Dark mode brand tweaks */
-.dark .brand-title { 
-	color: #7ED9A3; 
+/* Brand colors (dark-first) */
+.brand-title { 
+	color: rgb(var(--cv-primary));
+	text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
-.dark .brand-tagline { 
-	color: #9CA3AF; 
+.brand-tagline { 
+	color: rgb(var(--text-muted));
 }
 
-.dark .cv-btn-primary { 
-	background:#0B5C34; 
-}
-
-.dark .cv-btn-ghost:hover {
-	background: rgba(14,124,69,0.1);
-}
-
-.dark input,
-.dark textarea,
-.dark select {
+/* Inputs - dark, high contrast */
+input,
+textarea,
+select {
+	background-color: rgb(var(--bg-input));
+	color: rgb(var(--text-primary));
+	border: 1px solid rgba(148, 163, 184, 0.2);
 	color-scheme: dark;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	outline: none;
+	border-color: rgb(var(--cv-primary));
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: rgb(var(--text-dim));
 }
 
 /* Subtle reptilian accents (optional) */
@@ -179,7 +238,22 @@ td, th {
 }
 
 .text-muted { 
-	color: var(--cv-muted); 
+	color: rgb(var(--text-muted));
+}
+
+/* Stat colors - Fantasy Football standard */
+.stat-positive {
+	color: rgb(var(--success));
+	font-weight: 600;
+}
+
+.stat-negative {
+	color: rgb(var(--danger));
+	font-weight: 600;
+}
+
+.stat-neutral {
+	color: rgb(var(--text-secondary));
 }
 
 /* Accessible focus and reduced motion */
@@ -249,24 +323,21 @@ table tr > td {
 	background: linear-gradient(90deg, rgba(14,124,69,.25), rgba(14,124,69,.6));
 }
 
-/* Sticky first column for tables */
+/* Sticky first column for tables - dark only */
 .sticky-first { 
 	position: sticky; 
 	left: 0; 
-	background: white; 
+	background: rgb(var(--bg-card));
 	z-index: 1; 
-	box-shadow: 2px 0 4px rgba(0,0,0,0.03);
+	box-shadow: 2px 0 8px rgba(0,0,0,0.4);
 }
 
-.dark .sticky-first { 
-	background: rgb(17, 24, 39); 
-}
-
-/* Dark mode tooltip styles (from frontend_changes.txt Batch 5) */
-.dark [role="tooltip"] {
-	background: #0f172a;
-	color: #e5e7eb;
-	border-color: rgba(255,255,255,.12);
+/* Tooltip styles - dark theme */
+[role="tooltip"] {
+	background: rgb(var(--bg-elevated));
+	color: rgb(var(--text-primary));
+	border: 1px solid rgba(148, 163, 184, 0.2);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 /* Screen reader utilities (Batch 8 requirement) */

@@ -200,17 +200,17 @@ export default function MetricsPage() {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Events</div>
               <div className="text-3xl font-bold">{metrics.totalEvents}</div>
             </div>
             
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tool Uses</div>
               <div className="text-3xl font-bold">{metrics.toolUsage.total}</div>
             </div>
             
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Event Types</div>
               <div className="text-3xl font-bold">{Object.keys(metrics.eventsByType).length}</div>
             </div>
@@ -218,7 +218,7 @@ export default function MetricsPage() {
 
           {/* Tool Usage */}
           {metrics.toolUsage.total > 0 && (
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <h2 className="text-lg font-semibold mb-4">Tool Usage</h2>
               <div className="space-y-3">
                 {Object.entries(metrics.toolUsage.by_tool).map(([tool, count]) => (
@@ -243,7 +243,7 @@ export default function MetricsPage() {
 
           {/* Risk Mode Distribution */}
           {Object.keys(metrics.riskDistribution).length > 0 && (
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <h2 className="text-lg font-semibold mb-4">Risk Mode Distribution</h2>
               <div className="space-y-3">
                 {Object.entries(metrics.riskDistribution).map(([mode, count]) => {
@@ -273,7 +273,7 @@ export default function MetricsPage() {
 
           {/* Event Types */}
           {Object.keys(metrics.eventsByType).length > 0 && (
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <h2 className="text-lg font-semibold mb-4">Events by Type</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {Object.entries(metrics.eventsByType).map(([type, count]) => (
@@ -288,7 +288,7 @@ export default function MetricsPage() {
 
           {/* Recent Events */}
           {metrics.recentEvents.length > 0 && (
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <h2 className="text-lg font-semibold mb-4">Recent Events (Last 10)</h2>
               <div className="space-y-2 text-xs font-mono">
                 {metrics.recentEvents.map((event, i) => (

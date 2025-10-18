@@ -158,10 +158,10 @@ function StartSitContent() {
         </EmptyState>
       ) : null}
 
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800 space-y-4">
+      <div className="rounded-lg p-6 bg-[rgb(var(--bg-card))] space-y-4 border border-[rgba(148,163,184,0.1)]">
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
               Player A
             </label>
             <PlayerSearch
@@ -175,12 +175,12 @@ function StartSitContent() {
               value={playerA}
               onChange={(e) => setPlayerA(e.target.value)}
               placeholder="Or type manually"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 rounded-lg text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
               Player B
             </label>
             <PlayerSearch
@@ -194,7 +194,7 @@ function StartSitContent() {
               value={playerB}
               onChange={(e) => setPlayerB(e.target.value)}
               placeholder="Or type manually"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 rounded-lg text-sm"
             />
           </div>
         </div>
@@ -208,17 +208,17 @@ function StartSitContent() {
               <button
                 key={r}
                 onClick={() => setRisk(r)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   risk === r
-                    ? 'bg-brand-primary text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
+                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)] hover:bg-[rgba(16,185,129,0.2)]'
                 }`}
               >
                 {r.charAt(0).toUpperCase() + r.slice(1)}
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-[rgb(var(--text-dim))] mt-2">
             Keyboard shortcuts: 1/2/3 to select risk mode, Enter to compare
           </p>
         </div>
@@ -254,7 +254,7 @@ function StartSitContent() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
               <h4 className="font-semibold mb-2">
                 <button
                   className="text-brand-primary dark:text-brand-accent underline hover:no-underline"
@@ -271,7 +271,7 @@ function StartSitContent() {
               </div>
             </div>
 
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
               <h4 className="font-semibold mb-2">
                 <button
                   className="text-brand-primary dark:text-brand-accent underline hover:no-underline"
