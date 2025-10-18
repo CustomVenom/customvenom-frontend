@@ -7,9 +7,9 @@
 
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+const _prisma = new PrismaClient();
 
-interface LocalStorageEvent {
+interface _LocalStorageEvent {
   id: string;
   event_type: string;
   tool_name?: string;
@@ -69,14 +69,14 @@ async function backfillEvents() {
   /*
   const fs = require('fs');
   const eventsJson = fs.readFileSync('./events-backup.json', 'utf-8');
-  const events: LocalStorageEvent[] = JSON.parse(eventsJson);
+  const events: _LocalStorageEvent[] = JSON.parse(eventsJson);
   
   let successCount = 0;
   let errorCount = 0;
   
   for (const event of events) {
     try {
-      await prisma.analyticsEvent.create({
+      await _prisma.analyticsEvent.create({
         data: {
           userId: event.user_id || null,
           sessionId: event.session_id,

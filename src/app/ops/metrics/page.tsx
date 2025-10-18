@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
@@ -35,11 +35,7 @@ export default function MetricsPage() {
     checkAccess();
   }, []);
 
-  useEffect(() => {
-    loadMetrics();
-  }, [timeRange]);
-
-  function loadMetrics() {
+  const loadMetrics = useCallback(() => {
     setIsLoading(true);
     
     try {
@@ -60,7 +56,11 @@ export default function MetricsPage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
 
   // Access check - Pro or Admin required
   if (entitlements && !entitlements.features.analytics) {

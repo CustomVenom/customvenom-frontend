@@ -8,14 +8,6 @@ import type { AnalyticsEvent } from '@/lib/analytics';
  * Phase 2.1b: Prisma/database persistence with hourly rollups
  */
 
-interface RollupData {
-  event_counts: Record<string, number>;
-  tool_usage: Record<string, number>;
-  risk_distribution: Record<string, number>;
-  unique_sessions: string[];
-  total_events: number;
-}
-
 /**
  * Get hour key for rollup (start of hour)
  */
