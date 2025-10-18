@@ -14,10 +14,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { priceId } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const priceId = body.priceId || process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
 
     if (!priceId) {
-      return NextResponse.json({ error: 'Price ID required' }, { status: 400 });
+      return NextResponse.json({ error: 'Price ID required - set NEXT_PUBLIC_STRIPE_PRO_PRICE_ID' }, { status: 400 });
     }
 
     const frontendBase = process.env.NEXTAUTH_URL || 'http://localhost:3000';
