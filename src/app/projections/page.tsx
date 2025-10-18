@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import styles from './page.module.css';
 import GoProButton from '@/components/GoProButton';
 import { type Entitlements } from '@/lib/entitlements';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
@@ -55,14 +54,14 @@ function ProFeature({ isPro, children }: ProFeatureProps) {
   }
 
   return (
-    <div className={styles.proFeature}>
-      <div className={styles.proFeatureContent}>
+    <div className="relative">
+      <div className="blur-sm opacity-60 pointer-events-none">
         {children}
       </div>
-      <div className={styles.proFeatureOverlay}>
-        <div className={styles.proFeatureLock}>
-          <span className={styles.lockIcon}>🔒</span>
-          <span className={styles.lockText}>Pro Feature</span>
+      <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-lg z-10">
+        <div className="flex flex-col items-center gap-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white px-6 py-4 rounded-xl shadow-lg">
+          <span className="text-2xl">🔒</span>
+          <span className="font-semibold text-sm">Pro Feature</span>
         </div>
       </div>
     </div>
@@ -72,41 +71,41 @@ function ProFeature({ isPro, children }: ProFeatureProps) {
 function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { isPro: boolean }) {
   if (decisions.length === 0) {
     return (
-      <div className={styles.decisionsStrip}>
-        <div className={styles.decisionsHeader}>
-          <h2 className={styles.decisionsTitle}>Important Decisions</h2>
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
+        <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-800 m-0">Important Decisions</h2>
         </div>
-        <div className={styles.emptyState}>
-          <span className={styles.emptyIcon}>📊</span>
-          <span className={styles.emptyText}>No important decisions yet</span>
+        <div className="flex flex-col items-center justify-center py-10 px-5 text-center">
+          <span className="text-3xl mb-3 opacity-60">📊</span>
+          <span className="text-gray-600 text-lg font-medium">No important decisions yet</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.decisionsStrip}>
-      <div className={styles.decisionsHeader}>
-        <h2 className={styles.decisionsTitle}>Important Decisions</h2>
-        <span className={styles.decisionsCount}>{decisions.length} decisions</span>
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
+      <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-800 m-0">Important Decisions</h2>
+        <span className="bg-[#667eea] text-white px-3 py-1 rounded-full text-sm font-medium">{decisions.length} decisions</span>
       </div>
       <ProFeature isPro={isPro}>
-        <div className={styles.decisionsList}>
+        <div className="flex flex-col gap-3">
           {decisions.map((decision, index) => (
-            <div key={index} className={styles.decisionItem}>
-              <div className={styles.decisionHeader}>
-                <span className={styles.decisionPlayer}>{decision.player_id}</span>
-                <span className={styles.decisionStat}>{decision.stat_name}</span>
-                <span className={styles.decisionProjection}>{decision.projection}</span>
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-gray-800 text-lg">{decision.player_id}</span>
+                <span className="text-gray-600 text-sm capitalize">{decision.stat_name}</span>
+                <span className="text-xl font-bold text-[#667eea]">{decision.projection}</span>
               </div>
-              <div className={styles.decisionReason}>
+              <div className="text-gray-700 text-base mb-2 leading-snug">
                 <ReasonChipsAdapter reasons={decision.reasons} />
               </div>
-              <div className={styles.decisionFooter}>
-                <span className={styles.decisionConfidence}>
+              <div className="flex justify-between items-center text-sm">
+                <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-xl font-medium">
                   {(decision.confidence * 100).toFixed(1)}% confidence
                 </span>
-                <span className={styles.decisionRefresh}>
+                <span className="text-gray-600">
                   Updated: {new Date(decision.last_refresh).toLocaleDateString()}
                 </span>
               </div>
@@ -192,12 +191,12 @@ function ProjectionsPageInner() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Projections</h1>
+      <div className="max-w-7xl mx-auto p-5">
+        <div className="flex justify-between items-start mb-8 gap-5">
+          <h1 className="text-4xl font-bold text-gray-800 m-0 mb-3">Projections</h1>
         </div>
-        <div className={styles.loadingContainer}>
-          <p className={styles.loadingText}>Loading projections...</p>
+        <div className="p-5">
+          <p className="text-center text-lg text-gray-600 mb-5">Loading projections...</p>
           <TableSkeleton rows={8} cols={4} />
         </div>
       </div>
@@ -206,8 +205,8 @@ function ProjectionsPageInner() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>Error: {error}</div>
+      <div className="max-w-7xl mx-auto p-5">
+        <div className="text-center text-xl text-red-600 py-10 bg-red-50 border border-red-200 rounded-lg">Error: {error}</div>
       </div>
     );
   }
@@ -259,21 +258,21 @@ function ProjectionsPageInner() {
   }, {} as Record<string, ProjectionData[]>);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
+    <div className="max-w-7xl mx-auto p-5">
+      <div className="flex justify-between items-start mb-8 gap-5">
         <div>
-          <h1 className={styles.title}>
+          <h1 className="text-4xl font-bold text-gray-800 m-0 mb-3">
             <GlossaryTip term="Baseline">Projections</GlossaryTip>
           </h1>
           <button 
             onClick={handleReload}
-            className={styles.reloadButton}
+            className="bg-[#667eea] text-white border-none px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all inline-flex items-center gap-1.5 hover:bg-[#5a6fd8] hover:-translate-y-px active:translate-y-0"
             aria-label="Reload projections data"
           >
             🔄 Reload Data
           </button>
         </div>
-        <div className={styles.headerRight}>
+        <div className="flex flex-col gap-4 items-end">
           <DemoBadge show={isDemoMode} />
           <TrustSnapshot 
             lastRefresh={lastRefresh} 
@@ -282,7 +281,7 @@ function ProjectionsPageInner() {
             staleAge={staleAge}
           />
           {!isPro && (
-            <div className={styles.proPrompt}>
+            <div className="bg-gradient-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
               <GoProButton 
                 priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || 'price_pro_season'}
               />
@@ -297,42 +296,42 @@ function ProjectionsPageInner() {
 
       <FaabBands week="2025-06" />
 
-      <div className={styles.projectionsGrid}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
         {Object.entries(groupedProjections).map(([playerId, playerProjections]) => (
-          <div key={playerId} className={styles.playerCard}>
-            <div className={styles.playerHeader}>
-              <h3 className={styles.playerId}>{playerId}</h3>
-              <div className={styles.playerActions}>
+          <div key={playerId} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800 m-0">{playerId}</h3>
+              <div className="flex gap-2">
                 <ProFeature isPro={isPro}>
-                  <button className={styles.actionButton}>
+                  <button className="bg-[#667eea] text-white border-none px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer transition-all hover:bg-[#5a6fd8] hover:-translate-y-px">
                     📊 Export CSV
                   </button>
                 </ProFeature>
                 <ProFeature isPro={isPro}>
-                  <button className={styles.actionButton}>
+                  <button className="bg-[#667eea] text-white border-none px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer transition-all hover:bg-[#5a6fd8] hover:-translate-y-px">
                     📧 Email Recap
                   </button>
                 </ProFeature>
               </div>
             </div>
             
-            <div className={styles.projectionsList}>
+            <div className="flex flex-col gap-4">
               {playerProjections.map((projection, index) => (
-                <div key={index} className={styles.projectionItem}>
-                  <div className={styles.projectionHeader}>
-                    <span className={styles.statName}>{projection.stat_name}</span>
-                    <span className={styles.projectionValue}>{projection.projection}</span>
+                <div key={index} className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#667eea]">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-semibold text-gray-800 capitalize">{projection.stat_name}</span>
+                    <span className="text-xl font-bold text-[#667eea]">{projection.projection}</span>
                   </div>
                   
-                  <div className={styles.projectionDetails}>
-                    <span className={styles.method}>{projection.method}</span>
-                    <span className={styles.sources}>
+                  <div className="flex justify-between items-center mb-3 text-sm text-gray-600">
+                    <span className="italic">{projection.method}</span>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-xl text-xs font-medium">
                       <GlossaryTip term="Coverage">Sources</GlossaryTip>: {projection.sources_used}
                     </span>
                   </div>
 
                   {projection.reasons && (
-                    <div className={styles.reasonsChipsContainer}>
+                    <div className="mt-3 pt-3 border-t border-gray-200">
                       <ReasonChipsAdapter reasons={projection.reasons} />
                     </div>
                   )}

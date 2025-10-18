@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Tile, DualTile } from '@/components/Tile';
 import { fetchLogMetrics } from '@/lib/logs';
-import styles from './page.module.css';
 
 interface DashboardMetrics {
   errors_5xx: number;
@@ -65,20 +64,20 @@ export default function OpsDashboard() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading dashboard...</div>
+      <div className="max-w-7xl mx-auto p-5">
+        <div className="text-center text-xl text-gray-600 py-10">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Ops Dashboard</h1>
-        <span className={styles.subtitle}>6-Panel Monitoring</span>
+    <div className="max-w-7xl mx-auto p-5">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-800 m-0">Ops Dashboard</h1>
+        <span className="text-lg text-gray-600 mt-2 block">6-Panel Monitoring</span>
       </div>
 
-      <div className={styles.grid}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
         {/* Tile 1: 5xx Errors */}
         <Tile
           title="5xx Errors"
@@ -137,14 +136,14 @@ export default function OpsDashboard() {
         />
       </div>
 
-      <div className={styles.notes}>
-        <h3 className={styles.notesTitle}>Notes</h3>
-        <ul className={styles.notesList}>
-          <li><strong>LIVE tiles</strong> show data once logs exist</li>
-          <li><strong>5xx & P95:</strong> From Cloudflare Workers logs</li>
-          <li><strong>Cache, Coverage, Pinball, Chips:</strong> From /ops-data endpoint</li>
-          <li>Dashboard auto-refreshes every 60 seconds</li>
-          <li>Aim: 5xx = 0, P95 &lt; 300ms, Cache &gt; 80%</li>
+      <div className="bg-gray-50 rounded-xl p-6 mt-8">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4 mt-0">Notes</h3>
+        <ul className="m-0 pl-6 text-gray-700 leading-relaxed">
+          <li className="mb-2"><strong className="text-gray-800">LIVE tiles</strong> show data once logs exist</li>
+          <li className="mb-2"><strong className="text-gray-800">5xx & P95:</strong> From Cloudflare Workers logs</li>
+          <li className="mb-2"><strong className="text-gray-800">Cache, Coverage, Pinball, Chips:</strong> From /ops-data endpoint</li>
+          <li className="mb-2">Dashboard auto-refreshes every 60 seconds</li>
+          <li className="mb-2">Aim: 5xx = 0, P95 &lt; 300ms, Cache &gt; 80%</li>
         </ul>
       </div>
     </div>

@@ -4,7 +4,6 @@
 import { requireAuth } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
 import { LeagueImport } from '@/components/LeagueImport';
-import styles from './page.module.css';
 
 export const metadata = {
   title: 'Settings - CustomVenom',
@@ -22,63 +21,63 @@ export default async function SettingsPage() {
   const isPro = user.role === 'pro';
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Account Settings</h1>
+    <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="bg-white rounded-xl p-8 shadow-sm">
+        <h1 className="text-3xl font-bold mb-8 text-gray-900">Account Settings</h1>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Profile</h2>
-          <div className={styles.field}>
-            <label className={styles.label}>Name</label>
-            <div className={styles.value}>{user.name || 'Not set'}</div>
+        <div className="mb-10 pb-10 border-b border-gray-200 last:border-b-0">
+          <h2 className="text-xl font-semibold mb-6 text-gray-700">Profile</h2>
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-600 mb-2">Name</label>
+            <div className="text-base text-gray-900">{user.name || 'Not set'}</div>
           </div>
-          <div className={styles.field}>
-            <label className={styles.label}>Email</label>
-            <div className={styles.value}>{user.email}</div>
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+            <div className="text-base text-gray-900">{user.email}</div>
           </div>
         </div>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Subscription</h2>
-          <div className={styles.field}>
-            <label className={styles.label}>Current Plan</label>
-            <div className={styles.value}>
-              <span className={isPro ? styles.proBadge : styles.freeBadge}>
+        <div className="mb-10 pb-10 border-b border-gray-200 last:border-b-0">
+          <h2 className="text-xl font-semibold mb-6 text-gray-700">Subscription</h2>
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-600 mb-2">Current Plan</label>
+            <div className="text-base text-gray-900">
+              <span className={isPro ? 'inline-block py-1 px-3 rounded-full text-sm font-semibold bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white' : 'inline-block py-1 px-3 rounded-full text-sm font-semibold bg-gray-200 text-gray-600'}>
                 {isPro ? 'Pro' : 'Free'}
               </span>
             </div>
           </div>
 
           {isPro ? (
-            <form action="/api/stripe/portal" method="POST" className={styles.form}>
-              <button type="submit" className={styles.manageButton}>
+            <form action="/api/stripe/portal" method="POST" className="mt-4">
+              <button type="submit" className="py-3 px-6 bg-gray-900 text-white border-none rounded-lg text-base font-semibold cursor-pointer transition-all hover:bg-gray-700 hover:-translate-y-px">
                 Manage Billing
               </button>
-              <p className={styles.hint}>
+              <p className="mt-2 text-sm text-gray-500">
                 Update payment method, view invoices, or cancel your subscription
               </p>
             </form>
           ) : (
-            <div className={styles.upgradePrompt}>
-              <p className={styles.upgradeText}>
+            <div className="mt-4 p-6 bg-gradient-to-br from-[#667eea15] to-[#764ba215] rounded-lg">
+              <p className="text-base text-gray-600 mb-4">
                 Upgrade to Pro to unlock advanced features and insights
               </p>
-              <a href="/go-pro" className={styles.upgradeButton}>
+              <a href="/go-pro" className="inline-block py-3 px-6 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white border-none rounded-lg text-base font-semibold no-underline cursor-pointer transition-all hover:-translate-y-px hover:shadow-lg">
                 Upgrade to Pro
               </a>
             </div>
           )}
         </div>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>League Integration (Preview)</h2>
+        <div className="mb-10 pb-10 border-b border-gray-200 last:border-b-0">
+          <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration (Preview)</h2>
           <LeagueImport />
         </div>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Danger Zone</h2>
+        <div className="mb-10 pb-10 border-b border-gray-200 last:border-b-0">
+          <h2 className="text-xl font-semibold mb-6 text-gray-700">Danger Zone</h2>
           <form action="/api/auth/signout" method="POST">
-            <button type="submit" className={styles.signOutButton}>
+            <button type="submit" className="py-3 px-6 bg-transparent text-red-600 border border-red-600 rounded-lg text-base font-semibold cursor-pointer transition-all hover:bg-red-600 hover:text-white">
               Sign Out
             </button>
           </form>
