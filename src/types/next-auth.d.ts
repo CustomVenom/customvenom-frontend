@@ -1,20 +1,19 @@
-// NextAuth type extensions
-// Extends session to include user role and Stripe customer ID
-
-import { DefaultSession } from 'next-auth';
+import 'next-auth';
+import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session {
-    user: {
-      id: string;
-      role: string;
+    user: NonNullable<Session['user']> & {
+      id?: string;
+      role?: 'free' | 'pro' | 'team' | 'admin';
       stripeCustomerId?: string;
-    } & DefaultSession['user'];
-  }
-
-  interface User {
-    role: string;
-    stripeCustomerId?: string;
+    };
   }
 }
 
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role?: 'free' | 'pro' | 'team' | 'admin';
+    stripeCustomerId?: string;
+  }
+}

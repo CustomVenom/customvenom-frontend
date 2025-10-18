@@ -2,11 +2,10 @@
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
 import NextAuth, { NextAuthConfig } from 'next-auth';
-import type { User, Account, Profile } from 'next-auth';
+import type { Session, User, Account, Profile } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
-// @ts-expect-error - @auth/prisma-adapter lacks type declarations
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './db';
 import { YahooProvider } from './integrations/yahoo/provider';
@@ -48,28 +47,26 @@ export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers,
   callbacks: {
-    async signIn({ user, account, profile }: { user: unknown; account: Account | null; profile?: Profile }) {
+    async signIn({ user, account: _account, profile: _profile }: { user: User; account?: Account | null; profile?: Profile }) {
       // Auto-assign admin role to admin emails
-      if (user && typeof user === 'object' && 'email' in user && user.email) {
+      if (user.email && user.id) {
         const { isAdminEmail, ROLES } = await import('./rbac');
         
-        if (isAdminEmail(user.email as string)) {
+        if (isAdminEmail(user.email)) {
           // Update user role to admin if they're signing in
-          if ('id' in user && user.id) {
-            await prisma.user.update({
-              where: { id: user.id as string },
-              data: { role: ROLES.ADMIN },
-            });
-          }
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: ROLES.ADMIN },
+          });
         }
       }
       return true;
     },
-    async session({ session, user }: { session: any; user: unknown }) {
+    async session({ session, user }: { session: Session; user: User }) {
       // Add user role to session for easy access
-      if (session.user && user && typeof user === 'object' && 'id' in user) {
-        session.user.id = user.id as string;
-        session.user.role = 'role' in user ? (user.role as string) || 'free' : 'free';
+      if (session.user && user.id) {
+        session.user.id = user.id;
+        session.user.role = ('role' in user ? user.role : 'free') as 'free' | 'pro' | 'team' | 'admin' | undefined;
         session.user.stripeCustomerId = 'stripeCustomerId' in user ? (user.stripeCustomerId as string | undefined) : undefined;
       }
       return session;
