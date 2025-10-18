@@ -6,11 +6,14 @@
 const SEND_TO_BACKEND = true; // Set to false to disable server persistence
 const BACKEND_ENDPOINT = '/api/analytics/track';
 
+// Prisma-compatible JSON value type
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
 export interface AnalyticsEvent {
   event_type: string;
   tool_name?: string;
   action?: string;
-  properties?: Record<string, unknown>;
+  properties?: Record<string, JsonValue>;
   user_id?: string;
   session_id: string;
   timestamp: string;
@@ -143,7 +146,7 @@ export function trackEvent(
 export function trackToolUsage(
   tool_name: string,
   action: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, JsonValue>
 ): void {
   trackEvent('tool_used', {
     tool_name,
@@ -173,7 +176,7 @@ export function trackRiskModeChange(
 export function trackFeatureInteraction(
   feature_name: string,
   action: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, JsonValue>
 ): void {
   trackEvent('feature_interaction', {
     feature_name,

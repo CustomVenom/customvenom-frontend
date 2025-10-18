@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import type { AnalyticsEvent } from '@/lib/analytics';
 
 /**
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         eventType: event.event_type,
         toolName: event.tool_name || null,
         action: event.action || null,
-        properties: event.properties || {},
+        properties: event.properties as Prisma.InputJsonValue || Prisma.JsonNull,
         demoMode: event.demo_mode ?? true,
         timestamp: new Date(event.timestamp),
       },
