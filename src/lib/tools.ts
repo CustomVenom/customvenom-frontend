@@ -1,4 +1,5 @@
 // Tools utilities and types
+import { getProjectionsWithCache, warmProjectionsCache } from './cache';
 
 export interface Row {
   player_id: string;
@@ -42,18 +43,17 @@ export function clampChips(explanations?: Row['explanations']): ChipDisplay[] {
 }
 
 /**
- * Fetch projections data for search/autocomplete
- * Uses mock data for now - wire to API when ready
+ * Internal function to fetch projections from source
+ * (mock data for now, API in production)
  */
-export async function fetchProjections(week: string = '2025-06'): Promise<Row[]> {
-  try {
-    // TODO: Wire to actual API
-    // const response = await fetch(`/api/projections?week=${week}`);
-    // const data = await response.json();
-    // return data.projections;
-    
-    // Mock data for development
-    return [
+async function fetchProjectionsFromSource(week: string = '2025-06'): Promise<Row[]> {
+  // TODO: Wire to actual API
+  // const response = await fetch(`/api/projections?week=${week}`);
+  // const data = await response.json();
+  // return data.projections;
+  
+  // Mock data for development
+  return [
       {
         player_id: 'patrick_mahomes',
         player_name: 'Patrick Mahomes',
@@ -115,9 +115,39 @@ export async function fetchProjections(week: string = '2025-06'): Promise<Row[]>
         last_refresh: new Date().toISOString(),
       },
     ];
+}
+
+/**
+ * Fetch projections data with caching
+ * Uses cache-first strategy for instant loading
+ */
+export async function fetchProjections(week: string = '2025-06', forceRefresh: boolean = false): Promise<Row[]> {
+  try {
+    const result = await getProjectionsWithCache(
+      () => fetchProjectionsFromSource(week),
+      { week, forceRefresh }
+    );
+    
+    return result.data;
   } catch (error) {
-    console.error('Failed to fetch projections for search:', error);
+    console.error('Failed to fetch projections:', error);
     return [];
+  }
+}
+
+/**
+ * Warm up projections cache in background
+ * Call this early (e.g., on app load) for instant tool access
+ */
+export async function warmProjectionsCacheBackground(week: string = '2025-06'): Promise<void> {
+  try {
+    await warmProjectionsCache(
+      () => fetchProjectionsFromSource(week),
+      { silent: true, week }
+    );
+  } catch (error) {
+    // Silent failure - cache warmup is nice-to-have, not critical
+    console.warn('Cache warmup failed:', error);
   }
 }
 

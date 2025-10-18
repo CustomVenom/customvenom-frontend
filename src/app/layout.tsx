@@ -5,6 +5,7 @@ import { Inter, Merriweather_Sans } from "next/font/google";
 import "./globals.css";
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ClientLayout from './ClientLayout'
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -46,7 +47,9 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Header />
-        <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
+        <ClientLayout>
+          <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
+        </ClientLayout>
         <Footer />
       </body>
     </html>
