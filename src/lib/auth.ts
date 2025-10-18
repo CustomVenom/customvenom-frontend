@@ -5,8 +5,8 @@ import NextAuth, { NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
+// @ts-expect-error - @auth/prisma-adapter lacks type declarations
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { Adapter } from 'next-auth/adapters';
 import { prisma } from './db';
 import { YahooProvider } from './integrations/yahoo/provider';
 
@@ -44,10 +44,10 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
 }
 
 export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma) as Adapter,
+  adapter: PrismaAdapter(prisma),
   providers,
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user }: { user: any }) {
       // Auto-assign admin role to admin emails
       if (user.email) {
         const { isAdminEmail, ROLES } = await import('./rbac');
@@ -62,7 +62,7 @@ export const authConfig: NextAuthConfig = {
       }
       return true;
     },
-    async session({ session, user }) {
+    async session({ session, user }: { session: any; user: any }) {
       // Add user role to session for easy access
       if (session.user && user) {
         session.user.id = user.id;

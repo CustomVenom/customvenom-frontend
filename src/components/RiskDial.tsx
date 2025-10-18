@@ -75,9 +75,9 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
   };
 
   const getRiskBadgeClass = () => {
-    if (riskLevel === 'low') return styles.badgeLow;
-    if (riskLevel === 'moderate') return styles.badgeModerate;
-    return styles.badgeHigh;
+    if (riskLevel === 'low') return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-green-600/15 text-green-300 ring-1 ring-inset ring-green-600/30';
+    if (riskLevel === 'moderate') return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-yellow-600/15 text-yellow-300 ring-1 ring-inset ring-yellow-600/30';
+    return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-red-600/15 text-red-300 ring-1 ring-inset ring-red-600/30';
   };
 
   const getRiskLabel = () => {
@@ -146,7 +146,7 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
         </div>
 
         <div className="flex-1">
-          <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4 ${riskLevel === 'low' ? 'bg-green-100 text-green-800' : riskLevel === 'moderate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+          <span className={getRiskBadgeClass()}>
             {getRiskLabel()}
           </span>
           <p className="text-gray-700 leading-relaxed">{recommendation}</p>
