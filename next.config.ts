@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  serverExternalPackages: ['@prisma/client', 'prisma'],
+  outputFileTracingRoot: undefined, // Silence lockfile warning
 };
 
 export default nextConfig;
