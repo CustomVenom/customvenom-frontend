@@ -122,6 +122,16 @@ td, th {
 	background:#0B5C34; 
 }
 
+.dark .cv-btn-ghost:hover {
+	background: rgba(14,124,69,0.1);
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+	color-scheme: dark;
+}
+
 /* Subtle reptilian accents (optional) */
 .bg-scales {
 	background-image: radial-gradient(rgba(14,124,69,0.06) 1px, transparent 1px);

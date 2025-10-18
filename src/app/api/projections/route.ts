@@ -38,11 +38,20 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
     
+    // Validate schema version (defensive coding)
+    const SUPPORTED_SCHEMA_VERSIONS = ['v1'];
+    const dataSchemaVersion = data.schema_version || response.headers.get('x-schema-version') || 'v1';
+    
+    if (!SUPPORTED_SCHEMA_VERSIONS.includes(dataSchemaVersion)) {
+      console.warn('Unsupported schema version received:', dataSchemaVersion, '- proceeding with caution');
+      // Still proceed to show data, but log for monitoring
+    }
+    
     // Create response with additional headers for trust badge
     const nextResponse = NextResponse.json(data);
     
     // Forward relevant headers from the workers-api response
-    const schemaVersion = response.headers.get('x-schema-version') || 'v1';
+    const schemaVersion = response.headers.get('x-schema-version') || dataSchemaVersion;
     const lastRefresh = response.headers.get('x-last-refresh') || new Date().toISOString();
     
     nextResponse.headers.set('x-schema-version', schemaVersion);

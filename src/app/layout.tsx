@@ -39,8 +39,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${merri.variable}`}>
       <body className="min-h-screen flex flex-col">
+        <a 
+          href="#main" 
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-1 focus:rounded focus:z-50"
+        >
+          Skip to main content
+        </a>
         <Header />
-        <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
+        <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
         <Footer />
       </body>
     </html>

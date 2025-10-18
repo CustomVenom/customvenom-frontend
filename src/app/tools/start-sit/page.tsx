@@ -12,8 +12,9 @@ import { type Row, fetchProjections } from '@/lib/tools';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { useToast } from '@/components/Toast';
 import { startSitSummary } from '@/lib/summary';
+import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 
-export default function StartSitPage() {
+function StartSitContent() {
   const [playerA, setPlayerA] = useState('');
   const [playerB, setPlayerB] = useState('');
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
@@ -34,6 +35,29 @@ export default function StartSitPage() {
   useEffect(() => { 
     fetchProjections().then(setSuggestions).catch(() => {}); 
   }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      if (e.key === 'Enter' && playerA && playerB) {
+        handleCompare();
+      } else if (e.key === '1') {
+        setRisk('protect');
+      } else if (e.key === '2') {
+        setRisk('neutral');
+      } else if (e.key === '3') {
+        setRisk('chase');
+      }
+    };
+    
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [playerA, playerB]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openDrawer(row: Row) {
     setDrawerRow(row);
@@ -169,7 +193,7 @@ export default function StartSitPage() {
             ))}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Press 1/2/3 to select risk mode
+            Keyboard shortcuts: 1/2/3 to select risk mode, Enter to compare
           </p>
         </div>
 
@@ -245,6 +269,14 @@ export default function StartSitPage() {
       <PlayerDrawer open={drawerOpen} onClose={closeDrawer} row={drawerRow} />
       <Toast />
     </main>
+  );
+}
+
+export default function StartSitPage() {
+  return (
+    <ToolErrorBoundary toolName="Start/Sit">
+      <StartSitContent />
+    </ToolErrorBoundary>
   );
 }
 

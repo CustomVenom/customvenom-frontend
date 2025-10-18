@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Metadata } from 'next';
 import ToolsTabs from '@/components/ToolsTabs';
 import EmptyState from '@/components/EmptyState';
@@ -9,8 +9,9 @@ import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { faabSummary } from '@/lib/summary';
+import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 
-export default function FaabPage() {
+function FaabContent() {
   const [player, setPlayer] = useState('');
   const [budget, setBudget] = useState('100');
   const [result, setResult] = useState<{
@@ -21,6 +22,23 @@ export default function FaabPage() {
   } | null>(null);
   
   const { setMsg, Toast } = useToast();
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      if (e.key === 'Enter' && player && budget) {
+        handleCalculate();
+      }
+    };
+    
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [player, budget]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleExample() {
     setPlayer('Jahmyr Gibbs');
@@ -94,6 +112,9 @@ export default function FaabPage() {
         >
           Calculate Bid Range
         </Button>
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center -mt-2">
+          Keyboard shortcut: Press Enter to calculate
+        </p>
       </div>
 
       {result && (
@@ -166,6 +187,14 @@ export default function FaabPage() {
       <ActionBar />
       <Toast />
     </main>
+  );
+}
+
+export default function FaabPage() {
+  return (
+    <ToolErrorBoundary toolName="FAAB Bid Helper">
+      <FaabContent />
+    </ToolErrorBoundary>
   );
 }
 

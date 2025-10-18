@@ -17,13 +17,13 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+    <header role="banner" className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" aria-label="Home">
           <Brand size="lg" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-4 text-sm">
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-4 text-sm">
           {links.map(l => (
             <Link
               key={l.href}

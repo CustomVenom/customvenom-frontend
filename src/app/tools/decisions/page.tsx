@@ -8,8 +8,9 @@ import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
 import { type Row } from '@/lib/tools';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 
-export default function DecisionsPage() {
+function DecisionsContent() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
   const [decisions, setDecisions] = useState<Array<{
     row: Row;
@@ -30,6 +31,27 @@ export default function DecisionsPage() {
     setDrawerOpen(false);
     setDrawerRow(null);
   }
+
+  // Keyboard shortcuts for risk modes
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      if (e.key === '1') {
+        setRisk('protect');
+      } else if (e.key === '2') {
+        setRisk('neutral');
+      } else if (e.key === '3') {
+        setRisk('chase');
+      }
+    };
+    
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     // TODO: Fetch from API based on risk profile
@@ -133,6 +155,9 @@ export default function DecisionsPage() {
             </button>
           ))}
         </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          Keyboard shortcuts: 1/2/3 to select risk mode
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -186,6 +211,14 @@ export default function DecisionsPage() {
       <ActionBar />
       <PlayerDrawer open={drawerOpen} onClose={closeDrawer} row={drawerRow} />
     </main>
+  );
+}
+
+export default function DecisionsPage() {
+  return (
+    <ToolErrorBoundary toolName="Important Decisions">
+      <DecisionsContent />
+    </ToolErrorBoundary>
   );
 }
 
