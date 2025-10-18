@@ -47,6 +47,21 @@ export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma) as Adapter,
   providers,
   callbacks: {
+    async signIn({ user, account }) {
+      // Auto-assign admin role to admin emails
+      if (user.email) {
+        const { isAdminEmail, ROLES } = await import('./rbac');
+        
+        if (isAdminEmail(user.email)) {
+          // Update user role to admin if they're signing in
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: ROLES.ADMIN },
+          });
+        }
+      }
+      return true;
+    },
     async session({ session, user }) {
       // Add user role to session for easy access
       if (session.user && user) {

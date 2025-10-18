@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
-import { getEntitlements } from '@/lib/entitlements';
+import { getEntitlements, type Entitlements } from '@/lib/entitlements';
 import { getCacheStats } from '@/lib/cache';
 
 interface MetricsData {
@@ -23,15 +23,15 @@ export default function MetricsPage() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [timeRange, setTimeRange] = useState<number>(24);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPro, setIsPro] = useState(false);
+  const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
 
   useEffect(() => {
-    // Check Pro status
-    const checkPro = async () => {
-      const entitlements = await getEntitlements();
-      setIsPro(entitlements.isPro);
+    // Check access permissions
+    const checkAccess = async () => {
+      const ents = await getEntitlements();
+      setEntitlements(ents);
     };
-    checkPro();
+    checkAccess();
   }, []);
 
   useEffect(() => {
@@ -61,8 +61,8 @@ export default function MetricsPage() {
     }
   }
 
-  // Pro-only access check
-  if (!isPro) {
+  // Access check - Pro or Admin required
+  if (entitlements && !entitlements.features.analytics) {
     return (
       <main className="mx-auto max-w-4xl px-4 py-6">
         <h1 className="text-2xl font-bold mb-4">Analytics Metrics</h1>
@@ -70,17 +70,23 @@ export default function MetricsPage() {
         <div className="border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 bg-yellow-50 dark:bg-yellow-900/10">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-3xl">🔒</span>
-            <h2 className="text-xl font-semibold">Pro Feature</h2>
+            <h2 className="text-xl font-semibold">
+              {entitlements.isFree ? 'Pro Feature' : 'Access Restricted'}
+            </h2>
           </div>
           
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Analytics metrics are available to Pro subscribers only.
+            {entitlements.isFree 
+              ? 'Analytics metrics are available to Pro subscribers and above.'
+              : 'You do not have permission to access this feature.'}
           </p>
           
           <div className="flex gap-3">
-            <Link href="/go-pro" className="cv-btn-primary">
-              Upgrade to Pro
-            </Link>
+            {entitlements.isFree && (
+              <Link href="/go-pro" className="cv-btn-primary">
+                Upgrade to Pro
+              </Link>
+            )}
             <Link href="/ops" className="cv-btn-ghost">
               Back to Ops
             </Link>
