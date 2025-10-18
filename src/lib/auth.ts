@@ -2,6 +2,7 @@
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
 import NextAuth, { NextAuthConfig } from 'next-auth';
+import type { User, Account, Profile } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
@@ -47,25 +48,27 @@ export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers,
   callbacks: {
-    async signIn({ user }: { user: any }) {
+    async signIn({ user, account, profile }: { user: unknown; account: Account | null; profile?: Profile }) {
       // Auto-assign admin role to admin emails
-      if (user.email) {
+      if (user && typeof user === 'object' && 'email' in user && user.email) {
         const { isAdminEmail, ROLES } = await import('./rbac');
         
-        if (isAdminEmail(user.email)) {
+        if (isAdminEmail(user.email as string)) {
           // Update user role to admin if they're signing in
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { role: ROLES.ADMIN },
-          });
+          if ('id' in user && user.id) {
+            await prisma.user.update({
+              where: { id: user.id as string },
+              data: { role: ROLES.ADMIN },
+            });
+          }
         }
       }
       return true;
     },
-    async session({ session, user }: { session: any; user: any }) {
+    async session({ session, user }: { session: any; user: unknown }) {
       // Add user role to session for easy access
-      if (session.user && user) {
-        session.user.id = user.id;
+      if (session.user && user && typeof user === 'object' && 'id' in user) {
+        session.user.id = user.id as string;
         session.user.role = 'role' in user ? (user.role as string) || 'free' : 'free';
         session.user.stripeCustomerId = 'stripeCustomerId' in user ? (user.stripeCustomerId as string | undefined) : undefined;
       }
