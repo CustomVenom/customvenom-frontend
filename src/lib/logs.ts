@@ -24,9 +24,10 @@ export interface LogEntry {
  * Fetch operational metrics from logs API
  * Returns null when logs are not yet available
  */
-export async function fetchLogMetrics(_timeWindowMs: number = 86400000): Promise<LogMetrics | null> {
+export async function fetchLogMetrics(timeWindowMs: number = 86400000): Promise<LogMetrics | null> {
   try {
     // TODO: Wire to actual Cloudflare Workers logs API
+    // timeWindowMs will be used to query logs within time range
     // For now, return mock data to demonstrate live tiles
     
     // Simulate API call delay

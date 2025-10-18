@@ -160,10 +160,10 @@ function DecisionsContent() {
             <button
               key={r}
                 onClick={() => setRisk(r)}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`risk-segment px-4 py-2 rounded-lg text-sm font-semibold ${
                   risk === r
-                    ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
-                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)] hover:bg-[rgba(16,185,129,0.2)]'
+                    ? 'selected bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
+                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)]'
                 }`}
             >
               {r.charAt(0).toUpperCase() + r.slice(1)}
@@ -179,17 +179,14 @@ function DecisionsContent() {
         {decisions.map((d, i) => (
           <div 
             key={i} 
-            className="rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]"
+            className="player-row rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]"
+            onClick={() => openDrawer(d.row)}
           >
             <div className="flex items-start justify-between mb-3">
               <h3 className="font-semibold text-lg">
-                <button
-                  className="text-brand-primary dark:text-brand-accent underline hover:no-underline"
-                  onClick={() => openDrawer(d.row)}
-                  aria-label={`Open ${d.row.player_name} details`}
-                >
+                <span className="text-[rgb(var(--cv-primary))]">
                   {d.row.player_name}
-                </button>
+                </span>
               </h3>
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 #{i + 1}

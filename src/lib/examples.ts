@@ -1,7 +1,8 @@
 import { type Row } from '@/lib/tools';
 
-export function pickExamples(rows: Row[], n = 2): Row[] {
+export function pickExamples(rows: Row[], _n = 2): Row[] {
   // Choose two popular names with distinct positions if possible
+  // Note: _n parameter reserved for future use (limit number of examples)
   const sorted = [...rows].sort((a, b) => (b.expected_points ?? 0) - (a.expected_points ?? 0));
   const first = sorted[0];
   const second = sorted.find(r => r.player_name !== first?.player_name) || sorted[1];

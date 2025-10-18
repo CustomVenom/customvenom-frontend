@@ -208,10 +208,10 @@ function StartSitContent() {
               <button
                 key={r}
                 onClick={() => setRisk(r)}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`risk-segment px-4 py-2 rounded-lg text-sm font-semibold ${
                   risk === r
-                    ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
-                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)] hover:bg-[rgba(16,185,129,0.2)]'
+                    ? 'selected bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
+                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)]'
                 }`}
               >
                 {r.charAt(0).toUpperCase() + r.slice(1)}
@@ -254,11 +254,11 @@ function StartSitContent() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
+            <div className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]" onClick={() => openDrawer(result.rowA)}>
               <h4 className="font-semibold mb-2">
                 <button
-                  className="text-brand-primary dark:text-brand-accent underline hover:no-underline"
-                  onClick={() => openDrawer(result.rowA)}
+                  className="text-[rgb(var(--cv-primary))] hover:underline"
+                  onClick={(e) => { e.stopPropagation(); openDrawer(result.rowA); }}
                   aria-label={`Open ${result.rowA.player_name} details`}
                 >
                   {result.rowA.player_name}
@@ -271,11 +271,11 @@ function StartSitContent() {
               </div>
             </div>
 
-            <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
+            <div className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]" onClick={() => openDrawer(result.rowB)}>
               <h4 className="font-semibold mb-2">
                 <button
-                  className="text-brand-primary dark:text-brand-accent underline hover:no-underline"
-                  onClick={() => openDrawer(result.rowB)}
+                  className="text-[rgb(var(--cv-primary))] hover:underline"
+                  onClick={(e) => { e.stopPropagation(); openDrawer(result.rowB); }}
                   aria-label={`Open ${result.rowB.player_name} details`}
                 >
                   {result.rowB.player_name}
