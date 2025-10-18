@@ -10,7 +10,7 @@ export interface AnalyticsEvent {
   event_type: string;
   tool_name?: string;
   action?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   user_id?: string;
   session_id: string;
   timestamp: string;
@@ -84,7 +84,7 @@ function storeEvent(event: AnalyticsEvent): void {
  */
 export function trackEvent(
   event_type: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): void {
   const startTime = performance.now();
   
@@ -143,7 +143,7 @@ export function trackEvent(
 export function trackToolUsage(
   tool_name: string,
   action: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): void {
   trackEvent('tool_used', {
     tool_name,
@@ -173,7 +173,7 @@ export function trackRiskModeChange(
 export function trackFeatureInteraction(
   feature_name: string,
   action: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): void {
   trackEvent('feature_interaction', {
     feature_name,

@@ -14,7 +14,7 @@ interface LocalStorageEvent {
   event_type: string;
   tool_name?: string;
   action?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   user_id?: string;
   session_id: string;
   timestamp: string;

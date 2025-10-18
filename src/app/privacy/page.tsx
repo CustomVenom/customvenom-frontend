@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function PrivacyPage() {
   return (
     <main className="container section space-y-4">
@@ -36,8 +38,8 @@ export default function PrivacyPage() {
       </section>
 
       <div className="flex gap-2">
-        <a href="/" className="cv-btn-ghost">Home</a>
-        <a href="/projections" className="cv-btn-primary">Open Projections</a>
+        <Link href="/" className="cv-btn-ghost">Home</Link>
+        <Link href="/projections" className="cv-btn-primary">Open Projections</Link>
       </div>
     </main>
   );

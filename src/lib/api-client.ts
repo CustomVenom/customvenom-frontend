@@ -14,7 +14,7 @@ interface FetchOptions extends RequestInit {
 }
 
 // Store pending requests to prevent duplicates
-const pendingRequests = new Map<string, Promise<ApiResponse<any>>>();
+const pendingRequests = new Map<string, Promise<ApiResponse<unknown>>>();
 
 export async function apiFetch<T = unknown>(
   url: string, 
