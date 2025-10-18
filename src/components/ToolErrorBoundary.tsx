@@ -31,8 +31,8 @@ export class ToolErrorBoundary extends Component<Props, State> {
         tool_name: this.props.toolName || 'unknown',
       },
       level: 'error',
-      contexts: {
-        react: errorInfo,
+      extra: {
+        componentStack: errorInfo.componentStack,
       },
     });
   }
