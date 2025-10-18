@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
-import { getEntitlements, type Entitlements } from '@/lib/entitlements';
+import { type Entitlements } from '@/lib/entitlements';
 import { getCacheStats } from '@/lib/cache';
 
 interface MetricsData {
@@ -28,7 +28,8 @@ export default function MetricsPage() {
   useEffect(() => {
     // Check access permissions
     const checkAccess = async () => {
-      const ents = await getEntitlements();
+      const response = await fetch('/api/entitlements');
+      const ents = response.ok ? await response.json() : { isAdmin: false };
       setEntitlements(ents);
     };
     checkAccess();

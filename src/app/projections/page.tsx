@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import GoProButton from '@/components/GoProButton';
-import { getEntitlements, type Entitlements } from '@/lib/entitlements';
+import { type Entitlements } from '@/lib/entitlements';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 import { FaabBands } from '@/components/FaabBands';
 import { RiskDial } from '@/components/RiskDial';
@@ -163,14 +163,19 @@ function ProjectionsPageInner() {
     };
 
     const loadEntitlements = async () => {
-      // Check for session_id in URL params (from Stripe success redirect)
+      try {
+        const response = await fetch('/api/entitlements');
+        if (response.ok) {
+          const userEntitlements = await response.json();
+          setEntitlements(userEntitlements);
+        }
+      } catch (error) {
+        console.error('Failed to load entitlements:', error);
+      }
+      
+      // Clear session_id from URL if present (from Stripe redirect)
       const urlParams = new URLSearchParams(window.location.search);
       const sessionId = urlParams.get('session_id');
-      
-      const userEntitlements = await getEntitlements(sessionId || undefined);
-      setEntitlements(userEntitlements);
-      
-      // Clear session_id from URL after processing
       if (sessionId) {
         const newUrl = window.location.pathname;
         window.history.replaceState({}, '', newUrl);
