@@ -1,7 +1,7 @@
 # 🚀 CustomVenom Developer Guide
 
-**Last Updated**: October 17, 2025  
-**Stack**: Cloudflare Workers + Next.js 15 + R2 + NextAuth v5 + Stripe
+**Last Updated:** October 18, 2025  
+**Stack:** Cloudflare Workers + Next.js 15 + R2 + NextAuth v5 + Stripe
 
 ---
 
@@ -55,14 +55,17 @@ git push origin main
 
 ### 2. **Stale-If-Error Pattern**
 ```typescript
-// Current implementation (workers-api/src/index.ts)
-let LAST_GOOD_CACHE: Map<string, { body: string; ts: number }> = new Map();
+// workers-api/src/index.ts
+const LAST_GOOD_CACHE = new Map<string, { body: string; ts: number }>();
 
-// On R2 read:
-if (r2Failed && lastGoodCache) {
+// On R2 read failure:
+const cached = LAST_GOOD_CACHE.get(key);
+if (cached) {
+  const ageSec = Math.floor((Date.now() - cached.ts) / 1000);
   c.header('x-stale', 'true');
-  c.header('x-stale-age', Date.now() - lastGoodCache.ts);
-  return lastGoodCache.body;
+  c.header('x-stale-age', String(ageSec));  // seconds, not milliseconds
+  c.header('cache-control', 'public, max-age=60, stale-if-error=86400');
+  return new Response(cached.body, { headers: c.res.headers });
 }
 ```
 
@@ -70,15 +73,22 @@ if (r2Failed && lastGoodCache) {
 - 99.99% uptime even if R2 has issues
 - Graceful degradation
 - Users always get data (marked as stale)
+- `x-stale-age` in seconds for standard time units
 
 ### 3. **Demo Mode (Golden Week)**
 ```typescript
 // Anonymous users → pinned to Golden Week (2025-06)
 // Authenticated users → any week they request
 
-if (demoMode && !authed && requestedWeek !== getDemoWeek(env)) {
-  weekParam = getDemoWeek(env); // Force 2025-06
-  c.header('x-demo-mode', 'true');
+const demoMode = c.env.DEMO_MODE === '1';
+const authed = !!c.get('user');
+const requestedWeek = c.req.query('week');
+const demoWeek = getDemoWeek(c.env);
+
+let weekParam = requestedWeek ?? demoWeek;
+if (demoMode && !authed && requestedWeek !== demoWeek) {
+  weekParam = demoWeek;
+  c.header('x-demo-mode', 'true');  // Only on anonymous demo responses
 }
 ```
 
@@ -86,6 +96,8 @@ if (demoMode && !authed && requestedWeek !== getDemoWeek(env)) {
 - Reduces R2 egress costs (cache single week heavily)
 - Consistent demo experience
 - Auth users get full access
+
+**Important**: `x-demo-mode: true` header only appears on anonymous requests pinned to demo week. Never leaks on authenticated requests.
 
 ### 4. **Multi-Tier Caching**
 ```
@@ -98,11 +110,14 @@ Worker Instance Cache (LAST_GOOD_CACHE)
 R2 Bucket (source of truth)
 ```
 
-**Cache Headers Strategy**:
-- Golden Week: `max-age=3600` (1 hour)
-- Other weeks: `max-age=300` (5 min)
-- Health: `no-store` (always fresh)
-- Stale: `max-age=60` (1 min, marked stale)
+**Cache Headers Strategy** (Explicit):
+
+| Route | cache-control | Use Case |
+|-------|---------------|----------|
+| Golden Week (2025-06) | `public, max-age=3600, stale-if-error=86400` | Heavy caching (1 hour) |
+| Other weeks | `public, max-age=300, stale-if-error=86400` | Moderate caching (5 min) |
+| Health endpoint | `no-store` | Always fresh, never cached |
+| Stale fallback | `public, max-age=60, stale-if-error=86400` | Short cache with stale marker |
 
 ---
 
@@ -114,10 +129,20 @@ R2 Bucket (source of truth)
 wrangler secret put DEMO_SIGNING_KEY
 wrangler secret put NOTION_TOKEN
 wrangler secret put SENTRY_DSN
+wrangler secret put STRIPE_SECRET_KEY
 
 # ❌ BAD: Don't commit secrets to git
 # ❌ BAD: Don't use --var for secrets (visible in deployment logs)
 ```
+
+**Critical Security Rule:**
+- Use `wrangler secret put` for:
+  - SENTRY_DSN
+  - OAuth secrets (GOOGLE_CLIENT_SECRET, YAHOO_CLIENT_SECRET, etc.)
+  - Stripe live keys (STRIPE_SECRET_KEY)
+  - Any API tokens or credentials
+- **Never commit secrets to git** - they're visible in history forever
+- **Never use --var for secrets** - they appear in deployment logs
 
 ### Environment Variables
 ```bash
@@ -130,13 +155,20 @@ wrangler deploy --env production
 
 ### Rate Limiting
 ```typescript
-// Current: 100 req/min per IP
-// Adjust in: workers-api/src/middleware/rate-limit.ts
+// workers-api/src/middleware/rate-limit.ts
+import type { Context, Next } from 'hono';
 
-export const rateLimit = async (c: any, next: any) => {
-  const limit = 100; // Adjust as needed
-  const window = 60_000; // 1 minute
-  // ...
+export const rateLimit = async (c: Context, next: Next) => {
+  const limit = 100;      // Requests per window
+  const windowMs = 60_000; // 1 minute
+  
+  const ip = c.req.header('cf-connecting-ip') || 'unknown';
+  const key = `ratelimit:${ip}`;
+  
+  // Check and increment rate limit
+  // Implementation depends on KV or in-memory store
+  
+  await next();
 };
 ```
 
@@ -197,6 +229,40 @@ if (entitlements.isPro) {
 // Shows lock overlay for free users
 // Shows actual feature for pro users
 ```
+
+### 5. **TrustSnapshot Pattern (No Layout Shift)**
+```tsx
+// components/TrustSnapshot.tsx
+export function TrustSnapshot({ 
+  ver, 
+  ts, 
+  stale 
+}: { 
+  ver: string; 
+  ts: string; 
+  stale?: boolean;
+}) {
+  return (
+    <div className="trust">
+      <span className="ver">v{ver}</span>
+      <span className="ts">{ts}</span>
+      {/* Use visibility instead of conditional render to prevent CLS */}
+      <span 
+        className="stale" 
+        aria-hidden={!stale} 
+        style={{ visibility: stale ? 'visible' : 'hidden' }}
+      >
+        Stale
+      </span>
+    </div>
+  );
+}
+```
+
+**Why `visibility` instead of conditional render:**
+- Prevents layout shift (CLS < 0.1)
+- Reserves space even when badge is hidden
+- Accessibility: `aria-hidden` for screen readers
 
 ---
 
@@ -288,6 +354,11 @@ describe('FAAB Calculator', () => {
   });
 });
 ```
+
+**Contract Validation (CI):**
+- CI fails if `schema_version` or `last_refresh` are missing on `/projections` and `/health`
+- Prevents silent schema drift
+- Validates response structure matches golden examples
 
 ### Frontend Testing
 ```bash
@@ -391,6 +462,33 @@ console.log('[ProjectionsPage] Loading...', { week, entitlements });
 ## 🔄 Common Workflows
 
 ### Adding a New Endpoint
+
+**Standard Health Endpoint Pattern:**
+```typescript
+// workers-api/src/routes/health.ts
+import type { Context } from 'hono';
+
+app.get('/health', (c: Context) => {
+  const started = Date.now();
+  const requestId = crypto.randomUUID();
+  
+  // Set required headers (even on errors)
+  c.header('cache-control', 'no-store');
+  c.header('x-request-id', requestId);
+  
+  const body = {
+    ok: true,
+    schema_version: 'v1',
+    last_refresh: new Date().toISOString(),
+    environment: c.env.ENVIRONMENT ?? 'development',
+  };
+  
+  c.header('x-duration-ms', String(Date.now() - started));
+  return c.json(body, 200);
+});
+```
+
+**General Endpoint Pattern:**
 ```typescript
 // 1. Add route (workers-api/src/index.ts)
 app.get('/my-endpoint', async (c) => {
@@ -401,12 +499,15 @@ app.get('/my-endpoint', async (c) => {
   
   return c.json({ data: 'response' });
 });
+```
 
-// 2. Test locally
-// wrangler dev
+**Deployment:**
+```bash
+# 2. Test locally
+wrangler dev
 
-// 3. Deploy
-// wrangler deploy --var DEMO_MODE:1 --var DEMO_WEEK:2025-06
+# 3. Deploy
+wrangler deploy --var DEMO_MODE:1 --var DEMO_WEEK:2025-06
 ```
 
 ### Adding a New Frontend Page
@@ -449,6 +550,55 @@ if (entitlements.tier === 'enterprise') {
 
 ## 🚨 Troubleshooting
 
+### Canonical Error Shape
+
+All API errors should follow this standard format:
+
+```typescript
+type ApiError = {
+  ok: false;
+  error: string;
+  code: string;
+  request_id: string;
+  timestamp: string;
+};
+
+// Example: 404 Not Found
+return c.json<ApiError>({
+  ok: false,
+  error: 'Resource not found',
+  code: 'NOT_FOUND',
+  request_id: c.get('requestId'),
+  timestamp: new Date().toISOString(),
+}, 404);
+
+// Example: 400 Bad Request
+return c.json<ApiError>({
+  ok: false,
+  error: 'Invalid week parameter',
+  code: 'INVALID_PARAMETER',
+  request_id: c.get('requestId'),
+  timestamp: new Date().toISOString(),
+}, 400);
+
+// Example: 500 Server Error
+return c.json<ApiError>({
+  ok: false,
+  error: 'Failed to fetch projections',
+  code: 'INTERNAL_ERROR',
+  request_id: c.get('requestId'),
+  timestamp: new Date().toISOString(),
+}, 500);
+```
+
+**Benefits:**
+- Consistent error handling across all endpoints
+- `request_id` for tracing and debugging
+- `code` field for programmatic error handling
+- `timestamp` for logging correlation
+
+---
+
 ### "Worker exceeded CPU time limit"
 **Solution**: Reduce computation, use pre-computed artifacts
 ```typescript
@@ -467,6 +617,8 @@ if (stale && LAST_GOOD_CACHE.has(key)) {
   return LAST_GOOD_CACHE.get(key).body;
 }
 ```
+
+**Note**: Only shorten timeout if stale fallback is healthy. Avoid noisy flapping between fresh and stale.
 
 ### "Next.js build fails"
 **Solution**: Check Prisma generation
