@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${merri.variable}`}>
+    <html lang="en" className={`dark ${inter.variable} ${merri.variable}`}>
       <body className="min-h-screen flex flex-col">
         <a 
           href="#main" 
