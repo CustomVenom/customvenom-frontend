@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Session, User, Account, Profile } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import YahooProvider from "next-auth/providers/yahoo";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -25,7 +26,17 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     // Keep only non-sensitive IDs + minimal profile
-    async jwt({ token, account, profile, user }) {
+    async jwt({ 
+      token, 
+      account, 
+      profile, 
+      user 
+    }: { 
+      token: JWT; 
+      account?: Account | null; 
+      profile?: Profile; 
+      user?: User 
+    }) {
       if (account) {
         // Yahoo-specific data
         if (account.provider === "yahoo") {
@@ -43,12 +54,11 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       // Add user ID and Yahoo context to session
       if (session.user) {
-        session.user.id = token.userId as string;
-        const yahToken = token as { yah?: { sub?: string } };
-        session.user.sub = yahToken.yah?.sub ?? null;
+        session.user.id = token.userId ?? '';
+        session.user.sub = token.yah?.sub ?? null;
       }
       return session;
     },

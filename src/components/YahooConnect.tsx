@@ -9,7 +9,16 @@ interface League {
   season: string;
 }
 
-export default function YahooConnect() {
+interface YahooConnectProps {
+  onConnected?: (sub: string | null) => void;
+}
+
+interface YahooUser {
+  sub: string | null;
+  email?: string | null;
+}
+
+export default function YahooConnect({ onConnected }: YahooConnectProps = {}) {
   const { data: session, status } = useSession();
   const [leagues, setLeagues] = useState<League[] | null>(null);
   const [loading, setLoading] = useState(false);
