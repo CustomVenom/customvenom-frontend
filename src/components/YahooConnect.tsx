@@ -3,9 +3,15 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+interface League {
+  id: string;
+  name: string;
+  season: string;
+}
+
 export default function YahooConnect() {
   const { data: session, status } = useSession();
-  const [leagues, setLeagues] = useState<any[] | null>(null);
+  const [leagues, setLeagues] = useState<League[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

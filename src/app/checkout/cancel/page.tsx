@@ -7,7 +7,7 @@ export default function CheckoutCancelPage() {
         <div className="text-6xl mb-4">🤔</div>
         <h1 className="text-2xl font-bold mb-2">Checkout Cancelled</h1>
         <p className="text-gray-600 mb-6">
-          No worries! You can upgrade to Pro anytime you're ready.
+          No worries! You can upgrade to Pro anytime you&apos;re ready.
         </p>
         <div className="space-y-3">
           <Link href="/go-pro" className="cv-btn-primary block">
