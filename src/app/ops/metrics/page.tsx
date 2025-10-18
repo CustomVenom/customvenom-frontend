@@ -104,7 +104,7 @@ export default function MetricsPage() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(Number(e.target.value))}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm"
+            className="px-3 py-2 rounded-lg text-sm"
           >
             <option value={1}>Last Hour</option>
             <option value={6}>Last 6 Hours</option>

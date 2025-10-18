@@ -72,14 +72,14 @@ export default function ColumnToggle({
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-lg z-20">
-            <div className="text-xs text-gray-600 dark:text-gray-400 px-2 pb-2 font-medium">
+          <div className="absolute right-0 mt-2 w-56 rounded-lg border border-[rgba(148,163,184,0.2)] bg-[rgb(var(--bg-card))] p-2 shadow-2xl z-20">
+            <div className="text-xs text-[rgb(var(--text-muted))] px-2 pb-2 font-medium">
               Show or hide columns
             </div>
             <ul className="max-h-64 overflow-auto space-y-1">
               {columns.map(c => (
-                <li key={c.key} className="flex items-center justify-between px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 rounded">
-                  <label className="text-sm text-gray-700 dark:text-gray-300 flex-1 cursor-pointer">
+                <li key={c.key} className="flex items-center justify-between px-2 py-1.5 hover:bg-[rgba(16,185,129,0.1)] rounded">
+                  <label className="text-sm text-[rgb(var(--text-secondary))] flex-1 cursor-pointer">
                     {c.label}
                   </label>
                   <input
@@ -92,7 +92,7 @@ export default function ColumnToggle({
                 </li>
               ))}
             </ul>
-            <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-[rgba(148,163,184,0.1)]">
               <button className="cv-btn-ghost text-xs" onClick={() => setOpen(false)}>
                 Close
               </button>

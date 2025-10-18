@@ -36,7 +36,7 @@ export function GlossaryTip({ term, children, className = '' }: Props) {
         <span
           id={id}
           role="tooltip"
-          className="z-50 ml-1 rounded border bg-white px-2 py-1 text-xs text-gray-800 shadow"
+          className="z-50 ml-1 rounded-lg border border-[rgba(148,163,184,0.2)] bg-[rgb(var(--bg-elevated))] px-3 py-2 text-xs text-[rgb(var(--text-primary))] shadow-2xl"
         >
           {text}
         </span>
