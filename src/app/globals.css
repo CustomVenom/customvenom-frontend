@@ -256,11 +256,101 @@ textarea::placeholder {
 	color: rgb(var(--text-secondary));
 }
 
+/* Mobile-optimized tap targets (44px minimum) */
+@media (max-width: 768px) {
+	button,
+	a.cv-btn-primary,
+	a.cv-btn-secondary,
+	a.cv-btn-ghost,
+	.cv-btn-primary,
+	.cv-btn-secondary,
+	.cv-btn-ghost {
+		min-height: 44px;
+		min-width: 44px;
+		padding: 0.75rem 1rem;
+	}
+	
+	/* Tighter spacing on mobile */
+	.container {
+		padding-inline: 1rem;
+	}
+	
+	.section {
+		padding-block: 1rem;
+	}
+	
+	/* Larger text for readability */
+	body {
+		font-size: 16px;
+	}
+}
+
 /* Accessible focus and reduced motion */
 :focus-visible { 
-	outline: 2px solid var(--cv-accent); 
+	outline: 2px solid rgb(var(--cv-accent));
 	outline-offset: 2px; 
 	border-radius: 6px; 
+}
+
+/* Micro-interactions */
+.hover-lift {
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hover-lift:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.active-press:active {
+	transform: translateY(1px) scale(0.98);
+	transition: transform 0.1s;
+}
+
+/* Player row interactions */
+.player-row {
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+}
+
+.player-row:hover {
+	background: rgba(16, 185, 129, 0.08);
+	transform: translateX(4px);
+	border-left: 3px solid rgb(var(--cv-primary));
+	padding-left: calc(1rem - 3px);
+}
+
+.player-row:active {
+	transform: translateX(4px) scale(0.99);
+	background: rgba(16, 185, 129, 0.12);
+}
+
+/* Risk segment interactions */
+.risk-segment {
+	transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+}
+
+.risk-segment:not(.selected):hover {
+	transform: scale(1.05);
+	box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.risk-segment:not(.selected):active {
+	transform: scale(0.98);
+}
+
+.risk-segment.selected {
+	animation: pulse-green 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-green {
+	0%, 100% {
+		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+	}
+	50% {
+		box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -269,6 +359,10 @@ textarea::placeholder {
 		animation-iteration-count: 1 !important; 
 		transition-duration: .01ms !important; 
 		scroll-behavior: auto !important; 
+	}
+	
+	.risk-segment.selected {
+		animation: none;
 	}
 }
 
