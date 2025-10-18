@@ -1,0 +1,36 @@
+# ============================================
+# COPY THIS FILE TO .env.local
+# ============================================
+# This file provides the minimal environment variables needed for local development
+# Copy this content to a file named ".env.local" in the customvenom-frontend directory
+
+# NextAuth - Required for authentication system
+NEXTAUTH_URL=http://localhost:3000
+AUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
+
+# API Configuration - Backend API endpoint
+NEXT_PUBLIC_API_BASE=http://localhost:8787
+API_BASE=http://localhost:8787
+
+# Database - Mock URL (app will handle missing DB gracefully)
+DATABASE_URL=postgresql://localhost:5432/customvenom
+
+# Optional - Sentry (leave empty for local dev)
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+
+# Optional - Logs (disable for local dev)
+NEXT_PUBLIC_LOGS_ENABLED=false
+
+# ============================================
+# INSTRUCTIONS
+# ============================================
+# 1. Copy this entire file
+# 2. Create a new file: customvenom-frontend\.env.local
+# 3. Paste the content
+# 4. Run: npm run dev
+# 5. Open: http://localhost:3000
+#
+# The app will work without a real database - it will show demo data
+# and gracefully handle missing API endpoints.
+

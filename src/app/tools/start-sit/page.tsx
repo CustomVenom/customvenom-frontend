@@ -96,8 +96,8 @@ function StartSitContent() {
   async function handleCompare() {
     // Track comparison
     trackToolUsage('Start/Sit', 'compare', {
-      playerA,
-      playerB,
+      playerA: playerA || '',
+      playerB: playerB || '',
       risk_mode: risk
     });
     

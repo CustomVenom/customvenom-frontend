@@ -23,7 +23,7 @@ function DecisionsContent() {
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
 
   function openDrawer(row: Row) {
-    trackFeatureInteraction('player_drawer', 'opened', { tool: 'Decisions', player: row.player_name });
+    trackFeatureInteraction('player_drawer', 'opened', { tool: 'Decisions', player: row.player_name || '' });
     setDrawerRow(row);
     setDrawerOpen(true);
   }

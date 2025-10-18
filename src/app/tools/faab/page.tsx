@@ -55,8 +55,8 @@ function FaabContent() {
   async function handleCalculate() {
     // Track calculation
     trackToolUsage('FAAB', 'calculate', {
-      player,
-      budget: parseInt(budget)
+      player: player || '',
+      budget: parseInt(budget) || 0
     });
     
     // TODO: Wire to API endpoint
