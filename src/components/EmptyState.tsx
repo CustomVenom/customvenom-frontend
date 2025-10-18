@@ -8,9 +8,9 @@ interface EmptyStateProps {
 
 export default function EmptyState({ title, children, onExample }: EmptyStateProps) {
   return (
-    <div className="rounded border border-gray-200 dark:border-gray-700 p-6 text-center text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800">
-      <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">{title}</p>
-      {children && <p className="mb-3">{children}</p>}
+    <div className="rounded-lg border border-[rgba(148,163,184,0.2)] p-8 text-center bg-[rgb(var(--bg-elevated))]">
+      <p className="font-semibold text-[rgb(var(--text-primary))] text-lg mb-3">{title}</p>
+      {children && <p className="text-sm text-[rgb(var(--text-secondary))] mb-4">{children}</p>}
       {onExample && (
         <Button variant="ghost" size="sm" onClick={onExample}>
           Try an example

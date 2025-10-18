@@ -66,8 +66,8 @@ export class ToolErrorBoundary extends Component<Props, State> {
               </p>
               
               {this.state.error?.message && (
-                <div className="bg-white dark:bg-gray-900 rounded p-3 mb-3">
-                  <p className="text-xs text-gray-700 dark:text-gray-300 font-mono break-words">
+                <div className="bg-[rgb(var(--bg-input))] rounded p-3 mb-3 border border-[rgba(148,163,184,0.1)]">
+                  <p className="text-xs text-[rgb(var(--text-primary))] font-mono break-words">
                     {this.state.error.message}
                   </p>
                 </div>
@@ -83,7 +83,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
                 
                 <button
                   onClick={() => window.location.href = '/tools'}
-                  className="text-sm px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="text-sm px-3 py-1.5 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all border border-[rgba(148,163,184,0.2)] font-semibold"
                 >
                   Back to tools
                 </button>

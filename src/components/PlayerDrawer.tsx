@@ -69,10 +69,10 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-xl outline-none focus:outline-none overflow-y-auto animate-in slide-in-from-right duration-200"
+        className="fixed right-0 top-0 h-full w-full max-w-md bg-[rgb(var(--bg))] shadow-2xl outline-none focus:outline-none overflow-y-auto animate-in slide-in-from-right duration-200 border-l border-[rgba(148,163,184,0.1)]"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between border-b border-[rgba(148,163,184,0.1)] p-4">
+          <h2 className="text-lg font-bold text-[rgb(var(--text-primary))]">
             {row.player_name ?? 'Player'} Details
           </h2>
           <button
