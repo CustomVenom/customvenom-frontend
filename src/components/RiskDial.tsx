@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import styles from './RiskDial.module.css';
 
 interface RiskFactor {
   name: string;
@@ -54,16 +53,16 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading risk assessment...</div>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+        <div className="text-center text-lg text-gray-600 py-5">Loading risk assessment...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>Error: {error}</div>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+        <div className="text-center text-lg text-red-600 py-5">Error: {error}</div>
       </div>
     );
   }
@@ -88,19 +87,19 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Risk Assessment</h2>
+    <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 m-0">Risk Assessment</h2>
         {lastRefresh && (
-          <span className={styles.lastRefresh}>
+          <span className="text-sm text-gray-500">
             Updated {new Date(lastRefresh).toLocaleTimeString()}
           </span>
         )}
       </div>
 
-      <div className={styles.dialContainer}>
-        <div className={styles.dial}>
-          <svg width="200" height="200" viewBox="0 0 200 200">
+      <div className="flex flex-col md:flex-row items-center gap-8">
+        <div className="flex-shrink-0">
+          <svg width="200" height="200" viewBox="0 0 200 200" className="transform transition-transform">
             {/* Background circle */}
             <circle
               cx="100"
@@ -122,7 +121,6 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
               strokeDashoffset={2 * Math.PI * 80 * 0.25}
               strokeLinecap="round"
               transform="rotate(-90 100 100)"
-              className={styles.progressCircle}
             />
             {/* Center text */}
             <text
@@ -147,43 +145,43 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
           </svg>
         </div>
 
-        <div className={styles.info}>
-          <span className={`${styles.riskBadge} ${getRiskBadgeClass()}`}>
+        <div className="flex-1">
+          <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4 ${riskLevel === 'low' ? 'bg-green-100 text-green-800' : riskLevel === 'moderate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
             {getRiskLabel()}
           </span>
-          <p className={styles.recommendation}>{recommendation}</p>
+          <p className="text-gray-700 leading-relaxed">{recommendation}</p>
         </div>
       </div>
 
       {factors.length > 0 && (
-        <div className={styles.factorsSection}>
+        <div className="mt-6 pt-6 border-t border-gray-200">
           <button
             onClick={() => setExpanded(!expanded)}
-            className={styles.expandButton}
+            className="flex items-center gap-2 text-[#667eea] font-medium hover:text-[#5a6fd8] transition-colors cursor-pointer bg-transparent border-none p-0 text-base"
           >
             {expanded ? '▼' : '▶'} View Factor Breakdown
           </button>
 
           {expanded && (
-            <div className={styles.factorsList}>
+            <div className="mt-4 space-y-4">
               {factors.map((factor, index) => (
-                <div key={index} className={styles.factorItem}>
-                  <div className={styles.factorHeader}>
-                    <span className={styles.factorName}>{factor.name}</span>
-                    <span className={styles.factorScore}>
+                <div key={index} className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium text-gray-800">{factor.name}</span>
+                    <span className="text-sm font-semibold text-gray-600">
                       {Math.round(factor.score * 100)}%
                     </span>
                   </div>
-                  <div className={styles.factorBar}>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div
-                      className={styles.factorProgress}
+                      className="h-2 rounded-full transition-all"
                       style={{
                         width: `${factor.score * 100}%`,
                         backgroundColor: factor.score > 0.8 ? '#10b981' : factor.score >= 0.6 ? '#f59e0b' : '#ef4444'
                       }}
                     />
                   </div>
-                  <div className={styles.factorWeight}>
+                  <div className="text-xs text-gray-500">
                     Weight: {Math.round(factor.weight * 100)}%
                   </div>
                 </div>
