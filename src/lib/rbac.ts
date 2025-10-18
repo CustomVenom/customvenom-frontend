@@ -77,7 +77,7 @@ export function hasPermission(
   email?: string | null
 ): boolean {
   const effectiveRole = getEffectiveRole(userRole, email);
-  return PERMISSIONS[permission].includes(effectiveRole);
+  return (PERMISSIONS[permission] as readonly Role[]).includes(effectiveRole);
 }
 
 // Get user entitlements based on role

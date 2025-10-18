@@ -129,7 +129,7 @@ export async function fetchProjections(week: string = '2025-06', forceRefresh: b
       { week, forceRefresh }
     );
     
-    return result.data;
+    return result.data as Row[];
   } catch (error) {
     console.error('Failed to fetch projections:', error);
     return [];

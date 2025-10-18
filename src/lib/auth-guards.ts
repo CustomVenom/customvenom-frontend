@@ -4,7 +4,7 @@
 
 import { redirect } from 'next/navigation';
 import { auth } from './auth';
-import { getEntitlements } from './entitlements';
+import { getEntitlements, type Entitlements } from './entitlements';
 import { type Permission } from './rbac';
 
 /**
@@ -91,8 +91,8 @@ export async function getCurrentUser() {
 }
 
 // Helper to map permissions to feature keys
-function getFeatureFromPermission(permission: Permission): keyof ReturnType<typeof getEntitlements>['features'] {
-  const mapping: Record<Permission, keyof ReturnType<typeof getEntitlements>['features']> = {
+function getFeatureFromPermission(permission: Permission): keyof Entitlements['features'] {
+  const mapping: Record<Permission, keyof Entitlements['features']> = {
     'VIEW_ANALYTICS': 'analytics',
     'USE_COMPARE_VIEW': 'compareView',
     'EXPORT_CSV': 'csvExport',

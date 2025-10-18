@@ -23,7 +23,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 // Yahoo OAuth (Preview/Production when configured)
 if (process.env.YAHOO_CLIENT_ID && process.env.YAHOO_CLIENT_SECRET) {
-  providers.push(YahooProvider as Parameters<typeof NextAuth>[0]['providers'][0]);
+  providers.push(YahooProvider as any);
 }
 
 // Twitter OAuth (optional - add when needed)

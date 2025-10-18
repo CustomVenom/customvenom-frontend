@@ -94,8 +94,8 @@ export function trackEvent(
   try {
     const event: AnalyticsEvent = {
       event_type,
-      tool_name: properties?.tool_name,
-      action: properties?.action,
+      tool_name: typeof properties?.tool_name === 'string' ? properties.tool_name : undefined,
+      action: typeof properties?.action === 'string' ? properties.action : undefined,
       properties: properties || {},
       user_id: getUserId(),
       session_id: getSessionId(),
@@ -163,11 +163,14 @@ export function trackRiskModeChange(
   risk_mode: 'protect' | 'neutral' | 'chase',
   previous_mode?: 'protect' | 'neutral' | 'chase'
 ): void {
-  trackEvent('risk_mode_changed', {
+  const props: Record<string, JsonValue> = {
     tool_name,
     risk_mode,
-    previous_mode,
-  });
+  };
+  if (previous_mode) {
+    props.previous_mode = previous_mode;
+  }
+  trackEvent('risk_mode_changed', props);
 }
 
 /**
@@ -245,7 +248,9 @@ export function getRiskModeDistribution(events: StoredEvent[]) {
   const riskEvents = events.filter(e => e.event_type === 'risk_mode_changed');
   
   const distribution = riskEvents.reduce((acc, event) => {
-    const mode = event.properties?.risk_mode || 'unknown';
+    const mode = typeof event.properties?.risk_mode === 'string' 
+      ? event.properties.risk_mode 
+      : 'unknown';
     acc[mode] = (acc[mode] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
