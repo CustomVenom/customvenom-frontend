@@ -75,7 +75,7 @@ export default function PlayerSearch({
         onKeyDown={onKeyDown}
         onFocus={() => q && setOpen(true)}
         placeholder={placeholder}
-        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-brand-primary dark:focus:border-brand-accent focus:outline-none"
+        className="w-full rounded-lg px-3 py-2 text-sm"
         autoFocus={autoFocus}
         aria-expanded={open}
         aria-controls="player-search-listbox"
@@ -86,24 +86,24 @@ export default function PlayerSearch({
         <ul
           id="player-search-listbox"
           role="listbox"
-          className="absolute z-30 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-1 text-sm shadow-lg"
+          className="absolute z-30 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-[rgba(148,163,184,0.2)] bg-[rgb(var(--bg-card))] p-1 text-sm shadow-2xl"
         >
           {results.map((r, i) => (
             <li
               key={`${r.player_id ?? r.player_name}-${i}`}
               role="option"
               aria-selected={i === active}
-              className={`cursor-pointer rounded px-3 py-2 transition-colors ${
+              className={`cursor-pointer rounded px-3 py-2 transition-all ${
                 i === active 
-                  ? 'bg-brand-primary text-white' 
-                  : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                  ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg' 
+                  : 'text-[rgb(var(--text-primary))] hover:bg-[rgba(16,185,129,0.1)]'
               }`}
               onMouseEnter={() => setActive(i)}
               onMouseDown={e => { e.preventDefault(); choose(i); }}
             >
               <div className="font-medium">{r.player_name ?? '—'}</div>
               {(r.team || r.position) && (
-                <div className={`text-xs ${i === active ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
+                <div className={`text-xs ${i === active ? 'text-[#0A0E1A]/70' : 'text-[rgb(var(--text-dim))]'}`}>
                   {r.team && <span>{r.team}</span>}
                   {r.team && r.position && <span> · </span>}
                   {r.position && <span>{r.position}</span>}
