@@ -47,7 +47,8 @@ export const authOptions: NextAuthOptions = {
       // Add user ID and Yahoo context to session
       if (session.user) {
         session.user.id = token.userId as string;
-        session.user.sub = (token as any)?.yah?.sub ?? null;
+        const yahToken = token as { yah?: { sub?: string } };
+        session.user.sub = yahToken.yah?.sub ?? null;
       }
       return session;
     },
