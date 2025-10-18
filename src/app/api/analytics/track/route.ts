@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/db';
 import type { AnalyticsEvent } from '@/lib/analytics';
 
 /**
  * Analytics event tracking endpoint
  * Phase 2.1b: Prisma/database persistence with hourly rollups
  */
-
-const prisma = new PrismaClient();
 
 interface RollupData {
   event_counts: Record<string, number>;

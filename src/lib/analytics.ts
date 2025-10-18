@@ -30,7 +30,7 @@ function getSessionId(): string {
   
   let sessionId = sessionStorage.getItem('cv_session_id');
   if (!sessionId) {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     sessionStorage.setItem('cv_session_id', sessionId);
   }
   return sessionId;
@@ -56,7 +56,7 @@ function storeEvent(event: AnalyticsEvent): void {
   try {
     const stored: StoredEvent = {
       ...event,
-      id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `evt_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
     };
     
     // Get existing events
@@ -87,7 +87,7 @@ function storeEvent(event: AnalyticsEvent): void {
  */
 export function trackEvent(
   event_type: string,
-  properties?: Record<string, unknown>
+  properties?: Record<string, JsonValue>
 ): void {
   const startTime = performance.now();
   

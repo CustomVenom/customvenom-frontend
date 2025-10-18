@@ -1,5 +1,3 @@
-import '@/../sentry.server.config';
-import '@/../sentry.client.config';
 import type { Metadata } from "next";
 import { Inter, Merriweather_Sans } from "next/font/google";
 import "./globals.css";

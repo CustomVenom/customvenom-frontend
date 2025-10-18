@@ -59,7 +59,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true, event_type: event.type });
 }
 
-export const config = {
-  api: { bodyParser: false },
-};
-

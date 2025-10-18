@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/db';
 
 /**
  * GET /api/analytics/rollups?hours=168
  * Retrieve hourly rollup data from database
  * Default: last 7 days (168 hours)
  */
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {

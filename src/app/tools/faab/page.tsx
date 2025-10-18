@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Metadata } from 'next';
 import ToolsTabs from '@/components/ToolsTabs';
 import EmptyState from '@/components/EmptyState';
 import ActionBar from '@/components/ActionBar';
