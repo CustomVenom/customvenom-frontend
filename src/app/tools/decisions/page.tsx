@@ -9,6 +9,7 @@ import ActionBar from '@/components/ActionBar';
 import { type Row } from '@/lib/tools';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
 
 function DecisionsContent() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
@@ -23,6 +24,7 @@ function DecisionsContent() {
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
 
   function openDrawer(row: Row) {
+    trackFeatureInteraction('player_drawer', 'opened', { tool: 'Decisions', player: row.player_name });
     setDrawerRow(row);
     setDrawerOpen(true);
   }
@@ -31,6 +33,16 @@ function DecisionsContent() {
     setDrawerOpen(false);
     setDrawerRow(null);
   }
+
+  // Track tool view
+  useEffect(() => {
+    trackToolUsage('Decisions', 'viewed');
+  }, []);
+
+  // Track risk mode changes
+  useEffect(() => {
+    trackRiskModeChange('Decisions', risk);
+  }, [risk]);
 
   // Keyboard shortcuts for risk modes
   useEffect(() => {
@@ -41,10 +53,13 @@ function DecisionsContent() {
       }
       
       if (e.key === '1') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_protect', { tool: 'Decisions' });
         setRisk('protect');
       } else if (e.key === '2') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_neutral', { tool: 'Decisions' });
         setRisk('neutral');
       } else if (e.key === '3') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_chase', { tool: 'Decisions' });
         setRisk('chase');
       }
     };

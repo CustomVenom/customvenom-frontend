@@ -10,6 +10,7 @@ import { useToast } from '@/components/Toast';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { faabSummary } from '@/lib/summary';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import { trackToolUsage, trackFeatureInteraction } from '@/lib/analytics';
 
 function FaabContent() {
   const [player, setPlayer] = useState('');
@@ -23,6 +24,11 @@ function FaabContent() {
   
   const { setMsg, Toast } = useToast();
 
+  // Track tool view
+  useEffect(() => {
+    trackToolUsage('FAAB', 'viewed');
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -32,6 +38,7 @@ function FaabContent() {
       }
       
       if (e.key === 'Enter' && player && budget) {
+        trackFeatureInteraction('keyboard_shortcut', 'enter_calculate', { tool: 'FAAB' });
         handleCalculate();
       }
     };
@@ -41,11 +48,18 @@ function FaabContent() {
   }, [player, budget]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleExample() {
+    trackFeatureInteraction('example', 'loaded', { tool: 'FAAB' });
     setPlayer('Jahmyr Gibbs');
     setBudget('100');
   }
 
   async function handleCalculate() {
+    // Track calculation
+    trackToolUsage('FAAB', 'calculate', {
+      player,
+      budget: parseInt(budget)
+    });
+    
     // TODO: Wire to API endpoint
     // For now, return mock data
     setResult({
@@ -57,6 +71,7 @@ function FaabContent() {
   }
 
   function copyBid(amount: number, label: 'Min' | 'Likely' | 'Max') {
+    trackFeatureInteraction('copy_bid', label.toLowerCase(), { tool: 'FAAB', amount });
     navigator.clipboard.writeText(amount.toString());
     setMsg(`${label} bid copied`);
   }

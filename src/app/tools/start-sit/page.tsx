@@ -13,6 +13,7 @@ import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { useToast } from '@/components/Toast';
 import { startSitSummary } from '@/lib/summary';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
 
 function StartSitContent() {
   const [playerA, setPlayerA] = useState('');
@@ -33,8 +34,21 @@ function StartSitContent() {
   const { setMsg, Toast } = useToast();
 
   useEffect(() => { 
+    // Track tool view
+    trackToolUsage('Start/Sit', 'viewed');
+    
     fetchProjections().then(setSuggestions).catch(() => {}); 
   }, []);
+
+  // Track risk mode changes
+  useEffect(() => {
+    const previousRisk = risk;
+    return () => {
+      if (previousRisk !== risk) {
+        trackRiskModeChange('Start/Sit', risk, previousRisk);
+      }
+    };
+  }, [risk]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -45,12 +59,16 @@ function StartSitContent() {
       }
       
       if (e.key === 'Enter' && playerA && playerB) {
+        trackFeatureInteraction('keyboard_shortcut', 'enter_compare', { tool: 'Start/Sit' });
         handleCompare();
       } else if (e.key === '1') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_protect', { tool: 'Start/Sit' });
         setRisk('protect');
       } else if (e.key === '2') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_neutral', { tool: 'Start/Sit' });
         setRisk('neutral');
       } else if (e.key === '3') {
+        trackFeatureInteraction('keyboard_shortcut', 'risk_chase', { tool: 'Start/Sit' });
         setRisk('chase');
       }
     };
@@ -70,12 +88,20 @@ function StartSitContent() {
   }
 
   function handleExample() {
+    trackFeatureInteraction('example', 'loaded', { tool: 'Start/Sit' });
     setPlayerA('Patrick Mahomes');
     setPlayerB('Jalen Hurts');
     setRisk('neutral');
   }
 
   async function handleCompare() {
+    // Track comparison
+    trackToolUsage('Start/Sit', 'compare', {
+      playerA,
+      playerB,
+      risk_mode: risk
+    });
+    
     // TODO: Wire to API endpoint
     // For now, return mock data
     const mockRowA: Row = {
