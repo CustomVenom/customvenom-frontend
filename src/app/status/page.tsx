@@ -24,8 +24,9 @@ export default function StatusPage() {
         const json: Ops = await res.json();
         if (!alive) return;
         setData(json);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!alive) return;
+        console.error('Failed to load status:', e);
         setErr('Unable to load status right now.');
       }
     }

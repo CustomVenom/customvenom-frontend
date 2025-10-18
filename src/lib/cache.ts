@@ -4,7 +4,7 @@
 import { trackEvent } from './analytics';
 
 export interface CachedProjections {
-  data: any;
+  data: unknown;
   timestamp: number;
   week: string;
 }
@@ -61,7 +61,7 @@ export function getCachedProjections(): CachedProjections | null {
 /**
  * Save projections to cache
  */
-export function setCachedProjections(data: any, week?: string): void {
+export function setCachedProjections(data: unknown, week?: string): void {
   if (typeof window === 'undefined') return;
   
   try {
@@ -96,13 +96,13 @@ export function clearProjectionsCache(): void {
  * Returns cached data immediately if fresh, fetches in background if stale
  */
 export async function getProjectionsWithCache(
-  fetchFn: () => Promise<any>,
+  fetchFn: () => Promise<unknown>,
   options: {
     forceRefresh?: boolean;
     week?: string;
   } = {}
 ): Promise<{
-  data: any;
+  data: unknown;
   fromCache: boolean;
   cacheStatus: 'fresh' | 'stale' | 'expired' | 'none';
 }> {
@@ -232,7 +232,7 @@ export async function getProjectionsWithCache(
  * Call this on app load for instant tool access
  */
 export async function warmProjectionsCache(
-  fetchFn: () => Promise<any>,
+  fetchFn: () => Promise<unknown>,
   options: {
     silent?: boolean; // Don't throw errors, just log
     week?: string;

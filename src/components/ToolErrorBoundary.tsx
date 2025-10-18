@@ -1,6 +1,6 @@
 'use client';
 
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, ErrorInfo } from 'react';
 import * as Sentry from '@sentry/nextjs';
 
 interface Props {
@@ -23,7 +23,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log to Sentry with tool-specific tags
     Sentry.captureException(error, {
       tags: {
