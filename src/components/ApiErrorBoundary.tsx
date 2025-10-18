@@ -55,7 +55,7 @@ export class ApiErrorBoundary extends Component<Props, State> {
             <div className="bg-gray-50 dark:bg-gray-800 rounded p-3 text-sm">
               <p className="text-gray-500 mb-2">Request ID:</p>
               <div className="flex items-center justify-center gap-2">
-                <code className="font-mono text-xs bg-white dark:bg-gray-900 px-2 py-1 rounded border">
+                <code className="font-mono text-xs bg-[rgb(var(--bg-input))] px-2 py-1 rounded border border-[rgba(148,163,184,0.2)] text-[rgb(var(--cv-primary))]">
                   {requestId}
                 </code>
                 <button
@@ -71,7 +71,7 @@ export class ApiErrorBoundary extends Component<Props, State> {
           
           <button 
             onClick={() => this.setState({ hasError: false, copied: false })}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-[rgb(var(--cv-primary))] text-[#0A0E1A] rounded-lg hover:bg-[rgb(var(--success))] transition-all font-semibold shadow-lg"
           >
             Retry
           </button>

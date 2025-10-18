@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         We keep data collection minimal to run the product and improve reliability.
       </p>
 
-      <section className="rounded border bg-white p-4 space-y-2">
+      <section className="rounded-lg border border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg-card))] p-4 space-y-2">
         <h2 className="h2">What we collect</h2>
         <ul className="list-disc pl-5 text-sm">
           <li>Basic usage analytics (page views, feature use) without sensitive content</li>
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
         </ul>
       </section>
 
-      <section className="rounded border bg-white p-4 space-y-2">
+      <section className="rounded-lg border border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg-card))] p-4 space-y-2">
         <h2 className="h2">What we do not collect</h2>
         <ul className="list-disc pl-5 text-sm">
           <li>No passwords (handled by your provider)</li>
@@ -26,7 +26,7 @@ export default function PrivacyPage() {
         </ul>
       </section>
 
-      <section className="rounded border bg-white p-4 space-y-2">
+      <section className="rounded-lg border border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg-card))] p-4 space-y-2">
         <h2 className="h2">Control and export</h2>
         <ul className="list-disc pl-5 text-sm">
           <li>Request export or deletion any time: trust@customvenom.com</li>
