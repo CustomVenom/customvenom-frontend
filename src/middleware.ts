@@ -1,11 +1,36 @@
 // Middleware for route protection
-// Currently minimal to stay under Edge Function size limits
-// Pro-only route protection moved to page-level guards (requirePro helper)
+// Handles demo mode and paywall bypass for development
 
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export function middleware() {
-  // No middleware logic needed - all auth checks happen at page/API level
+export function middleware(request: NextRequest) {
+  // Paywall bypass for development
+  if (process.env.PAYWALL_DISABLED === '1') {
+    return NextResponse.next();
+  }
+
+  // Demo mode - allow anonymous access to public routes
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === '1';
+  
+  const publicRoutes = [
+    '/',
+    '/projections',
+    '/status',
+    '/privacy',
+    '/terms',
+    '/api/auth',
+  ];
+  
+  const isPublicRoute = publicRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  );
+  
+  if (isDemoMode && isPublicRoute) {
+    return NextResponse.next();
+  }
+
+  // All other auth checks happen at page/API level
   // This keeps the Edge Function bundle small (<1MB for Vercel free tier)
   return NextResponse.next();
 }

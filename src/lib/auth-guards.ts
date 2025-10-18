@@ -10,8 +10,15 @@ import { type Permission } from './rbac';
 /**
  * Require authentication
  * Redirects to home if not authenticated
+ * Bypassed if PAYWALL_DISABLED=1 in development
  */
 export async function requireAuth() {
+  // Paywall bypass for development
+  if (process.env.PAYWALL_DISABLED === '1') {
+    const session = await auth();
+    return session || null;
+  }
+  
   const session = await auth();
   
   if (!session?.user) {
@@ -44,8 +51,16 @@ export async function requirePermission(permission: Permission) {
 /**
  * Require admin access
  * Redirects to home if not admin
+ * Admin emails from RBAC automatically bypass
  */
 export async function requireAdmin() {
+  // Paywall bypass for development
+  if (process.env.PAYWALL_DISABLED === '1') {
+    const session = await auth();
+    const entitlements = await getEntitlements();
+    return { session, entitlements };
+  }
+  
   const session = await requireAuth();
   const entitlements = await getEntitlements();
   
@@ -59,10 +74,23 @@ export async function requireAdmin() {
 /**
  * Require Pro subscription
  * Redirects to upgrade page if not Pro
+ * Admin emails automatically bypass
  */
 export async function requirePro() {
+  // Paywall bypass for development
+  if (process.env.PAYWALL_DISABLED === '1') {
+    const session = await auth();
+    const entitlements = await getEntitlements();
+    return { session, entitlements };
+  }
+  
   const session = await requireAuth();
   const entitlements = await getEntitlements();
+  
+  // Admin emails bypass pro requirement
+  if (entitlements.isAdmin) {
+    return { session, entitlements };
+  }
   
   if (!entitlements.isPro) {
     redirect('/go-pro?error=pro_required');

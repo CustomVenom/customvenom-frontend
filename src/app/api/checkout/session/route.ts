@@ -1,37 +1,49 @@
-// Simple checkout session for Preview testing
-// No database writes, just redirects to Stripe test checkout
-
+import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 
-// Only initialize if Stripe is configured
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' })
-  : null;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+});
 
-export async function POST() {
-  // Check if Stripe is configured
-  if (!stripe || !process.env.NEXT_PUBLIC_CHECKOUT_PRICE) {
-    return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });
+export async function POST(req: NextRequest) {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    const { priceId } = await req.json();
+
+    if (!priceId) {
+      return NextResponse.json({ error: 'Price ID required' }, { status: 400 });
+    }
+
+    const frontendBase = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
+    const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
+      customer_email: session.user.email,
       line_items: [
         {
-          price: process.env.NEXT_PUBLIC_CHECKOUT_PRICE,
+          price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/settings?pro=1`,
-      cancel_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/go-pro?canceled=1`,
+      success_url: `${frontendBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${frontendBase}/checkout/cancel`,
+      metadata: {
+        userId: session.user.id,
+      },
     });
 
-    return NextResponse.json({ id: session.id, url: session.url });
-  } catch (error) {
-    console.error('Checkout session creation failed:', error);
-    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch (err) {
+    console.error('[Checkout Error]', err);
+    return NextResponse.json(
+      { error: 'Failed to create checkout session' },
+      { status: 500 }
+    );
   }
 }
