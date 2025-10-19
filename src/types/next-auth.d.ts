@@ -1,18 +1,25 @@
 import 'next-auth';
 import 'next-auth/jwt';
+import { DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
     user: NonNullable<Session['user']> & {
       id: string;
       role?: 'free' | 'pro' | 'team' | 'admin';
-      sub?: string | null;
+      // Yahoo
+      sub: string;
+      yah?: string;
+      // Stripe
       stripeCustomerId?: string;
     };
   }
 
-  interface User {
+  interface User extends DefaultUser {
     role?: 'free' | 'pro' | 'team' | 'admin';
+    sub?: string;
+    yah?: string;
+    stripeCustomerId?: string;
   }
 }
 

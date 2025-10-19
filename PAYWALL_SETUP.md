@@ -263,3 +263,4 @@ PAYWALL_DISABLED=0  # Never enable in production
 
 **Ready to use:** Copy `.env.local.template` → `.env.local` and run `npm run dev`
 
+

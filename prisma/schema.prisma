@@ -16,23 +16,32 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  
+
   // Business fields
   role          String    @default("free") // free | pro | team
+
+  // Yahoo OAuth fields
+  sub           String?   @unique // Yahoo user ID (sub claim)
+  yah           String?   // Yahoo-specific metadata (JSON)
+
+  // Stripe fields
   stripeCustomerId String? @unique
   subscriptionStatus String? // trial | active | paused | canceled
   tier          String?   // free | pro | team
   paidUntil     DateTime?
-  
+
   // Relations
   accounts      Account[]
   sessions      Session[]
   preferences   UserPreferences?
   leagues       League[]
   events        AnalyticsEvent[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([sub])
+  @@index([stripeCustomerId])
 }
 
 model Account {
@@ -48,9 +57,9 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([provider, providerAccountId])
 }
 
@@ -59,7 +68,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -67,7 +76,7 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  
+
   @@unique([identifier, token])
 }
 
@@ -96,7 +105,7 @@ model League {
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
+
   @@unique([userId, platform, leagueId])
   @@index([userId])
 }
@@ -114,7 +123,7 @@ model AnalyticsEvent {
   timestamp  DateTime @default(now())
   receivedAt DateTime @default(now()) // When server received it
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
+
   @@index([userId, eventType])
   @@index([timestamp])
   @@index([sessionId])
@@ -133,7 +142,7 @@ model HourlyRollup {
   totalEvents      Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  
+
   @@index([hour])
 }
 

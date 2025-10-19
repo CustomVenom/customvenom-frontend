@@ -1,138 +1,42 @@
-/**
- * Auth Guards - Protect routes and components based on permissions
- */
+// Runtime validation guards for auth features
 
+import { Session } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { auth } from './auth';
-import { getEntitlements, type Entitlements } from './entitlements';
-import { type Permission } from './rbac';
 
 /**
- * Require authentication
- * Redirects to home if not authenticated
- * Bypassed if PAYWALL_DISABLED=1 in development
+ * Validate Yahoo session has required fields
+ * Use before calling Yahoo Fantasy APIs
  */
-export async function requireAuth() {
-  // Paywall bypass for development
-  if (process.env.PAYWALL_DISABLED === '1') {
-    const session = await auth();
-    return session || null;
+export function requireYahooAuth(
+  session: Session | null
+): asserts session is Session & { user: { sub: string } } {
+  if (!session?.user?.sub) {
+    throw new Error('Yahoo authentication required');
   }
-  
-  const session = await auth();
-  
-  if (!session?.user) {
-    redirect('/?error=auth_required');
-  }
-  
-  return session;
 }
 
 /**
- * Require specific permission
- * Redirects to appropriate page if permission not granted
+ * Validate Stripe customer for paid features
+ * Redirects to /billing if not a paying customer
  */
-export async function requirePermission(permission: Permission) {
-  const session = await requireAuth();
-  const entitlements = await getEntitlements();
-  
-  if (!entitlements.features[getFeatureFromPermission(permission)]) {
-    // Redirect based on what they're missing
-    if (permission === 'ACCESS_OPS_DASHBOARD' || permission === 'VIEW_ALL_USERS') {
-      redirect('/?error=admin_only');
-    } else {
-      redirect('/go-pro?error=permission_required');
-    }
+export function requirePaidSubscription(session: Session | null) {
+  if (!session?.user?.stripeCustomerId) {
+    redirect('/billing');
   }
-  
-  return { session, entitlements };
 }
 
 /**
- * Require admin access
- * Redirects to home if not admin
- * Admin emails from RBAC automatically bypass
+ * Check if user has paid subscription (boolean)
+ * Use for conditional rendering
  */
-export async function requireAdmin() {
-  // Paywall bypass for development
-  if (process.env.PAYWALL_DISABLED === '1') {
-    const session = await auth();
-    const entitlements = await getEntitlements();
-    return { session, entitlements };
-  }
-  
-  const session = await requireAuth();
-  const entitlements = await getEntitlements();
-  
-  if (!entitlements.isAdmin) {
-    redirect('/?error=admin_only');
-  }
-  
-  return { session, entitlements };
+export function hasPaidSubscription(session: Session | null): boolean {
+  return Boolean(session?.user?.stripeCustomerId);
 }
 
 /**
- * Require Pro subscription
- * Redirects to upgrade page if not Pro
- * Admin emails automatically bypass
+ * Check if user has Yahoo connection (boolean)
+ * Use for conditional rendering
  */
-export async function requirePro() {
-  // Paywall bypass for development
-  if (process.env.PAYWALL_DISABLED === '1') {
-    const session = await auth();
-    const entitlements = await getEntitlements();
-    return { session, entitlements };
-  }
-  
-  const session = await requireAuth();
-  const entitlements = await getEntitlements();
-  
-  // Admin emails bypass pro requirement
-  if (entitlements.isAdmin) {
-    return { session, entitlements };
-  }
-  
-  if (!entitlements.isPro) {
-    redirect('/go-pro?error=pro_required');
-  }
-  
-  return { session, entitlements };
+export function hasYahooConnection(session: Session | null): boolean {
+  return Boolean(session?.user?.sub);
 }
-
-/**
- * Get current user with entitlements
- * Returns null if not authenticated
- */
-export async function getCurrentUser() {
-  const session = await auth();
-  
-  if (!session?.user) {
-    return null;
-  }
-  
-  const entitlements = await getEntitlements();
-  
-  return {
-    ...session.user,
-    entitlements,
-  };
-}
-
-// Helper to map permissions to feature keys
-function getFeatureFromPermission(permission: Permission): keyof Entitlements['features'] {
-  const mapping: Record<Permission, keyof Entitlements['features']> = {
-    'VIEW_ANALYTICS': 'analytics',
-    'USE_COMPARE_VIEW': 'compareView',
-    'EXPORT_CSV': 'csvExport',
-    'WEEKLY_RECAP_EMAIL': 'recapEmail',
-    'IMPORT_LEAGUES': 'compareView', // Basic feature
-    'MULTIPLE_LEAGUES': 'multipleLeagues',
-    'VIEW_ALL_USERS': 'adminDashboard',
-    'MANAGE_SUBSCRIPTIONS': 'adminDashboard',
-    'VIEW_SYSTEM_METRICS': 'adminDashboard',
-    'ACCESS_OPS_DASHBOARD': 'adminDashboard',
-  };
-  
-  return mapping[permission] || 'compareView';
-}
-

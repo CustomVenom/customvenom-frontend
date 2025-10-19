@@ -17,11 +17,11 @@ export async function getServerSession() {
  */
 export async function requireAuth() {
   const session = await getServerSession();
-  
+
   if (!session?.user) {
     redirect('/');
   }
-  
+
   return session;
 }
 
@@ -31,11 +31,11 @@ export async function requireAuth() {
  */
 export async function requirePro() {
   const session = await requireAuth();
-  
+
   if (session.user.role !== 'pro') {
     redirect('/go-pro');
   }
-  
+
   return session;
 }
 
@@ -57,3 +57,24 @@ export async function isAuthenticated() {
   return !!session?.user;
 }
 
+/**
+ * Require paid subscription
+ * Redirects to /billing if user doesn't have stripeCustomerId
+ */
+export async function requirePaid() {
+  const session = await requireAuth();
+
+  if (!session.user.stripeCustomerId) {
+    redirect('/billing');
+  }
+
+  return session;
+}
+
+/**
+ * Check if user has paid subscription (boolean check)
+ */
+export async function hasPaid() {
+  const session = await getServerSession();
+  return Boolean(session?.user?.stripeCustomerId);
+}
