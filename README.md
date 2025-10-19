@@ -28,7 +28,7 @@ cp .env.example .env.local
 # Edit .env.local with your values
 
 npx prisma generate
-npx prisma migrate dev
+npx prisma migrate dev --name add_yahoo_stripe_fields
 
 npm run dev
 ```
@@ -37,11 +37,12 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## 🎯 Features
 
-- Projections with risk assessment and reason chips (±3.5% clamp)
-- Density toggle with localStorage persistence
-- Skeletons to prevent layout shift
-- Stripe Pro tier integration
-- Zod validation at API boundaries
+- **Projections** - Risk assessment and reason chips (±3.5% clamp)
+- **Auth Hardening** - Type-safe Yahoo OAuth + Stripe integration (v1.0.0)
+- **League Import** - Yahoo Fantasy integration ready
+- **Paywall** - Runtime guards for paid features
+- **UI Polish** - Density toggle, skeletons, localStorage persistence
+- **Validation** - Zod schema validation at API boundaries
 
 ## 📡 API
 
