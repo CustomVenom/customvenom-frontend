@@ -1,3 +1,10 @@
+# CI Guardrails:
+# - Resolve API base once; never curl a blank URL (API_BASE_STAGING -> STAGING_BASE).
+# - Skip posting to Notion/GitHub when secrets/vars are missing.
+# - Normalize: ROADMAP_DATABASE_ID = ROADMAP_DATABASE_ID || NOTION_DATABASE_ID.
+# - Route contract: /health = .ok only; /projections = trust headers + schema.
+# - Use scripts + jq; avoid inline JSON in YAML.
+
 name: Notion Sync
 
 on:
@@ -40,8 +47,9 @@ jobs:
             [ -z "${NOTION_DATABASE_ID:-}" ] && missing+=("NOTION_DATABASE_ID")
           fi
           if [ "${#missing[@]}" -gt 0 ]; then
-            echo "::error::Missing required secrets: ${missing[*]}"
-            exit 1
+            echo "⚠️ Missing required secrets: ${missing[*]}"
+            echo "✅ Skipping Notion sync (missing secrets in schedule context)."
+            exit 0
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

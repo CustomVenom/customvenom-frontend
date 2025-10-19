@@ -1,0 +1,55 @@
+# CI Guardrails Verification
+# Enforces that all workflows follow the guardrail patterns to prevent regression
+
+name: CI Guardrails Verification
+
+on:
+  pull_request:
+    branches: [ main, staging ]
+  push:
+    branches: [ main ]
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify skip-on-missing for Notion/GitHub posting
+        run: |
+          set -euo pipefail
+          FAIL=0
+          for f in $(git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml'); do
+            # Check if workflow posts to Notion or GitHub APIs
+            if grep -qi 'api.notion.com' "$f" || grep -qi 'NOTION_TOKEN' "$f"; then
+              if ! grep -q 'Guard posting' "$f" && ! grep -q 'Skipping Notion' "$f"; then
+                echo "::error file=$f::Missing skip-on-missing guard for Notion posting"
+                FAIL=1
+              fi
+            fi
+          done
+          exit $FAIL
+
+      - name: Verify CI guardrails banner present
+        run: |
+          set -euo pipefail
+          FAIL=0
+          for f in $(git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml'); do
+            if ! grep -q 'CI Guardrails:' "$f"; then
+              echo "::warning file=$f::Missing CI guardrails banner at top of file"
+            fi
+          done
+          exit $FAIL
+
+      - name: Check for inline JSON string concatenation (should use jq)
+        run: |
+          set -euo pipefail
+          FAIL=0
+          for f in $(git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml'); do
+            # Warn if using string substitution for JSON (e.g., ${BODY//VAR/value})
+            if grep -q 'BODY.*//.*/' "$f"; then
+              echo "::warning file=$f::Consider extracting JSON generation to script with jq"
+            fi
+          done
+          exit $FAIL
+

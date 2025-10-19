@@ -1,0 +1,23 @@
+# CODEOWNERS for customvenom-frontend
+# These owners will be requested for review when someone opens a pull request
+
+# Workflows and CI configuration require review to prevent guardrail regression
+/.github/workflows/ @Incarcer
+/.github/CODEOWNERS @Incarcer
+/.github/PULL_REQUEST_TEMPLATE.md @Incarcer
+
+# Core app and authentication
+/src/app/ @Incarcer
+/src/lib/auth/ @Incarcer
+/src/middleware.ts @Incarcer
+
+# Database schema and migrations
+/prisma/ @Incarcer
+
+# API routes and server actions
+/src/app/api/ @Incarcer
+
+# Critical configuration
+/next.config.js @Incarcer
+/package.json @Incarcer
+

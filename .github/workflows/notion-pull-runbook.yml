@@ -1,3 +1,10 @@
+# CI Guardrails:
+# - Resolve API base once; never curl a blank URL (API_BASE_STAGING -> STAGING_BASE).
+# - Skip posting to Notion/GitHub when secrets/vars are missing.
+# - Normalize: ROADMAP_DATABASE_ID = ROADMAP_DATABASE_ID || NOTION_DATABASE_ID.
+# - Route contract: /health = .ok only; /projections = trust headers + schema.
+# - Use scripts + jq; avoid inline JSON in YAML.
+
 name: Notion → Runbook.md (PR flow)
 
 on:
