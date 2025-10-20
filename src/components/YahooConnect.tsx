@@ -13,12 +13,7 @@ interface YahooConnectProps {
   onConnected?: (sub: string | null) => void;
 }
 
-interface YahooUser {
-  sub: string | null;
-  email?: string | null;
-}
-
-export default function YahooConnect({ onConnected }: YahooConnectProps = {}) {
+export default function YahooConnect(_props: YahooConnectProps = {}) {
   const { data: session, status } = useSession();
   const [leagues, setLeagues] = useState<League[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +29,9 @@ export default function YahooConnect({ onConnected }: YahooConnectProps = {}) {
       setError(null);
 
       const apiBase = process.env.NEXT_PUBLIC_API_BASE;
-      const response = await fetch(`${apiBase}/yahoo/leagues`);
+      const response = await fetch(`${apiBase}/yahoo/leagues`, {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -67,12 +64,12 @@ export default function YahooConnect({ onConnected }: YahooConnectProps = {}) {
         <div>
           <h3 className="text-lg font-semibold">Yahoo Fantasy</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {isYahooConnected 
-              ? 'Connected - You can import your leagues' 
+            {isYahooConnected
+              ? 'Connected - You can import your leagues'
               : 'Connect to import your fantasy leagues'}
           </p>
         </div>
-        
+
         {!isYahooConnected ? (
           <button
             onClick={handleConnect}

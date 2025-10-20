@@ -22,6 +22,10 @@ NEXT_PUBLIC_SENTRY_DSN=
 # Optional - Logs (disable for local dev)
 NEXT_PUBLIC_LOGS_ENABLED=false
 
+# Optional - Yahoo OAuth (for Yahoo Fantasy integration)
+YAHOO_CLIENT_ID=dj0yJmk9VUxWc05DWG5Wc09xJmQ9WVdrOWFFeDViemxXVVRJbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWZl
+YAHOO_CLIENT_SECRET=79f00dfd848f68b469b4e6e4174a5ef1f31d0b63
+
 # ============================================
 # INSTRUCTIONS
 # ============================================

@@ -7,11 +7,12 @@ const tabs = [
   { href: '/tools/start-sit', label: 'Start/Sit' },
   { href: '/tools/faab', label: 'FAAB' },
   { href: '/tools/decisions', label: 'Decisions' },
+  { href: '/tools/yahoo', label: 'Yahoo' },
 ];
 
 export default function ToolsTabs() {
   const p = usePathname();
-  
+
   return (
     <div className="mt-2 border-b border-gray-200 dark:border-gray-700">
       <div className="mx-auto max-w-6xl flex gap-4 px-3">
