@@ -51,7 +51,7 @@ export default function YahooToolPage() {
   // Check if user is connected to Yahoo
   useEffect(() => {
     checkConnection();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkConnection = async () => {
@@ -90,7 +90,8 @@ export default function YahooToolPage() {
       const data = await response.json();
 
       // Parse Yahoo API response
-      const leaguesData = data.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || {};
+      const leaguesData =
+        data.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || {};
       const leaguesList: YahooLeague[] = [];
 
       for (let i = 0; i < (leaguesData.count || 0); i++) {
@@ -133,7 +134,7 @@ export default function YahooToolPage() {
             const key = Object.keys(item)[0];
             teamInfo[key] = item[key];
           });
-          teamsList.push(teamInfo as YahooTeam);
+          teamsList.push(teamInfo as unknown as YahooTeam);
         }
       }
 
@@ -173,7 +174,7 @@ export default function YahooToolPage() {
             const key = Object.keys(item)[0];
             playerInfo[key] = item[key];
           });
-          playersList.push(playerInfo as YahooPlayer);
+          playersList.push(playerInfo as unknown as YahooPlayer);
         }
       }
 
@@ -232,10 +233,7 @@ export default function YahooToolPage() {
           <div className="flex items-center gap-2">
             <span className="text-green-600 dark:text-green-400">✓ Connected</span>
           </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="cv-btn-ghost text-sm"
-          >
+          <button onClick={() => window.location.reload()} className="cv-btn-ghost text-sm">
             Refresh
           </button>
         </div>
@@ -343,4 +341,3 @@ export default function YahooToolPage() {
     </>
   );
 }
-
