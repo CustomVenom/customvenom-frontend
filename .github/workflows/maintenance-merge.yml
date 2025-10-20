@@ -1,0 +1,67 @@
+name: Maintenance — PR tidy
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Set true to list-only; false to execute"
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_PAT }}   # Fine-grained PAT with PR write + contents read
+    steps:
+      - name: Show context
+        run: |
+          echo "Repo: $GITHUB_REPOSITORY"
+          echo "Dry run: ${{ github.event.inputs.dry_run }}"
+
+      - name: Close stale PR #9 (non-descriptive)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          gh pr close 9 --comment "Closing stale PR. Re-open with clear scope if needed." || true
+
+      - name: List open PRs (dry-run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: gh pr list --limit 50
+
+      # Merge order: CI bumps → dev deps → runtime deps → framework last
+
+      - name: Merge CI bumps (frontend)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          for n in 11 10; do
+            gh pr merge $n --squash --auto || true
+          done
+
+      - name: Merge dev deps (frontend)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          for n in 14; do
+            gh pr merge $n --squash --auto || true
+          done
+
+      - name: Merge runtime deps (frontend)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          for n in 16 15 13; do
+            gh pr merge $n --squash --auto || true
+          done
+
+      - name: Merge framework last (frontend — Next.js)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          gh pr merge 12 --squash --auto || true
+
+# Notes:
+# - Requires repo secret GITHUB_PAT (fine-grained token: pull_requests:write, contents:read)
+# - CI/branch protection will gate merges; if checks are red, auto-merge won't complete
+# - Run with: gh workflow run "Maintenance — PR tidy" -f dry_run=false
+

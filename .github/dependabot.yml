@@ -1,31 +1,50 @@
+# Dependabot v2 config
+
 version: 2
+
 updates:
-  # Enable version updates for npm
+  # NPM (frontend)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 5
+      interval: "weekly"          # Options: daily, weekly, monthly
+      day: "monday"               # Optional: day for weekly
+      time: "09:00"               # Optional: UTC time
+    open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "automated"
+      - "automerge"
     commit-message:
-      prefix: "chore"
+      prefix: "chore(deps)"
       include: "scope"
-    
-  # Enable version updates for GitHub Actions
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+      tooling:
+        patterns:
+          - "@types/*"
+          - "@eslint/*"
+          - "eslint*"
+          - "prettier*"
+
+  # GitHub Actions (CI)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 3
+      time: "09:05"
     labels:
       - "dependencies"
-      - "github-actions"
+      - "ci"
+      - "automerge"
     commit-message:
       prefix: "ci"
+      include: "scope"
 
+# Notes:
+# - Label "automerge" allows Auto-merge to pick these up once checks pass
+# - Grouping minor/patch reduces PR noise while keeping majors separate
