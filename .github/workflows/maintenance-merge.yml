@@ -16,7 +16,7 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_PAT }}   # Fine-grained PAT with PR write + contents read
+      GH_TOKEN: ${{ secrets.PR_TIDY_TOKEN }}   # Fine-grained PAT with PR write + contents read
     steps:
       - name: Show context
         run: |
