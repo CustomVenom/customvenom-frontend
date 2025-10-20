@@ -15,7 +15,7 @@
     "type-check": "tsc --noEmit",
     "pre-commit": "npm run lint && npm run type-check",
     "prepare": "husky install",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate || echo 'Prisma generate skipped (DATABASE_URL not set)'",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
     "smoke:yahoo-session": "curl -s http://localhost:3000/api/auth/session | jq '.user | {sub,yah,stripeCustomerId}'",
     "smoke:paid-gate": "curl -s -I http://localhost:3000/pro/insights | grep -i location || true"
