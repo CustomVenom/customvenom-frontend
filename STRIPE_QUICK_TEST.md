@@ -1,6 +1,6 @@
 # Stripe Quick Test (5 minutes)
 
-**Preview Domain:** `https://customvenom-frontend-git-main-incarcers-projects.vercel.app`
+**Preview Domain:** `https://customvenom-frontend-git-main-customvenom.vercel.app`
 
 ---
 
@@ -55,7 +55,7 @@ NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=price_xxxxxxxxxxxxx
 
 ```
 Endpoint URL: 
-https://customvenom-frontend-git-main-incarcers-projects.vercel.app/api/stripe/webhook
+https://customvenom-frontend-git-main-customvenom.vercel.app/api/stripe/webhook
 
 Events to send:
 ✅ checkout.session.completed
@@ -83,7 +83,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ## Step 4: Run Full Test
 
 ### A. Start Checkout
-1. Visit: `https://customvenom-frontend-git-main-incarcers-projects.vercel.app/go-pro`
+1. Visit: `https://customvenom-frontend-git-main-customvenom.vercel.app/go-pro`
 2. Click **"Start Checkout"**
 3. Should redirect to Stripe Checkout page
 
@@ -110,7 +110,7 @@ Look for:
 ```
 
 ### E. Verify Pro Access
-1. Visit: `https://customvenom-frontend-git-main-incarcers-projects.vercel.app/settings`
+1. Visit: `https://customvenom-frontend-git-main-customvenom.vercel.app/settings`
 2. Should show: **"Role: Pro"** or **"Pro Features Enabled"**
 3. No paywall on `/projections` or other Pro routes
 
@@ -163,7 +163,7 @@ Look for:
 
 ```bash
 # Test checkout session creation (requires auth)
-curl -X POST https://customvenom-frontend-git-main-incarcers-projects.vercel.app/api/checkout/session \
+curl -X POST https://customvenom-frontend-git-main-customvenom.vercel.app/api/checkout/session \
   -H "Cookie: your-session-cookie" \
   -H "Content-Type: application/json" \
   -d '{"priceId": "price_xxxxxxxxxxxxx"}'

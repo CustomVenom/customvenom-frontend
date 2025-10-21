@@ -2,7 +2,7 @@
 
 ## ⏰ IMPORTANT: Deployment Limit Status
 
-**You've hit Vercel's 100 deployments/day limit**  
+**You've hit Vercel's 100 deployments/day limit**
 **Limit resets**: Midnight UTC (~7-8 PM your local time today)
 
 **DO THIS NOW** (before limit resets):
@@ -100,7 +100,7 @@ vercel env add --environment production < VERCEL_ENV_PRODUCTION.env
 **Import these for: Preview environment ONLY**
 
 ```env
-NEXTAUTH_URL=https://customvenom-frontend-git-main-incarcers-projects.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend-git-main-customvenom.vercel.app
 AUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 NEXTAUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 DATABASE_URL=YOUR_NEON_CONNECTION_STRING_HERE
@@ -162,7 +162,7 @@ NEXT_PUBLIC_LOGS_ENABLED=false
 
 **NEXTAUTH_URL for Preview:**
 ```
-Value: https://customvenom-frontend-git-main-incarcers-projects.vercel.app
+Value: https://customvenom-frontend-git-main-customvenom.vercel.app
 Environment: ☑️ Preview only
 ```
 
@@ -197,7 +197,7 @@ Environment: ☑️ Production only
 4. Application type: "Web application"
 5. Add Authorized redirect URIs:
    ```
-   https://customvenom-frontend-git-main-incarcers-projects.vercel.app/api/auth/callback/google
+   https://customvenom-frontend-git-main-customvenom.vercel.app/api/auth/callback/google
    https://customvenom-frontend.vercel.app/api/auth/callback/google
    ```
 6. Click "Create"
@@ -224,7 +224,7 @@ npx prisma studio
 
 ### Step 2: Wait for Deployment Limit Reset
 
-**Current time**: ~9 AM October 18, 2025  
+**Current time**: ~9 AM October 18, 2025
 **Limit resets**: Midnight UTC (7-8 PM your time today)
 
 ### Step 3: Deploy (After Limit Resets)

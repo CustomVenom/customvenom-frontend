@@ -1,8 +1,8 @@
 # 🏈 Yahoo OAuth + League Import Setup
 
-**Priority:** #1 for business (your personal Yahoo league integration)  
-**Environment:** Preview only (safe testing)  
-**Time:** 15 minutes  
+**Priority:** #1 for business (your personal Yahoo league integration)
+**Environment:** Preview only (safe testing)
+**Time:** 15 minutes
 **Risk:** Zero (no production, no DB writes)
 
 ---
@@ -26,7 +26,7 @@ https://developer.yahoo.com/apps/
 - **Application Name:** "CustomVenom Fantasy"
 - **Application Type:** "Web Application"
 - **Callback Domain:** Your Preview URL domain
-- **API Permissions:** 
+- **API Permissions:**
   - ✅ Fantasy Sports (Read)
   - ✅ OpenID Connect Permissions
 
@@ -46,7 +46,7 @@ After creating, you'll see:
 
 Add this **Redirect URI:**
 ```
-https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/yahoo
+https://customvenom-frontend-git-main-customvenom.vercel.app/auth/callback/yahoo
 ```
 
 **Important:** Must match your Preview URL exactly!
@@ -86,7 +86,7 @@ Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/envir
 
 ### **5.1 Visit Preview Site:**
 ```
-https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
+https://customvenom-frontend-git-main-customvenom.vercel.app
 ```
 
 ### **5.2 Click "Sign In"**
@@ -109,7 +109,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 
 ### **6.1 Go to Settings:**
 ```
-https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/settings
+https://customvenom-frontend-git-main-customvenom.vercel.app/settings
 ```
 
 ### **6.2 Find "League Integration" Section:**
@@ -153,7 +153,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/settings
 
 ### **OAuth redirect mismatch:**
 - Verify redirect URI in Yahoo console matches Preview URL exactly
-- Must include `/api/auth/callback/yahoo` path
+- Must include `/auth/callback/yahoo` path
 - Check for https:// vs http://
 
 ### **"Invalid client" error:**
@@ -219,7 +219,7 @@ https://developer.yahoo.com/apps/
 
 **Test Endpoint:**
 ```bash
-curl -X POST https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/league/import \
+curl -X POST https://customvenom-frontend-git-main-customvenom.vercel.app/api/league/import \
   -H "Content-Type: application/json" \
   -d '{"provider":"yahoo","league_id":"123"}' | jq
 ```
@@ -255,7 +255,7 @@ curl -X POST https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.ap
 
 ---
 
-**Status:** ✅ Code deployed, ready for Yahoo credentials  
-**Next:** Add YAHOO_CLIENT_ID + YAHOO_CLIENT_SECRET to Vercel Preview  
+**Status:** ✅ Code deployed, ready for Yahoo credentials
+**Next:** Add YAHOO_CLIENT_ID + YAHOO_CLIENT_SECRET to Vercel Preview
 **Test:** Sign in with Yahoo, then test league import stub
 

@@ -1,4 +1,4 @@
-NEXTAUTH_URL=https://customvenom-frontend-git-main-incarcers-projects.vercel.app
+NEXTAUTH_URL=https://customvenom-frontend-git-main-customvenom.vercel.app
 AUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 NEXTAUTH_SECRET=mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev

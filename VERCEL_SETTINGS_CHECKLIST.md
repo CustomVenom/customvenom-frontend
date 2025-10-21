@@ -59,7 +59,7 @@ npm install
 - Use same value for both
 
 **NEXTAUTH_URL**
-- Preview: `https://customvenom-frontend-git-main-incarcers-projects.vercel.app`
+- Preview: `https://customvenom-frontend-git-main-customvenom.vercel.app`
 - Production: `https://app.customvenom.com` (when ready)
 
 #### **OAuth Credentials (if using):**
