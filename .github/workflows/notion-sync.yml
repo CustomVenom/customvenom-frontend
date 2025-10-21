@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
+  actions: write
 
 env:
   API_BASE_STAGING: ${{ vars.API_BASE_STAGING }}   # optional (frontend/API tests)
