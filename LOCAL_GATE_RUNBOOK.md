@@ -34,7 +34,7 @@ npx playwright test
   - Contains `<time datetime="...">` element with valid ISO timestamp
 - All E2E tests pass
 
-**On FAIL**: 
+**On FAIL**:
 - Check `playwright-report/index.html` for visual report
 - Paste first error line for one-line fix
 

@@ -1,0 +1,13 @@
+[1mdiff --git a/src/components/TrustSnapshot.tsx b/src/components/TrustSnapshot.tsx[m
+[1mindex 15a3690..0c92774 100644[m
+[1m--- a/src/components/TrustSnapshot.tsx[m
+[1m+++ b/src/components/TrustSnapshot.tsx[m
+[36m@@ -38,7 +38,7 @@[m [mexport function TrustSnapshot({[m
+ [m
+       <div className="flex items-center gap-2">[m
+         <span className="text-gray-500">Calibrated:</span>[m
+[31m-        <time [m
+[32m+[m[32m        <time[m
+           dateTime={lastRefresh || ''}[m
+           className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}[m
+         >[m

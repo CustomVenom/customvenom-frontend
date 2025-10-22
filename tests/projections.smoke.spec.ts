@@ -9,11 +9,11 @@ test('Projections renders and has no console errors', async ({ page }) => {
     if (type === 'error') errors.push(`[${type}] ${msg.text()}`);
   });
 
-  const res = await page.goto(`${BASE}/projections`, { waitUntil: 'networkidle' });
+  const res = await page.goto(`${BASE}/tools`, { waitUntil: 'networkidle' });
   expect(res?.ok()).toBeTruthy();
 
   // Basic UI checks
-  await expect(page.getByText(/Projections/i)).toBeVisible();
+  await expect(page.getByText(/tools/i)).toBeVisible();
 
   // TrustSnapshot shows last_refresh or badge container exists
   await expect(page.locator('[data-testid="trust-snapshot"]')).toBeVisible();
