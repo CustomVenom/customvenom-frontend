@@ -15,8 +15,6 @@ jobs:
   playwright:
     runs-on: ubuntu-22.04
     timeout-minutes: 25
-    env:
-      ACTIONS_STEP_DEBUG: true
     steps:
       - name: Boot
         run: |
@@ -27,15 +25,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.11.1'
+          cache: 'npm'
 
-      - name: Install deps (non-strict)
-        run: npm install --no-audit --no-fund
+      - name: Install deps (strict, after lock sync)
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-
-      - name: Build
-        run: npm run build
 
       - name: Run E2E
         env:
