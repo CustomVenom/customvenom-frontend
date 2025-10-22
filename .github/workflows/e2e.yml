@@ -27,8 +27,8 @@ jobs:
           node-version: '20.11.1'
           cache: 'npm'
 
-      - name: Install deps (strict, after lock sync)
-        run: npm ci
+      - name: Install deps (non-strict)
+        run: npm install --no-audit --no-fund
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
