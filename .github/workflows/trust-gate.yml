@@ -5,13 +5,11 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: trust-gate-${{ github.ref }}-${{ github.run_attempt }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write
+  contents: read
 
 jobs:
   gate:
@@ -20,7 +18,10 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Boot
+        run: echo "runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
+
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
 
       # 0) Secrets preflight (names the missing ones and stops)
       - name: Secrets preflight

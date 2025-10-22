@@ -1,4 +1,4 @@
-ï»¿# CI Guardrails:
+# CI Guardrails:
 # - Resolve API base once; never curl a blank URL (API_BASE_STAGING -> STAGING_BASE).
 # - Skip posting to Notion/GitHub when secrets/vars are missing.
 # - Normalize: ROADMAP_DATABASE_ID = ROADMAP_DATABASE_ID || NOTION_DATABASE_ID.
@@ -23,8 +23,8 @@ jobs:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
       NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with: { node-version: '22' }
 
       - name: Run Build & Type Checks (if PR is open)
@@ -116,7 +116,7 @@ jobs:
 
           # Build check results (if tests ran)
           if [ "${{ steps.checks.outcome }}" = "success" ]; then
-            CHECK_RESULTS="Build Checks: ${{ steps.checks.outputs.status_emoji }} ${{ steps.checks.outputs.overall_status }} â€¢ TypeScript: ${{ steps.checks.outputs.test1 }} â€¢ Next.js Build: ${{ steps.checks.outputs.test2 }} â€¢ Linting: ${{ steps.checks.outputs.test3 }}"
+            CHECK_RESULTS="Build Checks: ${{ steps.checks.outputs.status_emoji }} ${{ steps.checks.outputs.overall_status }} • TypeScript: ${{ steps.checks.outputs.test1 }} • Next.js Build: ${{ steps.checks.outputs.test2 }} • Linting: ${{ steps.checks.outputs.test3 }}"
           else
             CHECK_RESULTS="Build checks skipped (PR closed or checks failed to run)"
           fi
@@ -133,7 +133,7 @@ jobs:
               children: [
                 {heading_3: {rich_text: [{type:"text", text:{content: $title}}]}},
                 {paragraph: {rich_text: [
-                  {type:"text", text:{content: ($status + "  â€¢  ")}},
+                  {type:"text", text:{content: ($status + "  •  ")}},
                   {type:"text", text:{content: "View PR", link:{url: $url}}}
                 ]}},
                 {paragraph: {rich_text: [{type:"text", text:{content: ("Repo: " + $repo)}}]}},

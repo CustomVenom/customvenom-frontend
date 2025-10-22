@@ -12,14 +12,24 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}-${{ github.run_attempt }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Boot
+        run: echo "runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
+
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 20
           cache: npm
