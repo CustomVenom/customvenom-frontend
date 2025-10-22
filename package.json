@@ -16,6 +16,7 @@
     "pre-commit": "npm run lint && npm run type-check",
     "prepare": "husky install",
     "postinstall": "prisma generate || echo 'Prisma generate skipped (DATABASE_URL not set)'",
+    "test:e2e": "playwright test",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
     "smoke:yahoo-session": "curl -s http://localhost:3000/api/auth/session | jq '.user | {sub,yah,stripeCustomerId}'",
     "smoke:paid-gate": "curl -s -I http://localhost:3000/pro/insights | grep -i location || true"
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@opennextjs/cloudflare": "^1.9.1",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.19",
