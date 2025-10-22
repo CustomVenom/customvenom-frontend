@@ -208,6 +208,7 @@ export default function YahooToolPage() {
             </p>
             <Link
               href="/api/auth/signin/yahoo"
+              prefetch={false}
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo
@@ -231,6 +232,7 @@ export default function YahooToolPage() {
             </p>
             <Link
               href="/api/auth/signin/yahoo"
+              prefetch={false}
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo
