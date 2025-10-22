@@ -20,7 +20,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
   const [error, setError] = useState<string | null>(null);
 
   const handleConnect = () => {
-    signIn('yahoo', { callbackUrl: window.location.href });
+    signIn('yahoo', { redirect: true, callbackUrl: '/tools/yahoo' });
   };
 
   const handleFetchLeagues = async () => {
@@ -71,10 +71,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
         </div>
 
         {!isYahooConnected ? (
-          <button
-            onClick={handleConnect}
-            className="cv-btn-primary"
-          >
+          <button onClick={handleConnect} className="cv-btn-primary">
             Connect Yahoo
           </button>
         ) : (
@@ -86,11 +83,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
 
       {isYahooConnected && (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={handleFetchLeagues}
-            disabled={loading}
-            className="cv-btn-ghost mb-4"
-          >
+          <button onClick={handleFetchLeagues} disabled={loading} className="cv-btn-ghost mb-4">
             {loading ? 'Fetching...' : 'Fetch My Leagues'}
           </button>
 
@@ -120,13 +113,10 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
           )}
 
           {leagues && leagues.length === 0 && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              No leagues found
-            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">No leagues found</div>
           )}
         </div>
       )}
     </div>
   );
 }
-
