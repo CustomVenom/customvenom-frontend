@@ -3,31 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0"
   },
-  "packageManager": "npm@10.x",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint src",
-    "lint:fix": "eslint --fix src",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
     "pre-commit": "npm run lint && npm run type-check",
     "prepare": "husky install",
-    "postinstall": "prisma generate || echo 'Prisma generate skipped (DATABASE_URL not set)'",
-    "test:e2e": "playwright test",
-    "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
-    "smoke:yahoo-session": "curl -s http://localhost:3000/api/auth/session | jq '.user | {sub,yah,stripeCustomerId}'",
-    "smoke:paid-gate": "curl -s -I http://localhost:3000/pro/insights | grep -i location || true"
+    "postinstall": "prisma generate",
+    "backfill-analytics": "npx tsx scripts/backfill-analytics.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.0",
     "@prisma/client": "^6.17.1",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/nextjs": "^8.0.0",
-    "@stripe/stripe-js": "^4.0.0",
-    "next": "15.5.6",
+    "@stripe/stripe-js": "^8.1.0",
+    "next": "15.5.4",
     "next-auth": "^5.0.0-beta.29",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -37,7 +33,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@opennextjs/cloudflare": "^1.9.1",
-    "@playwright/test": "^1.56.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.19",
