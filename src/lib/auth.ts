@@ -1,4 +1,4 @@
-﻿// NextAuth.js configuration
+// NextAuth.js configuration
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
 import NextAuth, { NextAuthConfig } from 'next-auth';
@@ -113,9 +113,6 @@ export const authConfig: NextAuthConfig = {
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-
-// Export authOptions for App Router compatibility
-export const authOptions = authConfig;
 
 // Export authOptions for App Router compatibility
 export const authOptions = authConfig;
