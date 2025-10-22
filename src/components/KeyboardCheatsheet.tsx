@@ -31,7 +31,7 @@ export default function KeyboardCheatsheet() {
       // '?' or 'Shift+/' to toggle
       if (e.key === '?' || (e.shiftKey && e.key === '/')) {
         e.preventDefault();
-        setIsOpen(open => !open);
+        setIsOpen((open) => !open);
       }
 
       // 'Escape' to close
@@ -67,11 +67,20 @@ export default function KeyboardCheatsheet() {
       />
 
       {/* Cheatsheet Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="keyboard-cheatsheet-title"
+        aria-describedby="keyboard-cheatsheet-description"
+      >
         <div className="w-full max-w-md bg-[rgb(var(--bg-card))] rounded-lg shadow-2xl border border-[rgba(148,163,184,0.2)] animate-in fade-in zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[rgba(148,163,184,0.1)] p-4">
-            <h2 className="text-lg font-bold text-[rgb(var(--text-primary))] flex items-center gap-2">
+            <h2
+              id="keyboard-cheatsheet-title"
+              className="text-lg font-bold text-[rgb(var(--text-primary))] flex items-center gap-2"
+            >
               <span className="text-[rgb(var(--cv-primary))]">⌨️</span>
               Keyboard Shortcuts
             </h2>
@@ -81,9 +90,18 @@ export default function KeyboardCheatsheet() {
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
+          </div>
+
+          <div id="keyboard-cheatsheet-description" className="sr-only">
+            Keyboard shortcuts and hotkeys for navigating and using the application.
           </div>
 
           {/* Shortcuts List */}
@@ -113,7 +131,15 @@ export default function KeyboardCheatsheet() {
           {/* Footer */}
           <div className="border-t border-[rgba(148,163,184,0.1)] p-4">
             <p className="text-xs text-[rgb(var(--text-dim))] text-center">
-              Press <kbd className="px-1 py-0.5 rounded bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[rgb(var(--cv-primary))] font-mono">?</kbd> or <kbd className="px-1 py-0.5 rounded bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[rgb(var(--cv-primary))] font-mono">Esc</kbd> to close
+              Press{' '}
+              <kbd className="px-1 py-0.5 rounded bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[rgb(var(--cv-primary))] font-mono">
+                ?
+              </kbd>{' '}
+              or{' '}
+              <kbd className="px-1 py-0.5 rounded bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[rgb(var(--cv-primary))] font-mono">
+                Esc
+              </kbd>{' '}
+              to close
             </p>
           </div>
         </div>
@@ -121,4 +147,3 @@ export default function KeyboardCheatsheet() {
     </>
   );
 }
-
