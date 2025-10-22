@@ -1,14 +1,14 @@
 'use client';
 
-export function ConnectYahoo() {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+import Link from 'next/link';
 
+export function ConnectYahoo() {
   return (
-    <a
+    <Link
       className="cv-btn-primary inline-block px-6 py-2 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
-      href={`${apiBase}/auth/yahoo`}
+      href="/api/auth/signin"
     >
       Connect Yahoo
-    </a>
+    </Link>
   );
 }
