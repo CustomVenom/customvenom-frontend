@@ -13,23 +13,15 @@ export const YahooProvider = {
   authorization: {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
     params: {
-      scope: 'fspt-r openid profile email',
       response_type: 'code',
       redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/yahoo`,
+      scope: 'openid profile email fspt-r',
     },
   },
-  token: 'https://api.login.yahoo.com/oauth2/get_token',
-  userinfo: {
-    url: 'https://api.login.yahoo.com/openid/v1/userinfo',
-    async request({ tokens }: { tokens: { access_token?: string } }) {
-      const response = await fetch('https://api.login.yahoo.com/openid/v1/userinfo', {
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
-        },
-      });
-      return response.json();
-    },
+  token: {
+    url: 'https://api.login.yahoo.com/oauth2/get_token',
   },
+  userinfo: 'https://api.login.yahoo.com/openid/v1/userinfo',
   clientId: process.env.YAHOO_CLIENT_ID || 'placeholder',
   clientSecret: process.env.YAHOO_CLIENT_SECRET || 'placeholder',
   profile(profile: {
