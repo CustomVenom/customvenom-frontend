@@ -38,7 +38,7 @@ export function TrustSnapshot({
 
       <div className="flex items-center gap-2">
         <span className="text-gray-500">Calibrated:</span>
-        <time 
+        <time
           dateTime={lastRefresh || ''}
           className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}
         >
