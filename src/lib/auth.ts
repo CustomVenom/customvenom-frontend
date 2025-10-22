@@ -52,6 +52,7 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers,
+  trustHost: true,
   callbacks: {
     async signIn({
       user,

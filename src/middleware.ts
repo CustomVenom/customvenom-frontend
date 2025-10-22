@@ -12,20 +12,11 @@ export function middleware(request: NextRequest) {
 
   // Demo mode - allow anonymous access to public routes
   const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === '1';
-  
-  const publicRoutes = [
-    '/',
-    '/projections',
-    '/status',
-    '/privacy',
-    '/terms',
-    '/api/auth',
-  ];
-  
-  const isPublicRoute = publicRoutes.some(route => 
-    request.nextUrl.pathname.startsWith(route)
-  );
-  
+
+  const publicRoutes = ['/', '/projections', '/status', '/privacy', '/terms', '/api/auth'];
+
+  const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
+
   if (isDemoMode && isPublicRoute) {
     return NextResponse.next();
   }
@@ -39,13 +30,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - api routes (handled separately)
+     * - api/auth routes (NextAuth)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
+    '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
   ],
 };
-
