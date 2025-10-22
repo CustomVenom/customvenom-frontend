@@ -54,6 +54,14 @@ export const authConfig: NextAuthConfig = {
   providers,
   trustHost: true,
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow absolute URLs to same origin
+      if (url.startsWith(baseUrl)) return url;
+      // Allow relative URLs
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      // Force a stable landing page after auth
+      return `${baseUrl}/tools/yahoo`;
+    },
     async signIn({
       user,
       account: _account,
@@ -104,8 +112,8 @@ export const authConfig: NextAuthConfig = {
     },
   },
   pages: {
-    signIn: '/', // Redirect to home page for sign-in
-    error: '/', // Redirect to home page on error
+    // Remove custom signIn page to use NextAuth default
+    error: '/auth/error', // Custom error page
   },
   session: {
     strategy: 'database',
