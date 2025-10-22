@@ -3,6 +3,9 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import type { AnalyticsEvent } from '@/lib/analytics';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 /**
  * Analytics event tracking endpoint
  * Phase 2.1b: Prisma/database persistence with hourly rollups
@@ -23,12 +26,12 @@ function getHourKey(timestamp: string): Date {
 async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
   try {
     const hourKey = getHourKey(event.timestamp);
-    
+
     // Get or create rollup
     let rollup = await prisma.hourlyRollup.findUnique({
       where: { hour: hourKey },
     });
-    
+
     if (!rollup) {
       // Create new rollup
       rollup = await prisma.hourlyRollup.create({
@@ -42,24 +45,24 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
         },
       });
     }
-    
+
     // Parse existing JSON data
     const eventCounts = rollup.eventCounts as Record<string, number>;
     const toolUsage = rollup.toolUsage as Record<string, number>;
     const riskDistribution = rollup.riskDistribution as Record<string, number>;
-    
+
     // Update counts
     eventCounts[event.event_type] = (eventCounts[event.event_type] || 0) + 1;
-    
+
     if (event.tool_name) {
       toolUsage[event.tool_name] = (toolUsage[event.tool_name] || 0) + 1;
     }
-    
+
     if (event.event_type === 'risk_mode_changed' && event.properties?.risk_mode) {
       const mode = event.properties.risk_mode as string;
       riskDistribution[mode] = (riskDistribution[mode] || 0) + 1;
     }
-    
+
     // Get unique sessions count (approximate - would need to track in separate table for exact count)
     const sessionCount = await prisma.analyticsEvent.groupBy({
       by: ['sessionId'],
@@ -70,7 +73,7 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
         },
       },
     });
-    
+
     // Update rollup
     await prisma.hourlyRollup.update({
       where: { hour: hourKey },
@@ -95,17 +98,18 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    // Validate event structure
+
+    // Validate event structure - be more tolerant in preview
     if (!body.event_type || !body.timestamp || !body.session_id) {
-      return NextResponse.json(
-        { error: 'Invalid event format' },
-        { status: 400 }
-      );
+      // In preview, return 204 instead of 400 to avoid console noise
+      if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
+        return new Response(null, { status: 204 });
+      }
+      return NextResponse.json({ error: 'Invalid event format' }, { status: 400 });
     }
-    
+
     const event: AnalyticsEvent = body;
-    
+
     // Store event in database
     const storedEvent = await prisma.analyticsEvent.create({
       data: {
@@ -114,54 +118,59 @@ export async function POST(request: NextRequest) {
         eventType: event.event_type,
         toolName: event.tool_name || null,
         action: event.action || null,
-        properties: event.properties as Prisma.InputJsonValue || Prisma.JsonNull,
+        properties: (event.properties as Prisma.InputJsonValue) || Prisma.JsonNull,
         demoMode: event.demo_mode ?? true,
         timestamp: new Date(event.timestamp),
       },
     });
-    
+
     // Update hourly rollup (async, non-blocking)
-    updateHourlyRollup(event).catch(err => {
+    updateHourlyRollup(event).catch((err) => {
       console.error('Rollup update failed (non-critical):', err);
     });
-    
+
     // Periodic cleanup: Delete events older than 30 days (every 100th request)
-    if (Math.random() < 0.01) { // ~1% of requests
+    if (Math.random() < 0.01) {
+      // ~1% of requests
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      prisma.analyticsEvent.deleteMany({
-        where: {
-          timestamp: {
-            lt: thirtyDaysAgo,
+      prisma.analyticsEvent
+        .deleteMany({
+          where: {
+            timestamp: {
+              lt: thirtyDaysAgo,
+            },
           },
-        },
-      }).catch(err => {
-        console.error('Cleanup failed (non-critical):', err);
-      });
-      
+        })
+        .catch((err) => {
+          console.error('Cleanup failed (non-critical):', err);
+        });
+
       // Also cleanup old rollups (>90 days)
       const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-      prisma.hourlyRollup.deleteMany({
-        where: {
-          hour: {
-            lt: ninetyDaysAgo,
+      prisma.hourlyRollup
+        .deleteMany({
+          where: {
+            hour: {
+              lt: ninetyDaysAgo,
+            },
           },
-        },
-      }).catch(err => {
-        console.error('Rollup cleanup failed (non-critical):', err);
-      });
+        })
+        .catch((err) => {
+          console.error('Rollup cleanup failed (non-critical):', err);
+        });
     }
-    
+
     return NextResponse.json({
       ok: true,
       event_id: storedEvent.id,
     });
-    
   } catch (error) {
     console.error('Error storing analytics event:', error);
-    return NextResponse.json(
-      { error: 'Failed to store event' },
-      { status: 500 }
-    );
+    // In preview, return 204 instead of 500 to avoid console noise
+    if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
+      return new Response(null, { status: 204 });
+    }
+    return NextResponse.json({ error: 'Failed to store event' }, { status: 500 });
   }
 }
 
@@ -173,9 +182,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const hours = parseInt(searchParams.get('hours') || '24');
-    
+
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    
+
     const recentEvents = await prisma.analyticsEvent.findMany({
       where: {
         timestamp: {
@@ -187,7 +196,7 @@ export async function GET(request: NextRequest) {
       },
       take: 1000, // Limit for performance
     });
-    
+
     const totalCount = await prisma.analyticsEvent.count({
       where: {
         timestamp: {
@@ -195,20 +204,15 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-    
+
     return NextResponse.json({
       ok: true,
       count: recentEvents.length,
       total_in_range: totalCount,
       events: recentEvents,
     });
-    
   } catch (error) {
     console.error('Error retrieving analytics events:', error);
-    return NextResponse.json(
-      { error: 'Failed to retrieve events' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to retrieve events' }, { status: 500 });
   }
 }
-

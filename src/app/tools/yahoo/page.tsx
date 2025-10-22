@@ -195,7 +195,18 @@ export default function YahooToolPage() {
         <h1 className="h1">Yahoo Fantasy</h1>
         <ToolsTabs />
         <div className="section">
-          <div className="animate-pulse">Checking connection...</div>
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
+            <h2 className="h2 mb-4">Connect Your Yahoo Fantasy Account</h2>
+            <p className="text-muted mb-6">
+              Link your Yahoo account to view your leagues, teams, and rosters.
+            </p>
+            <Link
+              href="/api/auth/signin?provider=yahoo"
+              className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+            >
+              Connect Yahoo
+            </Link>
+          </div>
         </div>
       </>
     );
