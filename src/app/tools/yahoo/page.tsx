@@ -63,9 +63,15 @@ export default function YahooToolPage() {
       });
 
       if (response.ok) {
-        setIsConnected(true);
-        // Auto-fetch leagues when connected
-        await fetchLeagues();
+        const data = await response.json();
+        // Check if we have actual user data (not just a successful response)
+        if (data.user && data.user.sub && data.user.email) {
+          setIsConnected(true);
+          // Auto-fetch leagues when connected
+          await fetchLeagues();
+        } else {
+          setIsConnected(false);
+        }
       } else {
         setIsConnected(false);
       }
@@ -245,9 +251,17 @@ export default function YahooToolPage() {
           <div className="flex items-center gap-2">
             <span className="text-green-600 dark:text-green-400">✓ Connected</span>
           </div>
-          <button onClick={() => window.location.reload()} className="cv-btn-ghost text-sm">
-            Refresh
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => window.location.reload()} className="cv-btn-ghost text-sm">
+              Refresh
+            </button>
+            <Link
+              href="/api/auth/signout"
+              className="cv-btn-ghost text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+            >
+              Sign Out
+            </Link>
+          </div>
         </div>
 
         {error && (
