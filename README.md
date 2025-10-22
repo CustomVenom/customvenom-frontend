@@ -1,5 +1,7 @@
 # CustomVenom Frontend
 
+[![e2e](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml)
+
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
 ## 🌐 Live Production URLs
@@ -34,6 +36,20 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+## 🧪 E2E: Trust Snapshot
+
+Test the Trust Snapshot UI component against staging:
+
+```bash
+# Install Playwright browsers
+npx playwright install
+
+# Run E2E tests
+NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev" npm run test:e2e
+```
+
+The test verifies that `/tools` page displays the Trust Snapshot with version and timestamp.
 
 ## 🎯 Features
 
