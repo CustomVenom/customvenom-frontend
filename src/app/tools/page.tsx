@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import ToolsTabs from '@/components/ToolsTabs';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
 
 export const metadata: Metadata = {
   title: 'Tools — Custom Venom',
@@ -13,34 +14,53 @@ export default function ToolsPage() {
       <h1 className="h1">Tools</h1>
       <ToolsTabs />
 
+      <div className="section">
+        <TrustSnapshot
+          schemaVersion="v1.0.0"
+          lastRefresh="2025-10-22T13:06:55.878Z"
+          stale={true}
+          staleAge="0"
+        />
+      </div>
+
       <div className="section space-y-6">
-        <p className="text-muted">
-          Interactive decision tools powered by explainable projections.
-        </p>
+        <p className="text-muted">Interactive decision tools powered by explainable projections.</p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/tools/start-sit" className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors">
+          <Link
+            href="/tools/start-sit"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
+          >
             <h2 className="h2 mb-2">🆚 Start/Sit</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Compare two players with risk preferences for your weekly lineup decisions.
             </p>
           </Link>
 
-          <Link href="/tools/faab" className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors">
+          <Link
+            href="/tools/faab"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
+          >
             <h2 className="h2 mb-2">💰 FAAB</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Smart waiver bid recommendations with min/likely/max ranges.
             </p>
           </Link>
 
-          <Link href="/tools/decisions" className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors">
+          <Link
+            href="/tools/decisions"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
+          >
             <h2 className="h2 mb-2">⭐ Decisions</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Top 3 weekly actions based on your risk profile and projected lift.
             </p>
           </Link>
 
-          <Link href="/tools/yahoo" className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors">
+          <Link
+            href="/tools/yahoo"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
+          >
             <h2 className="h2 mb-2">🏈 Yahoo</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Connect your Yahoo Fantasy leagues and view your teams and rosters.
@@ -51,4 +71,3 @@ export default function ToolsPage() {
     </>
   );
 }
-

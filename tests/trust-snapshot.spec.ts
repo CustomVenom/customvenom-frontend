@@ -7,7 +7,7 @@ test('Trust Snapshot renders with version and timestamp', async ({ page }) => {
   await expect(snapshot).toBeVisible();
 
   // shows v<schema_version>
-  await expect(snapshot).toContainText(/^v/i);
+  await expect(snapshot).toContainText(/v\d+\.\d+\.\d+/);
 
   // shows a time element
   const timeEl = snapshot.locator('time');
