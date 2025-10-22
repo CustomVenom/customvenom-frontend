@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { toReasonChips } from './adapter';
-import { parseRawReasons } from './schema';
+import { toReasonChips } from '../../src/lib/reasons/adapter';
+import { parseRawReasons } from '../../src/lib/reasons/schema';
 
 describe('parseRawReasons', () => {
   it('accepts valid array', () => {
