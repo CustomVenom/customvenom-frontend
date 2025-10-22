@@ -7,13 +7,13 @@ interface TrustSnapshotProps {
   staleAge?: string | null;
 }
 
-export function TrustSnapshot({ 
-  lastRefresh, 
+export function TrustSnapshot({
+  lastRefresh,
   schemaVersion = 'v1',
-  stale = false, 
-  staleAge 
+  stale = false,
+  staleAge
 }: TrustSnapshotProps) {
-  const formattedDate = lastRefresh 
+  const formattedDate = lastRefresh
     ? new Date(lastRefresh).toLocaleString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -25,22 +25,25 @@ export function TrustSnapshot({
 
   const staleSeconds = staleAge ? parseInt(staleAge, 10) : 0;
   const staleMinutes = Math.floor(staleSeconds / 60);
-  const staleDisplay = staleMinutes > 0 
-    ? `${staleMinutes}m ago` 
+  const staleDisplay = staleMinutes > 0
+    ? `${staleMinutes}m ago`
     : `${staleSeconds}s ago`;
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="flex items-center gap-3 text-sm" aria-label="Trust Snapshot">
       <div className="flex items-center gap-2">
         <span className="text-gray-500">Schema:</span>
         <span className="font-mono text-gray-700">{schemaVersion}</span>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <span className="text-gray-500">Calibrated:</span>
-        <span className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}>
+        <time 
+          dateTime={lastRefresh || ''}
+          className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}
+        >
           {formattedDate}
-        </span>
+        </time>
       </div>
 
       {stale && (
