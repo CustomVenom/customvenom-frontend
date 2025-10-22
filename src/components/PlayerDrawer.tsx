@@ -64,7 +64,8 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
       onClick={onBackdropClick}
       role="dialog"
       aria-modal="true"
-      aria-label="Player details"
+      aria-labelledby="player-drawer-title"
+      aria-describedby="player-drawer-description"
     >
       <div
         ref={panelRef}
@@ -72,7 +73,10 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
         className="fixed right-0 top-0 h-full w-full max-w-md bg-[rgb(var(--bg))] shadow-2xl outline-none focus:outline-none overflow-y-auto animate-in slide-in-from-right duration-200 border-l border-[rgba(148,163,184,0.1)]"
       >
         <div className="flex items-center justify-between border-b border-[rgba(148,163,184,0.1)] p-4">
-          <h2 className="text-lg font-bold text-[rgb(var(--text-primary))]">
+          <h2
+            id="player-drawer-title"
+            className="text-lg font-bold text-[rgb(var(--text-primary))]"
+          >
             {row.player_name ?? 'Player'} Details
           </h2>
           <button
@@ -82,6 +86,11 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
           >
             Close
           </button>
+        </div>
+
+        <div id="player-drawer-description" className="sr-only">
+          View detailed projections, range analysis, and reasoning for{' '}
+          {row.player_name ?? 'this player'}.
         </div>
 
         <div className="p-4 space-y-4">
@@ -97,15 +106,21 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
           <div className="grid grid-cols-3 gap-3">
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-800">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Floor</div>
-              <div className="text-xl font-semibold text-gray-900 dark:text-white">{row.range.p10.toFixed(1)}</div>
+              <div className="text-xl font-semibold text-gray-900 dark:text-white">
+                {row.range.p10.toFixed(1)}
+              </div>
             </div>
             <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-3 bg-brand-primary/5 dark:bg-brand-accent/10">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Median</div>
-              <div className="text-xl font-semibold text-brand-primary dark:text-brand-accent">{row.range.p50.toFixed(1)}</div>
+              <div className="text-xl font-semibold text-brand-primary dark:text-brand-accent">
+                {row.range.p50.toFixed(1)}
+              </div>
             </div>
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-800">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Ceiling</div>
-              <div className="text-xl font-semibold text-gray-900 dark:text-white">{row.range.p90.toFixed(1)}</div>
+              <div className="text-xl font-semibold text-gray-900 dark:text-white">
+                {row.range.p90.toFixed(1)}
+              </div>
             </div>
           </div>
 
@@ -114,7 +129,9 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Reasons (max 2)</div>
             <div className="flex flex-wrap gap-2">
               {chips.length === 0 && (
-                <span className="text-sm text-gray-500 dark:text-gray-400 italic">None speaking</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 italic">
+                  None speaking
+                </span>
               )}
               {chips.map((c, i) => (
                 <span key={i} className="cv-chip">
@@ -147,4 +164,3 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
     </div>
   );
 }
-
