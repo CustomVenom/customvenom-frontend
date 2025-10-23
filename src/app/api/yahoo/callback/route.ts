@@ -37,7 +37,11 @@ export async function GET(req: NextRequest) {
     });
     const text = await resp.text();
     if (!resp.ok) return new NextResponse(`token_exchange_${resp.status}:${text}`, { status: 502 });
-    const tokens = JSON.parse(text) as { access_token: string; refresh_token?: string };
+    const tokens = JSON.parse(text) as {
+      access_token: string;
+      refresh_token?: string;
+      xoauth_yahoo_guid?: string;
+    };
 
     const headers = new Headers();
     headers.append(
@@ -48,6 +52,11 @@ export async function GET(req: NextRequest) {
       headers.append(
         'Set-Cookie',
         `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+      );
+    if (tokens.xoauth_yahoo_guid)
+      headers.append(
+        'Set-Cookie',
+        `y_guid=${encodeURIComponent(tokens.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
       );
     headers.append('Location', '/settings?yahoo=connected');
     return new NextResponse(null, { status: 302, headers });

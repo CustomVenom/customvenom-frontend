@@ -16,10 +16,11 @@ export default function ToolsTabs() {
   return (
     <div className="mt-2 border-b border-gray-200 dark:border-gray-700">
       <div className="mx-auto max-w-6xl flex gap-4 px-3">
-        {tabs.map(t => (
+        {tabs.map((t) => (
           <Link
             key={t.href}
             href={t.href}
+            prefetch={t.href === '/tools/yahoo' ? false : undefined}
             className={`py-2 text-sm transition-colors ${
               p?.startsWith(t.href)
                 ? 'border-b-2 border-[var(--cv-primary)] dark:border-[var(--cv-accent)] text-[var(--cv-primary)] dark:text-[var(--cv-accent)] font-medium'
@@ -33,4 +34,3 @@ export default function ToolsTabs() {
     </div>
   );
 }
-

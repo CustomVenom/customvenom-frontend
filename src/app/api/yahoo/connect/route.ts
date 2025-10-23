@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     maxAge: 600,
   });
 
-  const scope = encodeURIComponent('openid profile email fspt-r');
+  const scope = encodeURIComponent('fspt-r');
   const url = `${Y_AUTH}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${encodeURIComponent(state)}`;
   return NextResponse.redirect(url, { status: 302 });
 }

@@ -60,6 +60,7 @@ export default function ToolsPage() {
 
           <Link
             href="/tools/yahoo"
+            prefetch={false}
             className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
           >
             <h2 className="h2 mb-2">🏈 Yahoo</h2>
