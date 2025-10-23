@@ -49,13 +49,20 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
   );
 }
 
+// Minimal runtime env presence log (remove after verification)
+console.log('[auth] NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
+console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env.NEXTAUTH_SECRET));
+console.log('[auth] YAHOO_CLIENT_ID set:', Boolean(process.env.YAHOO_CLIENT_ID));
+console.log('[auth] YAHOO_CLIENT_SECRET set:', Boolean(process.env.YAHOO_CLIENT_SECRET));
+
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers,
   trustHost: true,
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Force redirect to /tools/yahoo for all auth flows
+      if (url.startsWith(baseUrl)) return url;
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
       return `${baseUrl}/tools/yahoo`;
     },
     async signIn({

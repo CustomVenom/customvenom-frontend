@@ -1,8 +1,25 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export function ConnectYahoo() {
+  const { data: session } = useSession();
+
+  // Feature flag gating
+  const ENABLED = process.env.NEXT_PUBLIC_YAHOO_CONNECT_ENABLED === 'true';
+  const MAINT = process.env.NEXT_PUBLIC_YAHOO_MAINTENANCE === 'true';
+  const CANARY = (process.env.NEXT_PUBLIC_YAHOO_CANARY_EMAILS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase());
+
+  const isCanary = (email?: string) => !!email && CANARY.includes(email.toLowerCase());
+
+  // Hide CTA if not enabled, in maintenance, or user not in canary list
+  if (!ENABLED || MAINT || !isCanary(session?.user?.email)) {
+    return null;
+  }
+
   return (
     <Link
       href="/api/auth/signin/yahoo"

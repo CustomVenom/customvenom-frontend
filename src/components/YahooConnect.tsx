@@ -19,6 +19,15 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Feature flag gating
+  const ENABLED = process.env.NEXT_PUBLIC_YAHOO_CONNECT_ENABLED === 'true';
+  const MAINT = process.env.NEXT_PUBLIC_YAHOO_MAINTENANCE === 'true';
+  const CANARY = (process.env.NEXT_PUBLIC_YAHOO_CANARY_EMAILS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase());
+
+  const isCanary = (email?: string) => !!email && CANARY.includes(email.toLowerCase());
+
   const handleConnect = () => {
     signIn('yahoo', { redirect: true, callbackUrl: '/tools/yahoo' });
   };
@@ -71,9 +80,19 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
         </div>
 
         {!isYahooConnected ? (
-          <button onClick={handleConnect} className="cv-btn-primary">
-            Connect Yahoo
-          </button>
+          !ENABLED || MAINT || !isCanary(session?.user?.email) ? (
+            <div className="text-gray-500 text-sm">
+              {MAINT
+                ? 'Yahoo integration is temporarily unavailable'
+                : !ENABLED
+                  ? 'Yahoo integration is disabled'
+                  : 'Yahoo integration is in limited rollout'}
+            </div>
+          ) : (
+            <button onClick={handleConnect} className="cv-btn-primary">
+              Connect Yahoo
+            </button>
+          )
         ) : (
           <div className="flex items-center gap-2">
             <span className="text-green-600 dark:text-green-400">✓ Connected</span>

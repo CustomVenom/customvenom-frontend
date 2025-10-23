@@ -99,13 +99,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate event structure - be more tolerant in preview
+    // Validate event structure - always return 204, never throw
     if (!body.event_type || !body.timestamp || !body.session_id) {
-      // In preview, return 204 instead of 400 to avoid console noise
-      if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
-        return new Response(null, { status: 204 });
-      }
-      return NextResponse.json({ error: 'Invalid event format' }, { status: 400 });
+      return new Response(null, { status: 204 });
     }
 
     const event: AnalyticsEvent = body;
@@ -166,11 +162,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error storing analytics event:', error);
-    // In preview, return 204 instead of 500 to avoid console noise
-    if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
-      return new Response(null, { status: 204 });
-    }
-    return NextResponse.json({ error: 'Failed to store event' }, { status: 500 });
+    // Always return 204, never throw - analytics should never fail
+    return new Response(null, { status: 204 });
   }
 }
 
