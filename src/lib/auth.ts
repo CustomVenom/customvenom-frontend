@@ -9,8 +9,6 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './db';
-import { YahooProvider } from './integrations/yahoo/provider';
-
 // Only include providers that have credentials configured
 const providers = [];
 
@@ -22,12 +20,6 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     })
   );
-}
-
-// Yahoo OAuth (Preview/Production when configured)
-if (process.env.YAHOO_CLIENT_ID && process.env.YAHOO_CLIENT_SECRET) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  providers.push(YahooProvider as any);
 }
 
 // Twitter OAuth (optional - add when needed)
@@ -53,8 +45,6 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
 // Minimal runtime env presence log (remove after verification)
 console.log('[auth] NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
 console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env.NEXTAUTH_SECRET));
-console.log('[auth] YAHOO_CLIENT_ID set:', Boolean(process.env.YAHOO_CLIENT_ID));
-console.log('[auth] YAHOO_CLIENT_SECRET set:', Boolean(process.env.YAHOO_CLIENT_SECRET));
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),

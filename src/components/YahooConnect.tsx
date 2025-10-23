@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 interface League {
@@ -29,7 +29,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
   const isCanary = (email?: string) => !!email && CANARY.includes(email.toLowerCase());
 
   const handleConnect = () => {
-    signIn('yahoo', { redirect: true, callbackUrl: '/tools/yahoo' });
+    window.location.href = '/api/yahoo/connect';
   };
 
   const handleFetchLeagues = async () => {
