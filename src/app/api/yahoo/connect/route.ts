@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
-
-const Y_AUTH = 'https://api.login.yahoo.com/oauth2/request_auth';
 
 export async function GET(req: NextRequest) {
   const clientId = process.env.YAHOO_CLIENT_ID!;
@@ -14,18 +11,18 @@ export async function GET(req: NextRequest) {
   const redirectUri = `${site}/api/yahoo/callback`;
 
   const state = crypto.randomUUID();
-  const cookieStore = await cookies();
-  cookieStore.set({
-    name: 'y_state',
-    value: state,
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 600,
-  });
 
-  const scope = encodeURIComponent('fspt-r');
-  const url = `${Y_AUTH}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${encodeURIComponent(state)}`;
-  return NextResponse.redirect(url, { status: 302 });
+  const auth = new URL('https://api.login.yahoo.com/oauth2/request_auth');
+  auth.searchParams.set('client_id', clientId);
+  auth.searchParams.set('redirect_uri', redirectUri);
+  auth.searchParams.set('response_type', 'code');
+  auth.searchParams.set('scope', 'fspt-r');
+  auth.searchParams.set('state', state);
+
+  const res = NextResponse.redirect(auth.toString(), { status: 302 });
+  res.headers.append(
+    'Set-Cookie',
+    `y_state=${encodeURIComponent(state)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
+  );
+  return res;
 }
