@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     const nextResponse = NextResponse.json(data);
 
     // Forward key headers for observability and CORS
-    const fwd = ['x-request-id', 'cache-control', 'access-control-allow-origin'];
+    const fwd = ['x-request-id', 'cache-control', 'Access-Control-Allow-Origin'];
     fwd.forEach((h) => {
       const v = response.headers.get(h);
       if (v) nextResponse.headers.set(h, v);

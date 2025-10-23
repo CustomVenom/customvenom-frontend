@@ -31,7 +31,7 @@ export async function GET() {
   const res = new Response(body, { status: r.status });
 
   // Forward key headers for observability and CORS
-  const fwd = ['x-request-id', 'cache-control', 'access-control-allow-origin'];
+  const fwd = ['x-request-id', 'cache-control', 'Access-Control-Allow-Origin'];
   fwd.forEach((h) => {
     const v = r.headers.get(h);
     if (v) res.headers.set(h, v);
