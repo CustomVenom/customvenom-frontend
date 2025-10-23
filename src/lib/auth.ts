@@ -1,7 +1,8 @@
 // NextAuth.js configuration
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
-import NextAuth, { NextAuthConfig } from 'next-auth';
+import NextAuth from 'next-auth';
+import { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
@@ -60,7 +61,7 @@ export const authOptions = {
   providers,
   trustHost: true,
   callbacks: {
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
       if (url.startsWith('/')) return `${baseUrl}${url}`;
       return `${baseUrl}/tools/yahoo`;
@@ -125,3 +126,8 @@ export const authOptions = {
 };
 
 export default NextAuth(authOptions);
+
+// v4 shim so existing `{ auth }` imports keep working
+export async function auth() {
+  return getServerSession(authOptions);
+}

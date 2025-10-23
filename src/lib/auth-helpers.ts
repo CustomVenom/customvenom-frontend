@@ -1,6 +1,7 @@
 // Auth helper functions for server components and API routes
 
-import { auth } from './auth';
+import { getServerSession as nextAuthGetServerSession } from 'next-auth/next';
+import { authOptions } from './auth';
 import { redirect } from 'next/navigation';
 
 /**
@@ -8,7 +9,7 @@ import { redirect } from 'next/navigation';
  * Use this in Server Components and API routes
  */
 export async function getServerSession() {
-  return await auth();
+  return await nextAuthGetServerSession(authOptions);
 }
 
 /**

@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { auth } from './auth';
+import { getServerSession } from './auth-helpers';
 import { getEntitlementsFromRole, getRoleFromSubscription, ROLES, type Role } from './rbac';
 
 export interface Entitlements {
@@ -26,13 +26,13 @@ const stripeKey = process.env.STRIPE_SECRET_KEY;
  */
 export async function getEntitlements(): Promise<Entitlements> {
   try {
-    const session = await auth();
-    
+    const session = await getServerSession();
+
     if (!session?.user) {
       // Not logged in - free tier
       return getEntitlementsFromRole(ROLES.FREE);
     }
-    
+
     // Get user from database to check subscription status
     const { prisma } = await import('./db');
     const user = await prisma.user.findUnique({
@@ -45,23 +45,19 @@ export async function getEntitlements(): Promise<Entitlements> {
         paidUntil: true,
       },
     });
-    
+
     if (!user) {
       return getEntitlementsFromRole(ROLES.FREE);
     }
-    
+
     // Determine role from subscription status
-    const subscriptionRole = getRoleFromSubscription(
-      user.subscriptionStatus,
-      user.tier
-    );
-    
+    const subscriptionRole = getRoleFromSubscription(user.subscriptionStatus, user.tier);
+
     // Use the higher of database role or subscription role
     const userRole = (user.role as Role) || subscriptionRole;
-    
+
     // Get entitlements (admin email check happens inside)
     return getEntitlementsFromRole(userRole, user.email);
-    
   } catch (err) {
     console.error('Failed to get entitlements:', err);
     return getEntitlementsFromRole(ROLES.FREE);
@@ -79,12 +75,12 @@ export async function getEntitlementsFromCheckout(sessionId: string): Promise<En
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     if (session.payment_status === 'paid') {
       const customerId = session.customer as string;
-      const subs = await stripe.subscriptions.list({ 
-        customer: customerId, 
-        status: 'active', 
-        limit: 1 
+      const subs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: 'active',
+        limit: 1,
       });
-      
+
       if (subs.data.length > 0) {
         const sub = subs.data[0];
         const tier = sub.items.data[0]?.price.metadata?.tier || 'pro';
@@ -95,11 +91,14 @@ export async function getEntitlementsFromCheckout(sessionId: string): Promise<En
   } catch (err) {
     console.error('Stripe entitlement check failed', err);
   }
-  
+
   return getEntitlementsFromRole(ROLES.FREE);
 }
 
 // Check if user has specific feature access
-export function hasFeature(entitlements: Entitlements, feature: keyof Entitlements['features']): boolean {
+export function hasFeature(
+  entitlements: Entitlements,
+  feature: keyof Entitlements['features']
+): boolean {
   return entitlements.features[feature];
 }
