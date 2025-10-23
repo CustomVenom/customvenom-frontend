@@ -206,13 +206,12 @@ export default function YahooToolPage() {
             <p className="text-muted mb-6">
               Link your Yahoo account to view your leagues, teams, and rosters.
             </p>
-            <Link
+            <a
               href="/api/yahoo/connect"
-              prefetch={false}
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo
-            </Link>
+            </a>
           </div>
         </div>
       </>
@@ -230,13 +229,12 @@ export default function YahooToolPage() {
             <p className="text-muted mb-6">
               Link your Yahoo account to view your leagues, teams, and rosters.
             </p>
-            <Link
+            <a
               href="/api/yahoo/connect"
-              prefetch={false}
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo
-            </Link>
+            </a>
           </div>
         </div>
       </>
