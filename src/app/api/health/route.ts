@@ -23,22 +23,39 @@ export async function GET() {
 
   // Expect: { ok, schema_version, last_refresh }
   const data = await r.json();
-
-  // Clone body
   const body = JSON.stringify(data);
 
-  // Start response with upstream status
-  const res = new Response(body, { status: r.status });
-
-  // Forward key headers for observability and CORS
-  const fwd = ['x-request-id', 'cache-control', 'Access-Control-Allow-Origin'];
-  fwd.forEach((h) => {
-    const v = r.headers.get(h);
-    if (v) res.headers.set(h, v);
+  // Start response with upstream status and clone upstream headers wholesale first
+  const res = new Response(body, {
+    status: r.status,
+    headers: r.headers,
   });
 
-  // Ensure JSON content-type when needed
-  if (!res.headers.has('content-type')) res.headers.set('content-type', 'application/json');
+  // Ensure JSON content-type if missing
+  if (!res.headers.has('content-type')) {
+    res.headers.set('content-type', 'application/json');
+  }
+
+  // Explicitly set or re-ensure the key headers (case-insensitive on set)
+  const rid = r.headers.get('x-request-id');
+  if (rid) res.headers.set('x-request-id', rid);
+
+  const cors =
+    r.headers.get('Access-Control-Allow-Origin') || r.headers.get('access-control-allow-origin');
+  if (cors) res.headers.set('Access-Control-Allow-Origin', cors);
+
+  const cc = r.headers.get('cache-control');
+  if (cc) res.headers.set('cache-control', cc);
+
+  // Make x-request-id readable by client JS (fetch().headers.get(...))
+  const exposed = new Set(
+    (res.headers.get('Access-Control-Expose-Headers') || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+  exposed.add('x-request-id');
+  res.headers.set('Access-Control-Expose-Headers', Array.from(exposed).join(', '));
 
   return res;
 }

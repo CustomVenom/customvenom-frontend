@@ -46,15 +46,30 @@ export async function GET(request: NextRequest) {
       // Still proceed to show data, but log for monitoring
     }
 
-    // Create response with additional headers for trust badge
-    const nextResponse = NextResponse.json(data);
+    const body = JSON.stringify(data);
 
-    // Forward key headers for observability and CORS
-    const fwd = ['x-request-id', 'cache-control', 'Access-Control-Allow-Origin'];
-    fwd.forEach((h) => {
-      const v = response.headers.get(h);
-      if (v) nextResponse.headers.set(h, v);
+    // Start response with upstream status and clone upstream headers wholesale first
+    const nextResponse = new NextResponse(body, {
+      status: response.status,
+      headers: response.headers,
     });
+
+    // Ensure JSON content-type if missing
+    if (!nextResponse.headers.has('content-type')) {
+      nextResponse.headers.set('content-type', 'application/json');
+    }
+
+    // Explicitly set or re-ensure the key headers (case-insensitive on set)
+    const rid = response.headers.get('x-request-id');
+    if (rid) nextResponse.headers.set('x-request-id', rid);
+
+    const cors =
+      response.headers.get('Access-Control-Allow-Origin') ||
+      response.headers.get('access-control-allow-origin');
+    if (cors) nextResponse.headers.set('Access-Control-Allow-Origin', cors);
+
+    const cc = response.headers.get('cache-control');
+    if (cc) nextResponse.headers.set('cache-control', cc);
 
     // Forward relevant headers from the workers-api response
     const schemaVersion = response.headers.get('x-schema-version') || dataSchemaVersion;
@@ -62,6 +77,16 @@ export async function GET(request: NextRequest) {
 
     nextResponse.headers.set('x-schema-version', schemaVersion);
     nextResponse.headers.set('x-last-refresh', lastRefresh);
+
+    // Make x-request-id readable by client JS (fetch().headers.get(...))
+    const exposed = new Set(
+      (nextResponse.headers.get('Access-Control-Expose-Headers') || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    );
+    exposed.add('x-request-id');
+    nextResponse.headers.set('Access-Control-Expose-Headers', Array.from(exposed).join(', '));
 
     return nextResponse;
   } catch (error) {
