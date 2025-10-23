@@ -13,7 +13,15 @@ export function middleware(request: NextRequest) {
   // Demo mode - allow anonymous access to public routes
   const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === '1';
 
-  const publicRoutes = ['/', '/projections', '/status', '/privacy', '/terms', '/api/auth'];
+  const publicRoutes = [
+    '/',
+    '/projections',
+    '/status',
+    '/privacy',
+    '/terms',
+    '/api/auth',
+    '/api/yahoo',
+  ];
 
   const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
 
@@ -36,6 +44,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
+    '/((?!api/auth|api/yahoo|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
   ],
 };

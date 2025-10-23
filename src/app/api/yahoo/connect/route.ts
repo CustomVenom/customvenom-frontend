@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-
-export const dynamic = 'force-dynamic'; // avoid cached 404s
+export const dynamic = 'force-dynamic';
 
 const Y_AUTH = 'https://api.login.yahoo.com/oauth2/request_auth';
 
@@ -27,9 +26,6 @@ export async function GET(req: NextRequest) {
   });
 
   const scope = encodeURIComponent('openid profile email fspt-r');
-  const url = `${Y_AUTH}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&response_type=code&scope=${scope}&state=${encodeURIComponent(state)}`;
-
+  const url = `${Y_AUTH}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${encodeURIComponent(state)}`;
   return NextResponse.redirect(url, { status: 302 });
 }
