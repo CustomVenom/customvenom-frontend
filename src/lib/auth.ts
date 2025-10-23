@@ -60,6 +60,8 @@ export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers,
   trustHost: true,
+  // TEMP: allow linking same email across providers
+  allowDangerousEmailAccountLinking: true,
   callbacks: {
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
@@ -120,7 +122,7 @@ export const authOptions = {
     error: '/auth/error', // Custom error page
   },
   session: {
-    strategy: 'database' as const,
+    strategy: 'jwt' as const,
   },
   debug: process.env.NODE_ENV === 'development',
 };
