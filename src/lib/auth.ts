@@ -55,7 +55,7 @@ console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env.NEXTAUTH_SECRET))
 console.log('[auth] YAHOO_CLIENT_ID set:', Boolean(process.env.YAHOO_CLIENT_ID));
 console.log('[auth] YAHOO_CLIENT_SECRET set:', Boolean(process.env.YAHOO_CLIENT_SECRET));
 
-export const authConfig: NextAuthConfig = {
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers,
   trustHost: true,
@@ -119,12 +119,9 @@ export const authConfig: NextAuthConfig = {
     error: '/auth/error', // Custom error page
   },
   session: {
-    strategy: 'database',
+    strategy: 'database' as const,
   },
   debug: process.env.NODE_ENV === 'development',
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-
-// Export authOptions for App Router compatibility
-export const authOptions = authConfig;
+export default NextAuth(authOptions);
