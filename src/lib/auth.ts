@@ -60,8 +60,8 @@ export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers,
   trustHost: true,
-  // TEMP: allow linking same email across providers
-  allowDangerousEmailAccountLinking: true,
+  // TEMP: allow linking same email across providers (dev only)
+  allowDangerousEmailAccountLinking: process.env.NODE_ENV === 'development',
   callbacks: {
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
