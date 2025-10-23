@@ -61,7 +61,8 @@ export const authOptions = {
   providers,
   trustHost: true,
   // TEMP: allow linking same email across providers (dev only)
-  allowDangerousEmailAccountLinking: process.env.NODE_ENV === 'development',
+  allowDangerousEmailAccountLinking:
+    process.env.NODE_ENV === 'development' || process.env.AUTH_LINK_ALLOW === '1',
   callbacks: {
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
