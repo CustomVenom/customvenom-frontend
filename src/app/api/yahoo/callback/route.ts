@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-// Inline cookie helper to avoid import issues
+import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
-async function exchangeCodeForTokens(code: string, redirectUri: string) {
-  const basic = Buffer.from(
-    `${process.env.YAHOO_CLIENT_ID!}:${process.env.YAHOO_CLIENT_SECRET!}`
-  ).toString('base64');
+async function exchange(code: string, redirectUri: string) {
+  const id = process.env.YAHOO_CLIENT_ID!;
+  const secret = process.env.YAHOO_CLIENT_SECRET!;
+  if (!id || !secret) throw new Error('missing_yahoo_keys');
+  const basic = Buffer.from(`${id}:${secret}`).toString('base64');
 
   const resp = await fetch(TOKEN_URL, {
     method: 'POST',
@@ -19,19 +21,13 @@ async function exchangeCodeForTokens(code: string, redirectUri: string) {
       redirect_uri: redirectUri,
       code,
     }),
+    // Prevent edge caching weirdness
+    cache: 'no-store',
   });
 
   const text = await resp.text();
-  if (!resp.ok) {
-    throw new Error(`Yahoo token exchange failed: ${resp.status} ${text}`);
-  }
-  return JSON.parse(text) as {
-    access_token: string;
-    refresh_token?: string;
-    expires_in: number;
-    token_type: string;
-    xoauth_yahoo_guid?: string;
-  };
+  if (!resp.ok) throw new Error(`token_exchange_${resp.status}:${text}`);
+  return JSON.parse(text) as { access_token: string; refresh_token?: string; expires_in: number };
 }
 
 export async function GET(req: NextRequest) {
@@ -40,37 +36,37 @@ export async function GET(req: NextRequest) {
     const host = req.headers.get('host')!;
     const site = `${proto}://${host}`;
     const redirectUri = `${site}/api/yahoo/callback`;
+
     const code = req.nextUrl.searchParams.get('code') || '';
     const state = req.nextUrl.searchParams.get('state') || '';
-    const cookieState = req.cookies.get('y_state')?.value || '';
+    const cookieStore = await cookies();
+    const cookieState = cookieStore.get('y_state')?.value || '';
 
-    // CSRF/state check
     if (!state || !cookieState || state !== cookieState) {
       return new NextResponse('Invalid OAuth state', { status: 400 });
     }
-    // one-time use
-    const response = NextResponse.redirect('/settings?yahoo=connected');
-    response.cookies.delete('y_state');
+    // One-time use
+    cookieStore.set({ name: 'y_state', value: '', path: '/', maxAge: 0 });
 
-    if (!code) {
-      return new NextResponse('Missing code', { status: 400 });
+    if (!code) return new NextResponse('Missing code', { status: 400 });
+
+    const tokens = await exchange(code, redirectUri);
+
+    // Demo: set short-lived access token cookie
+    const headers = new Headers();
+    headers.append(
+      'Set-Cookie',
+      `y_at=${encodeURIComponent(tokens.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`
+    );
+    if (tokens.refresh_token) {
+      headers.append(
+        'Set-Cookie',
+        `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+      );
     }
 
-    const tokens = await exchangeCodeForTokens(code, redirectUri);
-
-    // DEMO persistence (session cookie). Replace with DB storage per user in production.
-    // Store short-lived access token for 15 minutes to complete "me/leagues" test.
-    const accessTokenCookie = `y_at=${encodeURIComponent(tokens.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`;
-    const refreshTokenCookie = tokens.refresh_token
-      ? `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-      : '';
-
-    response.headers.set(
-      'Set-Cookie',
-      [accessTokenCookie, refreshTokenCookie].filter(Boolean).join(', ')
-    );
-
-    return response;
+    headers.append('Location', '/settings?yahoo=connected');
+    return new NextResponse(null, { status: 302, headers });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Yahoo callback error';
     return new NextResponse(message, { status: 502 });
