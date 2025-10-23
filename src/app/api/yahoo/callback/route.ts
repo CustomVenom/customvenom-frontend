@@ -1,5 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { clearCookie } from '../../../lib/cookies';
+import { NextRequest, NextResponse } from 'next/server';
+// Inline cookie helper to avoid import issues
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
@@ -34,47 +34,45 @@ async function exchangeCodeForTokens(code: string, redirectUri: string) {
   };
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
   try {
-    const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
-    const host = req.headers.host!;
+    const proto = req.headers.get('x-forwarded-proto') || 'https';
+    const host = req.headers.get('host')!;
     const site = `${proto}://${host}`;
     const redirectUri = `${site}/api/yahoo/callback`;
-    const code = String(req.query.code ?? '');
-    const state = String(req.query.state ?? '');
-    const cookieState = req.cookies?.y_state ?? '';
+    const code = req.nextUrl.searchParams.get('code') || '';
+    const state = req.nextUrl.searchParams.get('state') || '';
+    const cookieState = req.cookies.get('y_state')?.value || '';
 
     // CSRF/state check
     if (!state || !cookieState || state !== cookieState) {
-      return res.status(400).send('Invalid OAuth state');
+      return new NextResponse('Invalid OAuth state', { status: 400 });
     }
     // one-time use
-    clearCookie(res, 'y_state');
+    const response = NextResponse.redirect('/settings?yahoo=connected');
+    response.cookies.delete('y_state');
 
     if (!code) {
-      return res.status(400).send('Missing code');
+      return new NextResponse('Missing code', { status: 400 });
     }
 
     const tokens = await exchangeCodeForTokens(code, redirectUri);
 
     // DEMO persistence (session cookie). Replace with DB storage per user in production.
     // Store short-lived access token for 15 minutes to complete "me/leagues" test.
-    res.setHeader(
+    const accessTokenCookie = `y_at=${encodeURIComponent(tokens.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`;
+    const refreshTokenCookie = tokens.refresh_token
+      ? `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+      : '';
+
+    response.headers.set(
       'Set-Cookie',
-      [
-        `y_at=${encodeURIComponent(tokens.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`,
-        tokens.refresh_token
-          ? `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-          : '', // 30 days
-      ]
-        .filter(Boolean)
-        .join(', ')
+      [accessTokenCookie, refreshTokenCookie].filter(Boolean).join(', ')
     );
 
-    // Redirect back to a settings page or success screen
-    res.redirect(302, '/settings?yahoo=connected');
+    return response;
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Yahoo callback error';
-    return res.status(502).send(message);
+    return new NextResponse(message, { status: 502 });
   }
 }

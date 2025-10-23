@@ -1,12 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Minimal fantasy endpoint sample. Depending on your chosen Fantasy API,
 // you might need a gameKey or to hit profile first to get the GUID/account key.
 // Adjust the URL to the correct Yahoo Fantasy API once you finalize the path.
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const at = req.cookies?.y_at;
-  if (!at) return res.status(401).json({ ok: false, error: 'not_connected' });
+export async function GET(req: NextRequest) {
+  const at = req.cookies.get('y_at')?.value;
+  if (!at) return NextResponse.json({ ok: false, error: 'not_connected' }, { status: 401 });
 
   // Example placeholder. Replace path with the real Yahoo Fantasy leagues list you're targeting.
   const url =
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const r = await fetch(url, { headers: { Authorization: `Bearer ${at}` } });
   const body = await r.text();
-  if (!r.ok) return res.status(502).send(body);
+  if (!r.ok) return new NextResponse(body, { status: 502 });
 
-  res.status(200).send(body);
+  return new NextResponse(body, { status: 200 });
 }

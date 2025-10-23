@@ -1,6 +1,6 @@
 // Small helper for cookies (Node Next.js API routes)
 export function setCookie(
-  res: { setHeader: (name: string, value: string) => void },
+  res: { headers: { set: (name: string, value: string) => void } },
   name: string,
   value: string,
   opts: Partial<{
@@ -20,12 +20,12 @@ export function setCookie(
   ];
   if (o.secure) parts.push(`Secure`);
   if (o.maxAge) parts.push(`Max-Age=${o.maxAge}`);
-  res.setHeader('Set-Cookie', parts.join('; '));
+  res.headers.set('Set-Cookie', parts.join('; '));
 }
 
 export function clearCookie(
-  res: { setHeader: (name: string, value: string) => void },
+  res: { headers: { set: (name: string, value: string) => void } },
   name: string
 ) {
-  res.setHeader('Set-Cookie', `${name}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
+  res.headers.set('Set-Cookie', `${name}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
 }
