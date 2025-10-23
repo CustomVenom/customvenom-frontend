@@ -5,6 +5,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  // Force apex → WWW redirect (so the flow never splits hosts)
+  const url = new URL(request.url);
+  if (url.hostname === 'customvenom.com') {
+    url.hostname = 'www.customvenom.com';
+    return NextResponse.redirect(url, 308);
+  }
+
   // Paywall bypass for development
   if (process.env.PAYWALL_DISABLED === '1') {
     return NextResponse.next();

@@ -1,62 +1,58 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
-const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
+
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  try {
-    const code = req.nextUrl.searchParams.get('code') || '';
-    const state = req.nextUrl.searchParams.get('state') || '';
-    const jar = await cookies();
-    const cookieState = jar.get('y_state')?.value || '';
-    if (!state || !cookieState || state !== cookieState)
-      return new NextResponse('Invalid OAuth state', { status: 400 });
-    jar.set({ name: 'y_state', value: '', path: '/', maxAge: 0 });
-    if (!code) return new NextResponse('Missing code', { status: 400 });
-
-    const basic = Buffer.from(
-      `${process.env.YAHOO_CLIENT_ID!}:${process.env.YAHOO_CLIENT_SECRET!}`
-    ).toString('base64');
-    const resp = await fetch(TOKEN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${basic}`,
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        redirect_uri: 'https://www.customvenom.com/api/yahoo/callback',
-        code,
-      }),
-      cache: 'no-store',
-    });
-    const text = await resp.text();
-    if (!resp.ok) return new NextResponse(`token_exchange_${resp.status}:${text}`, { status: 502 });
-    const tokens = JSON.parse(text) as {
-      access_token: string;
-      refresh_token?: string;
-      xoauth_yahoo_guid?: string;
-    };
-
-    const headers = new Headers();
-    headers.append(
-      'Set-Cookie',
-      `y_at=${encodeURIComponent(tokens.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`
-    );
-    if (tokens.refresh_token)
-      headers.append(
-        'Set-Cookie',
-        `y_rt=${encodeURIComponent(tokens.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-      );
-    if (tokens.xoauth_yahoo_guid)
-      headers.append(
-        'Set-Cookie',
-        `y_guid=${encodeURIComponent(tokens.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-      );
-    headers.append('Location', '/settings?yahoo=connected');
-    return new NextResponse(null, { status: 302, headers });
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : 'Yahoo callback error';
-    return new NextResponse(message, { status: 502 });
+  const url = new URL(req.url);
+  const code = url.searchParams.get('code') || '';
+  const state = url.searchParams.get('state') || '';
+  const yState = req.cookies.get('y_state')?.value || '';
+  if (!code || !state || !yState || state !== yState) {
+    return new NextResponse('Invalid OAuth state', { status: 400 });
   }
+
+  const tokenUrl = 'https://api.login.yahoo.com/oauth2/get_token';
+  const basic = Buffer.from(
+    `${process.env.YAHOO_CLIENT_ID!}:${process.env.YAHOO_CLIENT_SECRET!}`
+  ).toString('base64');
+  const body = new URLSearchParams({
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: 'https://www.customvenom.com/api/yahoo/callback', // EXACT match
+  });
+
+  const r = await fetch(tokenUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${basic}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body.toString(),
+    cache: 'no-store',
+  });
+
+  if (!r.ok) {
+    const t = await r.text().catch(() => '');
+    return new NextResponse(`Token exchange failed: ${r.status}\n${t}`, { status: 502 });
+  }
+
+  const tok = (await r.json()) as {
+    access_token: string;
+    xoauth_yahoo_guid?: string;
+    expires_in?: number;
+  };
+  const maxAge = Math.max(60, Math.min(3600, tok.expires_in ?? 900));
+
+  const res = NextResponse.redirect('/settings?yahoo=connected', { status: 302 });
+  res.headers.append(
+    'Set-Cookie',
+    `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
+  );
+  if (tok.xoauth_yahoo_guid) {
+    res.headers.append(
+      'Set-Cookie',
+      `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+    );
+  }
+  return res;
 }
