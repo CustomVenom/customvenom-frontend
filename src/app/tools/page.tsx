@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import ToolsTabs from '@/components/ToolsTabs';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
+import DebugRequestId from '@/components/DebugRequestId';
 
 export const metadata: Metadata = {
   title: 'Tools — Custom Venom',
@@ -68,6 +69,8 @@ export default function ToolsPage() {
           </Link>
         </div>
       </div>
+
+      <DebugRequestId />
     </>
   );
 }
