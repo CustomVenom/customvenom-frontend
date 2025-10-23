@@ -55,11 +55,7 @@ export const authConfig: NextAuthConfig = {
   trustHost: true,
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Allow absolute URLs to same origin
-      if (url.startsWith(baseUrl)) return url;
-      // Allow relative URLs
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      // Force a stable landing page after auth
+      // Force redirect to /tools/yahoo for all auth flows
       return `${baseUrl}/tools/yahoo`;
     },
     async signIn({

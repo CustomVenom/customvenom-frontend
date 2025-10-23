@@ -6,7 +6,12 @@ API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
 SENTRY_DSN=
 NEXT_PUBLIC_SENTRY_DSN=
 NEXT_PUBLIC_LOGS_ENABLED=false
-DATABASE_URL=YOUR_DATABASE_URL_HERE
-GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID_HERE
-GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_CLIENT_SECRET_HERE
 
+App ID
+    hLyo9VQ2
+Client ID (Consumer Key)
+
+prism dB = psql 'postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+    dj0yJmk9VUxWc05DWG5Wc09xJmQ9WVdrOWFFeDViemxXVVRJbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWZl
+Client Secret (Consumer Secret)
+    79f00dfd848f68b469b4e6e4174a5ef1f31d0b63
