@@ -23,11 +23,22 @@ export async function GET() {
 
   // Expect: { ok, schema_version, last_refresh }
   const data = await r.json();
-  return new Response(JSON.stringify(data), {
-    status: 200,
-    headers: {
-      'content-type': 'application/json',
-      'cache-control': 'no-store',
-    },
+
+  // Clone body
+  const body = JSON.stringify(data);
+
+  // Start response with upstream status
+  const res = new Response(body, { status: r.status });
+
+  // Forward key headers for observability and CORS
+  const fwd = ['x-request-id', 'cache-control', 'access-control-allow-origin'];
+  fwd.forEach((h) => {
+    const v = r.headers.get(h);
+    if (v) res.headers.set(h, v);
   });
+
+  // Ensure JSON content-type when needed
+  if (!res.headers.has('content-type')) res.headers.set('content-type', 'application/json');
+
+  return res;
 }
