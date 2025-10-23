@@ -5,11 +5,6 @@ const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
 export async function GET(req: NextRequest) {
   try {
-    const proto = req.headers.get('x-forwarded-proto') || 'https';
-    const host = req.headers.get('host')!;
-    const site = `${proto}://${host}`;
-    const redirectUri = `${site}/api/yahoo/callback`;
-
     const code = req.nextUrl.searchParams.get('code') || '';
     const state = req.nextUrl.searchParams.get('state') || '';
     const jar = await cookies();
@@ -30,7 +25,7 @@ export async function GET(req: NextRequest) {
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
+        redirect_uri: 'https://www.customvenom.com/api/yahoo/callback',
         code,
       }),
       cache: 'no-store',
