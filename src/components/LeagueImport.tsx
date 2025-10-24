@@ -1,19 +1,69 @@
 // League Import Component (Preview Testing)
-// Simple form to test /api/league/import endpoint
+// Shows Yahoo connection status and fetches leagues
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [yahooConnected, setYahooConnected] = useState(false);
+  const [yahooGuid, setYahooGuid] = useState<string | null>(null);
+  const [leagues, setLeagues] = useState<Array<{
+    name?: string;
+    league_id?: string;
+    season?: string;
+  }> | null>(null);
+  const [fetchingLeagues, setFetchingLeagues] = useState(false);
+
+  // Check Yahoo connection status on mount
+  useEffect(() => {
+    const checkYahooConnection = async () => {
+      try {
+        const response = await fetch('/api/yahoo/me');
+        if (response.ok) {
+          const data = await response.json();
+          setYahooConnected(true);
+          // Extract GUID from Yahoo response
+          if (data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
+            setYahooGuid(data.fantasy_content.users[0].user[0].guid);
+          }
+        }
+      } catch (err) {
+        console.log('Yahoo not connected:', err);
+      }
+    };
+    checkYahooConnection();
+  }, []);
+
+  const fetchLeagues = async () => {
+    setFetchingLeagues(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/yahoo/leagues');
+      if (!response.ok) {
+        throw new Error('Failed to fetch leagues');
+      }
+      const data = await response.json();
+      console.log('Leagues response:', data);
+
+      // Extract leagues from Yahoo response
+      const leaguesData =
+        data?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || [];
+      setLeagues(leaguesData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch leagues');
+    } finally {
+      setFetchingLeagues(false);
+    }
+  };
 
   const handleImport = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!leagueId.trim()) {
       setError('Please enter a league ID');
       return;
@@ -33,7 +83,8 @@ export function LeagueImport() {
         }),
       });
 
-      const data: { error?: string; message?: string; [key: string]: unknown } = await response.json();
+      const data: { error?: string; message?: string; [key: string]: unknown } =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || data.message || 'Import failed');
@@ -51,20 +102,123 @@ export function LeagueImport() {
   };
 
   return (
-    <div style={{ 
-      padding: '24px', 
-      border: '1px solid #e5e7eb', 
-      borderRadius: '8px',
-      maxWidth: '600px',
-    }}>
-      <h2 style={{ marginTop: 0, marginBottom: '8px' }}>Import Yahoo League</h2>
+    <div
+      style={{
+        padding: '24px',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        maxWidth: '600px',
+      }}
+    >
+      <h2 style={{ marginTop: 0, marginBottom: '16px' }}>Yahoo Fantasy Integration</h2>
+
+      {/* Yahoo Connection Status */}
+      <div
+        style={{
+          marginBottom: '20px',
+          padding: '16px',
+          backgroundColor: yahooConnected ? '#d1fae5' : '#fef3c7',
+          borderRadius: '8px',
+          border: `1px solid ${yahooConnected ? '#6ee7b7' : '#fbbf24'}`,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+          <span style={{ fontSize: '18px', marginRight: '8px' }}>
+            {yahooConnected ? '✅' : '⚠️'}
+          </span>
+          <strong style={{ color: yahooConnected ? '#065f46' : '#92400e' }}>
+            {yahooConnected ? 'Yahoo Connected' : 'Yahoo Not Connected'}
+          </strong>
+        </div>
+        {yahooConnected && yahooGuid && (
+          <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '12px' }}>
+            GUID:{' '}
+            <code style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '4px' }}>
+              {yahooGuid}
+            </code>
+          </div>
+        )}
+        {yahooConnected ? (
+          <button
+            onClick={fetchLeagues}
+            disabled={fetchingLeagues}
+            style={{
+              backgroundColor: fetchingLeagues ? '#9ca3af' : '#3b82f6',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: fetchingLeagues ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            {fetchingLeagues ? 'Fetching...' : 'Fetch My Leagues'}
+          </button>
+        ) : (
+          <a
+            href="https://www.customvenom.com/api/yahoo/connect"
+            style={{
+              display: 'inline-block',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Connect Yahoo
+          </a>
+        )}
+      </div>
+
+      {/* Leagues Display */}
+      {leagues && leagues.length > 0 && (
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 600 }}>
+            Your Leagues ({leagues.length})
+          </h3>
+          <div
+            style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+            }}
+          >
+            {leagues.map((league, index: number) => (
+              <div
+                key={index}
+                style={{
+                  padding: '12px',
+                  borderBottom: index < leagues.length - 1 ? '1px solid #f3f4f6' : 'none',
+                }}
+              >
+                <div style={{ fontWeight: 500, marginBottom: '4px' }}>
+                  {league.name || 'Unnamed League'}
+                </div>
+                <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                  ID: {league.league_id || 'N/A'} • Season: {league.season || 'N/A'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>Import Yahoo League</h3>
       <p style={{ color: '#6b7280', marginBottom: '16px', fontSize: '14px' }}>
         Preview mode - tests API endpoint without actual import
       </p>
 
       <form onSubmit={handleImport}>
         <div style={{ marginBottom: '16px' }}>
-          <label htmlFor="leagueId" style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
+          <label
+            htmlFor="leagueId"
+            style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}
+          >
             Yahoo League ID:
           </label>
           <input
@@ -102,35 +256,41 @@ export function LeagueImport() {
       </form>
 
       {error && (
-        <div style={{
-          marginTop: '16px',
-          padding: '12px',
-          backgroundColor: '#fee2e2',
-          border: '1px solid #fca5a5',
-          borderRadius: '6px',
-          color: '#991b1b',
-        }}>
+        <div
+          style={{
+            marginTop: '16px',
+            padding: '12px',
+            backgroundColor: '#fee2e2',
+            border: '1px solid #fca5a5',
+            borderRadius: '6px',
+            color: '#991b1b',
+          }}
+        >
           <strong>Error:</strong> {error}
         </div>
       )}
 
       {result && (
-        <div style={{
-          marginTop: '16px',
-          padding: '12px',
-          backgroundColor: '#d1fae5',
-          border: '1px solid #6ee7b7',
-          borderRadius: '6px',
-        }}>
+        <div
+          style={{
+            marginTop: '16px',
+            padding: '12px',
+            backgroundColor: '#d1fae5',
+            border: '1px solid #6ee7b7',
+            borderRadius: '6px',
+          }}
+        >
           <strong style={{ color: '#065f46' }}>✅ Success!</strong>
-          <pre style={{
-            marginTop: '8px',
-            padding: '8px',
-            backgroundColor: '#f9fafb',
-            borderRadius: '4px',
-            fontSize: '12px',
-            overflow: 'auto',
-          }}>
+          <pre
+            style={{
+              marginTop: '8px',
+              padding: '8px',
+              backgroundColor: '#f9fafb',
+              borderRadius: '4px',
+              fontSize: '12px',
+              overflow: 'auto',
+            }}
+          >
             {JSON.stringify(result, null, 2)}
           </pre>
         </div>
@@ -138,4 +298,3 @@ export function LeagueImport() {
     </div>
   );
 }
-
