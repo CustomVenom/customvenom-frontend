@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit",
     "pre-commit": "npm run lint && npm run type-check",
     "prepare": "husky install",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/nextjs": "^8.0.0",
     "@stripe/stripe-js": "^4.0.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "latest",
     "@testing-library/react": "^16.3.0",
     "@vercel/analytics": "^1.5.0",
     "next": "15.5.4",
