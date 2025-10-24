@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 interface League {
   id: string;
   name: string;
@@ -13,10 +11,7 @@ interface LeagueChooserProps {
 }
 
 export function LeagueChooser({ leagues, onPick }: LeagueChooserProps) {
-  const [selected, setSelected] = useState('');
-
   const handleChange = (leagueId: string) => {
-    setSelected(leagueId);
     localStorage.setItem('cv_last_league', leagueId);
     onPick(leagueId);
   };

@@ -38,7 +38,7 @@ export function LeagueSwitcher() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      const res = await fetch('/app/me/leagues', { 
+      const res = await fetch('/app/me/leagues', {
         cache: 'no-store',
         headers: { 'accept': 'application/json' },
         signal: controller.signal
@@ -61,7 +61,7 @@ export function LeagueSwitcher() {
       if (json) {
         setData(json);
         setError(null);
-        
+
         // Check for saved league preference
         const savedLeague = localStorage.getItem('cv_last_league');
         if (savedLeague && json.synced_leagues.includes(savedLeague)) {
@@ -74,9 +74,10 @@ export function LeagueSwitcher() {
       } else {
         setError('Invalid response');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[LeagueSwitcher]', err);
-      setError(err?.message || 'Failed to load leagues');
+      const message = err instanceof Error ? err.message : 'Failed to load leagues';
+      setError(message);
     } finally {
       setLoading(false);
     }

@@ -17,7 +17,7 @@ export function TrustRibbon({
   schemaVersion = 'v1',
   lastRefresh,
   stale = false,
-  staleAge,
+  staleAge: _staleAge,
 }: TrustRibbonProps) {
   const formattedTime = lastRefresh
     ? new Date(lastRefresh).toLocaleTimeString('en-US', {
