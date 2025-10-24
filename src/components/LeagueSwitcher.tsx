@@ -63,6 +63,18 @@ export function LeagueSwitcher() {
 
       const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } = await res.json();
 
+      // Handle empty leagues array explicitly
+      if (!json.leagues || json.leagues.length === 0) {
+        console.warn('[LeagueSwitcher] Empty leagues array returned');
+        setData({
+          ...json,
+          leagues: [],
+          synced_leagues: [],
+        });
+        setError('No leagues found. Try refreshing your league data.');
+        return;
+      }
+
       setData(json);
       setError(null);
 
