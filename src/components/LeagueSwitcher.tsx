@@ -36,6 +36,7 @@ export function LeagueSwitcher() {
   };
 
   const fetchLeagues = async () => {
+    let requestId = 'no-request-id';
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
@@ -47,6 +48,7 @@ export function LeagueSwitcher() {
       });
 
       clearTimeout(timeoutId);
+      requestId = res.headers.get('x-request-id') || 'no-request-id';
 
       if (res.status === 404) {
         throw new Error('leagues_endpoint_not_found');
@@ -74,7 +76,11 @@ export function LeagueSwitcher() {
           synced_leagues: [],
         });
         setError('No leagues found. Try refreshing your league data.');
-        setErrorDetails(JSON.stringify({ connected: json.connected, leagueCount: json.leagues?.length || 0 }, null, 2));
+        setErrorDetails(JSON.stringify({
+          requestId,
+          connected: json.connected,
+          leagueCount: json.leagues?.length || 0
+        }, null, 2));
         return;
       }
 
@@ -97,7 +103,11 @@ export function LeagueSwitcher() {
       console.error('[LeagueSwitcher]', err);
       const message = err instanceof Error ? err.message : 'Failed to load leagues';
       setError(message);
-      setErrorDetails(err instanceof Error ? err.stack || err.message : String(err));
+      setErrorDetails(JSON.stringify({
+        requestId,
+        error: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined
+      }, null, 2));
     } finally {
       setLoading(false);
     }
