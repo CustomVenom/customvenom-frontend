@@ -11,23 +11,63 @@ export async function GET() {
     const r = await fetch(`${apiBase}/api/me/leagues`, {
       headers: {
         'x-request-id': reqId,
+        'accept': 'application/json',
       },
       cache: 'no-store',
     });
 
     if (!r.ok) {
-      return new NextResponse(`Upstream error: ${r.status}`, { status: r.status });
+      // Return JSON error response
+      return NextResponse.json(
+        { leagues: [], error: 'upstream_unavailable' },
+        {
+          status: r.status,
+          headers: {
+            'content-type': 'application/json',
+            'cache-control': 'no-store',
+            'x-request-id': reqId,
+          },
+        }
+      );
+    }
+
+    const contentType = r.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      // Upstream returned non-JSON, return safe fallback
+      return NextResponse.json(
+        { leagues: [], error: 'invalid_response' },
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+            'cache-control': 'no-store',
+            'x-request-id': reqId,
+          },
+        }
+      );
     }
 
     const body = await r.json();
     return NextResponse.json(body, {
       headers: {
+        'content-type': 'application/json',
         'cache-control': 'no-store',
         'x-request-id': reqId,
       },
     });
   } catch (error) {
     console.error('[me/leagues]', error);
-    return new NextResponse('Internal error', { status: 500 });
+    // Return JSON error response
+    return NextResponse.json(
+      { leagues: [], error: 'internal_error' },
+      {
+        status: 500,
+        headers: {
+          'content-type': 'application/json',
+          'cache-control': 'no-store',
+          'x-request-id': reqId,
+        },
+      }
+    );
   }
 }
