@@ -115,7 +115,7 @@ export default function YahooToolPage() {
     }
   };
 
-  const fetchTeams = async (leagueKey: string) => {
+  const _fetchTeams = async (leagueKey: string) => {
     try {
       setError(null);
       setLoading(true);
@@ -213,6 +213,9 @@ export default function YahooToolPage() {
             >
               Connect Yahoo
             </a>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+              Connect Yahoo to sync your leagues and view team rosters.
+            </p>
           </div>
         </div>
       </>
@@ -237,6 +240,9 @@ export default function YahooToolPage() {
             >
               Connect Yahoo
             </a>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+              Connect Yahoo to sync your leagues and view team rosters.
+            </p>
           </div>
         </div>
       </>
@@ -278,14 +284,10 @@ export default function YahooToolPage() {
             <h2 className="h2 mb-4">Your Leagues ({leagues.length})</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {leagues.map((league) => (
-                <button
+                <Link
                   key={league.league_key}
-                  onClick={() => fetchTeams(league.league_key)}
-                  className={`border rounded-lg p-4 text-left transition-colors ${
-                    selectedLeague === league.league_key
-                      ? 'border-brand-primary dark:border-brand-accent bg-brand-primary/5 dark:bg-brand-accent/5'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-brand-primary dark:hover:border-brand-accent'
-                  }`}
+                  href={`/tools/yahoo/${league.league_id || league.league_key}`}
+                  className={`border rounded-lg p-4 text-left transition-colors block border-gray-200 dark:border-gray-700 hover:border-brand-primary dark:hover:border-brand-accent`}
                 >
                   <div className="font-semibold text-lg mb-1">{league.name}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -296,7 +298,7 @@ export default function YahooToolPage() {
                       Tier: {league.felo_tier}
                     </div>
                   )}
-                </button>
+                </Link>
               ))}
             </div>
           </div>
