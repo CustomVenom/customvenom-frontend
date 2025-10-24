@@ -3,76 +3,18 @@
 import { useEffect, useState } from 'react';
 import type { MeLeaguesResponse } from '@/types/leagues';
 import { safeJson } from '@/lib/safe-json';
+import { LeagueChooser } from './LeagueChooser';
 
 export function LeagueSwitcher() {
   const [data, setData] = useState<MeLeaguesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await fetch('/app/me/leagues', { 
-          cache: 'no-store',
-          headers: { 'accept': 'application/json' }
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-
-        const contentType = res.headers.get('content-type') || '';
-        if (!contentType.includes('application/json')) {
-          throw new Error('Non-JSON response');
-        }
-
-        const text = await res.text();
-        const json = safeJson<MeLeaguesResponse>(text, null);
-
-        if (!cancelled) {
-          if (json) {
-            setData(json);
-            setError(null);
-          } else {
-            setError('Invalid response');
-          }
-        }
-      } catch (err: any) {
-        if (!cancelled) {
-          console.error('[LeagueSwitcher]', err);
-          setError(err?.message || 'Failed to load leagues');
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (loading) {
-    return <span className="text-xs text-gray-500">Loading leagues…</span>;
-  }
-
-  if (error) {
-    return <span className="text-xs text-gray-500">Leagues unavailable</span>;
-  }
-
-  if (!data || data.synced_leagues.length === 0) {
-    return <span className="text-xs text-gray-500">No leagues</span>;
-  }
-
-  const active = data.active_league ?? data.synced_leagues[0];
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const handleChange = async (newActive: string) => {
-    if (updating || newActive === active) return;
+    if (updating) return;
 
     setUpdating(true);
     try {
@@ -81,14 +23,109 @@ export function LeagueSwitcher() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ league_key: newActive }),
       });
-      setData({ ...data, active_league: newActive });
+      localStorage.setItem('cv_last_league', newActive);
+      setSelectedLeague(newActive);
+      setData((prev) => prev ? { ...prev, active_league: newActive } : null);
     } catch (err) {
       console.error('[LeagueSwitcher] Failed to update active league', err);
-      // Fallback: could show toast here
     } finally {
       setUpdating(false);
     }
   };
+
+  const fetchLeagues = async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+      const res = await fetch('/app/me/leagues', { 
+        cache: 'no-store',
+        headers: { 'accept': 'application/json' },
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Non-JSON response');
+      }
+
+      const text = await res.text();
+      const json = safeJson<MeLeaguesResponse>(text, null);
+
+      if (json) {
+        setData(json);
+        setError(null);
+        
+        // Check for saved league preference
+        const savedLeague = localStorage.getItem('cv_last_league');
+        if (savedLeague && json.synced_leagues.includes(savedLeague)) {
+          setSelectedLeague(savedLeague);
+        } else if (json.synced_leagues.length === 1) {
+          // Auto-select if only one league
+          setSelectedLeague(json.synced_leagues[0]);
+        }
+        // else: show chooser (no auto-select)
+      } else {
+        setError('Invalid response');
+      }
+    } catch (err: any) {
+      console.error('[LeagueSwitcher]', err);
+      setError(err?.message || 'Failed to load leagues');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeagues();
+  }, [retryCount]);
+
+  if (loading) {
+    return <span className="text-xs text-gray-500">Loading leagues…</span>;
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-gray-500">Leagues unavailable</span>
+        <button
+          onClick={() => {
+            setLoading(true);
+            setError(null);
+            setRetryCount((c) => c + 1);
+          }}
+          className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (!data || data.synced_leagues.length === 0) {
+    return <span className="text-xs text-gray-500">No leagues</span>;
+  }
+
+  // Show chooser if multiple leagues and none selected
+  if (data.synced_leagues.length > 1 && !selectedLeague) {
+    return (
+      <LeagueChooser
+        leagues={data.synced_leagues.map((k) => {
+          const L = data.leagues.find((l) => l.key === k);
+          return { id: k, name: L?.name ?? k };
+        })}
+        onPick={handleChange}
+      />
+    );
+  }
+
+  const active = selectedLeague ?? data.active_league ?? data.synced_leagues[0];
 
   return (
     <label className="flex items-center gap-2 text-sm">
