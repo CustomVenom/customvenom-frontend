@@ -1,0 +1,49 @@
+[1mdiff --git a/src/components/LeagueSwitcher.tsx b/src/components/LeagueSwitcher.tsx[m
+[1mindex 9cbb3f7..80079c6 100644[m
+[1m--- a/src/components/LeagueSwitcher.tsx[m
+[1m+++ b/src/components/LeagueSwitcher.tsx[m
+[36m@@ -69,7 +69,7 @@[m [mexport function LeagueSwitcher() {[m
+       // Use server defaultLeagueId first, then localStorage, then auto-select single league[m
+       const serverDefault = json.defaultLeagueId;[m
+       const savedLeague = localStorage.getItem('cv_last_league');[m
+[31m-      [m
+[32m+[m
+       if (serverDefault && json.synced_leagues.includes(serverDefault)) {[m
+         setSelectedLeague(serverDefault);[m
+       } else if (savedLeague && json.synced_leagues.includes(savedLeague)) {[m
+[36m@@ -94,7 +94,7 @@[m [mexport function LeagueSwitcher() {[m
+         method: 'POST',[m
+         headers: { 'accept': 'application/json' },[m
+       });[m
+[31m-      [m
+[32m+[m
+       if (res.ok) {[m
+         // Wait a moment for backend to process, then reload[m
+         setTimeout(() => {[m
+[36m@@ -158,7 +158,7 @@[m [mexport function LeagueSwitcher() {[m
+   }[m
+ [m
+   const active = selectedLeague ?? data.active_league ?? data.synced_leagues[0];[m
+[31m-  const lastSyncDisplay = data.lastSync [m
+[32m+[m[32m  const lastSyncDisplay = data.lastSync[m
+     ? new Date(data.lastSync).toLocaleDateString()[m
+     : null;[m
+ [m
+[36m@@ -183,7 +183,7 @@[m [mexport function LeagueSwitcher() {[m
+         </select>[m
+         {updating && <span className="text-xs text-gray-500">Updating...</span>}[m
+       </label>[m
+[31m-      [m
+[32m+[m
+       <button[m
+         onClick={handleRefresh}[m
+         disabled={refreshing}[m
+[36m@@ -191,7 +191,7 @@[m [mexport function LeagueSwitcher() {[m
+       >[m
+         {refreshing ? 'Refreshing...' : 'Refresh'}[m
+       </button>[m
+[31m-      [m
+[32m+[m
+       {lastSyncDisplay && ([m
+         <span className="text-xs text-gray-500">Last sync: {lastSyncDisplay}</span>[m
+       )}[m

@@ -44,7 +44,7 @@ export function LeagueHeaderControls({
       >
         Change league
       </button>
-      
+
       {open && (
         <div className="absolute top-full right-0 z-40 mt-2 w-[280px] rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-lg">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Select a league</div>

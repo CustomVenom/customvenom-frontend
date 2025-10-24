@@ -47,7 +47,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps) {
 
   const handleChange = async (id: string) => {
     localStorage.setItem('cv_last_league', id);
-    
+
     // Optionally POST to server (stub for now)
     try {
       await fetch('/api/leagues/set-active', {
@@ -58,7 +58,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps) {
     } catch (err) {
       console.error('[LeaguePageHeader] Failed to persist active league', err);
     }
-    
+
     // Reload page data for the new active league
     window.location.reload();
   };
