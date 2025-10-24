@@ -7,11 +7,22 @@ const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 const REDIRECT_URI = 'https://www.customvenom.com/api/yahoo/callback';
 
 export async function GET(req: NextRequest) {
+  const reqId = crypto.randomUUID();
   try {
     const url = new URL(req.url);
     const code = url.searchParams.get('code') || '';
     const state = url.searchParams.get('state') || '';
     const yStateCookie = req.cookies.get('y_state')?.value || '';
+
+    console.log(
+      JSON.stringify({
+        level: 'info',
+        req_id: reqId,
+        route: '/api/yahoo/callback',
+        code_present: !!code,
+        state_present: !!state,
+      })
+    );
 
     // Parse state cookie to extract returnTo
     let returnTo = '/tools/yahoo';

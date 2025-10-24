@@ -7,9 +7,14 @@ const AUTH_URL = 'https://api.login.yahoo.com/oauth2/request_auth';
 const REDIRECT_URI = 'https://www.customvenom.com/api/yahoo/callback'; // canonical
 
 export async function GET(req: NextRequest) {
+  const reqId = crypto.randomUUID();
   const url = new URL(req.url);
   const returnTo = url.searchParams.get('returnTo') ?? '/tools/yahoo';
   const state = crypto.randomUUID();
+
+  console.log(
+    JSON.stringify({ level: 'info', req_id: reqId, route: '/api/yahoo/connect', returnTo })
+  );
 
   const auth = new URL(AUTH_URL);
   auth.searchParams.set('client_id', process.env.YAHOO_CLIENT_ID!);

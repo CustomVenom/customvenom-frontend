@@ -56,26 +56,36 @@ export default async function YahooLeaguePage({ params }: { params: { leagueId: 
       <Link href="/tools/yahoo" className="text-sm underline">
         ← Back to leagues
       </Link>
-      <h2 className="text-xl font-semibold">
-        {data.league.name} • {data.league.season}
-      </h2>
-      <h3 className="font-medium">{data.team.name}</h3>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-left border-b">
-            <th className="py-2 pr-3">Pos</th>
-            <th className="py-2">Player</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.roster.map((r, i) => (
-            <tr key={i} className="border-b last:border-0">
-              <td className="py-2 pr-3">{r.pos}</td>
-              <td className="py-2">{r.name}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {!data ? (
+        <div className="space-y-4">
+          <div className="skeleton h-8 w-60" />
+          <div className="skeleton h-6 w-40" />
+          <div className="skeleton h-64 w-full" />
+        </div>
+      ) : (
+        <>
+          <h2 className="text-xl font-semibold">
+            {data.league.name} • {data.league.season}
+          </h2>
+          <h3 className="font-medium">{data.team.name}</h3>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b">
+                <th className="py-2 pr-3">Pos</th>
+                <th className="py-2">Player</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.roster.map((r, i) => (
+                <tr key={i} className="border-b last:border-0">
+                  <td className="py-2 pr-3">{r.pos}</td>
+                  <td className="py-2">{r.name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 }

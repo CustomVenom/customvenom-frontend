@@ -279,7 +279,7 @@ export default function YahooToolPage() {
         )}
 
         {/* Leagues */}
-        {leagues.length > 0 && (
+        {leagues.length > 0 ? (
           <div>
             <h2 className="h2 mb-4">Your Leagues ({leagues.length})</h2>
             <div className="grid md:grid-cols-2 gap-4">
@@ -301,6 +301,19 @@ export default function YahooToolPage() {
                 </Link>
               ))}
             </div>
+          </div>
+        ) : (
+          <div className="border rounded-lg p-8 text-center">
+            <h2 className="h2 mb-4">No Yahoo leagues found</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Try switching Yahoo accounts or ensure your account has active leagues.
+            </p>
+            <Link
+              href="/api/yahoo/connect?returnTo=/tools/yahoo"
+              className="cv-btn-primary inline-block"
+            >
+              Switch Yahoo Account
+            </Link>
           </div>
         )}
 
