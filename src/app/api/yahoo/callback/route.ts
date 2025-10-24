@@ -4,9 +4,12 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
-// For localhost dev: add http://localhost:3000/api/yahoo/callback to Yahoo app settings
-const REDIRECT_URI =
-  process.env.YAHOO_REDIRECT_URI || 'https://www.customvenom.com/api/yahoo/callback';
+const PROD_HOST = 'https://www.customvenom.com';
+
+// Yahoo OAuth: MUST use production domain with www
+function yahooRedirectUri(): string {
+  return `${PROD_HOST}/api/yahoo/callback`;
+}
 
 export async function GET(req: NextRequest) {
   const reqId = crypto.randomUUID();
@@ -34,8 +37,14 @@ export async function GET(req: NextRequest) {
       if (stateData.state && stateData.returnTo) {
         // Validate returnTo to prevent open redirects
         const parsedReturnTo = stateData.returnTo;
+
+        // Guardrail: reject absolute URLs (only allow internal paths)
+        if (parsedReturnTo.startsWith('http://') || parsedReturnTo.startsWith('https://')) {
+          console.error('Rejected absolute URL in returnTo:', parsedReturnTo);
+          returnTo = '/tools/leagues'; // Safe fallback
+        }
         // Only allow redirects to /tools/* pages, prefer /tools/leagues
-        if (parsedReturnTo.startsWith('/tools/leagues')) {
+        else if (parsedReturnTo.startsWith('/tools/leagues')) {
           returnTo = parsedReturnTo;
         } else if (parsedReturnTo.startsWith('/tools/')) {
           // Legacy support: redirect old /tools/yahoo to /tools/leagues
@@ -58,11 +67,17 @@ export async function GET(req: NextRequest) {
       return new NextResponse('Server misconfig: missing YAHOO_CLIENT_ID/SECRET', { status: 500 });
     }
 
+    // Yahoo OAuth: enforce absolute https://www... redirect
+    const redirectUri = yahooRedirectUri();
+    if (!redirectUri.startsWith('https://www.customvenom.com/api/yahoo/callback')) {
+      return new NextResponse('Invalid redirect URI configuration', { status: 500 });
+    }
+
     const basic = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     const body = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: REDIRECT_URI, // MUST match the authorize redirect_uri exactly
+      redirect_uri: redirectUri, // MUST match the authorize redirect_uri exactly
     });
 
     const r = await fetch(TOKEN_URL, {
@@ -95,15 +110,16 @@ export async function GET(req: NextRequest) {
 
     const to = new URL(returnTo, req.nextUrl.origin);
     const res = NextResponse.redirect(to, { status: 302 });
+    // Cookie domain: .customvenom.com for cross-subdomain, Secure for HTTPS only
     res.headers.append(
       'Set-Cookie',
-      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
+      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`
     );
 
     if (tok.xoauth_yahoo_guid) {
       res.headers.append(
         'Set-Cookie',
-        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=2592000`
       );
     }
 
