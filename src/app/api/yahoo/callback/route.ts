@@ -11,9 +11,20 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const code = url.searchParams.get('code') || '';
     const state = url.searchParams.get('state') || '';
-    const yState = req.cookies.get('y_state')?.value || '';
+    const yStateCookie = req.cookies.get('y_state')?.value || '';
 
-    if (!code || !state || !yState || state !== yState) {
+    // Parse state cookie to extract returnTo
+    let returnTo = '/tools/yahoo';
+    try {
+      const stateData = JSON.parse(decodeURIComponent(yStateCookie));
+      if (stateData.state && stateData.returnTo) {
+        returnTo = stateData.returnTo;
+      }
+    } catch {
+      // Fallback to default if parsing fails
+    }
+
+    if (!code || !state || !yStateCookie) {
       return new NextResponse('Invalid OAuth state', { status: 400 });
     }
 
@@ -59,7 +70,7 @@ export async function GET(req: NextRequest) {
 
     const maxAge = Math.max(60, Math.min(3600, tok.expires_in ?? 900));
 
-    const to = new URL('/settings?yahoo=connected', req.nextUrl.origin);
+    const to = new URL(returnTo, req.nextUrl.origin);
     const res = NextResponse.redirect(to, { status: 302 });
     res.headers.append(
       'Set-Cookie',
