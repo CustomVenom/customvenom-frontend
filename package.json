@@ -15,7 +15,10 @@
     "pre-commit": "npm run lint && npm run type-check",
     "prepare": "husky install",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
-    "backfill-analytics": "npx tsx scripts/backfill-analytics.ts"
+    "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "lhci": "lhci autorun --config=./lighthouse/lighthouserc.json"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.0",
@@ -36,7 +39,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@lhci/cli": "^0.12.0",
     "@opennextjs/cloudflare": "^1.9.1",
+    "@storybook/addon-essentials": "^8.3.0",
+    "@storybook/addon-interactions": "^8.3.0",
+    "@storybook/addon-links": "^8.3.0",
+    "@storybook/nextjs": "^8.3.0",
+    "@storybook/react": "^8.3.0",
+    "@storybook/test": "^8.3.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.19",
@@ -54,6 +64,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prisma": "^6.17.1",
+    "storybook": "^8.3.0",
     "tailwindcss": "^4.1.14",
     "typescript": "5.9.3",
     "vitest": "^3.2.4"
