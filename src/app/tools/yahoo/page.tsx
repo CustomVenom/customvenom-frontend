@@ -207,7 +207,7 @@ export default function YahooToolPage() {
               Link your Yahoo account to view your leagues, teams, and rosters.
             </p>
             <a
-              href="/api/yahoo/connect"
+              href="https://www.customvenom.com/api/yahoo/connect"
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo
@@ -230,7 +230,7 @@ export default function YahooToolPage() {
               Link your Yahoo account to view your leagues, teams, and rosters.
             </p>
             <a
-              href="/api/yahoo/connect"
+              href="https://www.customvenom.com/api/yahoo/connect"
               className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
             >
               Connect Yahoo

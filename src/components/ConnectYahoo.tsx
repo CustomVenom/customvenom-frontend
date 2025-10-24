@@ -21,8 +21,9 @@ export function ConnectYahoo() {
 
   return (
     <a
-      href="/api/yahoo/connect"
+      href="https://www.customvenom.com/api/yahoo/connect"
       className="cv-btn-primary inline-block px-6 py-2 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+      rel="nofollow"
     >
       Connect Yahoo
     </a>

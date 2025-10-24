@@ -28,10 +28,6 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
 
   const isCanary = (email?: string) => !!email && CANARY.includes(email.toLowerCase());
 
-  const handleConnect = () => {
-    window.location.href = '/api/yahoo/connect';
-  };
-
   const handleFetchLeagues = async () => {
     try {
       setLoading(true);
@@ -89,9 +85,13 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
                   : 'Yahoo integration is in limited rollout'}
             </div>
           ) : (
-            <button onClick={handleConnect} className="cv-btn-primary">
+            <a
+              href="https://www.customvenom.com/api/yahoo/connect"
+              className="cv-btn-primary"
+              rel="nofollow"
+            >
               Connect Yahoo
-            </button>
+            </a>
           )
         ) : (
           <div className="flex items-center gap-2">
