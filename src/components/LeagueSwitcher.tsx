@@ -37,7 +37,7 @@ export function LeagueSwitcher() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      const res = await fetch('/app/me/leagues', {
+      const res = await fetch('/api/leagues', {
         cache: 'no-store',
         headers: { 'accept': 'application/json' },
         signal: controller.signal
@@ -45,6 +45,12 @@ export function LeagueSwitcher() {
 
       clearTimeout(timeoutId);
 
+      if (res.status === 404) {
+        throw new Error('leagues_endpoint_not_found');
+      }
+      if (res.status === 401) {
+        throw new Error('auth_required');
+      }
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
@@ -86,9 +92,15 @@ export function LeagueSwitcher() {
   }
 
   if (error) {
+    const errorMessage = error === 'leagues_endpoint_not_found' 
+      ? 'Leagues endpoint not ready'
+      : error === 'auth_required'
+      ? 'Authentication required'
+      : 'Leagues unavailable';
+    
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500">Leagues unavailable</span>
+        <span className="text-xs text-gray-500">{errorMessage}</span>
         <button
           onClick={() => {
             setLoading(true);
