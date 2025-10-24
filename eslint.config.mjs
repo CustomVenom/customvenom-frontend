@@ -23,11 +23,15 @@ const eslintConfig = [
   },
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', {
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
         caughtErrorsIgnorePattern: '^_',
       }],
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 ];
