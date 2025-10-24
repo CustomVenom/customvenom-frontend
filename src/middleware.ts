@@ -1,7 +1,6 @@
 // Middleware for route protection
 // Handles demo mode and paywall bypass for development
 
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {

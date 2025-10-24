@@ -25,11 +25,21 @@ export async function GET(req: NextRequest) {
     );
 
     // Parse state cookie to extract returnTo
-    let returnTo = '/tools/yahoo';
+    // Always redirect to /tools/leagues as the canonical landing page after OAuth
+    let returnTo = '/tools/leagues';
     try {
       const stateData = JSON.parse(decodeURIComponent(yStateCookie));
       if (stateData.state && stateData.returnTo) {
-        returnTo = stateData.returnTo;
+        // Validate returnTo to prevent open redirects
+        const parsedReturnTo = stateData.returnTo;
+        // Only allow redirects to /tools/* pages, prefer /tools/leagues
+        if (parsedReturnTo.startsWith('/tools/leagues')) {
+          returnTo = parsedReturnTo;
+        } else if (parsedReturnTo.startsWith('/tools/')) {
+          // Legacy support: redirect old /tools/yahoo to /tools/leagues
+          returnTo = '/tools/leagues';
+        }
+        // Never redirect to /settings - settings is not a valid OAuth callback destination
       }
     } catch {
       // Fallback to default if parsing fails

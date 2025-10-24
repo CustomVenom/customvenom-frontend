@@ -17,7 +17,8 @@ export const dynamic = 'force-dynamic';
 export default async function SettingsPage() {
   const session = await getServerSession();
   const cookieStore = await cookies();
-  const _yahooToken = cookieStore.get('y_at')?.value;
+  const yahooToken = cookieStore.get('y_at')?.value;
+  const yahooGuid = cookieStore.get('y_guid')?.value;
 
   // If not authenticated, show connect UI instead of redirecting
   if (!session) {
@@ -25,13 +26,25 @@ export default async function SettingsPage() {
       <div className="max-w-3xl mx-auto py-8 px-4">
         <div className="bg-white rounded-xl p-8 shadow-sm">
           <h1 className="text-3xl font-bold mb-8 text-gray-900">Settings</h1>
-          <div className="mb-10 pb-10 border-b border-gray-200">
-            <h2 className="text-xl font-semibold mb-6 text-gray-700">Authentication Required</h2>
-            <p className="text-gray-600 mb-4">Please sign in to access your settings.</p>
-            <Link href="/tools/yahoo" className="cv-btn-primary" aria-label="Connect Yahoo">
-              Connect Yahoo
-            </Link>
-          </div>
+          {yahooToken ? (
+            <div className="mb-10 pb-10 border-b border-gray-200">
+              <h2 className="text-xl font-semibold mb-6 text-gray-700">Yahoo Connected</h2>
+              <p className="text-gray-600 mb-4">
+                You&apos;re connected to Yahoo Fantasy. {yahooGuid && `GUID: ${yahooGuid}`}
+              </p>
+              <Link href="/tools/yahoo" className="cv-btn-primary" aria-label="View Yahoo Tools">
+                View Yahoo Tools
+              </Link>
+            </div>
+          ) : (
+            <div className="mb-10 pb-10 border-b border-gray-200">
+              <h2 className="text-xl font-semibold mb-6 text-gray-700">Authentication Required</h2>
+              <p className="text-gray-600 mb-4">Please sign in to access your settings.</p>
+              <Link href="/tools/yahoo" className="cv-btn-primary" aria-label="Connect Yahoo">
+                Connect Yahoo
+              </Link>
+            </div>
+          )}
           <div className="mb-10 pb-10 border-b border-gray-200">
             <h2 className="text-xl font-semibold mb-6 text-gray-700">
               League Integration (Preview)
