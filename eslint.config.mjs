@@ -22,6 +22,11 @@ const eslintConfig = [
     ],
   },
   {
+    files: ["**/*.ts", "**/*.tsx"],
+    parserOptions: {
+      project: ["./tsconfig.eslint.json"],
+      tsconfigRootDir: ".",
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
