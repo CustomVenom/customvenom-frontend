@@ -9,6 +9,7 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './db';
+// Note: Yahoo OAuth is handled separately via custom /api/yahoo/* routes
 // Only include providers that have credentials configured
 const providers = [];
 
