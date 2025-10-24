@@ -16,7 +16,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <TrustRibbon schemaVersion="v1" lastRefresh={new Date().toISOString()} stale={false} />
       <CacheWarmer />
       <KeyboardCheatsheet />
-      <DevOverlay requestId={undefined} cache={undefined} stale={false} route={undefined} />
+      <DevOverlay stale={false} />
       <QuickNav />
       <div className="flex min-h-screen">
         <SideNav />
