@@ -59,7 +59,8 @@ export async function GET(req: NextRequest) {
 
     const maxAge = Math.max(60, Math.min(3600, tok.expires_in ?? 900));
 
-    const res = NextResponse.redirect('/settings?yahoo=connected', { status: 302 });
+    const to = new URL('/settings?yahoo=connected', req.nextUrl.origin);
+    const res = NextResponse.redirect(to, { status: 302 });
     res.headers.append(
       'Set-Cookie',
       `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
