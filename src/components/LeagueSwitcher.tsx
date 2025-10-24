@@ -69,7 +69,7 @@ export function LeagueSwitcher() {
       // Use server defaultLeagueId first, then localStorage, then auto-select single league
       const serverDefault = json.defaultLeagueId;
       const savedLeague = localStorage.getItem('cv_last_league');
-      
+
       if (serverDefault && json.synced_leagues.includes(serverDefault)) {
         setSelectedLeague(serverDefault);
       } else if (savedLeague && json.synced_leagues.includes(savedLeague)) {
@@ -94,7 +94,7 @@ export function LeagueSwitcher() {
         method: 'POST',
         headers: { 'accept': 'application/json' },
       });
-      
+
       if (res.ok) {
         // Wait a moment for backend to process, then reload
         setTimeout(() => {
@@ -158,7 +158,7 @@ export function LeagueSwitcher() {
   }
 
   const active = selectedLeague ?? data.active_league ?? data.synced_leagues[0];
-  const lastSyncDisplay = data.lastSync 
+  const lastSyncDisplay = data.lastSync
     ? new Date(data.lastSync).toLocaleDateString()
     : null;
 
@@ -183,7 +183,7 @@ export function LeagueSwitcher() {
         </select>
         {updating && <span className="text-xs text-gray-500">Updating...</span>}
       </label>
-      
+
       <button
         onClick={handleRefresh}
         disabled={refreshing}
@@ -191,7 +191,7 @@ export function LeagueSwitcher() {
       >
         {refreshing ? 'Refreshing...' : 'Refresh'}
       </button>
-      
+
       {lastSyncDisplay && (
         <span className="text-xs text-gray-500">Last sync: {lastSyncDisplay}</span>
       )}
