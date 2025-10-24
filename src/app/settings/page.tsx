@@ -4,6 +4,7 @@
 import { getServerSession } from '@/lib/auth-helpers';
 import { cookies } from 'next/headers';
 import { LeagueImport } from '@/components/LeagueImport';
+import { YahooStatusBadge } from '@/components/YahooStatusBadge';
 import Link from 'next/link';
 
 export const metadata = {
@@ -102,6 +103,9 @@ export default async function SettingsPage() {
 
         <div className="mb-10 pb-10 border-b border-gray-200 last:border-b-0">
           <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration (Preview)</h2>
+          <div className="mb-6">
+            <YahooStatusBadge />
+          </div>
           <LeagueImport />
         </div>
 
