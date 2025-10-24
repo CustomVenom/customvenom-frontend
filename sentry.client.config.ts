@@ -10,7 +10,7 @@ Sentry.init({
   replaysSessionSampleRate: 0.0, // off by default
   enabled: !!DSN,
   environment: VERCEL_ENV || NODE_ENV,
-  
+
   beforeSend(event, hint) {
     // Add request_id tag if available
     const originalEx = hint.originalException as { requestId?: string } | undefined;
@@ -19,7 +19,7 @@ Sentry.init({
     if (requestId) {
       event.tags = { ...event.tags, request_id: requestId };
     }
-    
+
     // Add route tag from URL
     if (event.request?.url) {
       try {
@@ -29,7 +29,7 @@ Sentry.init({
         // Invalid URL, skip
       }
     }
-    
+
     return event;
   },
 });

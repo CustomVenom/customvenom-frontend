@@ -9,7 +9,7 @@ Sentry.init({
   tracesSampleRate: 0.1, // 10% of transactions
   enabled: !!DSN,
   environment: VERCEL_ENV || NODE_ENV,
-  
+
   beforeSend(event, hint) {
     // Add request_id tag if available (from headers or error)
     const originalEx = hint.originalException as { requestId?: string } | undefined;
@@ -18,7 +18,7 @@ Sentry.init({
     if (requestId) {
       event.tags = { ...event.tags, request_id: requestId };
     }
-    
+
     // Add route tag from URL
     if (event.request?.url) {
       try {
@@ -28,7 +28,7 @@ Sentry.init({
         // Invalid URL, skip
       }
     }
-    
+
     // Add custom context from error
     if (hint.originalException) {
       const error = hint.originalException as Error & { statusCode?: number };
@@ -36,7 +36,7 @@ Sentry.init({
         event.tags = { ...event.tags, status_code: error.statusCode.toString() };
       }
     }
-    
+
     return event;
   },
 });
