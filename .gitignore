@@ -53,3 +53,7 @@ VERCEL_ENV_*.env
 VERCEL_ENV_PREVIEW.env
 VERCEL_ENV_PRODUCTION.env
 VERCEL_IMPORT_*.txt
+
+# stray directories (prevent accidental copies of other repos)
+ersFibDocumentscustomvenomCVbusiness*/
+*CVbusiness*/
