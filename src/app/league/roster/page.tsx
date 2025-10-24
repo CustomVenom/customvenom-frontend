@@ -1,6 +1,7 @@
 import { getServerSession } from '@/lib/auth-helpers';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
+import { LeaguePageHeader } from '@/components/LeaguePageHeader';
 
 export const metadata = {
   title: 'Roster - CustomVenom',
@@ -20,6 +21,8 @@ export default async function RosterPage() {
       <div className="mb-6">
         <ProviderStatus provider="yahoo" connected={!!session} />
       </div>
+
+      <LeaguePageHeader isPro={isPro} />
 
       <ProLock isPro={isPro}>
         <div className="bg-white rounded-xl p-8 shadow-sm">
