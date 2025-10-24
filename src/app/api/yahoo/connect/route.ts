@@ -4,7 +4,9 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const AUTH_URL = 'https://api.login.yahoo.com/oauth2/request_auth';
-const REDIRECT_URI = 'https://www.customvenom.com/api/yahoo/callback'; // canonical
+// For localhost dev: add http://localhost:3000/api/yahoo/callback to Yahoo app settings
+const REDIRECT_URI =
+  process.env.YAHOO_REDIRECT_URI || 'https://www.customvenom.com/api/yahoo/callback';
 
 export async function GET(req: NextRequest) {
   const reqId = crypto.randomUUID();
