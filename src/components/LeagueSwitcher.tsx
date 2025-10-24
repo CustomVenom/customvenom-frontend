@@ -5,9 +5,10 @@ import type { MeLeaguesResponse } from '@/types/leagues';
 import { LeagueChooser } from './LeagueChooser';
 
 export function LeagueSwitcher() {
-  const [data, setData] = useState<MeLeaguesResponse | null>(null);
+  const [data, setData] = useState<MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -60,17 +61,20 @@ export function LeagueSwitcher() {
         throw new Error('Non-JSON response');
       }
 
-      const json: MeLeaguesResponse = await res.json();
+      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } = await res.json();
 
       setData(json);
       setError(null);
 
-      // Check for saved league preference
+      // Use server defaultLeagueId first, then localStorage, then auto-select single league
+      const serverDefault = json.defaultLeagueId;
       const savedLeague = localStorage.getItem('cv_last_league');
-      if (savedLeague && json.synced_leagues.includes(savedLeague)) {
+      
+      if (serverDefault && json.synced_leagues.includes(serverDefault)) {
+        setSelectedLeague(serverDefault);
+      } else if (savedLeague && json.synced_leagues.includes(savedLeague)) {
         setSelectedLeague(savedLeague);
       } else if (json.synced_leagues.length === 1) {
-        // Auto-select if only one league
         setSelectedLeague(json.synced_leagues[0]);
       }
       // else: show chooser (no auto-select)
@@ -80,6 +84,27 @@ export function LeagueSwitcher() {
       setError(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch('/api/leagues/refresh', {
+        method: 'POST',
+        headers: { 'accept': 'application/json' },
+      });
+      
+      if (res.ok) {
+        // Wait a moment for backend to process, then reload
+        setTimeout(() => {
+          fetchLeagues();
+        }, 1000);
+      }
+    } catch (err) {
+      console.error('[LeagueSwitcher] Refresh failed', err);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -133,26 +158,43 @@ export function LeagueSwitcher() {
   }
 
   const active = selectedLeague ?? data.active_league ?? data.synced_leagues[0];
+  const lastSyncDisplay = data.lastSync 
+    ? new Date(data.lastSync).toLocaleDateString()
+    : null;
 
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <span className="text-gray-600 dark:text-gray-400">Active League:</span>
-      <select
-        className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        value={active}
-        onChange={(e) => handleChange(e.target.value)}
-        disabled={updating}
+    <div className="flex items-center gap-3">
+      <label className="flex items-center gap-2 text-sm">
+        <span className="text-gray-600 dark:text-gray-400">Active League:</span>
+        <select
+          className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          value={active}
+          onChange={(e) => handleChange(e.target.value)}
+          disabled={updating}
+        >
+          {data.synced_leagues.map((k) => {
+            const L = data.leagues.find((l) => l.key === k);
+            return (
+              <option key={k} value={k}>
+                {L?.name ?? k}
+              </option>
+            );
+          })}
+        </select>
+        {updating && <span className="text-xs text-gray-500">Updating...</span>}
+      </label>
+      
+      <button
+        onClick={handleRefresh}
+        disabled={refreshing}
+        className="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
       >
-        {data.synced_leagues.map((k) => {
-          const L = data.leagues.find((l) => l.key === k);
-          return (
-            <option key={k} value={k}>
-              {L?.name ?? k}
-            </option>
-          );
-        })}
-      </select>
-      {updating && <span className="text-xs text-gray-500">Updating...</span>}
-    </label>
+        {refreshing ? 'Refreshing...' : 'Refresh'}
+      </button>
+      
+      {lastSyncDisplay && (
+        <span className="text-xs text-gray-500">Last sync: {lastSyncDisplay}</span>
+      )}
+    </div>
   );
 }
