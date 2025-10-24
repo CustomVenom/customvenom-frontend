@@ -10,6 +10,8 @@ export function LeagueSwitcher() {
   const [updating, setUpdating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -72,6 +74,7 @@ export function LeagueSwitcher() {
           synced_leagues: [],
         });
         setError('No leagues found. Try refreshing your league data.');
+        setErrorDetails(JSON.stringify({ connected: json.connected, leagueCount: json.leagues?.length || 0 }, null, 2));
         return;
       }
 
@@ -94,6 +97,7 @@ export function LeagueSwitcher() {
       console.error('[LeagueSwitcher]', err);
       const message = err instanceof Error ? err.message : 'Failed to load leagues';
       setError(message);
+      setErrorDetails(err instanceof Error ? err.stack || err.message : String(err));
     } finally {
       setLoading(false);
     }
@@ -133,21 +137,39 @@ export function LeagueSwitcher() {
       ? 'Leagues endpoint not ready'
       : error === 'auth_required'
       ? 'Authentication required'
-      : 'Leagues unavailable';
+      : error;
 
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500">{errorMessage}</span>
-        <button
-          onClick={() => {
-            setLoading(true);
-            setError(null);
-            setRetryCount((c) => c + 1);
-          }}
-          className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          Try again
-        </button>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500">{errorMessage}</span>
+          <button
+            onClick={() => {
+              setLoading(true);
+              setError(null);
+              setErrorDetails(null);
+              setRetryCount((c) => c + 1);
+            }}
+            className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Try again
+          </button>
+        </div>
+        {errorDetails && (
+          <div className="text-xs">
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {showDetails ? 'Hide' : 'Show'} details
+            </button>
+            {showDetails && (
+              <pre className="mt-1 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto max-h-40">
+                {errorDetails}
+              </pre>
+            )}
+          </div>
+        )}
       </div>
     );
   }
