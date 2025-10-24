@@ -1,9 +1,0 @@
-.open-next/
-.open-next/.build/
-node_modules/
-.next/
-out/
-build/
-dist/
-
-

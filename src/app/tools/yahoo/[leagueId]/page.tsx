@@ -23,7 +23,11 @@ async function getLeagueRoster(userId: string, leagueId: string) {
   };
 }
 
-export default async function YahooLeaguePage({ params }: { params: { leagueId: string } }) {
+export default async function YahooLeaguePage({
+  params,
+}: {
+  params: Promise<{ leagueId: string }>;
+}) {
   const session = await getServerSession();
   const userId = session?.user?.id as string | undefined;
 
@@ -38,7 +42,8 @@ export default async function YahooLeaguePage({ params }: { params: { leagueId: 
     );
   }
 
-  const data = await getLeagueRoster(userId, params.leagueId);
+  const { leagueId } = await params;
+  const data = await getLeagueRoster(userId, leagueId);
 
   if (!data) {
     return (
