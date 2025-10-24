@@ -92,12 +92,12 @@ export function LeagueSwitcher() {
   }
 
   if (error) {
-    const errorMessage = error === 'leagues_endpoint_not_found' 
+    const errorMessage = error === 'leagues_endpoint_not_found'
       ? 'Leagues endpoint not ready'
       : error === 'auth_required'
       ? 'Authentication required'
       : 'Leagues unavailable';
-    
+
     return (
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500">{errorMessage}</span>
