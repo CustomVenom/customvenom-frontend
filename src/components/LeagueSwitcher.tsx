@@ -55,10 +55,10 @@ export function LeagueSwitcher() {
       }
 
       const json: MeLeaguesResponse = await res.json();
-      
+
       setData(json);
       setError(null);
-      
+
       // Check for saved league preference
       const savedLeague = localStorage.getItem('cv_last_league');
       if (savedLeague && json.synced_leagues.includes(savedLeague)) {
