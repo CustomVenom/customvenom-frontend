@@ -1,22 +1,21 @@
 {
-  "league_id": "123456",
-  "league_name": "Mock League 2025-06",
-  "week": "2025-06",
-  "players": [
-    {
-      "player_id": "espn:4685",
-      "name": "Patrick Mahomes",
-      "team": "KC",
-      "position": "QB",
-      "projected_points": 28.5
-    },
-    {
-      "player_id": "espn:6798",
-      "name": "Cooper Kupp",
-      "team": "LAR",
-      "position": "WR",
-      "projected_points": 18.2
-    }
-  ]
+    "league_id": "123456",
+    "league_name": "Mock League 2025-06",
+    "week": "2025-06",
+    "players": [
+        {
+            "player_id": "espn:4685",
+            "name": "Patrick Mahomes",
+            "team": "KC",
+            "position": "QB",
+            "projected_points": 28.5
+        },
+        {
+            "player_id": "espn:6798",
+            "name": "Cooper Kupp",
+            "team": "LAR",
+            "position": "WR",
+            "projected_points": 18.2
+        }
+    ]
 }
-
