@@ -6,6 +6,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const url = new URL(req.url);
+  // Force apex to www
   if (url.hostname === 'customvenom.com') {
     url.hostname = 'www.customvenom.com';
     return Response.redirect(url, 308);
@@ -13,5 +14,5 @@ export function middleware(req: NextRequest) {
   return;
 }
 
-// do not intercept OAuth endpoints
-export const config = { matcher: ['/((?!api/yahoo).*)'] };
+// Apply to all routes (pages + API)
+export const config = { matcher: ['/(.*)'] };

@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
   const code = url.searchParams.get('code') || '';
   const state = url.searchParams.get('state') || '';
   const yState = req.cookies.get('y_state')?.value || '';
+  // Strict state guard
   if (!code || !state || !yState || state !== yState) {
     return new NextResponse('Invalid OAuth state', { status: 400 });
   }
@@ -18,7 +19,8 @@ export async function GET(req: NextRequest) {
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code,
-    redirect_uri: 'https://www.customvenom.com/api/yahoo/callback', // EXACT match
+    // MUST match authorize redirect_uri byte-for-byte
+    redirect_uri: 'https://www.customvenom.com/api/yahoo/callback',
   });
 
   const r = await fetch(tokenUrl, {
