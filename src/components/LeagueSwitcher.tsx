@@ -51,12 +51,15 @@ export function LeagueSwitcher() {
       requestId = res.headers.get('x-request-id') || 'no-request-id';
 
       if (res.status === 404) {
+        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
         throw new Error('leagues_endpoint_not_found');
       }
       if (res.status === 401) {
+        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
         throw new Error('auth_required');
       }
       if (!res.ok) {
+        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
         throw new Error(`HTTP ${res.status}`);
       }
 
@@ -167,12 +170,24 @@ export function LeagueSwitcher() {
         </div>
         {errorDetails && (
           <div className="text-xs">
-            <button
-              onClick={() => setShowDetails(!showDetails)}
-              className="text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              {showDetails ? 'Hide' : 'Show'} details
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {showDetails ? 'Hide' : 'Show'} details
+              </button>
+              {showDetails && (
+                <button
+                  onClick={() => {
+                    void navigator.clipboard.writeText(errorDetails);
+                  }}
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Copy details
+                </button>
+              )}
+            </div>
             {showDetails && (
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto max-h-40">
                 {errorDetails}
