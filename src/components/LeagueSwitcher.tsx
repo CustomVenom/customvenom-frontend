@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import type { MeLeaguesResponse } from '@/types/leagues';
-import { safeJson } from '@/lib/safe-json';
 import { LeagueChooser } from './LeagueChooser';
 
 export function LeagueSwitcher() {
@@ -55,25 +54,20 @@ export function LeagueSwitcher() {
         throw new Error('Non-JSON response');
       }
 
-      const text = await res.text();
-      const json = safeJson<MeLeaguesResponse>(text, null);
-
-      if (json) {
-        setData(json);
-        setError(null);
-
-        // Check for saved league preference
-        const savedLeague = localStorage.getItem('cv_last_league');
-        if (savedLeague && json.synced_leagues.includes(savedLeague)) {
-          setSelectedLeague(savedLeague);
-        } else if (json.synced_leagues.length === 1) {
-          // Auto-select if only one league
-          setSelectedLeague(json.synced_leagues[0]);
-        }
-        // else: show chooser (no auto-select)
-      } else {
-        setError('Invalid response');
+      const json: MeLeaguesResponse = await res.json();
+      
+      setData(json);
+      setError(null);
+      
+      // Check for saved league preference
+      const savedLeague = localStorage.getItem('cv_last_league');
+      if (savedLeague && json.synced_leagues.includes(savedLeague)) {
+        setSelectedLeague(savedLeague);
+      } else if (json.synced_leagues.length === 1) {
+        // Auto-select if only one league
+        setSelectedLeague(json.synced_leagues[0]);
       }
+      // else: show chooser (no auto-select)
     } catch (err: unknown) {
       console.error('[LeagueSwitcher]', err);
       const message = err instanceof Error ? err.message : 'Failed to load leagues';
