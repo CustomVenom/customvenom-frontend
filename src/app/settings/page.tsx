@@ -28,7 +28,7 @@ export default async function SettingsPage() {
           <div className="mb-10 pb-10 border-b border-gray-200">
             <h2 className="text-xl font-semibold mb-6 text-gray-700">Authentication Required</h2>
             <p className="text-gray-600 mb-4">Please sign in to access your settings.</p>
-            <Link href="/connect/yahoo" className="cv-btn-primary">
+            <Link href="/api/yahoo/connect" className="cv-btn-primary" aria-label="Connect Yahoo">
               Connect Yahoo
             </Link>
           </div>
