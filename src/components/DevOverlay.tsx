@@ -14,12 +14,13 @@ interface DevOverlayProps {
  * Toggle with backtick key (`)
  * Shows request metadata for debugging
  */
-export function DevOverlay({ requestId, cache, stale, route }: DevOverlayProps) {
+export function DevOverlay({ requestId, cache, stale = false, route }: DevOverlayProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Only enable in development
-    if (process.env.NODE_ENV !== 'development') return;
+    const nodeEnv = process.env['NODE_ENV'] || '';
+    if (nodeEnv !== 'development') return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === '`' || e.key === 'Backquote') {
@@ -32,7 +33,8 @@ export function DevOverlay({ requestId, cache, stale, route }: DevOverlayProps) 
   }, []);
 
   // Don't render in production
-  if (process.env.NODE_ENV !== 'development') return null;
+  const nodeEnv = process.env['NODE_ENV'] || '';
+  if (nodeEnv !== 'development') return null;
 
   if (!isOpen) return null;
 
