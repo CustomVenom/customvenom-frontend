@@ -1,10 +1,14 @@
 import * as Sentry from '@sentry/nextjs';
 
+const DSN = process.env['SENTRY_DSN'] || '';
+const VERCEL_ENV = process.env['VERCEL_ENV'] || '';
+const NODE_ENV = process.env['NODE_ENV'] || '';
+
 Sentry.init({
-  dsn: process.env.SENTRY_DSN || '',
+  dsn: DSN,
   tracesSampleRate: 0.1, // 10% of transactions
-  enabled: !!process.env.SENTRY_DSN,
-  environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
+  enabled: !!DSN,
+  environment: VERCEL_ENV || NODE_ENV,
   
   beforeSend(event, hint) {
     // Add request_id tag if available (from headers or error)
