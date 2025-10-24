@@ -27,7 +27,7 @@ export function QuickNav() {
         const nextHandler = (nextE: KeyboardEvent) => {
           const shortcut = shortcuts.find((s) => s.key === nextE.key.toLowerCase());
           if (shortcut) {
-            e.preventDefault();
+            nextE.preventDefault();
             router.push(shortcut.path);
           }
           document.removeEventListener('keydown', nextHandler);
