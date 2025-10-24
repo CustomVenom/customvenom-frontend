@@ -20,7 +20,7 @@ export async function GET() {
   // Host-wide for safety; SameSite=Lax is correct
   res.headers.append(
     'Set-Cookie',
-    `y_state=${encodeURIComponent(state)}; Path=/; Domain=.customvenom.com; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
+    `y_state=${encodeURIComponent(state)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
   );
   return res;
 }
