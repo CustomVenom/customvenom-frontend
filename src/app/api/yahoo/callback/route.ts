@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
-const REDIRECT_URI = 'https://www.customvenom.com/api/yahoo/callback'; // MUST match authorize
+const REDIRECT_URI = 'https://www.customvenom.com/api/yahoo/callback';
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
       return new NextResponse('Invalid OAuth state', { status: 400 });
     }
 
-    const clientId = process.env.YAHOO_CLIENT_ID!;
-    const clientSecret = process.env.YAHOO_CLIENT_SECRET!;
+    const clientId = process.env.YAHOO_CLIENT_ID;
+    const clientSecret = process.env.YAHOO_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
       return new NextResponse('Server misconfig: missing YAHOO_CLIENT_ID/SECRET', { status: 500 });
@@ -28,10 +28,9 @@ export async function GET(req: NextRequest) {
     const body = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: REDIRECT_URI, // MUST match the authorize redirect_uri exactly
     });
 
-    // Yahoo requires x-www-form-urlencoded and Basic auth
     const r = await fetch(TOKEN_URL, {
       method: 'POST',
       headers: {
@@ -44,15 +43,14 @@ export async function GET(req: NextRequest) {
 
     if (!r.ok) {
       const txt = await r.text().catch(() => '');
-      // Surface Yahoo's error for quick diagnosis
+      // Return Yahoo's actual error for diagnosis
       return new NextResponse(`Token exchange failed: ${r.status}\n${txt}`, { status: 502 });
     }
 
-    // Yahoo returns JSON
     const tok = (await r.json()) as {
       access_token: string;
-      expires_in?: number;
       xoauth_yahoo_guid?: string;
+      expires_in?: number;
     };
 
     if (!tok?.access_token) {
