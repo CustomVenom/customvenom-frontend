@@ -24,3 +24,5 @@ export function ProtectionModeBadge({ isStale, className = '' }: ProtectionModeB
     </Tooltip>
   );
 }
+
+export default ProtectionModeBadge;

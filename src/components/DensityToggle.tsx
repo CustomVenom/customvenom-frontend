@@ -6,7 +6,7 @@ interface DensityToggleProps {
   onValueChange?: (value: 'comfortable' | 'compact') => void;
 }
 
-export default function DensityToggle({ value, onValueChange }: DensityToggleProps = {}) {
+export function DensityToggle({ value, onValueChange }: DensityToggleProps = {}) {
   const { dense, toggle } = useDensity();
 
   // Use controlled value if provided, otherwise use hook value
@@ -30,3 +30,6 @@ export default function DensityToggle({ value, onValueChange }: DensityTogglePro
     </button>
   );
 }
+
+// Allow both named and default import styles
+export default DensityToggle;
