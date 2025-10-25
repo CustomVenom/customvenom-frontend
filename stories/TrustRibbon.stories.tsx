@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { TrustRibbon } from '../src/components/TrustRibbon';
 
 const meta: Meta<typeof TrustRibbon> = {

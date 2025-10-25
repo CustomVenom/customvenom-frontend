@@ -47,6 +47,29 @@ const response = await fetch('http://fantasysports.yahoo.com/api/leagues', optio
 
 **Preflight checks will block any `http://*.yahoo.com` references in source code.**
 
+### safeFetch Checklist
+
+**Before making any Yahoo API calls, verify:**
+
+- [ ] Import `safeFetch` from `@/lib/http-guard`
+- [ ] Use `safeFetch()` instead of direct `fetch()` for Yahoo endpoints
+- [ ] Test that HTTP URLs are automatically upgraded to HTTPS
+- [ ] Verify non-Yahoo URLs remain unchanged
+- [ ] Check that relative paths work correctly
+
+**Example implementation:**
+```typescript
+import { safeFetch } from '@/lib/http-guard';
+
+// ✅ CORRECT - Auto-upgrades to HTTPS
+const response = await safeFetch('http://fantasysports.yahoo.com/api/leagues', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+// ❌ WRONG - Bypasses HTTPS enforcement
+const response = await fetch('http://fantasysports.yahoo.com/api/leagues', options);
+```
+
 ### Quick Quality Check
 
 **Always run `npm run preflight` before pushing.**
