@@ -1,0 +1,24 @@
+{
+    "recommendations": [
+        // ESLint (code quality)
+        "dbaeumer.vscode-eslint",
+        // Prettier (code formatting)
+        "esbenp.prettier-vscode",
+        // TypeScript (type checking and IntelliSense)
+        "ms-vscode.vscode-typescript-next",
+        // Tailwind CSS (class autocomplete)
+        "bradlc.vscode-tailwindcss",
+        // Git (version control)
+        "eamodio.gitlens",
+        // Next.js (snippets and IntelliSense)
+        "ms-vscode.vscode-json",
+        // Error Lens (inline error messages)
+        "usernamehw.errorlens",
+        // REST Client (test API endpoints)
+        "humao.rest-client",
+        // Playwright (test running)
+        "ms-playwright.playwright",
+        // Prisma (database schema)
+        "prisma.prisma"
+    ]
+}
