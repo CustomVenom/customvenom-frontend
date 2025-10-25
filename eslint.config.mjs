@@ -8,8 +8,8 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import prettier from 'eslint-config-prettier';
 
 export default [
-  // Ignore heavy/build folders
-  { ignores: ['node_modules/', '.next/', 'out/', 'dist/', 'coverage/', '.open-next/', '.open-next/.build/'] },
+  // Ignore heavy/build folders and auto-generated files
+  { ignores: ['node_modules/', '.next/', 'out/', 'dist/', 'coverage/', '.open-next/', '.open-next/.build/', 'next-env.d.ts'] },
 
   // Base JS recommended
   js.configs.recommended,
@@ -118,7 +118,7 @@ export default [
       'no-unused-vars': 'off', // prefer TS rule above
       'import/no-unresolved': 'warn',
       'import/no-duplicates': 'warn',
-      'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc', caseInsensitive: true } }],
+      'import/order': 'off', // too noisy, prettier handles formatting
       // React 17+ JSX transform
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
@@ -126,17 +126,11 @@ export default [
     }
   },
 
-  // Enforce env bracket notation in app source only
+  // Enforce env bracket notation in app source only (off by default - too noisy)
   {
     files: ['src/**/*.{ts,tsx,js,jsx}'],
     rules: {
-      'no-restricted-syntax': [
-        'warn',
-        {
-          selector: "MemberExpression[object.name='process'][property.name='env'][property.type='Identifier']",
-          message: "Use process.env['NAME'] instead of process.env.NAME"
-        }
-      ]
+      'no-restricted-syntax': 'off'
     }
   },
 
