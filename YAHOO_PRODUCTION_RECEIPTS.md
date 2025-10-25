@@ -6,7 +6,7 @@
 
 ```bash
 # Check OAuth redirect
-curl -sSD - "https://www.customvenom.com/api/yahoo/connect?returnTo=/settings" -o /dev/null | head -20
+curl -sSD - "https://www.customvenom.com/api/yahoo/connect?returnTo=/settings" -o /dev/null | head -30
 ```
 
 **Expected:**

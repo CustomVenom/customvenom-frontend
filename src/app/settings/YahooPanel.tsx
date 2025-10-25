@@ -49,7 +49,7 @@ export default async function YahooPanel() {
         <div className="flex items-center gap-2">
           <span>Yahoo: not connected.</span>
           <Link
-            href="/auth/yahoo"
+            href="/api/yahoo/connect?returnTo=/settings"
             className="underline"
             data-testid="yahoo-connect-btn"
           >
@@ -66,7 +66,7 @@ export default async function YahooPanel() {
   if (!league) {
     return (
       <Card tone="yellow" data-testid="yahoo-status">
-        No leagues found. <Link href="/auth/yahoo" className="underline">Connect Yahoo</Link>
+        No leagues found. <Link href="/api/yahoo/connect?returnTo=/settings" className="underline">Connect Yahoo</Link>
       </Card>
     );
   }
@@ -92,7 +92,7 @@ export default async function YahooPanel() {
         <div data-testid="yahoo-connected" className="font-medium">
           Yahoo Connected — {league.name} ({league.season})
         </div>
-        <Link href="/auth/yahoo" className="underline opacity-80">
+        <Link href="/api/yahoo/connect?returnTo=/settings" className="underline opacity-80">
           Reconnect
         </Link>
       </div>
