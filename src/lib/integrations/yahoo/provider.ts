@@ -15,7 +15,7 @@ export const YahooProvider = {
     params: {
       response_type: 'code',
       redirect_uri: `${process.env['NEXTAUTH_URL']}/api/auth/callback/yahoo`,
-      scope: 'openid profile email fspt-r',
+      scope: 'fspt-r',
     },
   },
   token: {
