@@ -2,6 +2,7 @@
 // Add this to your ESLint config to catch any future violations
 
 /* eslint-env node */
+/* global module */
 module.exports = {
   rules: {
     'no-restricted-syntax': [
