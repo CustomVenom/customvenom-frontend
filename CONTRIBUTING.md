@@ -32,7 +32,7 @@ const stripeKey = process.env.STRIPE_SECRET_KEY;
 
 ### Quick Quality Check
 
-Run the preflight script to catch regressions locally:
+**Always run `npm run preflight` before pushing.**
 
 ```bash
 npm run preflight
