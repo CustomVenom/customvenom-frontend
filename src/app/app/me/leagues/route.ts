@@ -8,7 +8,7 @@ export async function GET() {
   const reqId = crypto.randomUUID();
 
   try {
-    const r = await fetch(`${apiBase}/api/me/leagues`, {
+    const r = await fetch(`${apiBase}/leagues`, {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
