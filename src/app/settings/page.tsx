@@ -1,6 +1,6 @@
-// BARE-BONES SETTINGS - Binary search for failing import
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+
 export default function SettingsPage() {
-  // Route-entry structured env log (visible in server logs)
   console.error(
     JSON.stringify({
       scope: 'settings.route.enter',
@@ -11,14 +11,16 @@ export default function SettingsPage() {
     })
   );
 
+  // Keep skeleton for now
   return (
     <div className="mx-auto max-w-3xl py-8">
       <h1 className="text-2xl font-semibold mb-8">Settings</h1>
       <div className="mb-10 pb-10 border-b border-gray-200">
         <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration (Preview)</h2>
-        <div className="p-3 bg-gray-50 border rounded">
-          Settings page loaded successfully. No server-side crashes detected.
-        </div>
+        <ErrorBoundary fallback={<div className="p-3 bg-yellow-50 border rounded">Panel disabled</div>}>
+          {/* Panel will be added in Step 2 */}
+          <div className="p-3 bg-gray-50 border rounded">Placeholder</div>
+        </ErrorBoundary>
       </div>
     </div>
   );
