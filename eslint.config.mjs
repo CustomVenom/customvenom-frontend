@@ -9,7 +9,7 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   // Ignore heavy/build folders
-  { ignores: ['node_modules/', '.next/', 'out/', 'dist/', 'coverage/'] },
+  { ignores: ['node_modules/', '.next/', 'out/', 'dist/', 'coverage/', '.open-next/', '.open-next/.build/'] },
 
   // Base JS recommended
   js.configs.recommended,
@@ -45,8 +45,8 @@ export default [
   // JS/TS common rules
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    languageOptions: { 
-      ecmaVersion: 'latest', 
+    languageOptions: {
+      ecmaVersion: 'latest',
       sourceType: 'module',
       // Add browser and node globals so they're known
       globals: {

@@ -16,6 +16,7 @@
     "type-check": "tsc --noEmit",
     "qa": "npm run typecheck && npm run lint",
     "pre-commit": "npm run lint && npm run type-check",
+    "preflight": "eslint . --max-warnings=0 && tsc -p tsconfig.json --noEmit",
     "prepare": "husky install",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
