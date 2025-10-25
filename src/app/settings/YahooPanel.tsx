@@ -26,22 +26,26 @@ function Card({
 }
 
 export default async function YahooPanel() {
-  const base =
-    process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE'] || '';
-  // Guard missing env
-  if (!base) {
-    return (
-      <Card tone="yellow" data-testid="yahoo-status">
-        Yahoo: not configured. Set NEXT_PUBLIC_API_BASE.
-      </Card>
-    );
-  }
+  try {
+    const base =
+      process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE'] || '';
+    // Guard missing env
+    if (!base) {
+      return (
+        <Card tone="yellow" data-testid="yahoo-status">
+          Yahoo: not configured. Set NEXT_PUBLIC_API_BASE.
+        </Card>
+      );
+    }
 
-  // Try to fetch leagues (requires OAuth cookie set by /auth/yahoo)
-  const leagues = await safeFetchJson<{
-    games?: unknown;
-    leagues?: YahooLeague[];
-  }>(`${base}/yahoo/leagues`);
+    // Ensure absolute URL (prevent accidental relative paths)
+    const apiBase = base.startsWith('http') ? base : `https://${base}`;
+
+      // Try to fetch leagues (requires OAuth cookie set by /auth/yahoo)
+    const leagues = await safeFetchJson<{
+      games?: unknown;
+      leagues?: YahooLeague[];
+    }>(`${apiBase}/yahoo/leagues`);
 
   if (!hasLeagues(leagues) || leagues.leagues.length === 0) {
     return (
@@ -73,7 +77,7 @@ export default async function YahooPanel() {
 
   // Fetch teams for chosen league, pick first team that looks like "yours"
   const teamsResp = await safeFetchJson<{ teams?: YahooTeam[] }>(
-    `${base}/yahoo/leagues/${encodeURIComponent(league.key)}/teams`
+    `${apiBase}/yahoo/leagues/${encodeURIComponent(league.key)}/teams`
   );
   const teams = (teamsResp?.teams ?? []) as YahooTeam[];
   const team = teams.at(0);
@@ -81,7 +85,7 @@ export default async function YahooPanel() {
   // Fetch roster; always degrade gracefully
   const rosterResp = team
     ? await safeFetchJson<YahooRoster>(
-        `${base}/yahoo/team/${encodeURIComponent(team.key)}/roster`
+        `${apiBase}/yahoo/team/${encodeURIComponent(team.key)}/roster`
       )
     : null;
   const players = rosterResp?.players ?? [];
@@ -123,4 +127,18 @@ export default async function YahooPanel() {
       )}
     </Card>
   );
+  } catch (error: unknown) {
+    // Log error with structured data
+    const err = error as { digest?: string; message?: string };
+    console.error(
+      JSON.stringify({
+        scope: '[settings.yahoo]',
+        digest: err?.digest || null,
+        msg: err?.message || 'Unknown error',
+      })
+    );
+
+    // Re-throw to trigger ErrorBoundary
+    throw error;
+  }
 }
