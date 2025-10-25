@@ -1,0 +1,58 @@
+name: Frontend E2E Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_API_BASE: ${{ secrets.API_BASE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.1'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      # Fast-fail API readiness check (health gate)
+      - name: Health precheck (staging API)
+        run: |
+          set -euo pipefail
+          echo "Checking $NEXT_PUBLIC_API_BASE/health ..."
+          curl -fsS "$NEXT_PUBLIC_API_BASE/health" | jq -e '.ok and .ready and .schema_version and .last_refresh and .r2_key' >/dev/null
+          curl -fsSI "$NEXT_PUBLIC_API_BASE/health" | grep -qi '^cache-control: .*no-store'
+          echo "Health OK"
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run focused tests
+        run: |
+          npx playwright test \
+            tests/trust-snapshot.spec.ts
+
+      # Optionally run the broader suite when stable
+      # - name: Run full e2e suite
+      #   run: npx playwright test

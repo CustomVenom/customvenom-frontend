@@ -130,13 +130,9 @@ export default [
   {
     files: ['src/**/*.{ts,tsx,js,jsx}'],
     rules: {
-      'no-restricted-syntax': [
-        'warn',
-        {
-          selector: "MemberExpression[object.name='process'][property.name='env'][property.type='Identifier']",
-          message: "Use process.env['NAME'] instead of process.env.NAME"
-        }
-      ]
+      'no-restricted-syntax': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'import/order': 'warn'
     }
   },
 

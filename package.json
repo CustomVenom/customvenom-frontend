@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.0",
-    "@playwright/test": "^1.56.1",
     "@prisma/client": "^6.17.1",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/nextjs": "^8.0.0",
@@ -45,6 +44,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.2",
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.17.0",
     "@lhci/cli": "^0.12.0",
@@ -93,7 +93,8 @@
     "@parcel/watcher-linux-x64-musl": "^2.5.0"
   },
   "overrides": {
-    "lightningcss": "^1.30.2"
+    "lightningcss": "^1.30.2",
+    "@playwright/test": "^1.48.2"
   },
   "react": "19.2.0",
   "react-dom": "19.2.0"
