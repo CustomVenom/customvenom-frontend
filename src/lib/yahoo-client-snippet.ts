@@ -19,7 +19,7 @@ export class YahooClient {
    * Fetch user's leagues for a season
    * @param season - Year (e.g., 2025)
    */
-  async getLeagues(season: number = new Date().getFullYear()) {
+  async getLeagues(_season: number = new Date().getFullYear()) {
     // ✅ CORRECT: safeFetch automatically upgrades to HTTPS
     const response = await safeFetch(`${this.baseUrl}/users;use_login=1/games;game_keys=nfl/leagues`, {
       headers: {
