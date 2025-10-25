@@ -5,15 +5,21 @@
  */
 
 export function enforceYahooHttps(url: string): string {
+  // Handle empty strings and non-URL strings
+  if (!url || !url.includes('://')) {
+    return url;
+  }
+  
   try {
-    const u = new URL(url, 'http://localhost'); // base only for relative URLs
+    const u = new URL(url);
     const host = u.hostname.toLowerCase();
     const isYahoo =
       host === 'yahoo.com' ||
       host.endsWith('.yahoo.com') ||
       host.includes('fantasysports.yahoo');
     
-    if (isYahoo && u.protocol !== 'https:') {
+    // Only upgrade HTTP to HTTPS for Yahoo domains
+    if (isYahoo && u.protocol === 'http:') {
       u.protocol = 'https:';
     }
     
