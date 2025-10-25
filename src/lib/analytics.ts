@@ -38,12 +38,15 @@ export function trackFeatureInteraction(
 export function getEventsSince(_iso: string): AnalyticsEvent[] {
   return [];
 }
-export function getEventCountsByType(events: AnalyticsEvent[] = []): Record<string, number> {
+export function getEventCountsByType(_events: AnalyticsEvent[] = []): Record<string, number> {
   return {};
 }
-export function getToolUsageStats(events: AnalyticsEvent[] = []): { by_tool: Record<string, number>; total: number } {
+export function getToolUsageStats(_events: AnalyticsEvent[] = []): {
+  by_tool: Record<string, number>;
+  total: number;
+} {
   return { by_tool: {}, total: 0 };
 }
-export function getRiskModeDistribution(events: AnalyticsEvent[] = []): Record<string, number> {
+export function getRiskModeDistribution(_events: AnalyticsEvent[] = []): Record<string, number> {
   return { protect: 0, neutral: 0, chase: 0 };
 }
