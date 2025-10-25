@@ -3,7 +3,7 @@
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import YahooPanelClient from '@/components/YahooPanelClient';
 
-export default function YahooPanelMount() {
+export default function YahooPanelMount({ enabled }: { enabled: boolean }) {
   return (
     <ErrorBoundary
       fallback={
@@ -12,7 +12,7 @@ export default function YahooPanelMount() {
         </div>
       }
     >
-      <YahooPanelClient />
+      <YahooPanelClient enabled={enabled} />
     </ErrorBoundary>
   );
 }

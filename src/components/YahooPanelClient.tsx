@@ -21,18 +21,13 @@ function Card({
   return <div className={`p-3 border rounded ${map[tone]}`}>{children}</div>;
 }
 
-export default function YahooPanelClient() {
+export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   // Do not read env if not in browser
   const baseRaw = typeof window !== 'undefined' ? (process.env['NEXT_PUBLIC_API_BASE'] || '') : '';
   const apiBase = useMemo(() => {
     if (!baseRaw) return '';
     return baseRaw.startsWith('http') ? baseRaw : `https://${baseRaw}`;
   }, [baseRaw]);
-
-  // Short-circuit on disabled flag (read once on client)
-  const enabled = typeof window !== 'undefined'
-    ? ((window as unknown as { __CV_ENABLE_YAHOO__?: boolean })?.__CV_ENABLE_YAHOO__ ?? (process.env['NEXT_PUBLIC_ENABLE_YAHOO'] === 'true'))
-    : false;
 
   const [loading, setLoading] = useState(true);
   const [leagues, setLeagues] = useState<YahooLeague[] | null>(null);
