@@ -45,7 +45,63 @@ export default [
   // JS/TS common rules
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    languageOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+    languageOptions: { 
+      ecmaVersion: 'latest', 
+      sourceType: 'module',
+      // Add browser and node globals so they're known
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        performance: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Headers: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        AbortController: 'readonly',
+        crypto: 'readonly',
+        Buffer: 'readonly',
+        // Node globals
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        // React globals
+        React: 'readonly',
+        // DOM types
+        HTMLElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLSpanElement: 'readonly',
+        HTMLTableElement: 'readonly',
+        HTMLTableSectionElement: 'readonly',
+        HTMLTableCellElement: 'readonly',
+        HTMLTableRowElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        MouseEvent: 'readonly',
+        Node: 'readonly',
+        // Other globals
+        JSX: 'readonly',
+        // Additional globals
+        location: 'readonly',
+        ReadableStream: 'readonly',
+        PerformanceObserver: 'readonly',
+        RequestInit: 'readonly'
+      }
+    },
     settings: {
       react: { version: 'detect' },
       'import/resolver': { node: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'] } }
@@ -58,7 +114,15 @@ export default [
       // React 17+ JSX transform
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
-      ...reactHooks.configs.recommended.rules
+      ...reactHooks.configs.recommended.rules,
+      // Prevent process.env.FOO dot-access regression
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: "MemberExpression[object.name='process'][property.name='env'][property.type='Identifier']",
+          message: "Use process.env['NAME'] instead of process.env.NAME"
+        }
+      ]
     }
   },
 
