@@ -2,8 +2,8 @@
 
 export default function YahooConnectButton() {
   const connect = () => {
-    const returnTo = encodeURIComponent('/tools')
-    window.location.href = `/api/yahoo/connect?returnTo=${returnTo}`
+    const WORKERS = process.env['NEXT_PUBLIC_API_BASE']!; // e.g. https://customvenom-workers-api.jdewett81.workers.dev
+    window.location.href = `${WORKERS}/api/yahoo/connect?returnTo=${encodeURIComponent('/tools')}`;
   }
 
   return (
