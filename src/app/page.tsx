@@ -1,7 +1,7 @@
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table'
-import { Tooltip } from '@/components/ui/Tooltip'
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 export default function Page() {
   return (
