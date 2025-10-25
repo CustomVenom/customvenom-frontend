@@ -1,5 +1,5 @@
-export default function Connected() {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+﻿export default function Connected() {
+  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
   return (
     <div className="container mx-auto max-w-2xl p-8">
@@ -62,3 +62,4 @@ export default function Connected() {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'; // ensure no static caching
 export const revalidate = 0;
 
 export async function GET() {
-  const API_BASE = process.env.API_BASE;
+  const API_BASE = process.env['API_BASE'];
   if (!API_BASE) {
     return new Response(JSON.stringify({ ok: false, error: 'missing_API_BASE' }), {
       status: 500,

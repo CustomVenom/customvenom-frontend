@@ -1,6 +1,6 @@
-export const logger = {
+﻿export const logger = {
   info: (message: string, meta?: Record<string, unknown>) => {
-    if (process.env.NODE_ENV === 'development') console.log('[INFO]', message, meta);
+    if (process.env['NODE_ENV'] === 'development') console.log('[INFO]', message, meta);
   },
   warn: (message: string, meta?: Record<string, unknown>) => {
     console.warn('[WARN]', message, meta);
@@ -9,4 +9,5 @@ export const logger = {
     console.error('[ERROR]', message, meta);
   }
 };
+
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 
@@ -26,7 +26,7 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
     const fetchRiskDial = async () => {
       try {
         setLoading(true);
-        const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+        const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const response = await fetch(`${apiBase}/risk_dial?week=${week}`, {
           cache: 'no-store'
         });
@@ -193,4 +193,5 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
     </div>
   );
 }
+
 

@@ -1,4 +1,4 @@
-export const runtime = 'nodejs';
+﻿export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -60,8 +60,8 @@ export async function GET(req: NextRequest) {
       return new NextResponse('Invalid OAuth state', { status: 400 });
     }
 
-    const clientId = process.env.YAHOO_CLIENT_ID;
-    const clientSecret = process.env.YAHOO_CLIENT_SECRET;
+    const clientId = process.env['YAHOO_CLIENT_ID'];
+    const clientSecret = process.env['YAHOO_CLIENT_SECRET'];
 
     if (!clientId || !clientSecret) {
       return new NextResponse('Server misconfig: missing YAHOO_CLIENT_ID/SECRET', { status: 500 });
@@ -129,3 +129,4 @@ export async function GET(req: NextRequest) {
     return new NextResponse(`Server error: ${msg}`, { status: 500 });
   }
 }
+

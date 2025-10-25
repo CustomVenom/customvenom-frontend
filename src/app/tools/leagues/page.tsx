@@ -1,4 +1,4 @@
-// Leagues Tool Page
+﻿// Leagues Tool Page
 // Provider-agnostic league management and connection
 //
 // Architecture:
@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic';
 
 async function getMeLeagues(): Promise<MeLeaguesResponse | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE || 'http://localhost:3000';
+    const baseUrl = process.env['NEXT_PUBLIC_FRONTEND_BASE'] || 'http://localhost:3000';
     const r = await fetch(`${baseUrl}/app/me/leagues`, {
       cache: 'no-store',
       headers: {
@@ -123,3 +123,4 @@ export default async function LeaguesPage() {
     </>
   );
 }
+

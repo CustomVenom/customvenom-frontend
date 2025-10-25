@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useSession } from 'next-auth/react';
 
@@ -6,9 +6,9 @@ export function ConnectYahoo() {
   const { data: session } = useSession();
 
   // Feature flag gating
-  const ENABLED = process.env.NEXT_PUBLIC_YAHOO_CONNECT_ENABLED === 'true';
-  const MAINT = process.env.NEXT_PUBLIC_YAHOO_MAINTENANCE === 'true';
-  const CANARY = (process.env.NEXT_PUBLIC_YAHOO_CANARY_EMAILS || '')
+  const ENABLED = process.env['NEXT_PUBLIC_YAHOO_CONNECT_ENABLED'] === 'true';
+  const MAINT = process.env['NEXT_PUBLIC_YAHOO_MAINTENANCE'] === 'true';
+  const CANARY = (process.env['NEXT_PUBLIC_YAHOO_CANARY_EMAILS'] || '')
     .split(',')
     .map((s) => s.trim().toLowerCase());
 
@@ -29,3 +29,4 @@ export function ConnectYahoo() {
     </a>
   );
 }
+

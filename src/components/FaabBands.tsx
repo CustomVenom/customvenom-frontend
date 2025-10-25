@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 
 interface FaabItem {
@@ -28,7 +28,7 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
     const fetchFaabBands = async () => {
       try {
         setLoading(true);
-        const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+        const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const response = await fetch(`${apiBase}/faab_bands?week=${week}`, {
           cache: 'no-store'
         });
@@ -146,4 +146,5 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
     </div>
   );
 }
+
 

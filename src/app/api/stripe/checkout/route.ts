@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getServerSession } from '@/lib/auth-helpers';
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' })
+const stripe = process.env['STRIPE_SECRET_KEY']
+  ? new Stripe(process.env['STRIPE_SECRET_KEY'], { apiVersion: '2024-06-20' })
   : null;
 
 export async function POST(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { priceId } = await request.json();
-    
+
     if (!priceId) {
       return NextResponse.json(
         { error: 'Price ID is required' },
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.STRIPE_SUCCESS_URL || process.env.NEXTAUTH_URL + '/settings'}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: process.env.STRIPE_CANCEL_URL || process.env.NEXTAUTH_URL + '/go-pro',
+      success_url: `${process.env['STRIPE_SUCCESS_URL'] || process.env['NEXTAUTH_URL'] + '/settings'}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: process.env['STRIPE_CANCEL_URL'] || process.env['NEXTAUTH_URL'] + '/go-pro',
       metadata: {
         userId: session.user.id,
         userEmail: session.user.email!,

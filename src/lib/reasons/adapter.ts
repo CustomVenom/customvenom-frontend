@@ -52,7 +52,7 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
   const normalized = safe.map((r, index) => {
     // API may send decimal fraction (0.021) or percent (2.1). Detect by magnitude.
     const rawVal = Number(r.effect ?? 0);
-    
+
     // Safety: Handle NaN/Infinity
     if (!Number.isFinite(rawVal)) {
       return {
@@ -63,15 +63,15 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
         index, // For stable sorting
       };
     }
-    
+
     // Improved heuristic: values < 1.0 are fractions (0.021 = 2.1%), >= 1.0 are percents
     // Edge case: 0.5 would be 50% (fraction), but this is more intuitive than the alternative
     const asPct = Math.abs(rawVal) < 1.0 ? rawVal * 100 : rawVal;
     const clamped = clampPct(asPct);
-    
+
     // Fix negative zero: -0 should display as 0
     const normalized = Object.is(clamped, -0) ? 0 : clamped;
-    
+
     const label = r.label || LABEL_MAP[r.key] || humanizeKey(r.key);
     return {
       key: r.key,
@@ -84,7 +84,7 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
 
   // Filter out zero-effect chips (no value to user)
   const nonZero = normalized.filter(n => Math.abs(n.effectPct) > 0.01);
-  
+
   // If all effects are ~0, return empty
   if (!nonZero.length) return [];
 
@@ -107,6 +107,7 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
 function humanizeKey(key: string): string {
   // "market_delta:up" → "Market delta (up)"
   const [base, suffix] = key.split(':');
+  if (!base) return key; // fallback if split fails
   const basePretty = base.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   return suffix ? `${basePretty} (${suffix})` : basePretty;
 }

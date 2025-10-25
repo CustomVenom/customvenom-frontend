@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get the API base URL from environment variables
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || process.env.API_BASE;
+    const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE'];
 
     if (!apiBase) {
       return NextResponse.json({ error: 'API base URL not configured' }, { status: 500 });

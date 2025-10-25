@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 
@@ -8,7 +8,7 @@ type Ops = {
   pinball?: { overall?: number };
 };
 
-export default function OpsStatus({ api = process.env.NEXT_PUBLIC_API_BASE }: { api?: string }) {
+export default function OpsStatus({ api = process.env['NEXT_PUBLIC_API_BASE'] }: { api?: string }) {
   const [ok, setOk] = useState<boolean | null>(null);
   const [rate, setRate] = useState<number | null>(null);
 
@@ -47,4 +47,5 @@ export default function OpsStatus({ api = process.env.NEXT_PUBLIC_API_BASE }: { 
     </span>
   );
 }
+
 

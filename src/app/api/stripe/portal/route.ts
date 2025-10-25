@@ -1,12 +1,12 @@
-// Stripe Customer Portal
+﻿// Stripe Customer Portal
 // Creates a billing portal session for Pro users to manage their subscription
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getServerSession } from '@/lib/auth-helpers';
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' })
+const stripe = process.env['STRIPE_SECRET_KEY']
+  ? new Stripe(process.env['STRIPE_SECRET_KEY'], { apiVersion: '2024-06-20' })
   : null;
 
 export async function POST() {
@@ -44,7 +44,7 @@ export async function POST() {
     // Create billing portal session
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: session.user.stripeCustomerId,
-      return_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/settings`,
+      return_url: `${process.env['NEXTAUTH_URL'] || 'http://localhost:3000'}/settings`,
     });
 
     return NextResponse.json({ url: portalSession.url });
@@ -56,4 +56,5 @@ export async function POST() {
     );
   }
 }
+
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -32,7 +32,7 @@ export default function GoProButton({ priceId, className = '' }: GoProButtonProp
       const { sessionId } = await response.json();
 
       // Initialize Stripe (check if configured)
-      const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+      const stripeKey = process.env['NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'];
       if (!stripeKey) {
         throw new Error('Stripe not configured');
       }
@@ -116,3 +116,4 @@ export default function GoProButton({ priceId, className = '' }: GoProButtonProp
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LeagueHeaderControls } from './LeagueHeaderControls';
 import { LeagueSwitcher } from './LeagueSwitcher';
 import type { MeLeaguesResponse } from '@/types/leagues';
@@ -14,7 +14,7 @@ interface LeagueData extends MeLeaguesResponse {
   lastSync?: string;
 }
 
-export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): JSX.Element {
+export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): React.JSX.Element {
   const [data, setData] = useState<LeagueData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +72,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): JSX.
   return (
     <div className="mb-6 flex items-center gap-4">
       <LeagueSwitcher />
-      {leagues.length > 1 && (
+      {leagues.length > 1 && activeId && (
         <LeagueHeaderControls
           leagues={leagues}
           activeId={activeId}

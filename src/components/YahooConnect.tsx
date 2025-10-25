@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -20,9 +20,9 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
   const [error, setError] = useState<string | null>(null);
 
   // Feature flag gating
-  const ENABLED = process.env.NEXT_PUBLIC_YAHOO_CONNECT_ENABLED === 'true';
-  const MAINT = process.env.NEXT_PUBLIC_YAHOO_MAINTENANCE === 'true';
-  const CANARY = (process.env.NEXT_PUBLIC_YAHOO_CANARY_EMAILS || '')
+  const ENABLED = process.env['NEXT_PUBLIC_YAHOO_CONNECT_ENABLED'] === 'true';
+  const MAINT = process.env['NEXT_PUBLIC_YAHOO_MAINTENANCE'] === 'true';
+  const CANARY = (process.env['NEXT_PUBLIC_YAHOO_CANARY_EMAILS'] || '')
     .split(',')
     .map((s) => s.trim().toLowerCase());
 
@@ -33,7 +33,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
       setLoading(true);
       setError(null);
 
-      const apiBase = process.env.NEXT_PUBLIC_API_BASE;
+      const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
       const response = await fetch(`${apiBase}/yahoo/leagues`, {
         credentials: 'include',
       });
@@ -139,3 +139,4 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
     </div>
   );
 }
+

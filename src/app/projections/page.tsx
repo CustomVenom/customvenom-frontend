@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import GoProButton from '@/components/GoProButton';
 import { type Entitlements } from '@/lib/entitlements';
@@ -283,7 +283,7 @@ function ProjectionsPageInner() {
           {!isPro && (
             <div className="bg-gradient-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
               <GoProButton 
-                priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || 'price_pro_season'}
+                priceId={process.env['NEXT_PUBLIC_STRIPE_PRICE_ID'] || 'price_pro_season'}
               />
             </div>
           )}
@@ -352,3 +352,4 @@ export default function ProjectionsPage() {
     </ApiErrorBoundary>
   );
 }
+

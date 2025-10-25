@@ -1,4 +1,4 @@
-// Preview-only webhook handler
+﻿// Preview-only webhook handler
 // Logs events but doesn't write to database
 // Use this for testing Stripe integration before going live
 
@@ -10,19 +10,19 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   // Check if Stripe is configured
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+  if (!process.env['STRIPE_SECRET_KEY'] || !process.env['STRIPE_WEBHOOK_SECRET']) {
     return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });
   }
 
   const sig = req.headers.get('stripe-signature');
-  const whSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  
+  const whSecret = process.env['STRIPE_WEBHOOK_SECRET'];
+
   if (!sig || !whSecret) {
     return NextResponse.json({ error: 'missing_sig' }, { status: 400 });
   }
 
   const buf = Buffer.from(await req.arrayBuffer());
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+  const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'], { apiVersion: '2024-06-20' });
 
   let event: Stripe.Event;
   try {
@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     // Preview-only entitlement toggle (no DB write)
     const session = event.data.object as Stripe.Checkout.Session;
-    
+
     console.log('entitlement_toggle_preview', {
-      plan: process.env.NEXT_PUBLIC_ENTITLEMENT_PLAN || 'pro',
+      plan: process.env['NEXT_PUBLIC_ENTITLEMENT_PLAN'] || 'pro',
       session: session.id,
       customer: session.customer,
       customer_email: session.customer_email,
@@ -58,4 +58,5 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ ok: true, event_type: event.type });
 }
+
 

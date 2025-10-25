@@ -17,15 +17,15 @@ interface FetchOptions extends RequestInit {
 const pendingRequests = new Map<string, Promise<ApiResponse<unknown>>>();
 
 export async function apiFetch<T = unknown>(
-  url: string, 
+  url: string,
   options: FetchOptions = {}
 ): Promise<ApiResponse<T>> {
   const { logErrors = true, deduplicate = true, ...fetchOptions } = options;
-  
+
   // Create cache key from URL + method + body
   const method = fetchOptions.method || 'GET';
   const cacheKey = `${method}:${url}${fetchOptions.body ? ':' + fetchOptions.body : ''}`;
-  
+
   // Return existing pending request if deduplication enabled
   if (deduplicate && pendingRequests.has(cacheKey)) {
     if (typeof window !== 'undefined' && console.log) {
@@ -38,13 +38,13 @@ export async function apiFetch<T = unknown>(
     }
     return pendingRequests.get(cacheKey)! as Promise<ApiResponse<T>>;
   }
-  
+
   // Create new request promise
   const requestPromise = (async () => {
     try {
       const response = await fetch(url, fetchOptions);
     const requestId = response.headers.get('x-request-id');
-    
+
     // Log all API calls with status
     if (typeof window !== 'undefined' && console.log) {
       console.log(JSON.stringify({
@@ -55,10 +55,10 @@ export async function apiFetch<T = unknown>(
         timestamp: new Date().toISOString()
       }));
     }
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      
+
       if (logErrors && typeof window !== 'undefined') {
         console.error(JSON.stringify({
           type: 'api_error',
@@ -69,24 +69,24 @@ export async function apiFetch<T = unknown>(
           timestamp: new Date().toISOString()
         }));
       }
-      
+
       return {
         ok: false,
         error: errorData.error || `HTTP ${response.status}`,
-        request_id: requestId || errorData.request_id
+        ...(requestId || errorData.request_id ? { request_id: requestId || errorData.request_id } : {})
       };
     }
-    
+
     const data = await response.json();
     return {
       ok: true,
       data: data as T,
-      request_id: requestId || undefined
+      ...(requestId ? { request_id: requestId } : {})
     };
-    
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Network error';
-    
+
     if (logErrors && typeof window !== 'undefined') {
       console.error(JSON.stringify({
         type: 'api_network_error',
@@ -95,7 +95,7 @@ export async function apiFetch<T = unknown>(
         timestamp: new Date().toISOString()
       }));
     }
-    
+
     return {
       ok: false,
       error: errorMessage
@@ -107,12 +107,12 @@ export async function apiFetch<T = unknown>(
     }
   }
   })();
-  
+
   // Store pending request if deduplication enabled
   if (deduplicate) {
     pendingRequests.set(cacheKey, requestPromise);
   }
-  
+
   return requestPromise;
 }
 

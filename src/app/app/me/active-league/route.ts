@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   const apiBase =
-    process.env.API_BASE || process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+    process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const reqId = crypto.randomUUID();
 
   try {
@@ -37,3 +37,4 @@ export async function POST(req: Request) {
     return new NextResponse('Internal error', { status: 500 });
   }
 }
+

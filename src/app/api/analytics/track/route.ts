@@ -58,8 +58,8 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
       toolUsage[event.tool_name] = (toolUsage[event.tool_name] || 0) + 1;
     }
 
-    if (event.event_type === 'risk_mode_changed' && event.properties?.risk_mode) {
-      const mode = event.properties.risk_mode as string;
+    if (event.event_type === 'risk_mode_changed' && event.properties?.['risk_mode']) {
+      const mode = event.properties['risk_mode'] as string;
       riskDistribution[mode] = (riskDistribution[mode] || 0) + 1;
     }
 

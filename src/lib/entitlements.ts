@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+﻿import Stripe from 'stripe';
 import { getServerSession } from './auth-helpers';
 import { getEntitlementsFromRole, getRoleFromSubscription, ROLES, type Role } from './rbac';
 
@@ -18,7 +18,7 @@ export interface Entitlements {
   };
 }
 
-const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripeKey = process.env['STRIPE_SECRET_KEY'];
 
 /**
  * Get entitlements from current session
@@ -83,9 +83,11 @@ export async function getEntitlementsFromCheckout(sessionId: string): Promise<En
 
       if (subs.data.length > 0) {
         const sub = subs.data[0];
-        const tier = sub.items.data[0]?.price.metadata?.tier || 'pro';
-        const role = getRoleFromSubscription('active', tier);
-        return getEntitlementsFromRole(role);
+        if (sub) {
+          const tier = sub.items.data[0]?.price.metadata?.['tier'] || 'pro';
+          const role = getRoleFromSubscription('active', tier);
+          return getEntitlementsFromRole(role);
+        }
       }
     }
   } catch (err) {
@@ -102,3 +104,4 @@ export function hasFeature(
 ): boolean {
   return entitlements.features[feature];
 }
+

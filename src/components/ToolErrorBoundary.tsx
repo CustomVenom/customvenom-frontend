@@ -23,7 +23,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log to Sentry with tool-specific tags
     Sentry.captureException(error, {
       tags: {
@@ -37,7 +37,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
@@ -55,16 +55,16 @@ export class ToolErrorBoundary extends Component<Props, State> {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            
+
             <div className="flex-1">
               <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">
                 Tool Error
               </h3>
-              
+
               <p className="text-sm text-red-800 dark:text-red-200 mb-3">
                 {this.props.toolName || 'This tool'} encountered an error. The issue has been logged.
               </p>
-              
+
               {this.state.error?.message && (
                 <div className="bg-[rgb(var(--bg-input))] rounded p-3 mb-3 border border-[rgba(148,163,184,0.1)]">
                   <p className="text-xs text-[rgb(var(--text-primary))] font-mono break-words">
@@ -72,7 +72,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
                   </p>
                 </div>
               )}
-              
+
               <div className="flex gap-2">
                 <button
                   onClick={() => this.setState({ hasError: false, error: null })}
@@ -80,7 +80,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
                 >
                   Try again
                 </button>
-                
+
                 <button
                   onClick={() => window.location.href = '/tools'}
                   className="text-sm px-3 py-1.5 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all border border-[rgba(148,163,184,0.2)] font-semibold"

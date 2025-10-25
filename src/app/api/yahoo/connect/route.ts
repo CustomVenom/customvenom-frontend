@@ -1,4 +1,4 @@
-export const runtime = 'nodejs';
+﻿export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   }
 
   const auth = new URL(AUTH_URL);
-  auth.searchParams.set('client_id', process.env.YAHOO_CLIENT_ID!);
+  auth.searchParams.set('client_id', process.env['YAHOO_CLIENT_ID']!);
   auth.searchParams.set('redirect_uri', redirectUri);
   auth.searchParams.set('response_type', 'code');
   auth.searchParams.set('scope', 'fspt-r');
@@ -44,3 +44,4 @@ export async function GET(req: NextRequest) {
   );
   return res;
 }
+

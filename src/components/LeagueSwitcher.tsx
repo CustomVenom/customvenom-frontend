@@ -81,7 +81,7 @@ export function LeagueSwitcher() {
         setError('No leagues found. Try refreshing your league data.');
         setErrorDetails(JSON.stringify({
           requestId,
-          connected: json.connected,
+          connections: json.connections?.length || 0,
           leagueCount: json.leagues?.length || 0
         }, null, 2));
         return;
@@ -99,7 +99,10 @@ export function LeagueSwitcher() {
       } else if (savedLeague && json.synced_leagues.includes(savedLeague)) {
         setSelectedLeague(savedLeague);
       } else if (json.synced_leagues.length === 1) {
-        setSelectedLeague(json.synced_leagues[0]);
+        const firstLeague = json.synced_leagues[0];
+        if (firstLeague) {
+          setSelectedLeague(firstLeague);
+        }
       }
       // else: show chooser (no auto-select)
     } catch (err: unknown) {

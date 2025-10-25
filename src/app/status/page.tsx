@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 
@@ -12,7 +12,7 @@ type Ops = {
 export default function StatusPage() {
   const [data, setData] = useState<Ops | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const api = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+  const api = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
   useEffect(() => {
     let alive = true;
@@ -122,3 +122,4 @@ export default function StatusPage() {
     </main>
   );
 }
+

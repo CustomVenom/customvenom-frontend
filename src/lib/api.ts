@@ -1,4 +1,4 @@
-// API client with stale header detection
+﻿// API client with stale header detection
 
 export interface Projection {
   player_id: string;
@@ -29,7 +29,7 @@ export interface ProjectionsResponse {
 }
 
 export async function fetchProjections(week: string): Promise<ProjectionsResponse> {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const res = await fetch(`${apiBase}/projections?week=${week}`, { 
     cache: 'no-store' 
   });
@@ -53,7 +53,7 @@ export async function fetchProjections(week: string): Promise<ProjectionsRespons
 }
 
 export async function fetchHealth() {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const res = await fetch(`${apiBase}/health`, { cache: 'no-store' });
   
   if (!res.ok) {
@@ -62,4 +62,5 @@ export async function fetchHealth() {
 
   return res.json();
 }
+
 

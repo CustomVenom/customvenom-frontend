@@ -75,14 +75,11 @@ export function LeagueHeaderControls({
           </div>
           {!isPro && wantId && wantId !== activeId && (
             <div className="mt-3">
-              <ProLock
-                unlocked={false}
-                cta={
-                  <a href="#upgrade" className="rounded border border-blue-500 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 text-blue-600 dark:text-blue-400">
-                    Go Pro
-                  </a>
-                }
-              />
+              <ProLock isPro={false}>
+                <a href="#upgrade" className="rounded border border-blue-500 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 text-blue-600 dark:text-blue-400">
+                  Go Pro
+                </a>
+              </ProLock>
             </div>
           )}
         </div>

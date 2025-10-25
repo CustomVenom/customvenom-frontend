@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
     const rt = req.cookies.get('y_rt')?.value;
     if (!rt) return NextResponse.json({ ok: false, error: 'no_refresh_token' }, { status: 401 });
 
-    const id = process.env.YAHOO_CLIENT_ID!;
-    const secret = process.env.YAHOO_CLIENT_SECRET!;
+    const id = process.env['YAHOO_CLIENT_ID']!;
+    const secret = process.env['YAHOO_CLIENT_SECRET']!;
     const basic = Buffer.from(`${id}:${secret}`).toString('base64');
 
     const proto = req.headers.get('x-forwarded-proto') || 'https';
@@ -61,3 +61,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }
+

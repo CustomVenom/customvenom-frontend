@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import { Tile, DualTile } from '@/components/Tile';
 import { fetchLogMetrics } from '@/lib/logs';
@@ -29,12 +29,12 @@ export default function OpsDashboard() {
       try {
         // Fetch from logs for 5xx and P95
         const logMetrics = await fetchLogMetrics();
-        
+
         // Fetch ops data for other tiles
-        const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+        const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const opsResponse = await fetch(`${apiBase}/ops-data`);
         const opsData = await opsResponse.json();
-        
+
         setMetrics({
           errors_5xx: logMetrics?.errors_5xx || 0,
           p95_latency_ms: logMetrics?.p95_latency_ms || 0,
@@ -46,7 +46,7 @@ export default function OpsDashboard() {
             suppress: opsData?.chips?.suppress || 0
           }
         });
-        
+
         setLogsAvailable(!!logMetrics);
         setLoading(false);
       } catch (error) {
@@ -56,7 +56,7 @@ export default function OpsDashboard() {
     };
 
     fetchMetrics();
-    
+
     // Refresh every 60 seconds
     const interval = setInterval(fetchMetrics, 60000);
     return () => clearInterval(interval);
@@ -91,7 +91,7 @@ export default function OpsDashboard() {
         <Tile
           title="P95 Latency"
           value={logsAvailable ? metrics.p95_latency_ms : 'awaiting source'}
-          unit={logsAvailable ? 'ms' : undefined}
+          {...(logsAvailable ? { unit: 'ms' } : {})}
           label="95th percentile"
           status={logsAvailable ? 'live' : 'placeholder'}
           loading={loading}
@@ -101,7 +101,7 @@ export default function OpsDashboard() {
         <Tile
           title="Cache Hit Rate"
           value={metrics.cache_hit_rate !== null ? metrics.cache_hit_rate : 'awaiting source'}
-          unit={metrics.cache_hit_rate !== null ? '%' : undefined}
+          {...(metrics.cache_hit_rate !== null ? { unit: '%' } : {})}
           label="R2 cache performance"
           status={metrics.cache_hit_rate !== null ? 'live' : 'placeholder'}
           loading={loading}
@@ -111,7 +111,7 @@ export default function OpsDashboard() {
         <Tile
           title="Coverage"
           value={metrics.coverage_pct || 'awaiting source'}
-          unit={metrics.coverage_pct ? '%' : undefined}
+          {...(metrics.coverage_pct ? { unit: '%' } : {})}
           label="Players with projections"
           status={metrics.coverage_pct ? 'live' : 'placeholder'}
           loading={loading}
@@ -149,4 +149,5 @@ export default function OpsDashboard() {
     </div>
   );
 }
+
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Yahoo OAuth Provider for NextAuth
  *
  * App ID: hLyo9VQ2
@@ -14,7 +14,7 @@ export const YahooProvider = {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
     params: {
       response_type: 'code',
-      redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/yahoo`,
+      redirect_uri: `${process.env['NEXTAUTH_URL']}/api/auth/callback/yahoo`,
       scope: 'openid profile email fspt-r',
     },
   },
@@ -22,8 +22,8 @@ export const YahooProvider = {
     url: 'https://api.login.yahoo.com/oauth2/get_token',
   },
   userinfo: 'https://api.login.yahoo.com/openid/v1/userinfo',
-  clientId: process.env.YAHOO_CLIENT_ID || 'placeholder',
-  clientSecret: process.env.YAHOO_CLIENT_SECRET || 'placeholder',
+  clientId: process.env['YAHOO_CLIENT_ID'] || 'placeholder',
+  clientSecret: process.env['YAHOO_CLIENT_SECRET'] || 'placeholder',
   profile(profile: {
     sub?: string;
     user_id?: string;
@@ -40,3 +40,4 @@ export const YahooProvider = {
     };
   },
 };
+

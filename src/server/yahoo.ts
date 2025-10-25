@@ -1,4 +1,4 @@
-import 'server-only';
+﻿import 'server-only';
 import { cookies } from 'next/headers';
 
 type YahooLeague = { id: string; name: string; season: string; teams: number };
@@ -26,7 +26,7 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
 
   // Fetch leagues from Workers API
   try {
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+    const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const response = await fetch(`${apiBase}/yahoo/leagues`, {
       headers: {
         Cookie: `y_at=${t.accessToken}`,
@@ -74,3 +74,4 @@ export async function getCachedLeagues(userId: string): Promise<YahooLeague[]> {
   mem.set(key, { at: now, data: leagues });
   return leagues;
 }
+

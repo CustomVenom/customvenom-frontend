@@ -73,8 +73,8 @@ export default function ProjectionsTable({ rows }: Props) {
             {rows.map((r, i) => {
               const chips = clampChips(r.explanations);
               return (
-                <tr 
-                  key={i} 
+                <tr
+                  key={i}
                   className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
                   <td className="sticky-first px-3 py-2">
@@ -86,44 +86,44 @@ export default function ProjectionsTable({ rows }: Props) {
                       {r.player_name ?? r.player_id}
                     </button>
                   </td>
-                  
-                  {visible.team !== false && (
+
+                  {visible['team'] !== false && (
                     <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
                       ALL_COLUMNS.find(x => x.key === 'team')?.mobileHide ? 'hide-sm' : ''
                     }`}>
                       {r.team ?? '—'}
                     </td>
                   )}
-                  
-                  {visible.pos !== false && (
+
+                  {visible['pos'] !== false && (
                     <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
                       ALL_COLUMNS.find(x => x.key === 'pos')?.mobileHide ? 'hide-sm' : ''
                     }`}>
                       {r.position ?? '—'}
                     </td>
                   )}
-                  
-                  {visible.floor !== false && (
+
+                  {visible['floor'] !== false && (
                     <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
                       {r.range.p10.toFixed(1)}
                     </td>
                   )}
-                  
-                  {visible.median !== false && (
+
+                  {visible['median'] !== false && (
                     <td className="px-3 py-2 font-semibold text-brand-primary dark:text-brand-accent">
                       {r.range.p50.toFixed(1)}
                     </td>
                   )}
-                  
-                  {visible.ceiling !== false && (
+
+                  {visible['ceiling'] !== false && (
                     <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
                       ALL_COLUMNS.find(x => x.key === 'ceiling')?.mobileHide ? 'hide-sm' : ''
                     }`}>
                       {r.range.p90.toFixed(1)}
                     </td>
                   )}
-                  
-                  {visible.reasons !== false && (
+
+                  {visible['reasons'] !== false && (
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap gap-1">
                         {chips.length === 0 && (

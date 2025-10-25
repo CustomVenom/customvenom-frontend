@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Logs utilities for fetching and parsing operational metrics
  * from Cloudflare Workers logs (when available)
  */
@@ -35,7 +35,7 @@ export async function fetchLogMetrics(timeWindowMs = 86400000): Promise<LogMetri
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Check if logs are available (this would be a real check in production)
-    const logsAvailable = process.env.NEXT_PUBLIC_LOGS_ENABLED === 'true';
+    const logsAvailable = process.env['NEXT_PUBLIC_LOGS_ENABLED'] === 'true';
     
     if (!logsAvailable) {
       // Return null to indicate logs aren't available yet
@@ -108,4 +108,5 @@ export async function fetchWorkerLogs(timeWindowMs = 86400000): Promise<LogEntry
   
   return [];
 }
+
 

@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env['STRIPE_SECRET_KEY']!, {
   apiVersion: '2024-06-20',
 });
 
 export async function POST(req: Request) {
   const sig = req.headers.get('stripe-signature');
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = process.env['STRIPE_WEBHOOK_SECRET'];
 
   if (!sig || !webhookSecret) {
     console.error('[Stripe Webhook] Missing signature or secret');
@@ -34,3 +34,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'webhook_failed' }, { status: 400 });
   }
 }
+

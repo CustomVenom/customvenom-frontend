@@ -1,4 +1,4 @@
-// NextAuth.js configuration
+﻿// NextAuth.js configuration
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
 import NextAuth from 'next-auth';
@@ -14,38 +14,38 @@ import { prisma } from './db';
 const providers = [];
 
 // Google OAuth (required for now)
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (process.env['GOOGLE_CLIENT_ID'] && process.env['GOOGLE_CLIENT_SECRET']) {
   providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env['GOOGLE_CLIENT_ID'],
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
     })
   );
 }
 
 // Twitter OAuth (optional - add when needed)
-if (process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET) {
+if (process.env['TWITTER_CLIENT_ID'] && process.env['TWITTER_CLIENT_SECRET']) {
   providers.push(
     TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET,
+      clientId: process.env['TWITTER_CLIENT_ID'],
+      clientSecret: process.env['TWITTER_CLIENT_SECRET'],
     })
   );
 }
 
 // Facebook OAuth (optional - add when needed)
-if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+if (process.env['FACEBOOK_CLIENT_ID'] && process.env['FACEBOOK_CLIENT_SECRET']) {
   providers.push(
     FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      clientId: process.env['FACEBOOK_CLIENT_ID'],
+      clientSecret: process.env['FACEBOOK_CLIENT_SECRET'],
     })
   );
 }
 
 // Minimal runtime env presence log (remove after verification)
-console.log('[auth] NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
-console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env.NEXTAUTH_SECRET));
+console.log('[auth] NEXTAUTH_URL:', process.env['NEXTAUTH_URL']);
+console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env['NEXTAUTH_SECRET']));
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -53,7 +53,7 @@ export const authOptions = {
   trustHost: true,
   // TEMP: allow linking same email across providers (dev only)
   allowDangerousEmailAccountLinking:
-    process.env.NODE_ENV === 'development' || process.env.AUTH_LINK_ALLOW === '1',
+    process.env['NODE_ENV'] === 'development' || process.env['AUTH_LINK_ALLOW'] === '1',
   callbacks: {
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
@@ -116,7 +116,7 @@ export const authOptions = {
   session: {
     strategy: 'jwt' as const,
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env['NODE_ENV'] === 'development',
 };
 
 export default NextAuth(authOptions);
@@ -125,3 +125,4 @@ export default NextAuth(authOptions);
 export async function auth() {
   return getServerSession(authOptions);
 }
+

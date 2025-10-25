@@ -30,7 +30,6 @@ export const Stale: Story = {
 export const MissingData: Story = {
   args: {
     schemaVersion: 'v1',
-    lastRefresh: undefined,
     stale: false,
   },
 };
