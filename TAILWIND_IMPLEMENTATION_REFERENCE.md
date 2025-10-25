@@ -93,6 +93,7 @@ content: [
 ## 🧪 Quick Validation Snippets
 
 ### Basic Test
+
 ```tsx
 <div className="p-4 rounded bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-zinc-100">
   Tailwind OK
@@ -100,13 +101,20 @@ content: [
 ```
 
 ### Extended Test
+
 ```tsx
 <div className="p-6 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
   <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tailwind Test</h2>
   <div className="grid grid-cols-3 gap-4">
-    <div className="bg-red-100 dark:bg-red-900 p-3 rounded text-center text-sm text-red-800 dark:text-red-200">Red</div>
-    <div className="bg-green-100 dark:bg-green-900 p-3 rounded text-center text-sm text-green-800 dark:text-green-200">Green</div>
-    <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded text-center text-sm text-blue-800 dark:text-blue-200">Blue</div>
+    <div className="bg-red-100 dark:bg-red-900 p-3 rounded text-center text-sm text-red-800 dark:text-red-200">
+      Red
+    </div>
+    <div className="bg-green-100 dark:bg-green-900 p-3 rounded text-center text-sm text-green-800 dark:text-green-200">
+      Green
+    </div>
+    <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded text-center text-sm text-blue-800 dark:text-blue-200">
+      Blue
+    </div>
   </div>
   <div className="mt-4 flex gap-2">
     <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
@@ -141,6 +149,7 @@ content: [
 ## 🚀 Preflight Checks
 
 Run `npm run preflight` to verify:
+
 - ✅ ESLint passes
 - ✅ TypeScript compiles
 - ✅ Tailwind configuration is valid

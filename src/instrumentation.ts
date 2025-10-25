@@ -8,7 +8,11 @@
   }
 }
 
-export const onRequestError = async (err: Error, request: { method: string; url: string }, context: { routerKind: string; routePath?: string }) => {
+export const onRequestError = async (
+  err: Error,
+  request: { method: string; url: string },
+  context: { routerKind: string; routePath?: string },
+) => {
   // This is called for all errors in your application
   // You can use this to send errors to Sentry
   const { captureException } = await import('@sentry/nextjs');
@@ -20,5 +24,3 @@ export const onRequestError = async (err: Error, request: { method: string; url:
     },
   });
 };
-
-

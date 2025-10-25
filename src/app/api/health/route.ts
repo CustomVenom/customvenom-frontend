@@ -52,7 +52,7 @@ export async function GET() {
     (res.headers.get('Access-Control-Expose-Headers') || '')
       .split(',')
       .map((s) => s.trim())
-      .filter(Boolean)
+      .filter(Boolean),
   );
   exposed.add('x-request-id');
   res.headers.set('Access-Control-Expose-Headers', Array.from(exposed).join(', '));

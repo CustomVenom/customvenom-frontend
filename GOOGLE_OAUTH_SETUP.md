@@ -21,16 +21,19 @@
 In the "Authorized redirect URIs" section, click **"Add URI"** and add these **two** URIs:
 
 #### Preview Redirect URI
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
 #### Production Redirect URI
+
 ```
 https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/callback/google
 ```
 
-**Important:** 
+**Important:**
+
 - Must end with `/api/auth/callback/google`
 - No trailing slash at the end
 - Both URIs should be added now (so you don't have to come back later)
@@ -59,6 +62,7 @@ Click **"Save"** button at the bottom of the Google Console page.
 Now add these to Vercel environment variables:
 
 ### GOOGLE_CLIENT_ID
+
 ```
 Name:        GOOGLE_CLIENT_ID
 Value:       294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com
@@ -66,6 +70,7 @@ Environment: ☑️ Preview ☑️ Production (check BOTH!)
 ```
 
 ### GOOGLE_CLIENT_SECRET
+
 ```
 Name:        GOOGLE_CLIENT_SECRET
 Value:       <paste-the-secret-you-copied-from-google>
@@ -81,11 +86,13 @@ Environment: ☑️ Preview ☑️ Production (check BOTH!)
 After adding to Vercel and redeploying:
 
 ### 1. Check Providers Endpoint
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/providers
 ```
 
 Should show:
+
 ```json
 {
   "google": {
@@ -111,12 +118,12 @@ Should show:
 
 ## 🎯 **Current OAuth Configuration**
 
-| Setting | Value |
-|---------|-------|
-| **Client ID** | `294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com` |
-| **Client Secret** | Get from Google Console |
-| **Preview Redirect** | `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google` |
-| **Production Redirect** | `https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/callback/google` |
+| Setting                 | Value                                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
+| **Client ID**           | `294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com`                      |
+| **Client Secret**       | Get from Google Console                                                                         |
+| **Preview Redirect**    | `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google` |
+| **Production Redirect** | `https://customvenom-frontend-incarcer-incarcers-projects.vercel.app/api/auth/callback/google`  |
 
 ---
 
@@ -126,6 +133,7 @@ Should show:
 **Client Secret:** ⚠️ NEVER share publicly or commit to git!
 
 The Client Secret should only be:
+
 - In Vercel environment variables ✅
 - In your password manager ✅
 - In local `.env.local` for testing ✅
@@ -139,6 +147,7 @@ The Client Secret should only be:
 **Cause:** Redirect URI in Google Console doesn't match exactly
 
 **Fix:** Verify you added the EXACT URI with no typos:
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
@@ -147,7 +156,8 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/ca
 
 **Cause:** Client ID or Secret is wrong in Vercel
 
-**Fix:** 
+**Fix:**
+
 1. Double-check you copied the full Client ID (294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com)
 2. Verify Client Secret is correct
 3. Redeploy
@@ -157,6 +167,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/ca
 **Cause:** Google OAuth consent screen not configured
 
 **Fix:**
+
 1. Go to: https://console.cloud.google.com/apis/credentials/consent
 2. Fill in required fields (app name, support email)
 3. Add test users if needed
@@ -167,4 +178,3 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/ca
 **Last Updated:** October 17, 2025  
 **Your Client ID:** `294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com`  
 **Status:** Ready to add redirect URIs ✅
-

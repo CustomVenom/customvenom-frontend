@@ -33,7 +33,8 @@ export default function GoProPage() {
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.';
       setError(errorMessage);
       setLoading(false);
     }
@@ -42,7 +43,9 @@ export default function GoProPage() {
   return (
     <div className="max-w-6xl mx-auto py-16 px-4">
       <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">Upgrade to Pro</h1>
+        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
+          Upgrade to Pro
+        </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Unlock advanced features and take your fantasy game to the next level
         </p>
@@ -115,4 +118,3 @@ export default function GoProPage() {
     </div>
   );
 }
-

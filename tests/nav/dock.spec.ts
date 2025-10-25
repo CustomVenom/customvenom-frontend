@@ -5,7 +5,7 @@ test.describe('Mobile Dock', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/tools');
-    
+
     // Check mobile dock is visible
     const dock = page.locator('nav[aria-label="Mobile navigation"]');
     await expect(dock).toBeVisible();
@@ -14,7 +14,7 @@ test.describe('Mobile Dock', () => {
   test('Mobile dock marks active item', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/tools');
-    
+
     // Find Tools link in dock
     const toolsLink = page.locator('nav[aria-label="Mobile navigation"] a[href="/tools"]');
     await expect(toolsLink).toHaveAttribute('aria-current', 'page');
@@ -24,10 +24,9 @@ test.describe('Mobile Dock', () => {
     // Set desktop viewport
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto('/tools');
-    
+
     // Mobile dock should be hidden
     const dock = page.locator('nav[aria-label="Mobile navigation"]');
     await expect(dock).not.toBeVisible();
   });
 });
-

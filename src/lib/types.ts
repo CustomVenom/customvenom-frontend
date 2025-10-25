@@ -1,5 +1,5 @@
 export type Reason = {
-  label: string;
-  impact: number;
+  component: string;
+  delta_points: number;
   confidence: number;
 };

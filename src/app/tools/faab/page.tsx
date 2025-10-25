@@ -21,12 +21,12 @@ function FaabContent() {
     max: number;
     reason: string;
   } | null>(null);
-  
+
   const { setMsg, Toast } = useToast();
 
   // Track tool view
   useEffect(() => {
-    trackToolUsage('FAAB', 'viewed');
+    trackToolUsage('FAAB', { action: 'viewed' });
   }, []);
 
   // Keyboard shortcuts
@@ -36,13 +36,13 @@ function FaabContent() {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
+
       if (e.key === 'Enter' && player && budget) {
         trackFeatureInteraction('keyboard_shortcut', 'enter_calculate', { tool: 'FAAB' });
         handleCalculate();
       }
     };
-    
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [player, budget]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -55,11 +55,12 @@ function FaabContent() {
 
   async function handleCalculate() {
     // Track calculation
-    trackToolUsage('FAAB', 'calculate', {
+    trackToolUsage('FAAB', {
+      action: 'calculate',
       player: player || '',
-      budget: parseInt(budget) || 0
+      budget: parseInt(budget) || 0,
     });
-    
+
     // TODO: Wire to API endpoint
     // For now, return mock data
     setResult({
@@ -84,10 +85,7 @@ function FaabContent() {
       <ToolsTabs />
 
       {!result ? (
-        <EmptyState 
-          title="Calculate FAAB bid range"
-          onExample={handleExample}
-        >
+        <EmptyState title="Calculate FAAB bid range" onExample={handleExample}>
           Enter a player name and your remaining budget for smart bid recommendations.
         </EmptyState>
       ) : null}
@@ -119,8 +117,8 @@ function FaabContent() {
           />
         </div>
 
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleCalculate}
           disabled={!player || !budget}
           className="w-full"
@@ -140,11 +138,13 @@ function FaabContent() {
 
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
-              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Min</div>
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">
+                Min
+              </div>
               <div className="text-3xl font-bold text-[rgb(var(--text-primary))] mb-2">
                 ${result.min}
               </div>
-              <button 
+              <button
                 onClick={() => copyBid(result.min, 'Min')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
@@ -153,11 +153,13 @@ function FaabContent() {
             </div>
 
             <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-4 bg-brand-primary/10 dark:bg-brand-accent/20">
-              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Likely</div>
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">
+                Likely
+              </div>
               <div className="text-2xl font-semibold text-brand-primary dark:text-brand-accent mb-2">
                 ${result.likely}
               </div>
-              <button 
+              <button
                 onClick={() => copyBid(result.likely, 'Likely')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
@@ -166,11 +168,13 @@ function FaabContent() {
             </div>
 
             <div className="rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]">
-              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">Max</div>
+              <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">
+                Max
+              </div>
               <div className="text-3xl font-bold text-[rgb(var(--text-primary))] mb-2">
                 ${result.max}
               </div>
-              <button 
+              <button
                 onClick={() => copyBid(result.max, 'Max')}
                 className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
               >
@@ -183,7 +187,7 @@ function FaabContent() {
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rationale</div>
             <p className="text-sm text-[rgb(var(--text-secondary))]">{result.reason}</p>
           </div>
-          
+
           <div className="mt-3">
             <button
               className="cv-btn-ghost"
@@ -212,4 +216,3 @@ export default function FaabPage() {
     </ToolErrorBoundary>
   );
 }
-

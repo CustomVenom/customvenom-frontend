@@ -8,6 +8,7 @@
 ## 🎯 Quick Start Commands
 
 ### Workers API
+
 ```bash
 cd customvenom-workers-api
 
@@ -28,6 +29,7 @@ npm test
 ```
 
 ### Frontend
+
 ```bash
 cd customvenom-frontend
 
@@ -46,6 +48,7 @@ git push origin main
 ## 🏗️ Architecture Patterns
 
 ### 1. **Edge-First, Artifact-First**
+
 - ✅ **DO**: Read projections from R2 artifacts (pre-generated JSON)
 - ✅ **DO**: Keep database for user accounts, sessions, subscriptions only
 - ❌ **DON'T**: Query database for projection data
@@ -54,6 +57,7 @@ git push origin main
 **Why**: Edge workers have 50ms CPU limits. Pre-computed artifacts = instant responses.
 
 ### 2. **Stale-If-Error Pattern**
+
 ```typescript
 // workers-api/src/index.ts
 const LAST_GOOD_CACHE = new Map<string, { body: string; ts: number }>();
@@ -63,19 +67,21 @@ const cached = LAST_GOOD_CACHE.get(key);
 if (cached) {
   const ageSec = Math.floor((Date.now() - cached.ts) / 1000);
   c.header('x-stale', 'true');
-  c.header('x-stale-age', String(ageSec));  // seconds, not milliseconds
+  c.header('x-stale-age', String(ageSec)); // seconds, not milliseconds
   c.header('cache-control', 'public, max-age=60, stale-if-error=86400');
   return new Response(cached.body, { headers: c.res.headers });
 }
 ```
 
 **Benefits**:
+
 - 99.99% uptime even if R2 has issues
 - Graceful degradation
 - Users always get data (marked as stale)
 - `x-stale-age` in seconds for standard time units
 
 ### 3. **Demo Mode (Golden Week)**
+
 ```typescript
 // Anonymous users → pinned to Golden Week (2025-06)
 // Authenticated users → any week they request
@@ -88,11 +94,12 @@ const demoWeek = getDemoWeek(c.env);
 let weekParam = requestedWeek ?? demoWeek;
 if (demoMode && !authed && requestedWeek !== demoWeek) {
   weekParam = demoWeek;
-  c.header('x-demo-mode', 'true');  // Only on anonymous demo responses
+  c.header('x-demo-mode', 'true'); // Only on anonymous demo responses
 }
 ```
 
-**Why**: 
+**Why**:
+
 - Reduces R2 egress costs (cache single week heavily)
 - Consistent demo experience
 - Auth users get full access
@@ -100,6 +107,7 @@ if (demoMode && !authed && requestedWeek !== demoWeek) {
 **Important**: `x-demo-mode: true` header only appears on anonymous requests pinned to demo week. Never leaks on authenticated requests.
 
 ### 4. **Multi-Tier Caching**
+
 ```
 Browser Cache (cache-control)
     ↓
@@ -112,18 +120,19 @@ R2 Bucket (source of truth)
 
 **Cache Headers Strategy** (Explicit):
 
-| Route | cache-control | Use Case |
-|-------|---------------|----------|
-| Golden Week (2025-06) | `public, max-age=3600, stale-if-error=86400` | Heavy caching (1 hour) |
-| Other weeks | `public, max-age=300, stale-if-error=86400` | Moderate caching (5 min) |
-| Health endpoint | `no-store` | Always fresh, never cached |
-| Stale fallback | `public, max-age=60, stale-if-error=86400` | Short cache with stale marker |
+| Route                 | cache-control                                | Use Case                      |
+| --------------------- | -------------------------------------------- | ----------------------------- |
+| Golden Week (2025-06) | `public, max-age=3600, stale-if-error=86400` | Heavy caching (1 hour)        |
+| Other weeks           | `public, max-age=300, stale-if-error=86400`  | Moderate caching (5 min)      |
+| Health endpoint       | `no-store`                                   | Always fresh, never cached    |
+| Stale fallback        | `public, max-age=60, stale-if-error=86400`   | Short cache with stale marker |
 
 ---
 
 ## 🔐 Security Best Practices
 
 ### Secrets Management
+
 ```bash
 # ✅ GOOD: Use Wrangler secrets for sensitive data
 wrangler secret put DEMO_SIGNING_KEY
@@ -136,6 +145,7 @@ wrangler secret put STRIPE_SECRET_KEY
 ```
 
 **Critical Security Rule:**
+
 - Use `wrangler secret put` for:
   - SENTRY_DSN
   - OAuth secrets (GOOGLE_CLIENT_SECRET, YAHOO_CLIENT_SECRET, etc.)
@@ -145,6 +155,7 @@ wrangler secret put STRIPE_SECRET_KEY
 - **Never use --var for secrets** - they appear in deployment logs
 
 ### Environment Variables
+
 ```bash
 # ✅ GOOD: Use --var for non-sensitive config
 wrangler deploy --var DEMO_MODE:1 --var DEMO_WEEK:2025-06
@@ -154,20 +165,21 @@ wrangler deploy --env production
 ```
 
 ### Rate Limiting
+
 ```typescript
 // workers-api/src/middleware/rate-limit.ts
 import type { Context, Next } from 'hono';
 
 export const rateLimit = async (c: Context, next: Next) => {
-  const limit = 100;      // Requests per window
+  const limit = 100; // Requests per window
   const windowMs = 60_000; // 1 minute
-  
+
   const ip = c.req.header('cf-connecting-ip') || 'unknown';
   const key = `ratelimit:${ip}`;
-  
+
   // Check and increment rate limit
   // Implementation depends on KV or in-memory store
-  
+
   await next();
 };
 ```
@@ -177,6 +189,7 @@ export const rateLimit = async (c: Context, next: Next) => {
 ## 🎨 Frontend Patterns
 
 ### 1. **Server Components by Default**
+
 ```tsx
 // ✅ GOOD: Use Server Components for data fetching
 export default async function ProjectionsPage() {
@@ -185,24 +198,32 @@ export default async function ProjectionsPage() {
 }
 
 // ❌ BAD: Don't use 'use client' unless you need interactivity
-'use client';
+('use client');
 export default function ProjectionsPage() {
   const [data, setData] = useState();
-  useEffect(() => { fetch('...') }, []);
+  useEffect(() => {
+    fetch('...');
+  }, []);
 }
 ```
 
 ### 2. **Client Components for Interactivity**
+
 ```tsx
 // ✅ GOOD: Mark only interactive parts as 'use client'
 'use client';
 export function PlayerDrawer({ row }: Props) {
   const [open, setOpen] = useState(false);
-  return <Dialog open={open} onOpenChange={setOpen}>...</Dialog>;
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      ...
+    </Dialog>
+  );
 }
 ```
 
 ### 3. **Entitlements Pattern**
+
 ```typescript
 // Centralized in: frontend/src/lib/entitlements.ts
 
@@ -220,6 +241,7 @@ if (entitlements.isPro) {
 ```
 
 ### 4. **ProLock Pattern**
+
 ```tsx
 // Gate features behind entitlements
 <ProFeature isPro={entitlements.isPro}>
@@ -231,25 +253,18 @@ if (entitlements.isPro) {
 ```
 
 ### 5. **TrustSnapshot Pattern (No Layout Shift)**
+
 ```tsx
 // components/TrustSnapshot.tsx
-export function TrustSnapshot({ 
-  ver, 
-  ts, 
-  stale 
-}: { 
-  ver: string; 
-  ts: string; 
-  stale?: boolean;
-}) {
+export function TrustSnapshot({ ver, ts, stale }: { ver: string; ts: string; stale?: boolean }) {
   return (
     <div className="trust">
       <span className="ver">v{ver}</span>
       <span className="ts">{ts}</span>
       {/* Use visibility instead of conditional render to prevent CLS */}
-      <span 
-        className="stale" 
-        aria-hidden={!stale} 
+      <span
+        className="stale"
+        aria-hidden={!stale}
         style={{ visibility: stale ? 'visible' : 'hidden' }}
       >
         Stale
@@ -260,6 +275,7 @@ export function TrustSnapshot({
 ```
 
 **Why `visibility` instead of conditional render:**
+
 - Prevents layout shift (CLS < 0.1)
 - Reserves space even when badge is hidden
 - Accessibility: `aria-hidden` for screen readers
@@ -271,6 +287,7 @@ export function TrustSnapshot({
 ### Workers API
 
 **1. Minimize Bundle Size**
+
 ```typescript
 // ✅ GOOD: Import only what you need
 import { cors } from 'hono/cors';
@@ -280,6 +297,7 @@ import * as hono from 'hono';
 ```
 
 **2. Use Streaming for Large Responses**
+
 ```typescript
 // For future large datasets:
 return c.stream(async (stream) => {
@@ -289,6 +307,7 @@ return c.stream(async (stream) => {
 ```
 
 **3. Optimize R2 Reads**
+
 ```typescript
 // Current timeout: 300ms
 // If slow, reduce timeout or use parallel reads
@@ -298,6 +317,7 @@ const { data } = await r2GetText(bucket, key, 200); // 200ms timeout
 ### Frontend
 
 **1. Image Optimization**
+
 ```tsx
 // ✅ GOOD: Use Next.js Image component
 import Image from 'next/image';
@@ -308,19 +328,24 @@ import Image from 'next/image';
 ```
 
 **2. Code Splitting**
+
 ```tsx
 // ✅ GOOD: Dynamic imports for heavy components
 const PlayerDrawer = dynamic(() => import('@/components/PlayerDrawer'), {
-  loading: () => <Skeleton />
+  loading: () => <Skeleton />,
 });
 ```
 
 **3. Memoization**
+
 ```tsx
 // ✅ GOOD: Memoize expensive calculations
-const groupedData = useMemo(() => 
-  projections.reduce((acc, p) => { /* ... */ }, {}),
-  [projections]
+const groupedData = useMemo(
+  () =>
+    projections.reduce((acc, p) => {
+      /* ... */
+    }, {}),
+  [projections],
 );
 ```
 
@@ -329,6 +354,7 @@ const groupedData = useMemo(() =>
 ## 🧪 Testing Strategy
 
 ### Workers API Testing
+
 ```bash
 cd customvenom-workers-api
 
@@ -343,6 +369,7 @@ npm test -- --watch
 ```
 
 **Test Structure**:
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 
@@ -356,11 +383,13 @@ describe('FAAB Calculator', () => {
 ```
 
 **Contract Validation (CI):**
+
 - CI fails if `schema_version` or `last_refresh` are missing on `/projections` and `/health`
 - Prevents silent schema drift
 - Validates response structure matches golden examples
 
 ### Frontend Testing
+
 ```bash
 cd customvenom-frontend
 
@@ -379,28 +408,34 @@ npm run build
 ## 📊 Monitoring & Observability
 
 ### Cloudflare Analytics
+
 - **Location**: Cloudflare Dashboard → Workers & Pages → customvenom-workers-api
 - **Metrics**: Requests, Errors, CPU time, Success rate
 
 ### Structured Logging
+
 ```typescript
 // Current pattern (workers-api/src/index.ts)
-console.log(JSON.stringify({
-  request_id: requestId,
-  message: "Projections served",
-  r2_key: key,
-  duration_ms: Date.now() - startTime,
-  stale: isStale,
-  timestamp: new Date().toISOString()
-}));
+console.log(
+  JSON.stringify({
+    request_id: requestId,
+    message: 'Projections served',
+    r2_key: key,
+    duration_ms: Date.now() - startTime,
+    stale: isStale,
+    timestamp: new Date().toISOString(),
+  }),
+);
 ```
 
 **Benefits**:
+
 - Searchable by request_id
 - Structured for log aggregation
 - Performance tracking
 
 ### Sentry Integration
+
 ```typescript
 // Already configured in workers-api/src/observability/sentry.ts
 import { captureException } from './observability/sentry';
@@ -409,7 +444,7 @@ try {
   // risky operation
 } catch (error) {
   captureException(error, {
-    tags: { route: '/projections', week: '2025-06' }
+    tags: { route: '/projections', week: '2025-06' },
   });
   throw error;
 }
@@ -422,18 +457,21 @@ try {
 ### Workers API
 
 **1. Use `wrangler tail` for live logs**
+
 ```bash
 wrangler tail
 # Then make requests to see logs in real-time
 ```
 
 **2. Test locally with real R2**
+
 ```bash
 # Local dev connects to production R2
 wrangler dev
 ```
 
 **3. Check request headers**
+
 ```bash
 # PowerShell
 $response = Invoke-WebRequest -Uri "https://..." -Method GET
@@ -443,16 +481,19 @@ $response.Headers
 ### Frontend
 
 **1. Check Network Tab**
+
 - API calls timing
 - Cache headers
 - Response payloads
 
 **2. React DevTools**
+
 - Component tree
 - Props/state inspection
 - Re-render tracking
 
 **3. Console Logging**
+
 ```typescript
 console.log('[ProjectionsPage] Loading...', { week, entitlements });
 ```
@@ -464,6 +505,7 @@ console.log('[ProjectionsPage] Loading...', { week, entitlements });
 ### Adding a New Endpoint
 
 **Standard Health Endpoint Pattern:**
+
 ```typescript
 // workers-api/src/routes/health.ts
 import type { Context } from 'hono';
@@ -471,37 +513,39 @@ import type { Context } from 'hono';
 app.get('/health', (c: Context) => {
   const started = Date.now();
   const requestId = crypto.randomUUID();
-  
+
   // Set required headers (even on errors)
   c.header('cache-control', 'no-store');
   c.header('x-request-id', requestId);
-  
+
   const body = {
     ok: true,
     schema_version: 'v1',
     last_refresh: new Date().toISOString(),
     environment: c.env.ENVIRONMENT ?? 'development',
   };
-  
+
   c.header('x-duration-ms', String(Date.now() - started));
   return c.json(body, 200);
 });
 ```
 
 **General Endpoint Pattern:**
+
 ```typescript
 // 1. Add route (workers-api/src/index.ts)
 app.get('/my-endpoint', async (c) => {
   const startTime = c.get('startTime');
   const requestId = c.get('requestId');
-  
+
   // Your logic here
-  
+
   return c.json({ data: 'response' });
 });
 ```
 
 **Deployment:**
+
 ```bash
 # 2. Test locally
 wrangler dev
@@ -511,6 +555,7 @@ wrangler deploy --var DEMO_MODE:1 --var DEMO_WEEK:2025-06
 ```
 
 ### Adding a New Frontend Page
+
 ```bash
 # 1. Create page
 mkdir src/app/my-page
@@ -527,6 +572,7 @@ touch src/app/my-page/page.tsx
 ```
 
 ### Updating Entitlements
+
 ```typescript
 // 1. Update type (frontend/src/lib/entitlements.ts)
 export type Entitlements = {
@@ -564,34 +610,44 @@ type ApiError = {
 };
 
 // Example: 404 Not Found
-return c.json<ApiError>({
-  ok: false,
-  error: 'Resource not found',
-  code: 'NOT_FOUND',
-  request_id: c.get('requestId'),
-  timestamp: new Date().toISOString(),
-}, 404);
+return c.json<ApiError>(
+  {
+    ok: false,
+    error: 'Resource not found',
+    code: 'NOT_FOUND',
+    request_id: c.get('requestId'),
+    timestamp: new Date().toISOString(),
+  },
+  404,
+);
 
 // Example: 400 Bad Request
-return c.json<ApiError>({
-  ok: false,
-  error: 'Invalid week parameter',
-  code: 'INVALID_PARAMETER',
-  request_id: c.get('requestId'),
-  timestamp: new Date().toISOString(),
-}, 400);
+return c.json<ApiError>(
+  {
+    ok: false,
+    error: 'Invalid week parameter',
+    code: 'INVALID_PARAMETER',
+    request_id: c.get('requestId'),
+    timestamp: new Date().toISOString(),
+  },
+  400,
+);
 
 // Example: 500 Server Error
-return c.json<ApiError>({
-  ok: false,
-  error: 'Failed to fetch projections',
-  code: 'INTERNAL_ERROR',
-  request_id: c.get('requestId'),
-  timestamp: new Date().toISOString(),
-}, 500);
+return c.json<ApiError>(
+  {
+    ok: false,
+    error: 'Failed to fetch projections',
+    code: 'INTERNAL_ERROR',
+    request_id: c.get('requestId'),
+    timestamp: new Date().toISOString(),
+  },
+  500,
+);
 ```
 
 **Benefits:**
+
 - Consistent error handling across all endpoints
 - `request_id` for tracing and debugging
 - `code` field for programmatic error handling
@@ -600,7 +656,9 @@ return c.json<ApiError>({
 ---
 
 ### "Worker exceeded CPU time limit"
+
 **Solution**: Reduce computation, use pre-computed artifacts
+
 ```typescript
 // ❌ BAD: Heavy computation in worker
 const result = heavyCalculation(largeDataset);
@@ -610,7 +668,9 @@ const result = await r2.get('precomputed-result.json');
 ```
 
 ### "R2 read timeout"
+
 **Solution**: Adjust timeout, use stale fallback
+
 ```typescript
 const { data, stale } = await r2GetText(bucket, key, 200); // Reduce timeout
 if (stale && LAST_GOOD_CACHE.has(key)) {
@@ -621,14 +681,18 @@ if (stale && LAST_GOOD_CACHE.has(key)) {
 **Note**: Only shorten timeout if stale fallback is healthy. Avoid noisy flapping between fresh and stale.
 
 ### "Next.js build fails"
+
 **Solution**: Check Prisma generation
+
 ```bash
 npx prisma generate
 npm run build
 ```
 
 ### "Environment variables not set"
+
 **Solution**: Use correct deployment command
+
 ```bash
 # For default env
 wrangler deploy --var KEY:value
@@ -664,16 +728,19 @@ wrangler deploy --env production
 ## 🎓 Learning Resources
 
 ### Cloudflare Workers
+
 - [Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Hono Framework](https://hono.dev/)
 - [R2 Best Practices](https://developers.cloudflare.com/r2/)
 
 ### Next.js 15
+
 - [App Router Guide](https://nextjs.org/docs/app)
 - [Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 - [Data Fetching](https://nextjs.org/docs/app/building-your-application/data-fetching)
 
 ### TypeScript
+
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Type Challenges](https://github.com/type-challenges/type-challenges)
 
@@ -682,6 +749,7 @@ wrangler deploy --env production
 ## 🤝 Contributing
 
 ### Code Style
+
 - Use TypeScript strict mode
 - Prefer functional components
 - Use async/await over promises
@@ -689,6 +757,7 @@ wrangler deploy --env production
 - Add JSDoc comments for complex logic
 
 ### Commit Messages
+
 ```bash
 # Good
 git commit -m "Add FAAB bid calculator with confidence bands"
@@ -701,14 +770,18 @@ git commit -m "fixed it"
 ```
 
 ### Pull Request Template
+
 ```markdown
 ## What
+
 Brief description of changes
 
 ## Why
+
 Why this change is needed
 
 ## Testing
+
 - [ ] Tested locally
 - [ ] Tests pass
 - [ ] Deployed to staging
@@ -719,4 +792,3 @@ Why this change is needed
 ---
 
 **Next Steps**: See `ARCHITECTURE.md` for detailed system design and `API_REFERENCE.md` for endpoint documentation.
-

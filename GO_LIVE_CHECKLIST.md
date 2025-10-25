@@ -9,6 +9,7 @@
 ## ⚡ Immediate Verifications (5-10 minutes)
 
 ### 1. Admin Access ✅
+
 **Objective:** Verify RBAC system works
 
 ```bash
@@ -24,6 +25,7 @@
 ```
 
 **Expected Result:**
+
 - ✅ Admin role assigned automatically
 - ✅ No paywall on /ops/metrics
 - ✅ Full access to all features
@@ -33,14 +35,17 @@
 ---
 
 ### 2. Database Environment Variables 🔐
+
 **Objective:** Ensure database connection in all environments
 
 **DATABASE_URL:**
+
 ```
 postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 ```
 
 **Vercel Setup:**
+
 ```bash
 # Action Items:
 - [ ] Go to Vercel Dashboard → customvenom-frontend → Settings → Environment Variables
@@ -53,6 +58,7 @@ postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-
 ```
 
 **Verification Commands:**
+
 ```bash
 # After redeployment
 curl -s https://your-preview.vercel.app/api/analytics/track \
@@ -64,6 +70,7 @@ curl -s https://your-preview.vercel.app/api/analytics/track \
 ```
 
 **Expected Result:**
+
 - ✅ Prisma generates successfully
 - ✅ App boots without database errors
 - ✅ Analytics endpoints return 200
@@ -71,6 +78,7 @@ curl -s https://your-preview.vercel.app/api/analytics/track \
 ---
 
 ### 3. Ops Page Verification 📊
+
 **Objective:** Confirm metrics dashboard works with real data
 
 ```bash
@@ -94,6 +102,7 @@ curl -s https://your-preview.vercel.app/api/analytics/track \
 ```
 
 **Expected Result:**
+
 - ✅ All tiles render with data
 - ✅ No layout shift (CLS < 0.1)
 - ✅ Refresh updates data
@@ -102,9 +111,11 @@ curl -s https://your-preview.vercel.app/api/analytics/track \
 ---
 
 ### 4. API Headers and Contracts 🔍
+
 **Objective:** Validate API responses meet contract
 
 **Test /health endpoint:**
+
 ```bash
 # Run this command:
 curl -si https://your-api.workers.dev/health
@@ -125,6 +136,7 @@ curl -s https://your-api.workers.dev/health | jq .
 ```
 
 **Test /projections endpoint:**
+
 ```bash
 # Get headers
 curl -si https://your-api.workers.dev/projections?week=2025-06 | head -30
@@ -151,6 +163,7 @@ curl -s https://your-api.workers.dev/projections?week=2025-06 | jq '.[0]'
 ```
 
 **Expected Result:**
+
 - ✅ All required headers present
 - ✅ Contract fields intact
 - ✅ Stale headers appear when using fallback
@@ -158,9 +171,11 @@ curl -s https://your-api.workers.dev/projections?week=2025-06 | jq '.[0]'
 ---
 
 ### 5. Lint and Type Checks ✨
+
 **Objective:** Ensure CI/CD pipeline is clean
 
 **Local Checks:**
+
 ```bash
 cd customvenom-frontend
 
@@ -178,6 +193,7 @@ cd customvenom-frontend
 ```
 
 **GitHub Actions Check:**
+
 ```bash
 # Action Items:
 - [ ] Go to GitHub → customvenom-frontend → Actions
@@ -187,6 +203,7 @@ cd customvenom-frontend
 ```
 
 **Expected Result:**
+
 - ✅ Local lint passes
 - ✅ Local type check passes
 - ✅ GitHub Actions passes
@@ -199,6 +216,7 @@ cd customvenom-frontend
 ### 6. Stripe Configuration 💳
 
 **Test Mode (Preview):**
+
 ```bash
 # Vercel Preview Environment Variables:
 - [ ] STRIPE_SECRET_KEY=sk_test_...
@@ -207,6 +225,7 @@ cd customvenom-frontend
 ```
 
 **Live Mode (Production):**
+
 ```bash
 # Vercel Production Environment Variables:
 - [ ] STRIPE_SECRET_KEY=sk_live_...
@@ -215,12 +234,13 @@ cd customvenom-frontend
 ```
 
 **Webhook Setup:**
+
 ```bash
 # Stripe Dashboard → Webhooks → Add endpoint
 
 Preview endpoint:
 - [ ] URL: https://your-preview.vercel.app/api/stripe/webhook
-- [ ] Events: checkout.session.completed, customer.subscription.updated, 
+- [ ] Events: checkout.session.completed, customer.subscription.updated,
               customer.subscription.deleted, invoice.payment_failed
 - [ ] Copy signing secret → Set as STRIPE_WEBHOOK_SECRET (Preview)
 
@@ -231,6 +251,7 @@ Production endpoint:
 ```
 
 **Test Subscription Flow:**
+
 ```bash
 # Action Items:
 - [ ] Go to /go-pro page
@@ -244,6 +265,7 @@ Production endpoint:
 ```
 
 **Expected Result:**
+
 - ✅ Checkout completes successfully
 - ✅ Webhook received and processed
 - ✅ User role updated in database
@@ -254,6 +276,7 @@ Production endpoint:
 ### 7. OAuth Redirect URIs 🔑
 
 **Google OAuth Console:**
+
 ```bash
 # https://console.cloud.google.com/apis/credentials
 
@@ -269,6 +292,7 @@ Authorized JavaScript origins:
 ```
 
 **Yahoo OAuth (If Configured):**
+
 ```bash
 # https://developer.yahoo.com/apps/
 
@@ -279,6 +303,7 @@ Redirect URIs:
 ```
 
 **Verification:**
+
 ```bash
 # Test each environment:
 - [ ] Local: Sign in at localhost:3000
@@ -297,6 +322,7 @@ Redirect URIs:
 **Vercel Environment Variables Setup:**
 
 **Type: Secret (Encrypted):**
+
 ```bash
 - [ ] DATABASE_URL
 - [ ] AUTH_SECRET
@@ -309,6 +335,7 @@ Redirect URIs:
 ```
 
 **Type: Plain Text (Public):**
+
 ```bash
 - [ ] NEXTAUTH_URL (https://customvenom.com for prod)
 - [ ] NEXT_PUBLIC_API_BASE
@@ -319,6 +346,7 @@ Redirect URIs:
 ```
 
 **Verification:**
+
 ```bash
 # Ensure secrets are NOT visible in:
 - [ ] Deployment logs
@@ -334,6 +362,7 @@ Redirect URIs:
 ### API Smoke Tests
 
 **Set your API base:**
+
 ```bash
 # For local testing
 export API_BASE="http://localhost:8787"
@@ -346,6 +375,7 @@ export API_BASE="https://api.customvenom.com"
 ```
 
 **Run smoke tests:**
+
 ```bash
 # 1. Health endpoint
 echo "Testing /health..."
@@ -380,6 +410,7 @@ done | tail -10
 ### Frontend Smoke Tests
 
 **Set your frontend base:**
+
 ```bash
 # For local
 export FRONTEND_BASE="http://localhost:3000"
@@ -392,6 +423,7 @@ export FRONTEND_BASE="https://customvenom.com"
 ```
 
 **Manual Browser Tests:**
+
 ```bash
 # 1. Projections Page
 - [ ] Visit $FRONTEND_BASE/projections
@@ -434,6 +466,7 @@ export FRONTEND_BASE="https://customvenom.com"
 ### Analytics Endpoints
 
 **Test analytics tracking:**
+
 ```bash
 # POST an event
 curl -X POST "$FRONTEND_BASE/api/analytics/track" \
@@ -545,6 +578,7 @@ Verification:
 ### Sentry Configuration
 
 **Staging/Preview First:**
+
 ```bash
 # Vercel Preview Environment:
 - [ ] SENTRY_DSN=https://...@sentry.io/...
@@ -562,6 +596,7 @@ Sentry.init({
 ```
 
 **Monitor for 24-48 hours:**
+
 ```bash
 - [ ] Check error volume in Sentry
 - [ ] Review error types and frequency
@@ -571,6 +606,7 @@ Sentry.init({
 ```
 
 **Production (After Staging Success):**
+
 ```bash
 - [ ] Set SENTRY_DSN in Production env
 - [ ] Update enabled condition to include 'production'
@@ -587,6 +623,7 @@ Sentry.init({
 ### Create Staging Worker
 
 **1. wrangler.toml update:**
+
 ```toml
 [env.staging]
 name = "customvenom-api-staging"
@@ -600,12 +637,14 @@ vars = { DEMO_MODE = "1", DEMO_WEEK = "2025-06" }
 ```
 
 **2. Deploy staging:**
+
 ```bash
 cd customvenom-workers-api
 wrangler deploy --env staging
 ```
 
 **3. Point Preview frontend to staging:**
+
 ```bash
 # Vercel Preview Environment:
 - [ ] NEXT_PUBLIC_API_BASE=https://staging-api.customvenom.com
@@ -613,6 +652,7 @@ wrangler deploy --env staging
 ```
 
 **4. Test breaking changes safely:**
+
 ```bash
 - [ ] Deploy API changes to staging first
 - [ ] Test with Preview frontend
@@ -815,12 +855,14 @@ Auth Issues:
 ## 📞 Support Resources
 
 **If Issues Occur:**
+
 - `HANDOFF_DOCUMENT.md` - Complete handoff
 - `SECURITY_AND_ACCESS_CONTROL.md` - Security setup
 - `PRE_COMMIT_SETUP.md` - Pre-commit troubleshooting
 - `PROJECT_ASSESSMENT.md` - Known issues and fixes
 
 **External Resources:**
+
 - Vercel Docs: https://vercel.com/docs
 - Neon Dashboard: https://console.neon.tech
 - Stripe Dashboard: https://dashboard.stripe.com
@@ -831,6 +873,7 @@ Auth Issues:
 ## 🎉 When Everything is Green
 
 **Run this final command:**
+
 ```bash
 echo "✅ All checks passed - Ready for Production!"
 echo "📊 Admin: jdewett81@gmail.com configured"
@@ -846,4 +889,3 @@ echo "🚀 Next: Switch Stripe to live mode and deploy!"
 **Prepared By:** AI Assistant  
 **Reviewed By:** [Pending]  
 **Status:** Ready for Execution
-

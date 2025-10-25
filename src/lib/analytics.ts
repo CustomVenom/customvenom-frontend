@@ -29,7 +29,7 @@ export function trackRiskModeChange(mode: 'protect' | 'neutral' | 'chase') {
 export function trackFeatureInteraction(
   feature: string,
   action: string,
-  props?: Record<string, unknown>
+  props?: Record<string, unknown>,
 ) {
   devLog(`feature:${feature}`, { action, ...(props || {}) });
 }

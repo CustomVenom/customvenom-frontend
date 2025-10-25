@@ -19,6 +19,7 @@ import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
 ## What Changed
 
 ### Files Added
+
 ```
 src/lib/reasons/
   ├── schema.ts               # Zod validation
@@ -30,6 +31,7 @@ src/components/
 ```
 
 ### Dependencies Added
+
 ```bash
 npm i zod  # Runtime validation
 ```
@@ -126,7 +128,7 @@ function legacyAdapter(reasons: any) {
 ✅ No linter errors  
 ✅ Zod catches bad data  
 ✅ Effects clamped to ±3.5%  
-✅ Max 2 chips shown  
+✅ Max 2 chips shown
 
 ---
 
@@ -138,4 +140,3 @@ function legacyAdapter(reasons: any) {
 4. Deploy!
 
 See `REASONS_ADAPTER.md` for full docs.
-

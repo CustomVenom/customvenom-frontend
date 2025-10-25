@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { DensityToggle } from '@/components/DensityToggle';
-import { Button } from '@/components/ui/Button';
+
+import DensityToggle from '@/components/DensityToggle';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table';
 
 export default function DesignPreviewPage() {

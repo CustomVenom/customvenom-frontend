@@ -17,4 +17,3 @@ export default function CacheWarmer() {
   // This component renders nothing
   return null;
 }
-

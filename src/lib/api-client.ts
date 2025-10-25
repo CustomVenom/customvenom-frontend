@@ -18,7 +18,7 @@ const pendingRequests = new Map<string, Promise<ApiResponse<unknown>>>();
 
 export async function apiFetch<T = unknown>(
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<ApiResponse<T>> {
   const { logErrors = true, deduplicate = true, ...fetchOptions } = options;
 
@@ -29,12 +29,14 @@ export async function apiFetch<T = unknown>(
   // Return existing pending request if deduplication enabled
   if (deduplicate && pendingRequests.has(cacheKey)) {
     if (typeof window !== 'undefined' && console.log) {
-      console.log(JSON.stringify({
-        type: 'api_deduplicated',
-        url,
-        method,
-        timestamp: new Date().toISOString()
-      }));
+      console.log(
+        JSON.stringify({
+          type: 'api_deduplicated',
+          url,
+          method,
+          timestamp: new Date().toISOString(),
+        }),
+      );
     }
     return pendingRequests.get(cacheKey)! as Promise<ApiResponse<T>>;
   }
@@ -43,69 +45,76 @@ export async function apiFetch<T = unknown>(
   const requestPromise = (async () => {
     try {
       const response = await fetch(url, fetchOptions);
-    const requestId = response.headers.get('x-request-id');
+      const requestId = response.headers.get('x-request-id');
 
-    // Log all API calls with status
-    if (typeof window !== 'undefined' && console.log) {
-      console.log(JSON.stringify({
-        type: 'api_call',
-        url,
-        status: response.status,
-        request_id: requestId,
-        timestamp: new Date().toISOString()
-      }));
-    }
+      // Log all API calls with status
+      if (typeof window !== 'undefined' && console.log) {
+        console.log(
+          JSON.stringify({
+            type: 'api_call',
+            url,
+            status: response.status,
+            request_id: requestId,
+            timestamp: new Date().toISOString(),
+          }),
+        );
+      }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+
+        if (logErrors && typeof window !== 'undefined') {
+          console.error(
+            JSON.stringify({
+              type: 'api_error',
+              url,
+              status: response.status,
+              request_id: requestId || errorData.request_id,
+              error: errorData.error || response.statusText,
+              timestamp: new Date().toISOString(),
+            }),
+          );
+        }
+
+        return {
+          ok: false,
+          error: errorData.error || `HTTP ${response.status}`,
+          ...(requestId || errorData.request_id
+            ? { request_id: requestId || errorData.request_id }
+            : {}),
+        };
+      }
+
+      const data = await response.json();
+      return {
+        ok: true,
+        data: data as T,
+        ...(requestId ? { request_id: requestId } : {}),
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Network error';
 
       if (logErrors && typeof window !== 'undefined') {
-        console.error(JSON.stringify({
-          type: 'api_error',
-          url,
-          status: response.status,
-          request_id: requestId || errorData.request_id,
-          error: errorData.error || response.statusText,
-          timestamp: new Date().toISOString()
-        }));
+        console.error(
+          JSON.stringify({
+            type: 'api_network_error',
+            url,
+            error: errorMessage,
+            timestamp: new Date().toISOString(),
+          }),
+        );
       }
 
       return {
         ok: false,
-        error: errorData.error || `HTTP ${response.status}`,
-        ...(requestId || errorData.request_id ? { request_id: requestId || errorData.request_id } : {})
-      };
-    }
-
-    const data = await response.json();
-    return {
-      ok: true,
-      data: data as T,
-      ...(requestId ? { request_id: requestId } : {})
-    };
-
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Network error';
-
-    if (logErrors && typeof window !== 'undefined') {
-      console.error(JSON.stringify({
-        type: 'api_network_error',
-        url,
         error: errorMessage,
-        timestamp: new Date().toISOString()
-      }));
+      };
+    } finally {
+      // Clean up pending request
+      if (deduplicate) {
+        pendingRequests.delete(cacheKey);
+      }
     }
-
-    return {
-      ok: false,
-      error: errorMessage
-    };
-  } finally {
-    // Clean up pending request
-    if (deduplicate) {
-      pendingRequests.delete(cacheKey);
-    }
-  }
   })();
 
   // Store pending request if deduplication enabled
@@ -130,4 +139,3 @@ export function getRequestId(response: Response | ApiResponse | Error): string |
   }
   return undefined;
 }
-

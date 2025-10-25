@@ -41,21 +41,21 @@ export default function GlobalError({
                 />
               </svg>
             </div>
-            
+
             <h2 className="text-2xl font-bold text-[rgb(var(--text-primary))] text-center mb-2">
               Application Error
             </h2>
-            
+
             <p className="text-[rgb(var(--text-secondary))] text-center mb-6">
               A critical error occurred. Our team has been notified.
             </p>
-            
+
             {error.digest && (
               <div className="text-center text-xs text-[rgb(var(--text-muted))] mb-6">
                 Error ID: {error.digest}
               </div>
             )}
-            
+
             <div className="flex gap-3">
               <button
                 onClick={reset}
@@ -63,9 +63,9 @@ export default function GlobalError({
               >
                 Try again
               </button>
-              
+
               <button
-                onClick={() => window.location.href = '/'}
+                onClick={() => (window.location.href = '/')}
                 className="flex-1 px-4 py-2 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all font-semibold border border-[rgba(148,163,184,0.2)]"
               >
                 Reload app
@@ -77,4 +77,3 @@ export default function GlobalError({
     </html>
   );
 }
-

@@ -11,6 +11,7 @@
 ### **Via Vercel API (Most Reliable)**
 
 **Get deployment ID:**
+
 ```bash
 # From URL: https://vercel.com/.../deployments/dpl_ABC123
 # Deployment ID = dpl_ABC123
@@ -20,6 +21,7 @@ npx vercel ls
 ```
 
 **Cancel deployment:**
+
 ```bash
 # Set your Vercel token (get from: https://vercel.com/account/tokens)
 export VERCEL_TOKEN="your_token_here"
@@ -31,6 +33,7 @@ curl -X POST \
 ```
 
 **PowerShell:**
+
 ```powershell
 $VERCEL_TOKEN = "your_token_here"
 $DEPLOYMENT_ID = "dpl_ABC123"
@@ -41,6 +44,7 @@ Invoke-RestMethod -Method POST `
 ```
 
 **Expected Response:**
+
 ```json
 {
   "state": "CANCELED",
@@ -70,6 +74,7 @@ npx vercel cancel DEPLOYMENT_ID
 ### **Method 1: Disable Auto-Deploy in Settings**
 
 **Temporary disable (safest):**
+
 1. Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/git
 2. Uncheck ✅ **"Automatically expose Preview Deployments"**
 3. Uncheck ✅ **"Automatically expose Production Deployments"**
@@ -82,6 +87,7 @@ npx vercel cancel DEPLOYMENT_ID
 ### **Method 2: Remove Git Integration (Nuclear Option)**
 
 **Only if you need to fully stop:**
+
 1. Settings → Git
 2. Click "Disconnect" on GitHub integration
 3. Confirm
@@ -95,6 +101,7 @@ npx vercel cancel DEPLOYMENT_ID
 ### **Prebuilt Deploy — Use Local .next Folder**
 
 **When to use:**
+
 - Vercel cloud builder is failing/stuck
 - Urgent hotfix needed immediately
 - Build works locally but fails on Vercel
@@ -103,6 +110,7 @@ npx vercel cancel DEPLOYMENT_ID
 **Steps:**
 
 #### **1. Build Locally**
+
 ```bash
 # Ensure clean environment
 nvm use 20
@@ -117,6 +125,7 @@ ls -la .next
 ```
 
 #### **2. Deploy Prebuilt (Preview)**
+
 ```bash
 # Deploy to preview
 npx vercel deploy --prebuilt
@@ -125,6 +134,7 @@ npx vercel deploy --prebuilt
 ```
 
 #### **3. Deploy Prebuilt (Production)**
+
 ```bash
 # Deploy to production
 npx vercel deploy --prebuilt --prod
@@ -133,6 +143,7 @@ npx vercel deploy --prebuilt --prod
 ```
 
 **PowerShell:**
+
 ```powershell
 # Build
 npm run build
@@ -145,12 +156,14 @@ npx vercel deploy --prebuilt --prod
 ```
 
 **Pros:**
+
 - ✅ Bypasses cloud builder completely
 - ✅ Uses your local build (full control)
 - ✅ Works during Vercel outages
 - ✅ Fast (no remote build time)
 
 **Cons:**
+
 - ⚠️ Requires local environment matches production
 - ⚠️ Must have all env vars in .env.local
 - ⚠️ No automatic deployments from Git
@@ -162,6 +175,7 @@ npx vercel deploy --prebuilt --prod
 ### **When Previous Deploy Failed**
 
 **Via Vercel UI:**
+
 1. Go to: https://vercel.com/incarcers-projects/customvenom-frontend/deployments
 2. Click the failed deployment
 3. Click **"..."** menu (top right)
@@ -170,6 +184,7 @@ npx vercel deploy --prebuilt --prod
 6. Click "Redeploy"
 
 **When to use:**
+
 - "Module not found" errors after dependency changes
 - Mysterious build failures that work locally
 - After Node version changes
@@ -180,6 +195,7 @@ npx vercel deploy --prebuilt --prod
 ## 📊 Vercel CLI Commands
 
 ### **List Deployments**
+
 ```bash
 # Show recent deployments
 npx vercel ls
@@ -189,6 +205,7 @@ npx vercel ls --verbose
 ```
 
 ### **Inspect Deployment**
+
 ```bash
 # Get deployment details
 npx vercel inspect <deployment-url>
@@ -198,6 +215,7 @@ npx vercel inspect <deployment-url> | grep "id:"
 ```
 
 ### **View Logs**
+
 ```bash
 # Stream deployment logs
 npx vercel logs <deployment-url>
@@ -207,6 +225,7 @@ npx vercel logs <deployment-url> --follow
 ```
 
 ### **Promote Deployment to Production**
+
 ```bash
 # Promote a preview to production
 npx vercel promote <deployment-url>
@@ -217,6 +236,7 @@ npx vercel promote <deployment-url>
 ## 🛡️ Safe Rollout After Incident
 
 ### **1. Verify Local Build**
+
 ```bash
 # Clean build
 rm -rf .next node_modules
@@ -228,9 +248,11 @@ echo "Exit code: $?"
 ```
 
 ### **2. Disable Auto-Deploys**
+
 - Pause Git integration (see above)
 
 ### **3. Deploy Manually First**
+
 ```bash
 # Deploy to preview first
 npx vercel deploy --prebuilt
@@ -243,10 +265,13 @@ npx vercel deploy --prebuilt --prod
 ```
 
 ### **4. Re-Enable Auto-Deploys**
+
 - Settings → Git → Re-enable auto-deploy checkboxes
 
 ### **5. Merge Safe PRs First**
+
 **Safe order (low to high risk):**
+
 1. Documentation changes
 2. CI/workflow changes
 3. Infrastructure (headers, middleware)
@@ -260,6 +285,7 @@ npx vercel deploy --prebuilt --prod
 ## 🚨 Common Failures & API Cancel Commands
 
 ### **Build Timeout (>45 minutes)**
+
 ```bash
 # Cancel via API
 curl -X POST \
@@ -271,6 +297,7 @@ curl -X POST \
 ```
 
 ### **OOM (Out of Memory)**
+
 ```bash
 # Cancel stuck build
 curl -X POST \
@@ -285,6 +312,7 @@ curl -X POST \
 ```
 
 ### **Stuck "Building..." (No Progress)**
+
 ```bash
 # Cancel and disable auto-deploy
 curl -X POST \
@@ -299,6 +327,7 @@ curl -X POST \
 ## 🔐 Vercel Token Setup
 
 ### **Create Token**
+
 1. Go to: https://vercel.com/account/tokens
 2. Click "Create Token"
 3. Name: `Emergency Deploys`
@@ -309,12 +338,14 @@ curl -X POST \
 ### **Store Token Securely**
 
 **Bash:**
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 export VERCEL_TOKEN="your_token_here"
 ```
 
 **PowerShell:**
+
 ```powershell
 # Add to $PROFILE
 $env:VERCEL_TOKEN = "your_token_here"
@@ -366,6 +397,7 @@ npx vercel deploy --prebuilt --prod
 ## 🔗 Quick Links
 
 **Vercel Dashboard:**
+
 - Project: https://vercel.com/incarcers-projects/customvenom-frontend
 - Settings: https://vercel.com/incarcers-projects/customvenom-frontend/settings
 - Git Settings: https://vercel.com/incarcers-projects/customvenom-frontend/settings/git
@@ -373,11 +405,13 @@ npx vercel deploy --prebuilt --prod
 - Create Token: https://vercel.com/account/tokens
 
 **Vercel API Docs:**
+
 - Cancel Deployment: https://vercel.com/docs/rest-api/endpoints/deployments#cancel-a-deployment
 - List Deployments: https://vercel.com/docs/rest-api/endpoints/deployments#list-deployments
 - Get Deployment: https://vercel.com/docs/rest-api/endpoints/deployments#get-a-deployment
 
 **Related Docs:**
+
 - `LOCAL_SMOKE_TESTS.md` — Local validation commands
 - `VERCEL_SETTINGS_CHECKLIST.md` — Required settings
 - `VERCEL_DEBUG_FIXES.md` — Common issues
@@ -387,6 +421,7 @@ npx vercel deploy --prebuilt --prod
 ## 💡 Prevention Tips
 
 **To avoid stuck builds:**
+
 - ✅ Test `npm run build` locally first
 - ✅ Use branch protection to require CI before merge
 - ✅ Keep builds small (< 5 minutes target)
@@ -394,6 +429,7 @@ npx vercel deploy --prebuilt --prod
 - ✅ Set deployment timeout alerts (if available)
 
 **To avoid build failures:**
+
 - ✅ Pin Node version in package.json
 - ✅ Add defaults for all env vars in code
 - ✅ Make Prisma postinstall non-fatal (already done)
@@ -405,4 +441,3 @@ npx vercel deploy --prebuilt --prod
 **Last Updated:** 2025-10-20
 **Tested:** Vercel API v13
 **Status:** Ready for emergency use
-

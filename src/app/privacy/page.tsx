@@ -38,10 +38,13 @@ export default function PrivacyPage() {
       </section>
 
       <div className="flex gap-2">
-        <Link href="/" className="cv-btn-ghost">Home</Link>
-        <Link href="/projections" className="cv-btn-primary">Open Projections</Link>
+        <Link href="/" className="cv-btn-ghost">
+          Home
+        </Link>
+        <Link href="/projections" className="cv-btn-primary">
+          Open Projections
+        </Link>
       </div>
     </main>
   );
 }
-

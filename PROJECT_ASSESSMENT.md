@@ -11,12 +11,14 @@
 ### Top Findings
 
 ✅ **Strengths:**
+
 - Contracts and ops: API headers, rate limit, stale-if-error, and request_id propagation in place and tested
 - Frontend trust: TrustSnapshot wiring and request_id surfacing merged
 - Docs: Manual-to-repo sync present; API Reference and Methods pages exist
 - Security: Dependabot and checkout bumps flowing
 
 ⚠️ **Gaps:**
+
 - Contract drift guard in CI isn't landed
 - Staging API separation recommended but not implemented
 - Sentry stubs added but disabled (needs enablement decision)
@@ -35,11 +37,9 @@
   - Trim profile documentation
   - Combined smoke tests
   - Per-IP rate limiting (merged or queued)
-  
 - **Request Tracking:**
   - Request ID propagation into error responses (PR open)
   - Proper error handling and logging
-  
 - **Documentation:**
   - Synced from Notion Manual
   - API Reference guide complete
@@ -53,11 +53,13 @@
 **Why:** Prevent silent schema changes that break clients
 
 **What to do:**
+
 - Add CI job that diffs live responses vs golden JSON
 - Fail on add/remove/rename/type changes
 - Use existing planning task as foundation
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/contract-guard.yml
 name: Contract Guard
@@ -71,18 +73,19 @@ jobs:
         run: |
           # Fetch current response
           curl -s https://staging-api.customvenom.com/projections > current.json
-          
+
           # Compare with golden
           diff <(jq -S . tests/golden/projections.json) \
                <(jq -S . current.json) \
                || (echo "❌ Contract drift detected" && exit 1)
-          
+
           echo "✅ Contract stable"
 ```
 
 **2. Standardize Header Names Across Routes** ⏰ 30 min
 
 **What to do:**
+
 - Create shared header helper function
 - Ensure these headers on ALL responses (including 429):
   - `x-schema-version`
@@ -91,6 +94,7 @@ jobs:
   - `x-key` (for cacheable responses)
 
 **Implementation:**
+
 ```typescript
 // src/utils/headers.ts
 export function standardHeaders(options: {
@@ -106,17 +110,15 @@ export function standardHeaders(options: {
     'x-request-id': options.requestId,
     'access-control-allow-origin': '*',
   });
-  
+
   if (options.cacheKey) {
     headers.set('x-key', options.cacheKey);
   }
-  
+
   if (options.maxAge !== undefined) {
-    headers.set('cache-control', 
-      `public, max-age=${options.maxAge}, stale-if-error=86400`
-    );
+    headers.set('cache-control', `public, max-age=${options.maxAge}, stale-if-error=86400`);
   }
-  
+
   return headers;
 }
 ```
@@ -126,15 +128,17 @@ export function standardHeaders(options: {
 **Current:** Stubs added but disabled
 
 **Recommendation:**
+
 - Keep disabled in production initially
 - Enable on staging with:
   - 5% trace sampling
   - Release tagging via `COMMIT_SHA`
   - Error grouping by route
-  
+
 **Watch volume for 1 week, then decide production rollout**
 
 **Implementation:**
+
 ```typescript
 // sentry.server.config.ts
 Sentry.init({
@@ -151,11 +155,13 @@ Sentry.init({
 **Why:** De-risk production by testing breaking changes safely
 
 **What to do:**
+
 - Create staging Worker deployment
 - Route Preview frontend to staging API
 - Test breaking changes before production
 
 **Implementation:**
+
 ```bash
 # wrangler.toml
 [env.staging]
@@ -169,11 +175,13 @@ NEXT_PUBLIC_API_BASE=https://staging-api.customvenom.com
 **5. Formalize Error Shape** ⏰ 30 min
 
 **What to do:**
+
 - Enforce shared error payload type
 - Add unit tests for 400/404/500
 - Document in API Reference
 
 **Implementation:**
+
 ```typescript
 // src/types/errors.ts
 export interface ApiError {
@@ -185,13 +193,16 @@ export interface ApiError {
 }
 
 // Use in all error responses
-return new Response(JSON.stringify({
-  ok: false,
-  error: 'Resource not found',
-  code: 'NOT_FOUND',
-  request_id: ctx.requestId,
-  timestamp: new Date().toISOString(),
-}), { status: 404 });
+return new Response(
+  JSON.stringify({
+    ok: false,
+    error: 'Resource not found',
+    code: 'NOT_FOUND',
+    request_id: ctx.requestId,
+    timestamp: new Date().toISOString(),
+  }),
+  { status: 404 },
+);
 ```
 
 ---
@@ -203,7 +214,6 @@ return new Response(JSON.stringify({
 - **Request Tracking:**
   - Request ID surfaced in errors and logging
   - Sentry stubs integrated
-  
 - **Documentation:**
   - Domain cutover checklist complete
   - Environment setup guides thorough
@@ -220,18 +230,20 @@ return new Response(JSON.stringify({
 **1. TrustSnapshot Acceptance Test** ⏰ 45 min
 
 **What to do:**
+
 - Add Playwright test for stale badge visibility
 - Assert no layout shift (CLS < 0.1)
 - Link to API headers documentation
 
 **Implementation:**
+
 ```typescript
 // tests/trust-snapshot.spec.ts
 import { test, expect } from '@playwright/test';
 
 test('TrustSnapshot shows stale badge without CLS', async ({ page }) => {
   await page.goto('/projections');
-  
+
   // Measure CLS
   const cls = await page.evaluate(() => {
     return new Promise((resolve) => {
@@ -244,13 +256,13 @@ test('TrustSnapshot shows stale badge without CLS', async ({ page }) => {
         }
         resolve(clsValue);
       }).observe({ entryTypes: ['layout-shift'] });
-      
+
       setTimeout(() => resolve(clsValue), 3000);
     });
   });
-  
+
   expect(cls).toBeLessThan(0.1);
-  
+
   // Check stale badge appears when x-stale header present
   // (Would need to mock API response with stale header)
 });
@@ -259,16 +271,19 @@ test('TrustSnapshot shows stale badge without CLS', async ({ page }) => {
 **2. Performance Budget Gates** ⏰ 1 hour
 
 **What to do:**
+
 - Add CI check for bundle size
 - Add Lighthouse run on Projections page
 - Fail PRs on regression
 
 **Targets:**
+
 - FCP < 1.8s
 - CLS < 0.1
 - Bundle size < 200KB
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/performance.yml
 name: Performance Budget
@@ -285,7 +300,7 @@ jobs:
             http://localhost:3000/
             http://localhost:3000/projections
           budgetPath: ./lighthouse-budget.json
-          
+
   bundle-size:
     runs-on: ubuntu-latest
     steps:
@@ -298,16 +313,20 @@ jobs:
 **3. OAuth Redirect Automation** ⏰ 20 min
 
 **What to do:**
+
 - Document verified redirect URIs
 - Add dev script to print expected URIs
 
 **Implementation:**
+
 ```javascript
 // scripts/show-oauth-uris.js
 const envs = {
   local: 'http://localhost:3000',
-  preview: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://preview.customvenom.com',
-  production: 'https://customvenom.com'
+  preview: process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://preview.customvenom.com',
+  production: 'https://customvenom.com',
 };
 
 console.log('OAuth Redirect URIs:\n');
@@ -340,11 +359,13 @@ Run: `node scripts/show-oauth-uris.js`
 **1. Schema Versioning and JSON Validation** ⏰ 1-2 hours
 
 **What to do:**
+
 - Create JSON schema files for each artifact type
 - Add CI job to validate all generated files
 - Enforce `schema_version` and `last_refresh` presence
 
 **Implementation:**
+
 ```json
 // schemas/projection-artifact-v1.schema.json
 {
@@ -393,11 +414,13 @@ jobs:
 **Why:** Avoid noisy diffs in version control
 
 **What to do:**
+
 - Ensure deterministic ordering (sort by player_id)
 - Stable numeric formatting (round to fixed decimals)
 - Add "clean sort" step before writing files
 
 **Implementation:**
+
 ```python
 # src/io/storage.py
 import json
@@ -407,7 +430,7 @@ def write_artifact(data: list, path: str) -> None:
     """Write artifact with deterministic formatting"""
     # Sort by player_id for consistent diffs
     sorted_data = sorted(data, key=lambda x: x.get('player_id', ''))
-    
+
     # Round all numeric values to 3 decimals
     def round_floats(obj):
         if isinstance(obj, float):
@@ -417,9 +440,9 @@ def write_artifact(data: list, path: str) -> None:
         elif isinstance(obj, list):
             return [round_floats(item) for item in obj]
         return obj
-    
+
     clean_data = round_floats(sorted_data)
-    
+
     # Write with consistent formatting
     with open(path, 'w') as f:
         json.dump(clean_data, f, indent=2, sort_keys=True, ensure_ascii=False)
@@ -431,23 +454,25 @@ def write_artifact(data: list, path: str) -> None:
 **Why:** High leverage for model features from nflverse data
 
 **What to do:**
+
 - Add DuckDB script to read nflverse parquet
 - Write to `usage_artifact_v1.json` with consistent keys
 - Fast to wire, high value for advanced features
 
 **Implementation:**
+
 ```python
 # scripts/ingest_nflverse.py
 import duckdb
 
 def ingest_nflverse_to_usage(week: str, output_path: str):
     """Read nflverse parquet and generate usage artifact"""
-    
+
     con = duckdb.connect()
-    
+
     # Load nflverse play-by-play data
     query = f"""
-    SELECT 
+    SELECT
         player_id,
         player_name,
         COUNT(*) as total_snaps,
@@ -459,9 +484,9 @@ def ingest_nflverse_to_usage(week: str, output_path: str):
     GROUP BY player_id, player_name
     ORDER BY player_id
     """
-    
+
     df = con.execute(query).fetchdf()
-    
+
     # Convert to usage artifact format
     usage_data = []
     for _, row in df.iterrows():
@@ -475,18 +500,20 @@ def ingest_nflverse_to_usage(week: str, output_path: str):
             'schema_version': 'v1',
             'last_refresh': datetime.now().isoformat()
         })
-    
+
     write_artifact(usage_data, output_path)
 ```
 
 **4. Weekly Job Skeleton** ⏰ 1 hour
 
 **What to do:**
+
 - Provide cron-compatible script
 - Write `calibration_report_v1` and ops summaries to R2
 - Match ops dashboard documentation
 
 **Implementation:**
+
 ```python
 # scripts/weekly_job.py
 #!/usr/bin/env python3
@@ -503,15 +530,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--week', required=True, help='Week to process (YYYY-WW)')
     args = parser.parse_args()
-    
+
     # Generate calibration report
     calibration = generate_calibration_report(args.week)
     upload_to_r2(calibration, f'calibration/{args.week}/report_v1.json')
-    
+
     # Generate ops summary
     ops_summary = generate_ops_summary(args.week)
     upload_to_r2(ops_summary, f'ops/weeklies/{args.week}/summary_v1.json')
-    
+
     print(f"✅ Weekly job complete for {args.week}")
 
 if __name__ == '__main__':
@@ -519,6 +546,7 @@ if __name__ == '__main__':
 ```
 
 **Cron setup:**
+
 ```bash
 # Run every Tuesday at 2 AM (after week data is finalized)
 0 2 * * 2 cd /path/to/pipelines && python scripts/weekly_job.py --week $(date +%Y-%V)
@@ -555,6 +583,7 @@ if __name__ == '__main__':
    - [ ] GDPR compliance (if EU users)
 
 **Resources:**
+
 - GitHub Security Setup: `customvenom-workers-api/GITHUB_SECURITY_SETUP.md`
 - Ops Dashboard: `customvenom-workers-api/OPS_DASHBOARD_SETUP.md`
 
@@ -563,6 +592,7 @@ if __name__ == '__main__':
 ## ⚡ Immediate Action Plan (1-2 Hours)
 
 ### Priority 1: Fix Deployment (Done ✅)
+
 - [x] Fix TypeScript linting errors
 - [x] Remove `@typescript-eslint/no-explicit-any` usages
 - [x] Fix unused variable warnings
@@ -570,6 +600,7 @@ if __name__ == '__main__':
 ### Priority 2: Workers API
 
 **Task 1:** Add Contract Drift CI Job (1 hour)
+
 ```bash
 cd customvenom-workers-api
 mkdir -p tests/golden
@@ -578,6 +609,7 @@ curl https://api.customvenom.com/projections > tests/golden/projections.json
 ```
 
 **Task 2:** Normalize Header Helper (30 min)
+
 ```bash
 cd customvenom-workers-api/src
 # Create utils/headers.ts (see implementation above)
@@ -587,6 +619,7 @@ cd customvenom-workers-api/src
 ### Priority 3: Frontend
 
 **Task:** Add Playwright Test (45 min)
+
 ```bash
 cd customvenom-frontend
 npm install -D @playwright/test
@@ -601,11 +634,13 @@ npx playwright install
 ### Day 1: Staging & Monitoring
 
 **Morning (2-3 hours):**
+
 1. Stand up staging Workers API
 2. Point Preview frontend to staging
 3. Test breaking changes flow
 
 **Afternoon (2-3 hours):**
+
 1. Enable Sentry on staging (low sample rate)
 2. Configure release tagging
 3. Monitor for 24 hours
@@ -613,11 +648,13 @@ npx playwright install
 ### Day 2: Data Pipeline Hardening
 
 **Morning (3-4 hours):**
+
 1. Create JSON schemas for all artifacts
 2. Add CI validation step
 3. Test with golden week data
 
 **Afternoon (2-3 hours):**
+
 1. Add DuckDB nflverse ingest script
 2. Test deterministic output formatting
 3. Set up weekly job skeleton
@@ -627,18 +664,21 @@ npx playwright install
 ## 🎯 Success Criteria
 
 ### Workers API
+
 - [ ] Contract drift CI job passes
 - [ ] All responses include standard headers
 - [ ] Staging environment operational
 - [ ] Error shapes standardized
 
 ### Frontend
+
 - [ ] Playwright tests passing
 - [ ] Performance budgets enforced in CI
 - [ ] OAuth redirect documentation complete
 - [ ] Zero TypeScript errors in deployment
 
 ### Data Pipelines
+
 - [ ] All artifacts pass JSON schema validation
 - [ ] Deterministic output verified (no noisy diffs)
 - [ ] DuckDB ingest working
@@ -649,15 +689,18 @@ npx playwright install
 ## 📚 Implementation Resources
 
 ### Documentation References
+
 - **API Contract:** `customvenom-workers-api/docs/guides/API_REFERENCE.md`
 - **Quick Reference:** `customvenom-workers-api/docs/QUICK_REFERENCE.md`
 - **Security:** `customvenom-frontend/SECURITY_AND_ACCESS_CONTROL.md`
 - **Environment:** `customvenom-frontend/ENV_VALUES_REFERENCE.md`
 
 ### Code Examples
+
 All implementation snippets above are production-ready and can be copy-pasted directly into your codebase.
 
 ### External Resources
+
 - **GitHub Advisory Database:** https://docs.github.com/en/code-security/security-advisories
 - **CISA Known Exploited Vulnerabilities:** https://www.cisa.gov/known-exploited-vulnerabilities-catalog
 - **DuckDB Parquet:** https://duckdb.org/docs/data/parquet
@@ -667,17 +710,20 @@ All implementation snippets above are production-ready and can be copy-pasted di
 ## 🚀 Getting Started
 
 ### Quick Wins (Start Here)
+
 1. ✅ Fix linting errors (DONE)
 2. ⏭️ Add contract drift CI job (1 hour)
 3. ⏭️ Create header helper function (30 min)
 4. ⏭️ Add Playwright test (45 min)
 
 ### This Week
+
 - Set up staging API
 - Enable Sentry on staging
 - Add JSON schema validation
 
 ### This Month
+
 - Performance budgets in CI
 - DuckDB ingest pipeline
 - Weekly automation job
@@ -686,17 +732,16 @@ All implementation snippets above are production-ready and can be copy-pasted di
 
 ## ✅ Status Summary
 
-| Category | Status | Priority |
-|----------|--------|----------|
-| TypeScript Errors | ✅ Fixed | Critical |
-| Contract Guards | ⏭️ Pending | High |
-| Staging Environment | ⏭️ Pending | High |
-| Performance Tests | ⏭️ Pending | Medium |
-| Schema Validation | ⏭️ Pending | Medium |
-| DuckDB Ingest | ⏭️ Pending | Medium |
-| Sentry Enablement | ⏭️ Pending | Low |
+| Category            | Status     | Priority |
+| ------------------- | ---------- | -------- |
+| TypeScript Errors   | ✅ Fixed   | Critical |
+| Contract Guards     | ⏭️ Pending | High     |
+| Staging Environment | ⏭️ Pending | High     |
+| Performance Tests   | ⏭️ Pending | Medium   |
+| Schema Validation   | ⏭️ Pending | Medium   |
+| DuckDB Ingest       | ⏭️ Pending | Medium   |
+| Sentry Enablement   | ⏭️ Pending | Low      |
 
 ---
 
 **Next Step:** Choose a priority from the "Immediate Action Plan" and I'll implement it! 🚀
-

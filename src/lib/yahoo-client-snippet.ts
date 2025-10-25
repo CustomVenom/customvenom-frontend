@@ -19,14 +19,17 @@ export class YahooClient {
    * Fetch user's leagues for a season
    * @param season - Year (e.g., 2025)
    */
-  async getLeagues(season: number = new Date().getFullYear()) {
+  async getLeagues(_season: number = new Date().getFullYear()) {
     // ✅ CORRECT: safeFetch automatically upgrades to HTTPS
-    const response = await safeFetch(`${this.baseUrl}/users;use_login=1/games;game_keys=nfl/leagues`, {
-      headers: {
-        'Authorization': `Bearer ${this.accessToken}`,
-        'Accept': 'application/json',
+    const response = await safeFetch(
+      `${this.baseUrl}/users;use_login=1/games;game_keys=nfl/leagues`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          Accept: 'application/json',
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Yahoo API error: ${response.status}`);
@@ -43,8 +46,8 @@ export class YahooClient {
     // ✅ CORRECT: safeFetch handles HTTPS enforcement
     const response = await safeFetch(`${this.baseUrl}/league/${leagueKey}/standings`, {
       headers: {
-        'Authorization': `Bearer ${this.accessToken}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.accessToken}`,
+        Accept: 'application/json',
       },
     });
 
@@ -63,8 +66,8 @@ export class YahooClient {
     // ✅ CORRECT: safeFetch ensures HTTPS for Yahoo domains
     const response = await safeFetch(`${this.baseUrl}/team/${teamKey}/roster`, {
       headers: {
-        'Authorization': `Bearer ${this.accessToken}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.accessToken}`,
+        Accept: 'application/json',
       },
     });
 

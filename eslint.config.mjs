@@ -1,175 +1,59 @@
-// Flat config for React + TypeScript (ESLint v9)
-import js from '@eslint/js';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import importPlugin from 'eslint-plugin-import';
-import reactPlugin from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
+// @ts-check
+import eslint from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import reactHooks from 'eslint-plugin-react-hooks';
+import tseslint from 'typescript-eslint';
 
 export default [
-  // Ignore heavy/build folders
-  { ignores: ['node_modules/', '.next/', 'out/', 'dist/', 'coverage/', '.open-next/', '.open-next/.build/'] },
-
-  // Base JS recommended
-  js.configs.recommended,
-
-  // Register plugins
+  // Ignore everything except source files
   {
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-      import: importPlugin,
-      react: reactPlugin,
-      'react-hooks': reactHooks
-    }
-  },
-
-  // TypeScript rules (non type-aware)
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.mts'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: false,
-        ecmaFeatures: { jsx: true }
-      }
-    },
-    rules: {
-      ...tsPlugin.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }]
-    }
-  },
-
-  // JS/TS common rules
-  {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      // Add browser and node globals so they're known
-      globals: {
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        localStorage: 'readonly',
-        sessionStorage: 'readonly',
-        console: 'readonly',
-        fetch: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        performance: 'readonly',
-        URL: 'readonly',
-        URLSearchParams: 'readonly',
-        Headers: 'readonly',
-        Request: 'readonly',
-        Response: 'readonly',
-        AbortController: 'readonly',
-        crypto: 'readonly',
-        Buffer: 'readonly',
-        // Node globals
-        process: 'readonly',
-        require: 'readonly',
-        module: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        // React globals
-        React: 'readonly',
-        // DOM types
-        HTMLElement: 'readonly',
-        HTMLDivElement: 'readonly',
-        HTMLInputElement: 'readonly',
-        HTMLButtonElement: 'readonly',
-        HTMLSpanElement: 'readonly',
-        HTMLTableElement: 'readonly',
-        HTMLTableSectionElement: 'readonly',
-        HTMLTableCellElement: 'readonly',
-        HTMLTableRowElement: 'readonly',
-        HTMLTextAreaElement: 'readonly',
-        KeyboardEvent: 'readonly',
-        MouseEvent: 'readonly',
-        Node: 'readonly',
-        // Other globals
-        JSX: 'readonly',
-        // Additional globals
-        location: 'readonly',
-        ReadableStream: 'readonly',
-        PerformanceObserver: 'readonly',
-        RequestInit: 'readonly'
-      }
-    },
-    settings: {
-      react: { version: 'detect' },
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          project: './tsconfig.json'
-        },
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
-        }
-      }
-    },
-    rules: {
-      'no-unused-vars': 'off', // prefer TS rule above
-      'import/no-unresolved': 'warn',
-      'import/no-duplicates': 'warn',
-      'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc', caseInsensitive: true } }],
-      // React 17+ JSX transform
-      'react/jsx-uses-react': 'off',
-      'react/react-in-jsx-scope': 'off',
-      ...reactHooks.configs.recommended.rules
-    }
-  },
-
-  // Enforce env bracket notation in app source only
-  {
-    files: ['src/**/*.{ts,tsx,js,jsx}'],
-    rules: {
-      'no-restricted-syntax': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'import/order': 'warn'
-    }
-  },
-
-  // Configs and tests: do not enforce the env dot-access rule
-  {
-    files: [
-      '**/*.config.{js,ts,mjs,cjs}',
-      'vitest.config.{js,ts,mjs,cjs}',
-      'jest.config.{js,ts,mjs,cjs}',
-      '**/*.test.{ts,tsx,js,jsx}',
-      'tests/**/*',
-      'scripts/**/*'
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'coverage/',
+      '.next/',
+      'out/',
+      'build/',
+      '.open-next/',
+      'test-results/',
+      'stories/',
+      'docs/',
+      '*.md',
+      '*.json',
+      '*.yml',
+      '*.yaml',
+      'public/',
+      'scripts/',
+      'tests/',
+      'playwright.config.ts',
+      'tailwind.config.js',
+      'postcss.config.js',
+      'next.config.mjs',
+      'vercel.json',
     ],
-    rules: {
-      'no-restricted-syntax': 'off'
-    }
   },
 
-  // Scripts override with node globals
+  // Base rules only
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+
+  // Prettier last
+  prettier,
+
+  // Minimal rules for performance
   {
-    files: ['scripts/**/*.{js,ts,mjs}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        process: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        require: 'readonly',
-        module: 'readonly',
-        console: 'readonly',
-        Buffer: 'readonly',
-        global: 'readonly'
-      }
-    }
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'no-console': 'off', // Allow console statements for debugging
+      'prefer-const': 'warn',
+      ...reactHooks.configs.recommended.rules,
+    },
   },
-
-  // Turn off stylistic conflicts
-  prettier
 ];

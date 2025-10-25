@@ -3,6 +3,7 @@
 ## ✅ Quick Setup - UptimeRobot (Free)
 
 ### Step 1: Create Account
+
 1. Go to https://uptimerobot.com
 2. Sign up (free tier: 50 monitors, 5-min intervals)
 3. Upgrade to Pro for 1-min intervals ($7/month)
@@ -62,6 +63,7 @@ Optional: Add Slack webhook for instant alerts
 ```
 
 ### Success Criteria
+
 - ✅ Status code 200
 - ✅ Response contains expected keywords
 - ✅ Response time < 300ms (p95)
@@ -72,6 +74,7 @@ Optional: Add Slack webhook for instant alerts
 ## 🚀 Alternative: Better Stack (More Features)
 
 ### Step 1: Create Account
+
 1. Go to https://betterstack.com/uptime
 2. Sign up (free tier: 10 monitors, 3-min intervals)
 
@@ -80,6 +83,7 @@ Optional: Add Slack webhook for instant alerts
 **Dashboard → Create Monitor**
 
 #### Health Monitor
+
 ```
 URL: https://customvenom-workers-api.jdewett81.workers.dev/health
 Name: API Health Check
@@ -96,6 +100,7 @@ Regions: Multiple (auto)
 ```
 
 #### Projections Monitor
+
 ```
 URL: https://customvenom-workers-api.jdewett81.workers.dev/projections?week=2025-06
 Name: API Projections
@@ -143,18 +148,22 @@ Action: Send email notification
 ### Key Metrics to Track
 
 **Uptime**
+
 - Target: 99.9% (43 minutes downtime/month)
 - Current: [Will show after setup]
 
 **Response Time**
+
 - Health endpoint p95: < 300ms
 - Projections endpoint p95: < 500ms
 
 **Error Rate**
+
 - Target: < 0.1%
 - Alert on: > 0.5% for 5 minutes
 
 **Incident Response**
+
 - Time to detect: < 3 minutes
 - Time to acknowledge: < 15 minutes
 - Time to resolve: < 1 hour (non-critical)
@@ -164,9 +173,10 @@ Action: Send email notification
 ## 🔔 Alert Configuration
 
 ### Email Alerts (Minimum)
+
 ```
 To: jdewett81@gmail.com
-When: 
+When:
   - 3 consecutive failures
   - Response time > 300ms for 5 minutes
   - SSL cert expiring soon
@@ -175,10 +185,11 @@ Example: [DOWN] API Health - Connection timeout after 30s
 ```
 
 ### Slack Alerts (Optional)
+
 ```
 Webhook URL: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
 Channel: #alerts or #ops
-Format: 
+Format:
   🔴 DOWN: API Health Check
   ⏱️ Response time: 2500ms (threshold: 300ms)
   📍 Region: us-east-1
@@ -190,6 +201,7 @@ Format:
 ## ✅ Setup Checklist
 
 ### UptimeRobot Setup
+
 - [ ] Account created
 - [ ] Health monitor configured (1-min interval)
 - [ ] Projections monitor configured (5-min interval)
@@ -198,6 +210,7 @@ Format:
 - [ ] Test both monitors (they should be "up")
 
 ### Better Stack Setup
+
 - [ ] Account created
 - [ ] Health monitor with assertions
 - [ ] Projections monitor with assertions
@@ -206,6 +219,7 @@ Format:
 - [ ] Slack webhook added (optional)
 
 ### Validation
+
 - [ ] Monitors show "UP" status
 - [ ] Response times < thresholds
 - [ ] Test alert (pause a monitor temporarily)
@@ -217,6 +231,7 @@ Format:
 ## 🧪 Test Your Monitors
 
 ### Simulate Downtime
+
 ```bash
 # Temporarily break the health endpoint (do this on staging first!)
 # Option 1: Deploy broken code
@@ -229,6 +244,7 @@ Format:
 ```
 
 ### Simulate Slow Response
+
 ```bash
 # Add artificial delay to API route
 # Wait for performance alert
@@ -243,42 +259,47 @@ Format:
 Track these metrics for the first week:
 
 **Uptime**
-- Day 1-7 uptime: ____%
-- Total incidents: ___
-- Mean time to recovery: ___ minutes
+
+- Day 1-7 uptime: \_\_\_\_%
+- Total incidents: \_\_\_
+- Mean time to recovery: \_\_\_ minutes
 
 **Performance**
-- Health p50: ___ ms
-- Health p95: ___ ms
-- Projections p50: ___ ms
-- Projections p95: ___ ms
+
+- Health p50: \_\_\_ ms
+- Health p95: \_\_\_ ms
+- Projections p50: \_\_\_ ms
+- Projections p95: \_\_\_ ms
 
 **Error Rate**
-- 4xx errors: ____%
-- 5xx errors: ____%
-- Timeout errors: ___
+
+- 4xx errors: \_\_\_\_%
+- 5xx errors: \_\_\_\_%
+- Timeout errors: \_\_\_
 
 ---
 
 ## 🎯 Target SLOs (Service Level Objectives)
 
 ### Availability
+
 - **Target:** 99.9% uptime
 - **Budget:** 43 minutes downtime/month
 - **Action:** If SLO breached, post-mortem required
 
 ### Latency
+
 - **Health endpoint:**
   - p50 < 100ms
   - p95 < 300ms
   - p99 < 500ms
-  
 - **Projections endpoint:**
   - p50 < 200ms
   - p95 < 500ms
   - p99 < 1000ms
 
 ### Error Rate
+
 - **Target:** < 0.1% of requests
 - **Action:** Alert on > 0.5% for 5 minutes
 
@@ -287,16 +308,19 @@ Track these metrics for the first week:
 ## 🔗 Quick Links
 
 **UptimeRobot:**
+
 - Dashboard: https://uptimerobot.com/dashboard
 - Pricing: https://uptimerobot.com/pricing
 - API Docs: https://uptimerobot.com/api
 
 **Better Stack:**
+
 - Dashboard: https://betterstack.com/uptime
 - Docs: https://betterstack.com/docs/uptime
 - Pricing: https://betterstack.com/pricing
 
 **Alternative Options:**
+
 - Pingdom: https://www.pingdom.com
 - StatusCake: https://www.statuscake.com
 - Checkly: https://www.checklyhq.com (best for API monitoring)
@@ -306,6 +330,7 @@ Track these metrics for the first week:
 ## 📝 Next Steps
 
 After setup:
+
 1. ✅ Confirm monitors are "UP"
 2. ✅ Add dashboard link to team wiki
 3. ✅ Document escalation process
@@ -313,5 +338,3 @@ After setup:
 5. ✅ Review and adjust alert thresholds after 1 week
 
 **Estimated Setup Time:** 15-20 minutes
-
-

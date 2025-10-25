@@ -9,24 +9,29 @@ All four UI features have been successfully implemented and are ready for testin
 ## 📁 Files Created
 
 ### Feature 1: Density Toggle
+
 - ✅ `src/components/DensityToggle.tsx` - Toggle button component
 - ✅ `src/hooks/useDensity.ts` - Already existed, compatible with implementation
 - ✅ Modified `src/app/globals.css` - Added CSS custom properties for spacing
 - ✅ Modified `src/app/layout.tsx` - Added toggle to header
 
 ### Feature 2: Loading Skeletons
+
 - ✅ `src/components/ui/Skeleton.tsx` - Base skeleton component
 - ✅ `src/components/ui/TableSkeleton.tsx` - Table skeleton with configurable rows/cols
 
 ### Feature 3: Reason Chips with Clamping
+
 - ✅ `src/lib/reasonsClamp.ts` - Business logic (filters, sorts, clamps)
 - ✅ `src/components/ReasonChips.tsx` - Visual chip component using Badge
 
 ### Feature 4: Glossary Tooltips
+
 - ✅ `src/lib/glossary.ts` - Centralized term definitions
 - ✅ `src/components/ui/GlossaryTip.tsx` - Accessible tooltip wrapper
 
 ### Demo & Documentation
+
 - ✅ `src/app/demo/page.tsx` - Full demo page showcasing all features
 - ✅ `src/app/demo/demo.module.css` - Demo-specific styles
 - ✅ `UI_FEATURES.md` - Complete documentation with examples
@@ -58,12 +63,12 @@ Open your browser to: **http://localhost:3000/demo**
 
 ## 📋 Acceptance Criteria Status
 
-| Criteria | Status | Notes |
-|----------|--------|-------|
-| Density toggle switches padding globally and persists between sessions | ✅ | Uses localStorage, applies CSS custom properties |
-| Skeletons appear before data and prevent layout jumps | ✅ | Grid-based layout matches table structure |
-| Reason chips never exceed 2 visible items and total effect stays within ±3.5% | ✅ | Enforced by `clampReasons()` utility |
-| Tooltip definitions render on hover/focus and are accessible with screen readers | ✅ | Radix UI tooltips with keyboard navigation |
+| Criteria                                                                         | Status | Notes                                            |
+| -------------------------------------------------------------------------------- | ------ | ------------------------------------------------ |
+| Density toggle switches padding globally and persists between sessions           | ✅     | Uses localStorage, applies CSS custom properties |
+| Skeletons appear before data and prevent layout jumps                            | ✅     | Grid-based layout matches table structure        |
+| Reason chips never exceed 2 visible items and total effect stays within ±3.5%    | ✅     | Enforced by `clampReasons()` utility             |
+| Tooltip definitions render on hover/focus and are accessible with screen readers | ✅     | Radix UI tooltips with keyboard navigation       |
 
 ---
 
@@ -72,27 +77,27 @@ Open your browser to: **http://localhost:3000/demo**
 ### Quick Integration Example
 
 ```tsx
-'use client'
-import { useState, useEffect } from 'react'
-import { Table } from '@/components/ui/Table'
-import { TableSkeleton } from '@/components/ui/TableSkeleton'
-import { ReasonChips } from '@/components/ReasonChips'
-import { GlossaryTip } from '@/components/ui/GlossaryTip'
+'use client';
+import { useState, useEffect } from 'react';
+import { Table } from '@/components/ui/Table';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { ReasonChips } from '@/components/ReasonChips';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 
 export default function YourPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [data, setData] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     // Fetch your data
-    fetchData().then(result => {
-      setData(result)
-      setIsLoading(false)
-    })
-  }, [])
+    fetchData().then((result) => {
+      setData(result);
+      setIsLoading(false);
+    });
+  }, []);
 
   if (isLoading) {
-    return <TableSkeleton rows={10} cols={4} />
+    return <TableSkeleton rows={10} cols={4} />;
   }
 
   return (
@@ -109,7 +114,7 @@ export default function YourPage() {
           </tr>
         </thead>
         <tbody>
-          {data.map(player => (
+          {data.map((player) => (
             <tr key={player.id}>
               <td>{player.name}</td>
               <td>{player.baseline}</td>
@@ -121,7 +126,7 @@ export default function YourPage() {
         </tbody>
       </Table>
     </div>
-  )
+  );
 }
 ```
 
@@ -139,13 +144,14 @@ The `clampReasons()` function automatically:
 4. **Clamps** total effect to ±3.5%
 
 Example:
+
 ```typescript
 const reasons = [
-  { label: 'Usage ↑', effect: 2.1, confidence: 0.78 },    // ✅ Shows (high confidence)
+  { label: 'Usage ↑', effect: 2.1, confidence: 0.78 }, // ✅ Shows (high confidence)
   { label: 'Weather ↓', effect: -1.4, confidence: 0.72 }, // ✅ Shows (high confidence)
-  { label: 'Matchup', effect: 0.9, confidence: 0.6 },     // ❌ Filtered (low confidence)
-  { label: 'Injury', effect: -0.8, confidence: 0.68 },    // ❌ Not shown (max 2 chips)
-]
+  { label: 'Matchup', effect: 0.9, confidence: 0.6 }, // ❌ Filtered (low confidence)
+  { label: 'Injury', effect: -0.8, confidence: 0.68 }, // ❌ Not shown (max 2 chips)
+];
 
 // Result: Shows "Usage ↑ +2.1%" and "Weather ↓ -1.4%"
 ```
@@ -170,13 +176,13 @@ Add more in `src/lib/glossary.ts`
 Edit `src/app/globals.css`:
 
 ```css
-:root { 
-  --row-py: 0.75rem;  /* Comfortable spacing */
-  --row-px: 1rem; 
+:root {
+  --row-py: 0.75rem; /* Comfortable spacing */
+  --row-px: 1rem;
 }
-[data-density='compact'] { 
-  --row-py: 0.25rem;  /* Compact spacing */
-  --row-px: 0.5rem; 
+[data-density='compact'] {
+  --row-py: 0.25rem; /* Compact spacing */
+  --row-px: 0.5rem;
 }
 ```
 
@@ -185,8 +191,8 @@ Edit `src/app/globals.css`:
 Edit `src/lib/reasonsClamp.ts`:
 
 ```typescript
-const picked = eligible.slice(0, 3)  // Change from 2 to 3
-const maxAbsTotal = 5.0              // Change from 3.5 to 5.0
+const picked = eligible.slice(0, 3); // Change from 2 to 3
+const maxAbsTotal = 5.0; // Change from 3.5 to 5.0
 ```
 
 ### Add New Glossary Term
@@ -197,7 +203,7 @@ Edit `src/lib/glossary.ts`:
 export const GLOSSARY: Record<string, string> = {
   // ... existing terms
   'Your Term': 'Your definition here.',
-}
+};
 ```
 
 ---
@@ -264,4 +270,3 @@ comprehensive documentation.
 All four features are implemented, tested, and documented. The demo page provides a live showcase of each feature working individually and combined.
 
 **Ready for Vercel preview deployment!** 🎉
-

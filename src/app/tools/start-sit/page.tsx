@@ -19,25 +19,31 @@ function StartSitContent() {
   const [playerA, setPlayerA] = useState('');
   const [playerB, setPlayerB] = useState('');
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
-  const [result, setResult] = useState<{ 
-    winner: 'A' | 'B'; 
-    rowA: Row; 
-    rowB: Row; 
-    recommendation: string 
+  const [result, setResult] = useState<{
+    winner: 'A' | 'B';
+    rowA: Row;
+    rowB: Row;
+    recommendation: string;
   } | null>(null);
-  
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
-  
+
   const [suggestions, setSuggestions] = useState<Row[]>([]);
-  
+
   const { setMsg, Toast } = useToast();
 
-  useEffect(() => { 
+  useEffect(() => {
     // Track tool view
-    trackToolUsage('Start/Sit', 'viewed');
-    
-    fetchProjections().then(setSuggestions).catch(() => {}); 
+    trackToolUsage('Start/Sit', { action: 'viewed' });
+
+    fetchProjections()
+      .then((response) => {
+        if (response.ok && response.body) {
+          setSuggestions(response.body.projections || []);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Track risk mode changes
@@ -45,7 +51,7 @@ function StartSitContent() {
     const previousRisk = risk;
     return () => {
       if (previousRisk !== risk) {
-        trackRiskModeChange('Start/Sit', risk, previousRisk);
+        trackRiskModeChange(risk);
       }
     };
   }, [risk]);
@@ -57,7 +63,7 @@ function StartSitContent() {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
+
       if (e.key === 'Enter' && playerA && playerB) {
         trackFeatureInteraction('keyboard_shortcut', 'enter_compare', { tool: 'Start/Sit' });
         handleCompare();
@@ -72,7 +78,7 @@ function StartSitContent() {
         setRisk('chase');
       }
     };
-    
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [playerA, playerB]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,12 +102,13 @@ function StartSitContent() {
 
   async function handleCompare() {
     // Track comparison
-    trackToolUsage('Start/Sit', 'compare', {
+    trackToolUsage('Start/Sit', {
+      action: 'compare',
       playerA: playerA || '',
       playerB: playerB || '',
-      risk_mode: risk
+      risk_mode: risk,
     });
-    
+
     // TODO: Wire to API endpoint
     // For now, return mock data
     const mockRowA: Row = {
@@ -124,9 +131,7 @@ function StartSitContent() {
       team: 'PHI',
       position: 'QB',
       range: { p10: 19.5, p50: 24.2, p90: 29.8 },
-      explanations: [
-        { component: 'Rushing upside', delta_points: 0.032, confidence: 0.75 },
-      ],
+      explanations: [{ component: 'Rushing upside', delta_points: 0.032, confidence: 0.75 }],
       schema_version: 'v1',
       last_refresh: new Date().toISOString(),
     };
@@ -150,10 +155,7 @@ function StartSitContent() {
       <ToolsTabs />
 
       {!result ? (
-        <EmptyState 
-          title="Compare two players"
-          onExample={handleExample}
-        >
+        <EmptyState title="Compare two players" onExample={handleExample}>
           Enter player names to see Start/Sit recommendation with ranges and reason chips.
         </EmptyState>
       ) : null}
@@ -204,7 +206,7 @@ function StartSitContent() {
             Risk Mode
           </label>
           <div className="flex gap-2">
-            {(['protect', 'neutral', 'chase'] as const).map(r => (
+            {(['protect', 'neutral', 'chase'] as const).map((r) => (
               <button
                 key={r}
                 onClick={() => setRisk(r)}
@@ -223,8 +225,8 @@ function StartSitContent() {
           </p>
         </div>
 
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleCompare}
           disabled={!playerA || !playerB}
           className="w-full"
@@ -239,12 +241,19 @@ function StartSitContent() {
             Recommendation
           </h3>
           <p className="text-gray-700 dark:text-gray-300 mb-4">{result.recommendation}</p>
-          
+
           <div className="mt-3 flex items-center gap-2">
             <button
               className="cv-btn-ghost"
               onClick={() => {
-                const s = startSitSummary(result.rowA, result.rowB, risk, result.winner === 'A' ? result.rowA.player_name || '' : result.rowB.player_name || '');
+                const s = startSitSummary(
+                  result.rowA,
+                  result.rowB,
+                  risk,
+                  result.winner === 'A'
+                    ? result.rowA.player_name || ''
+                    : result.rowB.player_name || '',
+                );
                 navigator.clipboard.writeText(s);
                 setMsg('Summary copied');
               }}
@@ -254,11 +263,17 @@ function StartSitContent() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]" onClick={() => openDrawer(result.rowA)}>
+            <div
+              className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]"
+              onClick={() => openDrawer(result.rowA)}
+            >
               <h4 className="font-semibold mb-2">
                 <button
                   className="text-[rgb(var(--cv-primary))] hover:underline"
-                  onClick={(e) => { e.stopPropagation(); openDrawer(result.rowA); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDrawer(result.rowA);
+                  }}
                   aria-label={`Open ${result.rowA.player_name} details`}
                 >
                   {result.rowA.player_name}
@@ -271,11 +286,17 @@ function StartSitContent() {
               </div>
             </div>
 
-            <div className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]" onClick={() => openDrawer(result.rowB)}>
+            <div
+              className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]"
+              onClick={() => openDrawer(result.rowB)}
+            >
               <h4 className="font-semibold mb-2">
                 <button
                   className="text-[rgb(var(--cv-primary))] hover:underline"
-                  onClick={(e) => { e.stopPropagation(); openDrawer(result.rowB); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDrawer(result.rowB);
+                  }}
                   aria-label={`Open ${result.rowB.player_name} details`}
                 >
                   {result.rowB.player_name}
@@ -305,4 +326,3 @@ export default function StartSitPage() {
     </ToolErrorBoundary>
   );
 }
-

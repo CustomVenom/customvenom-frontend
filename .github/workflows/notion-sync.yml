@@ -11,7 +11,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
   schedule:
-    - cron: "*/30 * * * *"   # optional: every 30 min for DB sync (remove if not needed)
+    - cron: '*/30 * * * *' # optional: every 30 min for DB sync (remove if not needed)
   workflow_dispatch: {}
 
 permissions:
@@ -20,7 +20,7 @@ permissions:
   actions: write
 
 env:
-  API_BASE_STAGING: ${{ vars.API_BASE_STAGING }}   # optional (frontend/API tests)
+  API_BASE_STAGING: ${{ vars.API_BASE_STAGING }} # optional (frontend/API tests)
 
 jobs:
   notion:

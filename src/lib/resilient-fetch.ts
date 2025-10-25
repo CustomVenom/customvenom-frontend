@@ -23,7 +23,7 @@ export interface ResilientFetchResponse extends Response {
  */
 export async function resilientFetch(
   url: string,
-  options: ResilientFetchOptions = {}
+  options: ResilientFetchOptions = {},
 ): Promise<ResilientFetchResponse> {
   const {
     timeout = 10000, // 10s timeout
@@ -65,8 +65,8 @@ export async function resilientFetch(
       const shouldRetry =
         attempt < retries &&
         (error instanceof TypeError || // Network error
-        (error as Error)?.name === 'AbortError' || // Timeout
-        (error as { status?: number })?.status && (error as { status: number }).status >= 500); // Server error
+          (error as Error)?.name === 'AbortError' || // Timeout
+          ((error as { status?: number })?.status && (error as { status: number }).status >= 500)); // Server error
 
       if (shouldRetry) {
         onRetry?.(attempt + 1, lastError);
@@ -86,7 +86,7 @@ export async function resilientFetch(
  */
 export async function fetchWithResilience(
   endpoint: string,
-  options: ResilientFetchOptions = {}
+  options: ResilientFetchOptions = {},
 ): Promise<{ ok: boolean; status: number; requestId: string; body: unknown; isStale?: boolean }> {
   const base = process.env['NEXT_PUBLIC_API_BASE'] || '';
   const url = `${base}${endpoint}`;

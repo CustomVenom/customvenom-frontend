@@ -12,7 +12,7 @@ export async function POST() {
       method: 'POST',
       headers: {
         'x-request-id': reqId,
-        'accept': 'application/json',
+        accept: 'application/json',
       },
       cache: 'no-store',
     });
@@ -27,7 +27,7 @@ export async function POST() {
             'cache-control': 'no-store',
             'x-request-id': reqId,
           },
-        }
+        },
       );
     }
 
@@ -50,8 +50,7 @@ export async function POST() {
           'cache-control': 'no-store',
           'x-request-id': reqId,
         },
-      }
+      },
     );
   }
 }
-

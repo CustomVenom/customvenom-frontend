@@ -17,19 +17,13 @@ export async function POST(request: NextRequest) {
     // Require authentication
     const session = await getServerSession();
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { priceId } = await request.json();
 
     if (!priceId) {
-      return NextResponse.json(
-        { error: 'Price ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
     }
 
     // Create checkout session with user metadata
@@ -53,9 +47,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
   } catch (error) {
     console.error('Stripe checkout error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
   }
 }

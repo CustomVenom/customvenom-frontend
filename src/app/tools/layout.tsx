@@ -1,4 +1,4 @@
-import { ToolsTabs } from '@/components/ToolsTabs';
+import ToolsTabs from '@/components/ToolsTabs';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 
 export default function ToolsLayout({ children }: { children: React.ReactNode }) {

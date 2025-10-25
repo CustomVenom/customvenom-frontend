@@ -13,18 +13,23 @@ import { type Row } from '@/lib/tools';
 
 function DecisionsContent() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
-  const [decisions, setDecisions] = useState<Array<{
-    row: Row;
-    action: string;
-    why: string;
-    next_step: string;
-  }>>([]);
-  
+  const [decisions, setDecisions] = useState<
+    Array<{
+      row: Row;
+      action: string;
+      why: string;
+      next_step: string;
+    }>
+  >([]);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
 
   function openDrawer(row: Row) {
-    trackFeatureInteraction('player_drawer', 'opened', { tool: 'Decisions', player: row.player_name || '' });
+    trackFeatureInteraction('player_drawer', 'opened', {
+      tool: 'Decisions',
+      player: row.player_name || '',
+    });
     setDrawerRow(row);
     setDrawerOpen(true);
   }
@@ -36,12 +41,12 @@ function DecisionsContent() {
 
   // Track tool view
   useEffect(() => {
-    trackToolUsage('Decisions', 'viewed');
+    trackToolUsage('Decisions', { action: 'viewed' });
   }, []);
 
   // Track risk mode changes
   useEffect(() => {
-    trackRiskModeChange('Decisions', risk);
+    trackRiskModeChange(risk);
   }, [risk]);
 
   // Keyboard shortcuts for risk modes
@@ -51,7 +56,7 @@ function DecisionsContent() {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
+
       if (e.key === '1') {
         trackFeatureInteraction('keyboard_shortcut', 'risk_protect', { tool: 'Decisions' });
         setRisk('protect');
@@ -63,7 +68,7 @@ function DecisionsContent() {
         setRisk('chase');
       }
     };
-    
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
@@ -79,9 +84,7 @@ function DecisionsContent() {
           team: 'DAL',
           position: 'WR',
           range: { p10: 12.5, p50: 16.8, p90: 21.3 },
-          explanations: [
-            { component: 'Target share ↑', delta_points: 0.028, confidence: 0.78 },
-          ],
+          explanations: [{ component: 'Target share ↑', delta_points: 0.028, confidence: 0.78 }],
           schema_version: 'v1',
           last_refresh: new Date().toISOString(),
         },
@@ -96,9 +99,7 @@ function DecisionsContent() {
           team: 'DET',
           position: 'RB',
           range: { p10: 14.2, p50: 18.5, p90: 24.1 },
-          explanations: [
-            { component: 'Usage stable', delta_points: 0.012, confidence: 0.71 },
-          ],
+          explanations: [{ component: 'Usage stable', delta_points: 0.012, confidence: 0.71 }],
           schema_version: 'v1',
           last_refresh: new Date().toISOString(),
         },
@@ -113,9 +114,7 @@ function DecisionsContent() {
           team: 'NYJ',
           position: 'WR',
           range: { p10: 10.8, p50: 14.2, p90: 18.9 },
-          explanations: [
-            { component: 'QB downgrade', delta_points: -0.015, confidence: 0.69 },
-          ],
+          explanations: [{ component: 'QB downgrade', delta_points: -0.015, confidence: 0.69 }],
           schema_version: 'v1',
           last_refresh: new Date().toISOString(),
         },
@@ -133,11 +132,11 @@ function DecisionsContent() {
       <main className="container section space-y-4">
         <h1 className="h1">Important Decisions</h1>
         <ToolsTabs />
-        
+
         <EmptyState title="No decisions yet">
           Try switching your risk mode or refresh projections to see personalized recommendations.
         </EmptyState>
-        
+
         <ActionBar />
       </main>
     );
@@ -156,15 +155,15 @@ function DecisionsContent() {
           Risk Profile
         </label>
         <div className="flex gap-2">
-          {(['protect', 'neutral', 'chase'] as const).map(r => (
+          {(['protect', 'neutral', 'chase'] as const).map((r) => (
             <button
               key={r}
-                onClick={() => setRisk(r)}
-                className={`risk-segment px-4 py-2 rounded-lg text-sm font-semibold ${
-                  risk === r
-                    ? 'selected bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
-                    : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)]'
-                }`}
+              onClick={() => setRisk(r)}
+              className={`risk-segment px-4 py-2 rounded-lg text-sm font-semibold ${
+                risk === r
+                  ? 'selected bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg shadow-[rgba(16,185,129,0.3)]'
+                  : 'bg-[rgba(16,185,129,0.1)] text-[rgb(var(--cv-primary))] border border-[rgba(16,185,129,0.3)]'
+              }`}
             >
               {r.charAt(0).toUpperCase() + r.slice(1)}
             </button>
@@ -177,20 +176,16 @@ function DecisionsContent() {
 
       <div className="space-y-4">
         {decisions.map((d, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="player-row rounded-lg p-6 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]"
             onClick={() => openDrawer(d.row)}
           >
             <div className="flex items-start justify-between mb-3">
               <h3 className="font-semibold text-lg">
-                <span className="text-[rgb(var(--cv-primary))]">
-                  {d.row.player_name}
-                </span>
+                <span className="text-[rgb(var(--cv-primary))]">{d.row.player_name}</span>
               </h3>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                #{i + 1}
-              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">#{i + 1}</span>
             </div>
 
             <div className="space-y-2 text-sm">
@@ -233,4 +228,3 @@ export default function DecisionsPage() {
     </ToolErrorBoundary>
   );
 }
-

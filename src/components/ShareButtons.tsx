@@ -5,9 +5,9 @@ interface ShareButtonsProps {
   url?: string;
 }
 
-export default function ShareButtons({ 
-  text = 'Check out Custom Venom — Pick Your Poison', 
-  url = 'https://customvenom.com' 
+export default function ShareButtons({
+  text = 'Check out Custom Venom — Pick Your Poison',
+  url = 'https://customvenom.com',
 }: ShareButtonsProps) {
   const encodedText = encodeURIComponent(text);
   const encodedUrl = encodeURIComponent(url);
@@ -19,10 +19,10 @@ export default function ShareButtons({
 
   return (
     <div className="flex items-center gap-2">
-      <a 
-        href={bsky} 
-        target="_blank" 
-        rel="noopener noreferrer" 
+      <a
+        href={bsky}
+        target="_blank"
+        rel="noopener noreferrer"
         className="cv-btn-secondary"
         aria-label="Share on Bluesky"
       >
@@ -38,4 +38,3 @@ export default function ShareButtons({
     </div>
   );
 }
-

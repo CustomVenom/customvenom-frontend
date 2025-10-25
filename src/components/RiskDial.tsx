@@ -28,7 +28,7 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
         setLoading(true);
         const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const response = await fetch(`${apiBase}/risk_dial?week=${week}`, {
-          cache: 'no-store'
+          cache: 'no-store',
         });
 
         if (!response.ok) {
@@ -75,8 +75,10 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
   };
 
   const getRiskBadgeClass = () => {
-    if (riskLevel === 'low') return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-green-600/15 text-green-300 ring-1 ring-inset ring-green-600/30';
-    if (riskLevel === 'moderate') return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-yellow-600/15 text-yellow-300 ring-1 ring-inset ring-yellow-600/30';
+    if (riskLevel === 'low')
+      return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-green-600/15 text-green-300 ring-1 ring-inset ring-green-600/30';
+    if (riskLevel === 'moderate')
+      return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-yellow-600/15 text-yellow-300 ring-1 ring-inset ring-yellow-600/30';
     return 'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-red-600/15 text-red-300 ring-1 ring-inset ring-red-600/30';
   };
 
@@ -99,16 +101,14 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
 
       <div className="flex flex-col md:flex-row items-center gap-8">
         <div className="flex-shrink-0">
-          <svg width="200" height="200" viewBox="0 0 200 200" className="transform transition-transform">
+          <svg
+            width="200"
+            height="200"
+            viewBox="0 0 200 200"
+            className="transform transition-transform"
+          >
             {/* Background circle */}
-            <circle
-              cx="100"
-              cy="100"
-              r="80"
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="20"
-            />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" strokeWidth="20" />
             {/* Progress arc */}
             <circle
               cx="100"
@@ -123,32 +123,17 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
               transform="rotate(-90 100 100)"
             />
             {/* Center text */}
-            <text
-              x="100"
-              y="95"
-              textAnchor="middle"
-              fontSize="36"
-              fontWeight="bold"
-              fill="#111"
-            >
+            <text x="100" y="95" textAnchor="middle" fontSize="36" fontWeight="bold" fill="#111">
               {confidencePercent}%
             </text>
-            <text
-              x="100"
-              y="115"
-              textAnchor="middle"
-              fontSize="14"
-              fill="#666"
-            >
+            <text x="100" y="115" textAnchor="middle" fontSize="14" fill="#666">
               Confidence
             </text>
           </svg>
         </div>
 
         <div className="flex-1">
-          <span className={getRiskBadgeClass()}>
-            {getRiskLabel()}
-          </span>
+          <span className={getRiskBadgeClass()}>{getRiskLabel()}</span>
           <p className="text-gray-700 leading-relaxed">{recommendation}</p>
         </div>
       </div>
@@ -177,7 +162,12 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
                       className="h-2 rounded-full transition-all"
                       style={{
                         width: `${factor.score * 100}%`,
-                        backgroundColor: factor.score > 0.8 ? '#10b981' : factor.score >= 0.6 ? '#f59e0b' : '#ef4444'
+                        backgroundColor:
+                          factor.score > 0.8
+                            ? '#10b981'
+                            : factor.score >= 0.6
+                              ? '#f59e0b'
+                              : '#ef4444',
                       }}
                     />
                   </div>
@@ -193,5 +183,3 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
     </div>
   );
 }
-
-

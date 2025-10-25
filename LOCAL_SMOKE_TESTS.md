@@ -11,16 +11,19 @@
 ### **Install jq (JSON processor)**
 
 **macOS:**
+
 ```bash
 brew install jq
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt-get install -y jq
 ```
 
 **Windows (choose one):**
+
 ```powershell
 # Chocolatey
 choco install jq
@@ -34,10 +37,12 @@ winget install jqlang.jq
 ### **Verify Services Running**
 
 **Workers API (Backend):**
+
 - Default: `http://localhost:8787`
 - Check with: `curl http://localhost:8787/health`
 
 **Next.js Frontend:**
+
 - Default: `http://localhost:3000`
 - Start with: `npm run dev`
 
@@ -48,6 +53,7 @@ winget install jqlang.jq
 ## 🐧 Bash / macOS / Linux
 
 ### **Start Dev Server (Terminal A)**
+
 ```bash
 cd customvenom-frontend
 npm run dev
@@ -56,11 +62,13 @@ npm run dev
 ### **Run Smoke Tests (Terminal B)**
 
 #### **1. Health Check (Workers API)**
+
 ```bash
 curl -s http://localhost:8787/health | jq '{ok, schema_version, last_refresh}'
 ```
 
 **Expected:**
+
 ```json
 {
   "ok": true,
@@ -70,12 +78,14 @@ curl -s http://localhost:8787/health | jq '{ok, schema_version, last_refresh}'
 ```
 
 #### **2. Projections Endpoint**
+
 ```bash
 curl -s "http://localhost:8787/projections?week=2025-06" \
   | jq '{schema_version, last_refresh, projection_count: (.projections | length)}'
 ```
 
 **Expected:**
+
 ```json
 {
   "schema_version": "v1.0.0",
@@ -87,11 +97,13 @@ curl -s "http://localhost:8787/projections?week=2025-06" \
 **Note:** If your API returns data at top level (not `.data`), remove `.data` from jq pipe
 
 #### **3. NextAuth Session**
+
 ```bash
 curl -s http://localhost:3000/api/auth/session | jq
 ```
 
 **Expected (not logged in):**
+
 ```json
 {
   "user": null
@@ -99,6 +111,7 @@ curl -s http://localhost:3000/api/auth/session | jq
 ```
 
 **Expected (logged in):**
+
 ```json
 {
   "user": {
@@ -110,16 +123,19 @@ curl -s http://localhost:3000/api/auth/session | jq
 ```
 
 #### **4. Homepage Check**
+
 ```bash
 curl -sI http://localhost:3000 | grep -i '^HTTP/'
 ```
 
 **Expected:**
+
 ```
 HTTP/1.1 200 OK
 ```
 
 #### **5-7. Static Checks**
+
 ```bash
 # Build check
 npm run build
@@ -134,6 +150,7 @@ npm run lint
 **Expected:** All complete with exit code 0
 
 ### **One-Liner Pass/Fail**
+
 ```bash
 npm run build && npm run type-check && npm run lint && echo "✅ All local smokes PASS"
 ```
@@ -143,6 +160,7 @@ npm run build && npm run type-check && npm run lint && echo "✅ All local smoke
 ## 🪟 PowerShell / Windows
 
 ### **Start Dev Server (Window A)**
+
 ```powershell
 cd customvenom-frontend
 npm run dev
@@ -151,6 +169,7 @@ npm run dev
 ### **Run Smoke Tests (Window B)**
 
 #### **1. Health Check (Workers API)**
+
 ```powershell
 (Invoke-WebRequest http://localhost:8787/health -UseBasicParsing).Content |
   ConvertFrom-Json |
@@ -159,6 +178,7 @@ npm run dev
 ```
 
 **Expected:**
+
 ```json
 {
   "ok": true,
@@ -168,6 +188,7 @@ npm run dev
 ```
 
 #### **2. Projections Endpoint**
+
 ```powershell
 $proj = (Invoke-WebRequest "http://localhost:8787/projections?week=2025-06" -UseBasicParsing).Content | ConvertFrom-Json
 $projection_count = $proj.projections.Count
@@ -179,6 +200,7 @@ $projection_count = $proj.projections.Count
 ```
 
 **Expected:**
+
 ```json
 {
   "schema_version": "v1.0.0",
@@ -188,27 +210,32 @@ $projection_count = $proj.projections.Count
 ```
 
 #### **3. NextAuth Session**
+
 ```powershell
 (Invoke-WebRequest http://localhost:3000/api/auth/session -UseBasicParsing).Content
 ```
 
 **Expected (not logged in):**
+
 ```json
-{"user":null}
+{ "user": null }
 ```
 
 #### **4. Homepage Check**
+
 ```powershell
 $iwr = Invoke-WebRequest http://localhost:3000 -UseBasicParsing -Method Head -ErrorAction SilentlyContinue
 "$($iwr.StatusCode) $($iwr.StatusDescription)"
 ```
 
 **Expected:**
+
 ```
 200 OK
 ```
 
 #### **5-7. Static Checks**
+
 ```powershell
 # Build check
 cmd /c "npm run build"
@@ -226,6 +253,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "Lint failed"; exit $LASTEXITCODE }
 ```
 
 ### **One-Liner Pass/Fail (PowerShell)**
+
 ```powershell
 cmd /c "npm run build" ; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 cmd /c "npm run type-check" ; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -238,8 +266,10 @@ cmd /c "npm run lint" ; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 ## 🔧 Troubleshooting
 
 ### **"Connection refused" or "Failed to connect"**
+
 **Cause:** Service not running or wrong port
 **Fix:**
+
 ```bash
 # Check if Workers API is running
 lsof -i :8787  # macOS/Linux
@@ -259,20 +289,25 @@ npm run dev
 ```
 
 ### **"jq: command not found" (Linux/macOS)**
+
 **Fix:** Install jq (see Prerequisites above)
 **Workaround:** Use PowerShell-style JSON parsing with `| python3 -m json.tool`
 
 ### **"npm run build" fails**
+
 **Cause:** TypeScript errors, missing deps, or env vars
 **Fix:**
+
 1. Run `npm run type-check` to see TypeScript errors
 2. Run `npm run lint` to see linter errors
 3. Check `.env.local` has required vars (see `env.template.txt`)
 4. Run `npm install` to ensure deps are up to date
 
 ### **"Prisma Client not generated"**
+
 **Cause:** Missing DATABASE_URL or prisma generate didn't run
 **Fix:**
+
 ```bash
 # Set DATABASE_URL in .env.local
 echo "DATABASE_URL=postgresql://..." >> .env.local
@@ -282,8 +317,10 @@ npx prisma generate
 ```
 
 ### **"Module not found" errors**
+
 **Cause:** Missing dependencies or stale node_modules
 **Fix:**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
@@ -294,6 +331,7 @@ npm install
 ## ✅ Success Criteria
 
 **All tests pass when:**
+
 - Health returns `ok: true`
 - Projections returns schema_version + projections array
 - Session returns valid JSON (null user or user object)
@@ -309,15 +347,18 @@ npm install
 ## 🔗 Related Documentation
 
 **Trust-First Smokes (Workers API):**
+
 - `customvenom-workers-api/scripts/smoke-robust.sh`
 - `customvenom-workers-api/docs/JQ_ROBUST_PATTERNS.md`
 
 **Build Guides:**
+
 - `VERCEL_SETTINGS_CHECKLIST.md` — Vercel configuration
 - `env.template.txt` — Required environment variables
 - `README.md` — Full setup guide
 
 **Notion References:**
+
 - [CustomVenom Build Manual](https://www.notion.so/CustomVenom-Build-Manual-v1-d5825d6035204be3afc9782e9d697cad)
 - [My Custom Venom AI Agent](https://www.notion.so/My-Custom-Venom-AI-Agent-2859f930952d8047bfeccbe61199d600)
 
@@ -325,15 +366,15 @@ npm install
 
 ## 📊 Quick Reference Card
 
-| Test | Endpoint | Expected |
-|------|----------|----------|
-| Health | `GET /health` | `{"ok": true, ...}` |
-| Projections | `GET /projections?week=2025-06` | `{"projections": [...], ...}` |
-| Session | `GET /api/auth/session` | `{"user": null}` or user object |
-| Homepage | `GET /` | `200 OK` |
-| Build | `npm run build` | Exit 0 |
-| Type-check | `npm run type-check` | Exit 0 |
-| Lint | `npm run lint` | Exit 0 |
+| Test        | Endpoint                        | Expected                        |
+| ----------- | ------------------------------- | ------------------------------- |
+| Health      | `GET /health`                   | `{"ok": true, ...}`             |
+| Projections | `GET /projections?week=2025-06` | `{"projections": [...], ...}`   |
+| Session     | `GET /api/auth/session`         | `{"user": null}` or user object |
+| Homepage    | `GET /`                         | `200 OK`                        |
+| Build       | `npm run build`                 | Exit 0                          |
+| Type-check  | `npm run type-check`            | Exit 0                          |
+| Lint        | `npm run lint`                  | Exit 0                          |
 
 ---
 
@@ -341,4 +382,3 @@ npm install
 **Tested On:** macOS, Linux (Ubuntu), Windows 11
 **Node Version:** 20.x
 **Next.js Version:** 15.5.4
-

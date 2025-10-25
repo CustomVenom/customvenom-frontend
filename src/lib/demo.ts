@@ -9,7 +9,7 @@ export const isAnonymous = () => {
   // import { useSession } from 'next-auth/react';
   // const { data: session } = useSession();
   // return !session?.user;
-  
+
   return true; // For now, all users are anonymous
 };
 
@@ -24,4 +24,3 @@ export const pinnedWeekForAnon = '2025-06';
 export const isDemoMode = (headers: Headers): boolean => {
   return headers.get('x-demo-mode') === 'true';
 };
-

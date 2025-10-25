@@ -8,11 +8,13 @@ Your API is now live at:
 ### Testing Endpoints
 
 Health check:
+
 ```bash
 curl https://customvenom-workers-api.jdewett81.workers.dev/health
 ```
 
 Projections:
+
 ```bash
 curl "https://customvenom-workers-api.jdewett81.workers.dev/projections?week=2025-06"
 ```
@@ -30,6 +32,7 @@ NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
 ## Setting Up Custom Domain (api.customvenom.com)
 
 ### Prerequisites
+
 - Your domain `customvenom.com` must be added to Cloudflare
 - DNS must be proxied through Cloudflare (orange cloud icon)
 
@@ -53,8 +56,9 @@ NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
    - Click **Save**
 
 3. **Update Frontend Environment Variables**
-   
+
    Update your `.env.local`:
+
    ```env
    API_BASE=https://api.customvenom.com
    NEXT_PUBLIC_API_BASE=https://api.customvenom.com
@@ -68,6 +72,7 @@ NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
 ## Worker Configuration
 
 Your worker is configured with:
+
 - ✅ R2 Bucket: `customvenom-data`
 - ✅ CORS enabled
 - ✅ Request logging (request_id, duration_ms)
@@ -76,22 +81,26 @@ Your worker is configured with:
 ## Useful Commands
 
 Deploy worker:
+
 ```bash
 cd ../customvenom-workers-api
 wrangler deploy
 ```
 
 View worker logs:
+
 ```bash
 wrangler tail
 ```
 
 Test locally:
+
 ```bash
 wrangler dev
 ```
 
 Deploy to staging (if configured):
+
 ```bash
 wrangler deploy --env=staging
 ```
@@ -115,8 +124,8 @@ To add scheduled tasks, update `wrangler.jsonc`:
 {
   // ... existing config
   "triggers": {
-    "crons": ["0 */6 * * *"]  // Run every 6 hours
-  }
+    "crons": ["0 */6 * * *"], // Run every 6 hours
+  },
 }
 ```
 
@@ -127,14 +136,10 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // ... existing code
   },
-  
+
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     // Run your cron job here
     console.log('Cron job running at:', new Date().toISOString());
-  }
+  },
 } satisfies ExportedHandler<Env>;
 ```
-
-
-
-

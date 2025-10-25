@@ -11,6 +11,7 @@ This document describes the four new UI features added to the CustomVenom fronte
 **Description**: Allows users to switch between compact and comfortable spacing throughout the app.
 
 **Files**:
+
 - `src/hooks/useDensity.ts` - React hook for density state management
 - `src/components/DensityToggle.tsx` - Toggle button component
 - `src/app/globals.css` - CSS variables for spacing
@@ -20,8 +21,14 @@ The density is controlled via CSS custom properties and applies automatically to
 
 ```css
 /* Automatically applied */
-:root { --row-py: 0.5rem; --row-px: 0.75rem; }
-[data-density='compact'] { --row-py: 0.25rem; --row-px: 0.5rem; }
+:root {
+  --row-py: 0.5rem;
+  --row-px: 0.75rem;
+}
+[data-density='compact'] {
+  --row-py: 0.25rem;
+  --row-px: 0.5rem;
+}
 ```
 
 **Persistence**: Uses localStorage, persists between sessions.
@@ -33,22 +40,22 @@ The density is controlled via CSS custom properties and applies automatically to
 **Description**: Animated placeholder components that prevent layout shift during data loading.
 
 **Files**:
+
 - `src/components/ui/Skeleton.tsx` - Base skeleton component
 - `src/components/ui/TableSkeleton.tsx` - Table-specific skeleton
 
 **Usage**:
 
 ```tsx
-import { TableSkeleton } from '@/components/ui/TableSkeleton'
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
 
-{isLoading ? (
-  <TableSkeleton rows={8} cols={4} />
-) : (
-  <YourTableComponent />
-)}
+{
+  isLoading ? <TableSkeleton rows={8} cols={4} /> : <YourTableComponent />;
+}
 ```
 
 **Props**:
+
 - `rows` (default: 8) - Number of skeleton rows
 - `cols` (default: 4) - Number of skeleton columns
 - `className` (optional) - Additional CSS classes for Skeleton
@@ -60,10 +67,12 @@ import { TableSkeleton } from '@/components/ui/TableSkeleton'
 **Description**: Displays driver factors (reasons) for projection adjustments with automatic filtering and clamping.
 
 **Files**:
+
 - `src/lib/reasonsClamp.ts` - Utility function for filtering and clamping reasons
 - `src/components/ReasonChips.tsx` - Visual component for displaying reasons
 
 **Business Rules**:
+
 - Filters reasons with confidence ≥ 0.65
 - Sorts by absolute effect (highest impact first)
 - Shows maximum 2 chips
@@ -87,10 +96,10 @@ const reasons: Reason[] = [
 
 ```typescript
 type Reason = {
-  label: string      // Display text
-  effect: number     // Signed percent, e.g. +1.2 or -0.8
-  confidence: number // 0..1 (filtered at 0.65 threshold)
-}
+  label: string; // Display text
+  effect: number; // Signed percent, e.g. +1.2 or -0.8
+  confidence: number; // 0..1 (filtered at 0.65 threshold)
+};
 ```
 
 ---
@@ -100,10 +109,12 @@ type Reason = {
 **Description**: Provides accessible tooltip definitions for domain-specific terms.
 
 **Files**:
+
 - `src/lib/glossary.ts` - Centralized term definitions
 - `src/components/ui/GlossaryTip.tsx` - Tooltip wrapper component
 
 **Available Terms**:
+
 - Range band
 - Coverage
 - Driver chip
@@ -124,7 +135,8 @@ import { GlossaryTip } from '@/components/ui/GlossaryTip'
 <GlossaryTip term="Range band">prediction range</GlossaryTip>
 ```
 
-**Accessibility**: 
+**Accessibility**:
+
 - Keyboard navigable (tabIndex={0})
 - Screen reader friendly
 - Clear visual affordance (dotted underline + info icon)
@@ -136,6 +148,7 @@ import { GlossaryTip } from '@/components/ui/GlossaryTip'
 **URL**: `/demo`
 
 The demo page showcases all four features in action with:
+
 - Interactive examples for each feature
 - Combined example showing features working together
 - Live "reload data" button to see skeletons in action
@@ -150,16 +163,16 @@ The demo page showcases all four features in action with:
 ### Example 1: Projections Table with All Features
 
 ```tsx
-'use client'
-import { useState } from 'react'
-import { Table } from '@/components/ui/Table'
-import { TableSkeleton } from '@/components/ui/TableSkeleton'
-import { ReasonChips } from '@/components/ReasonChips'
-import { GlossaryTip } from '@/components/ui/GlossaryTip'
+'use client';
+import { useState } from 'react';
+import { Table } from '@/components/ui/Table';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { ReasonChips } from '@/components/ReasonChips';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 
 export function ProjectionsTable({ data, isLoading }) {
   if (isLoading) {
-    return <TableSkeleton rows={10} cols={5} />
+    return <TableSkeleton rows={10} cols={5} />;
   }
 
   return (
@@ -167,23 +180,31 @@ export function ProjectionsTable({ data, isLoading }) {
       <thead>
         <tr>
           <th>Player</th>
-          <th><GlossaryTip term="Baseline">Baseline</GlossaryTip></th>
-          <th><GlossaryTip term="Range band">Range</GlossaryTip></th>
+          <th>
+            <GlossaryTip term="Baseline">Baseline</GlossaryTip>
+          </th>
+          <th>
+            <GlossaryTip term="Range band">Range</GlossaryTip>
+          </th>
           <th>Drivers</th>
         </tr>
       </thead>
       <tbody>
-        {data.map(player => (
+        {data.map((player) => (
           <tr key={player.id}>
             <td>{player.name}</td>
             <td>{player.baseline}</td>
-            <td>{player.floor}–{player.ceiling}</td>
-            <td><ReasonChips reasons={player.reasons} /></td>
+            <td>
+              {player.floor}–{player.ceiling}
+            </td>
+            <td>
+              <ReasonChips reasons={player.reasons} />
+            </td>
           </tr>
         ))}
       </tbody>
     </Table>
-  )
+  );
 }
 ```
 
@@ -209,7 +230,7 @@ To add a new term:
 export const GLOSSARY: Record<string, string> = {
   // ... existing terms
   'Your New Term': 'Definition of your new term.',
-}
+};
 ```
 
 3. Use it anywhere:
@@ -229,10 +250,10 @@ Edit `src/lib/reasonsClamp.ts`:
 ```typescript
 export function clampReasons(
   reasons: Reason[],
-  { 
-    maxChips = 3,        // Change from 2 to 3
-    maxAbsTotal = 5.0    // Change from 3.5 to 5.0
-  }: { maxChips?: number; maxAbsTotal?: number } = {}
+  {
+    maxChips = 3, // Change from 2 to 3
+    maxAbsTotal = 5.0, // Change from 3.5 to 5.0
+  }: { maxChips?: number; maxAbsTotal?: number } = {},
 ) {
   // ...
 }
@@ -243,13 +264,13 @@ export function clampReasons(
 Edit `src/app/globals.css`:
 
 ```css
-:root { 
-  --row-py: 0.75rem;  /* Increase comfortable spacing */
-  --row-px: 1rem; 
+:root {
+  --row-py: 0.75rem; /* Increase comfortable spacing */
+  --row-px: 1rem;
 }
-[data-density='compact'] { 
+[data-density='compact'] {
   --row-py: 0.125rem; /* Decrease compact spacing */
-  --row-px: 0.25rem; 
+  --row-px: 0.25rem;
 }
 ```
 
@@ -266,8 +287,8 @@ npm run dev
 Then open: http://localhost:3000/demo
 
 Test each feature:
+
 1. Click density toggle and observe table padding changes
 2. Click "Reload Data" to see skeleton animations
 3. Verify reason chips show max 2 items with proper badges
 4. Hover over glossary terms to see tooltips
-

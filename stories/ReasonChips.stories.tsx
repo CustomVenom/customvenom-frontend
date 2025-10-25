@@ -19,7 +19,7 @@ const highConfidenceReasons: Reason[] = [
 
 const mixedReasons: Reason[] = [
   { label: 'Favorable matchup', effect: 2.5, confidence: 0.85 },
-  { label: 'Tough defense', effect: -1.2, confidence: 0.70 },
+  { label: 'Tough defense', effect: -1.2, confidence: 0.7 },
 ];
 
 const lowConfidenceReasons: Reason[] = [
@@ -49,4 +49,3 @@ export const Empty: Story = {
     reasons: [],
   },
 };
-

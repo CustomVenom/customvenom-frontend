@@ -12,7 +12,6 @@ export async function POST() {
         'content-type': 'application/json',
         'cache-control': 'no-store',
       },
-    }
+    },
   );
 }
-

@@ -8,7 +8,7 @@ import { Session } from 'next-auth';
  * Use before calling Yahoo Fantasy APIs
  */
 export function requireYahooAuth(
-  session: Session | null
+  session: Session | null,
 ): asserts session is Session & { user: { sub: string } } {
   if (!session?.user?.sub) {
     throw new Error('Yahoo authentication required');

@@ -1,0 +1,15 @@
+# Ignore YAML files
+*.yml
+*.yaml
+
+# Ignore build outputs
+.next/
+out/
+dist/
+coverage/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore generated files
+.open-next/

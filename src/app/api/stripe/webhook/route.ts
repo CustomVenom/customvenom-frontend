@@ -20,11 +20,13 @@ export async function POST(req: Request) {
 
     // Step 3: Just log and return 2xx
     console.log(`[Stripe Webhook] ✅ Event: ${event.type}, ID: ${event.id}`);
-    
+
     // Log event data for verification
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log(`[Stripe Webhook] Customer: ${session.customer_email || session.customer_details?.email}`);
+      console.log(
+        `[Stripe Webhook] Customer: ${session.customer_email || session.customer_details?.email}`,
+      );
       console.log(`[Stripe Webhook] Subscription: ${session.subscription}`);
     }
 
@@ -34,4 +36,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'webhook_failed' }, { status: 400 });
   }
 }
-

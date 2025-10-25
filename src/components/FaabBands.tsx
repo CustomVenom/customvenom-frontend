@@ -30,7 +30,7 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
         setLoading(true);
         const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const response = await fetch(`${apiBase}/faab_bands?week=${week}`, {
-          cache: 'no-store'
+          cache: 'no-store',
         });
 
         if (!response.ok) {
@@ -91,20 +91,21 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
         <h2 className="text-2xl font-bold text-gray-800 m-0">FAAB Bid Bands</h2>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Schema: {schemaVersion}</span>
-          {lastRefresh && (
-            <span>
-              · Updated {new Date(lastRefresh).toLocaleTimeString()}
-            </span>
-          )}
+          {lastRefresh && <span>· Updated {new Date(lastRefresh).toLocaleTimeString()}</span>}
         </div>
       </div>
 
       <div className="space-y-4">
         {items.map((item, index) => (
-          <div key={item.player_id} className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div
+            key={item.player_id}
+            className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+          >
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-center gap-3">
-                <span className="inline-flex items-center justify-center w-8 h-8 bg-[#667eea] text-white rounded-full text-sm font-bold">#{index + 1}</span>
+                <span className="inline-flex items-center justify-center w-8 h-8 bg-[#667eea] text-white rounded-full text-sm font-bold">
+                  #{index + 1}
+                </span>
                 <div>
                   <span className="font-semibold text-gray-900 text-lg block">{item.name}</span>
                   <span className="text-sm text-gray-600">
@@ -146,5 +147,3 @@ export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
     </div>
   );
 }
-
-

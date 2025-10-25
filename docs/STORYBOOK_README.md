@@ -56,4 +56,3 @@ export const Default: Story = {
 - Use the `Controls` panel to interactively test props
 - Use the `Actions` panel to view event handlers
 - Stories are automatically documented with `autodocs` tag
-

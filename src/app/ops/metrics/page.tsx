@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 
-import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
+import {
+  getEventsSince,
+  getEventCountsByType,
+  getToolUsageStats,
+  getRiskModeDistribution,
+} from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
 import { getCacheStats } from '@/lib/cache';
 import { type Entitlements } from '@/lib/entitlements';
@@ -38,10 +43,10 @@ export default function MetricsPage() {
 
   const loadMetrics = useCallback(() => {
     setIsLoading(true);
-    
+
     try {
-      const events = getEventsSince(timeRange);
-      
+      const events = getEventsSince(timeRange.toString());
+
       const data: MetricsData = {
         totalEvents: events.length,
         eventsByType: getEventCountsByType(events),
@@ -50,7 +55,7 @@ export default function MetricsPage() {
         recentEvents: events.slice(-10).reverse(), // Last 10 events
         cacheStats: getCacheStats(),
       };
-      
+
       setMetrics(data);
     } catch (error) {
       console.error('Failed to load metrics:', error);
@@ -68,7 +73,7 @@ export default function MetricsPage() {
     return (
       <main className="mx-auto max-w-4xl px-4 py-6">
         <h1 className="text-2xl font-bold mb-4">Analytics Metrics</h1>
-        
+
         <div className="border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 bg-yellow-50 dark:bg-yellow-900/10">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-3xl">🔒</span>
@@ -76,13 +81,13 @@ export default function MetricsPage() {
               {entitlements.isFree ? 'Pro Feature' : 'Access Restricted'}
             </h2>
           </div>
-          
+
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            {entitlements.isFree 
+            {entitlements.isFree
               ? 'Analytics metrics are available to Pro subscribers and above.'
               : 'You do not have permission to access this feature.'}
           </p>
-          
+
           <div className="flex gap-3">
             {entitlements.isFree && (
               <Link href="/go-pro" className="cv-btn-primary">
@@ -107,7 +112,7 @@ export default function MetricsPage() {
             Last {timeRange} hours · Updates on refresh
           </p>
         </div>
-        
+
         <div className="flex gap-2">
           <select
             value={timeRange}
@@ -118,12 +123,8 @@ export default function MetricsPage() {
             <option value={6}>Last 6 Hours</option>
             <option value={24}>Last 24 Hours</option>
           </select>
-          
-          <button
-            onClick={loadMetrics}
-            className="cv-btn-ghost"
-            disabled={isLoading}
-          >
+
+          <button onClick={loadMetrics} className="cv-btn-ghost" disabled={isLoading}>
             {isLoading ? '...' : '↻ Refresh'}
           </button>
         </div>
@@ -143,17 +144,21 @@ export default function MetricsPage() {
                 <span>⚡</span>
                 Cache Performance
               </h2>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Status</div>
                   <div className="text-sm font-semibold">
                     {metrics.cacheStats.exists ? (
-                      <span className={`inline-flex items-center gap-1 ${
-                        metrics.cacheStats.status === 'fresh' ? 'text-green-600' :
-                        metrics.cacheStats.status === 'stale' ? 'text-yellow-600' :
-                        'text-red-600'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center gap-1 ${
+                          metrics.cacheStats.status === 'fresh'
+                            ? 'text-green-600'
+                            : metrics.cacheStats.status === 'stale'
+                              ? 'text-yellow-600'
+                              : 'text-red-600'
+                        }`}
+                      >
                         {metrics.cacheStats.status === 'fresh' && '🟢 Fresh'}
                         {metrics.cacheStats.status === 'stale' && '🟡 Stale'}
                         {metrics.cacheStats.status === 'expired' && '🔴 Expired'}
@@ -163,34 +168,34 @@ export default function MetricsPage() {
                     )}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Cache Age</div>
                   <div className="text-sm font-semibold">
                     {metrics.cacheStats.exists ? `${metrics.cacheStats.age_minutes} min` : 'N/A'}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Size</div>
                   <div className="text-sm font-semibold">
                     {metrics.cacheStats.exists ? `${metrics.cacheStats.size_kb} KB` : 'N/A'}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Week</div>
                   <div className="text-sm font-semibold">
                     {metrics.cacheStats.exists ? metrics.cacheStats.week : 'N/A'}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Hit Rate</div>
                   <div className="text-sm font-semibold">
                     {(() => {
-                      const hits = (metrics.eventsByType['cache_hit'] || 0);
-                      const misses = (metrics.eventsByType['cache_miss'] || 0);
+                      const hits = metrics.eventsByType['cache_hit'] || 0;
+                      const misses = metrics.eventsByType['cache_miss'] || 0;
                       const total = hits + misses;
                       if (total === 0) return 'N/A';
                       const rate = ((hits / total) * 100).toFixed(1);
@@ -212,12 +217,12 @@ export default function MetricsPage() {
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Events</div>
               <div className="text-3xl font-bold">{metrics.totalEvents}</div>
             </div>
-            
+
             <div className="rounded-lg p-4 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tool Uses</div>
               <div className="text-3xl font-bold">{metrics.toolUsage.total}</div>
             </div>
-            
+
             <div className="rounded-lg p-4 bg-[rgb(var(--bg-card))] border border-[rgba(148,163,184,0.1)]">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Event Types</div>
               <div className="text-3xl font-bold">{Object.keys(metrics.eventsByType).length}</div>
@@ -257,7 +262,7 @@ export default function MetricsPage() {
                 {Object.entries(metrics.riskDistribution).map(([mode, count]) => {
                   const total = Object.values(metrics.riskDistribution).reduce((a, b) => a + b, 0);
                   const percentage = ((count / total) * 100).toFixed(1);
-                  
+
                   return (
                     <div key={mode} className="flex items-center justify-between">
                       <span className="text-sm capitalize">{mode}</span>
@@ -285,7 +290,10 @@ export default function MetricsPage() {
               <h2 className="text-lg font-semibold mb-4">Events by Type</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {Object.entries(metrics.eventsByType).map(([type, count]) => (
-                  <div key={type} className="border border-gray-200 dark:border-gray-700 rounded p-3">
+                  <div
+                    key={type}
+                    className="border border-gray-200 dark:border-gray-700 rounded p-3"
+                  >
                     <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">{type}</div>
                     <div className="text-xl font-bold">{count}</div>
                   </div>
@@ -350,4 +358,3 @@ export default function MetricsPage() {
     </main>
   );
 }
-

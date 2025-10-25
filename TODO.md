@@ -10,7 +10,7 @@
     - src/app/projections/page.tsx or data.ts (use parseProjectionsPayload)
     - tests/projections.e2e.test.ts updated
 
-- [ ] Run codemod to replace all console.* with logger
+- [ ] Run codemod to replace all console.\* with logger
   - Acceptance:
     - No console.log/warn/error in src/ (except error paths)
     - All files import logger and use structured logging
@@ -39,6 +39,6 @@
     - .github/workflows/frontend-ci.yml
 
 ## Notes
+
 - Guardrails: require schema_version + last_refresh; chips ≤ 2; conf ≥ 0.65; |Δ| ≤ 3.5–4%; fail‑closed
 - Phase 3 items: observability polish, trim mode + stale badge, projections table UX, trust snapshot v2
-

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const state = crypto.randomUUID();
 
   console.log(
-    JSON.stringify({ level: 'info', req_id: reqId, route: '/api/yahoo/connect', returnTo })
+    JSON.stringify({ level: 'info', req_id: reqId, route: '/api/yahoo/connect', returnTo }),
   );
 
   // Yahoo OAuth: enforce absolute https://www... redirect
@@ -40,8 +40,7 @@ export async function GET(req: NextRequest) {
   // Cookie domain: .customvenom.com for cross-subdomain
   res.headers.append(
     'Set-Cookie',
-    `y_state=${encodeURIComponent(stateWithReturnTo)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=600`
+    `y_state=${encodeURIComponent(stateWithReturnTo)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=600`,
   );
   return res;
 }
-

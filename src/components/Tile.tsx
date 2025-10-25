@@ -9,14 +9,18 @@ interface TileProps {
 
 export function Tile({ title, value, unit, label, status, loading = false }: TileProps) {
   return (
-    <div className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}>
+    <div
+      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
+    >
       <div className="flex justify-between items-center mb-4">
         <span className="text-lg font-semibold text-gray-800">{title}</span>
-        <span className={`px-2 py-1 rounded-xl text-xs font-bold tracking-wide ${status === 'live' ? 'bg-green-500 text-white animate-pulse' : 'bg-gray-400 text-white'}`}>
+        <span
+          className={`px-2 py-1 rounded-xl text-xs font-bold tracking-wide ${status === 'live' ? 'bg-green-500 text-white animate-pulse' : 'bg-gray-400 text-white'}`}
+        >
           {status === 'live' ? 'LIVE' : 'PLACEHOLDER'}
         </span>
       </div>
-      
+
       {loading ? (
         <div className="text-center text-xl text-gray-600 py-10">Loading...</div>
       ) : (
@@ -49,14 +53,18 @@ interface DualTileProps {
 
 export function DualTile({ title, values, label, status, loading = false }: DualTileProps) {
   return (
-    <div className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}>
+    <div
+      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
+    >
       <div className="flex justify-between items-center mb-4">
         <span className="text-lg font-semibold text-gray-800">{title}</span>
-        <span className={`px-2 py-1 rounded-xl text-xs font-bold tracking-wide ${status === 'live' ? 'bg-green-500 text-white animate-pulse' : 'bg-gray-400 text-white'}`}>
+        <span
+          className={`px-2 py-1 rounded-xl text-xs font-bold tracking-wide ${status === 'live' ? 'bg-green-500 text-white animate-pulse' : 'bg-gray-400 text-white'}`}
+        >
           {status === 'live' ? 'LIVE' : 'PLACEHOLDER'}
         </span>
       </div>
-      
+
       {loading ? (
         <div className="text-center text-xl text-gray-600 py-10">Loading...</div>
       ) : (
@@ -82,4 +90,3 @@ export function DualTile({ title, values, label, status, loading = false }: Dual
     </div>
   );
 }
-

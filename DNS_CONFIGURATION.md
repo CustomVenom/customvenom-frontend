@@ -15,11 +15,11 @@ These are the **exact DNS records** provided by Vercel for your domain:
 
 **Add/Update these records:**
 
-| Type | Name | Target/Value | Proxy Status | TTL | Notes |
-|------|------|--------------|--------------|-----|-------|
-| **CNAME** | **www** | **b9eb6ad1e241f07c.vercel-dns-017.com.** | 🔘 DNS only (gray) | 300-600 | Root domain → Vercel |
-| A | @ | 76.76.2.13 | 🔘 DNS only (gray) | 300-600 | Vercel IP (optional) |
-| CNAME | api | (existing) | 🟠 Proxied (orange) | Auto | Keep as-is |
+| Type      | Name    | Target/Value                             | Proxy Status        | TTL     | Notes                |
+| --------- | ------- | ---------------------------------------- | ------------------- | ------- | -------------------- |
+| **CNAME** | **www** | **b9eb6ad1e241f07c.vercel-dns-017.com.** | 🔘 DNS only (gray)  | 300-600 | Root domain → Vercel |
+| A         | @       | 76.76.2.13                               | 🔘 DNS only (gray)  | 300-600 | Vercel IP (optional) |
+| CNAME     | api     | (existing)                               | 🟠 Proxied (orange) | Auto    | Keep as-is           |
 
 ---
 
@@ -28,6 +28,7 @@ These are the **exact DNS records** provided by Vercel for your domain:
 ### 1. Proxy Status - MUST BE DNS ONLY (Gray Cloud)
 
 For Vercel domains:
+
 - ✅ **Gray cloud** (DNS only) - CORRECT
 - ❌ **Orange cloud** (Proxied) - WILL NOT WORK
 
@@ -45,6 +46,7 @@ The trailing dot `.` is important! Some DNS providers add it automatically, but 
 ### 3. Keep API Subdomain
 
 Your existing `api.customvenom.com` is for Cloudflare Workers. **Keep it as-is:**
+
 - Keep proxied (orange cloud) ✅
 - Don't change any settings ✅
 
@@ -113,6 +115,7 @@ Legend:
 **Time to take effect:** 5 minutes to 48 hours (usually 15-30 minutes)
 
 **Check propagation:**
+
 - https://dnschecker.org/#CNAME/www.customvenom.com
 - https://www.whatsmydns.net/#CNAME/www.customvenom.com
 
@@ -138,6 +141,7 @@ nslookup www.customvenom.com
 Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/domains
 
 You should see:
+
 ```
 ✅ www.customvenom.com - Valid Configuration
 ```
@@ -160,11 +164,13 @@ Invoke-WebRequest -Uri "https://www.customvenom.com" -Method Head
 **Automatic:** Vercel provisions SSL certificates automatically via Let's Encrypt.
 
 **Timeline:**
+
 - DNS propagation: 5-30 minutes
 - SSL provisioning: 5-15 minutes after DNS
 - Total time: 10-45 minutes typically
 
 **Check SSL status:**
+
 - Go to Vercel domains page
 - Look for green checkmark next to domain
 - Test: `https://www.customvenom.com` should have valid SSL
@@ -188,6 +194,7 @@ Once domain is live, update in Vercel:
 **Go to:** https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 
 **Update Production:**
+
 ```bash
 NEXTAUTH_URL=https://www.customvenom.com
 ```
@@ -198,11 +205,11 @@ NEXTAUTH_URL=https://www.customvenom.com
 
 ## 📊 Final Configuration Summary
 
-| Domain | Purpose | Points To | Status |
-|--------|---------|-----------|--------|
-| `customvenom.com` | Root (optional) | 76.76.2.13 (Vercel) | Configure if wanted |
-| `www.customvenom.com` | Frontend | b9eb6ad1e241f07c.vercel-dns-017.com | ✅ Configure this |
-| `api.customvenom.com` | Workers API | Cloudflare Workers | ✅ Already working |
+| Domain                | Purpose         | Points To                           | Status              |
+| --------------------- | --------------- | ----------------------------------- | ------------------- |
+| `customvenom.com`     | Root (optional) | 76.76.2.13 (Vercel)                 | Configure if wanted |
+| `www.customvenom.com` | Frontend        | b9eb6ad1e241f07c.vercel-dns-017.com | ✅ Configure this   |
+| `api.customvenom.com` | Workers API     | Cloudflare Workers                  | ✅ Already working  |
 
 ---
 
@@ -211,11 +218,13 @@ NEXTAUTH_URL=https://www.customvenom.com
 ### "Invalid DNS Configuration" in Vercel
 
 **Causes:**
+
 1. Cloudflare proxy is enabled (orange cloud)
 2. DNS hasn't propagated yet
 3. CNAME target is wrong
 
 **Fix:**
+
 1. Verify cloud is **gray** (not orange)
 2. Wait 15-30 minutes for propagation
 3. Double-check CNAME: `b9eb6ad1e241f07c.vercel-dns-017.com.`
@@ -224,7 +233,8 @@ NEXTAUTH_URL=https://www.customvenom.com
 
 **Cause:** Cloudflare proxy enabled on Vercel domain
 
-**Fix:** 
+**Fix:**
+
 1. Go to Cloudflare DNS
 2. Click orange cloud next to www record
 3. Change to gray cloud (DNS only)
@@ -235,6 +245,7 @@ NEXTAUTH_URL=https://www.customvenom.com
 **Cause:** Certificate not yet provisioned
 
 **Fix:**
+
 1. Wait 15 minutes after DNS is valid
 2. Check Vercel domains page for SSL status
 3. If still failing after 1 hour, remove and re-add domain in Vercel
@@ -244,11 +255,13 @@ NEXTAUTH_URL=https://www.customvenom.com
 ## 📝 Quick Checklist
 
 Before starting:
+
 - [ ] Access to Cloudflare DNS (https://dash.cloudflare.com)
 - [ ] Access to Vercel domains (https://vercel.com/incarcers-projects/customvenom-frontend/settings/domains)
 - [ ] Domain already added in Vercel
 
 Configuration steps:
+
 - [ ] Add www CNAME record in Cloudflare
 - [ ] Set proxy to DNS only (gray cloud)
 - [ ] Add root A record (optional)
@@ -261,6 +274,7 @@ Configuration steps:
 - [ ] Update Google OAuth redirect URI
 
 Google OAuth Update:
+
 - [ ] Add `https://www.customvenom.com/api/auth/callback/google` to Google Console
 
 ---
@@ -278,4 +292,3 @@ Google OAuth Update:
 **Your Unique CNAME:** `b9eb6ad1e241f07c.vercel-dns-017.com.`  
 **Status:** Ready to configure DNS  
 **Next Action:** Add CNAME record in Cloudflare DNS
-

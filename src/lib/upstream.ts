@@ -132,7 +132,7 @@ export async function resilientFetch(
     timeout?: number;
     retries?: number;
     retryDelay?: number;
-  } = {}
+  } = {},
 ): Promise<Response> {
   const {
     service = 'default',

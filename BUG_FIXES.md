@@ -9,6 +9,7 @@ Found and fixed **6 non-cosmetic bugs** in the adapter system through systematic
 ## Bugs Fixed
 
 ### 1. ❌ **React Key Collision** (Critical)
+
 **Location**: `ReasonChips.tsx` line 10  
 **Issue**: Used `r.label` as React key, causing collisions if two reasons have the same label  
 **Impact**: Could cause React reconciliation errors, UI flickering, or incorrect re-renders  
@@ -22,6 +23,7 @@ Found and fixed **6 non-cosmetic bugs** in the adapter system through systematic
 ---
 
 ### 2. ❌ **Negative Zero Display** (UX Bug)
+
 **Location**: `ReasonChipsAdapter.tsx` line 15  
 **Issue**: JavaScript's `-0` would display as `-0.0%` instead of `0.0%`  
 **Impact**: Confusing UI showing meaningless negative zeros  
@@ -35,6 +37,7 @@ const normalized = Object.is(clamped, -0) ? 0 : clamped;
 ---
 
 ### 3. ❌ **Fraction Detection Edge Case** (Data Bug)
+
 **Location**: `adapter.ts` line 55  
 **Issue**: Used `≤ 0.5` threshold, making `0.5` ambiguous (50% or 0.5%?)  
 **Impact**: Inconsistent interpretation of edge-case values  
@@ -46,6 +49,7 @@ const normalized = Object.is(clamped, -0) ? 0 : clamped;
 ```
 
 **New Behavior**:
+
 - `0.5` → 50% (fraction)
 - `1.0` → 1.0% (percent)
 - `0.99` → 99% → clamped to 3.5%
@@ -53,6 +57,7 @@ const normalized = Object.is(clamped, -0) ? 0 : clamped;
 ---
 
 ### 4. ❌ **Sort Instability** (UI Flicker Bug)
+
 **Location**: `adapter.ts` line 68  
 **Issue**: When two reasons have same `abs(effect)`, sort order was undefined  
 **Impact**: UI flickering on re-renders due to unstable sort  
@@ -69,6 +74,7 @@ const normalized = Object.is(clamped, -0) ? 0 : clamped;
 ---
 
 ### 5. ❌ **Zero-Effect Chips Shown** (UX Clutter)
+
 **Location**: `adapter.ts` (no filtering)  
 **Issue**: Chips with `0.0%` effect were displayed but provided no value  
 **Impact**: UI clutter, wasted screen space, user confusion  
@@ -76,13 +82,14 @@ const normalized = Object.is(clamped, -0) ? 0 : clamped;
 
 ```typescript
 // Line 86
-const nonZero = normalized.filter(n => Math.abs(n.effectPct) > 0.01);
+const nonZero = normalized.filter((n) => Math.abs(n.effectPct) > 0.01);
 if (!nonZero.length) return [];
 ```
 
 ---
 
 ### 6. ❌ **NaN/Infinity Not Handled** (Potential Crash)
+
 **Location**: `adapter.ts` line 54  
 **Issue**: No check for `NaN`/`Infinity` after arithmetic operations  
 **Impact**: Could produce invalid numbers, break UI rendering  
@@ -91,7 +98,9 @@ if (!nonZero.length) return [];
 ```typescript
 // Line 57
 if (!Number.isFinite(rawVal)) {
-  return { /* safe defaults with 0 effect */ };
+  return {
+    /* safe defaults with 0 effect */
+  };
 }
 ```
 
@@ -115,6 +124,7 @@ Added **6 new edge-case tests** to prevent regressions:
 ## Test Results
 
 ### Before Fixes
+
 ```
 ❌ 3 tests failing
 ❌ Edge cases not covered
@@ -122,6 +132,7 @@ Added **6 new edge-case tests** to prevent regressions:
 ```
 
 ### After Fixes
+
 ```
 ✅ 17/17 adapter tests pass
 ✅ 4/4 E2E tests pass
@@ -133,12 +144,12 @@ Added **6 new edge-case tests** to prevent regressions:
 
 ## Files Modified
 
-| File | Lines Changed | Purpose |
-|------|---------------|---------|
-| `src/lib/reasons/adapter.ts` | +30 / -10 | Core bug fixes |
-| `src/components/ReasonChips.tsx` | +1 / -1 | Key fix |
-| `src/components/ReasonChipsAdapter.tsx` | +6 / -2 | Display fix |
-| `src/lib/reasons/adapter.test.ts` | +56 / -14 | Test coverage |
+| File                                    | Lines Changed | Purpose        |
+| --------------------------------------- | ------------- | -------------- |
+| `src/lib/reasons/adapter.ts`            | +30 / -10     | Core bug fixes |
+| `src/components/ReasonChips.tsx`        | +1 / -1       | Key fix        |
+| `src/components/ReasonChipsAdapter.tsx` | +6 / -2       | Display fix    |
+| `src/lib/reasons/adapter.test.ts`       | +56 / -14     | Test coverage  |
 
 **Total**: +93 / -27 lines (net +66 for safety)
 
@@ -147,14 +158,17 @@ Added **6 new edge-case tests** to prevent regressions:
 ## Impact Assessment
 
 ### Critical (Would Break Production)
+
 - ✅ React key collision → Could cause UI errors
 - ✅ NaN/Infinity → Could crash rendering
 
 ### High (Poor UX)
+
 - ✅ Zero-effect chips → Cluttered UI
 - ✅ Sort instability → UI flickering
 
 ### Medium (Edge Cases)
+
 - ✅ Negative zero → Confusing display
 - ✅ Fraction detection → Data misinterpretation
 
@@ -163,15 +177,17 @@ Added **6 new edge-case tests** to prevent regressions:
 ## Verification Steps
 
 1. **Run Tests**
+
    ```bash
    npx vitest run src/lib/reasons/adapter.test.ts
    # ✅ 17/17 pass
-   
+
    npx vitest run tests/projections.e2e.test.ts
    # ✅ 4/4 pass
    ```
 
 2. **Check Linter**
+
    ```bash
    npm run lint
    # ✅ 0 errors
@@ -188,11 +204,13 @@ Added **6 new edge-case tests** to prevent regressions:
 ## Lessons Learned
 
 ### What Worked
+
 - ✅ Systematic code review caught non-obvious bugs
 - ✅ Test-driven approach validated fixes
 - ✅ Zod validation provided defense-in-depth
 
 ### Best Practices Applied
+
 1. **Stable sorting** - Always provide tie-breaker
 2. **Defensive programming** - Check `isFinite()` before math
 3. **Filter meaningless data** - Don't show 0% effects
@@ -204,12 +222,14 @@ Added **6 new edge-case tests** to prevent regressions:
 ## Future Improvements
 
 ### Potential Enhancements (Not Bugs)
+
 1. **Confidence filtering** - If API adds confidence field
 2. **Accessibility** - ARIA labels for chip meanings
 3. **Animation** - Smooth transitions when chips change
 4. **Theming** - Custom colors per reason type
 
 ### Additional Tests to Consider
+
 - Performance test with 100+ reasons
 - React Testing Library component tests
 - Visual regression tests
@@ -247,4 +267,3 @@ This is intentional - they provide no value to users.
 ---
 
 **Status**: All bugs fixed, all tests passing, ready for production! ✅
-

@@ -18,6 +18,7 @@ React 19 + Next.js 15 frontend for fantasy football projections and decision too
 - ✅ **League Import Stub** - Test endpoint ready at `/api/league/import`
 
 **Setup Guides:**
+
 - [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
 - [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
 

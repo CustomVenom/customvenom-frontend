@@ -5,16 +5,19 @@
 Successfully integrated all four UI features into the `/projections` page:
 
 ### 1. ✅ Density Toggle
+
 - Already present in global layout header (top-right)
 - Table padding automatically adjusts via CSS variables
 - Persists in localStorage
 
 ### 2. ✅ Loading Skeletons
+
 - Replaced plain "Loading..." text with `TableSkeleton`
 - Shows 8 rows × 4 cols grid during initial load
 - Prevents layout shift
 
 ### 3. ✅ Reason Chips with Clamping
+
 - Replaced old `ReasonsDisplay` component with `ReasonChips`
 - Automatically filters by confidence ≥ 0.65
 - Max 2 chips displayed
@@ -22,11 +25,13 @@ Successfully integrated all four UI features into the `/projections` page:
 - Used in both projection items and important decisions
 
 ### 4. ✅ Glossary Tooltips
+
 - Added to "Projections" title (links to "Baseline" definition)
 - Added to "Sources" label (links to "Coverage" definition)
 - Keyboard accessible and screen reader friendly
 
 ### 5. ✅ Reload Data Button
+
 - Triggers full data refetch
 - Shows skeleton animation during reload
 - Provides visual feedback for data freshness
@@ -56,16 +61,15 @@ Successfully integrated all four UI features into the `/projections` page:
 The projections page now expects `reasons` to be an array of `Reason` objects, not strings.
 
 ### Old Format (strings):
+
 ```json
 {
-  "reasons": [
-    "High usage in last 3 games",
-    "Favorable matchup"
-  ]
+  "reasons": ["High usage in last 3 games", "Favorable matchup"]
 }
 ```
 
 ### New Format (Reason objects):
+
 ```json
 {
   "reasons": [
@@ -84,21 +88,24 @@ The projections page now expects `reasons` to be an array of `Reason` objects, n
 ```
 
 ### Reason Type Definition:
+
 ```typescript
 type Reason = {
-  label: string      // Short display label (e.g., "Usage ↑", "Weather ↓")
-  effect: number     // Signed percentage effect (e.g., +2.1, -1.4)
-  confidence: number // 0..1 (reasons < 0.65 are filtered out)
-}
+  label: string; // Short display label (e.g., "Usage ↑", "Weather ↓")
+  effect: number; // Signed percentage effect (e.g., +2.1, -1.4)
+  confidence: number; // 0..1 (reasons < 0.65 are filtered out)
+};
 ```
 
 ### Migration Path
 
 **Option 1: Update API immediately**
+
 - Modify `/api/projections` to return new format
 - Rebuild projection generation logic to include effect and confidence
 
 **Option 2: Add adapter layer**
+
 - Keep existing API format
 - Add client-side adapter to convert strings to Reason objects:
 
@@ -106,12 +113,12 @@ type Reason = {
 // Temporary adapter (remove once API is updated)
 function adaptLegacyReasons(reasons: string[] | Reason[]): Reason[] {
   if (!reasons || reasons.length === 0) return [];
-  
+
   // Check if already in new format
   if (typeof reasons[0] === 'object' && 'label' in reasons[0]) {
     return reasons as Reason[];
   }
-  
+
   // Convert old string format to new format
   return (reasons as string[]).map((reason, index) => ({
     label: reason.substring(0, 20), // Truncate for display
@@ -198,6 +205,7 @@ npm run dev
 ## Diff Summary
 
 ### Added Imports
+
 ```typescript
 import { ReasonChips } from '@/components/ReasonChips';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
@@ -206,6 +214,7 @@ import { Reason } from '@/lib/reasonsClamp';
 ```
 
 ### Changed Interfaces
+
 ```typescript
 // Before: reasons?: string[]
 // After:  reasons?: Reason[]
@@ -219,20 +228,23 @@ interface ImportantDecision {
 ```
 
 ### Removed Component
+
 ```typescript
 // ReasonsDisplay component - replaced by ReasonChips
 ```
 
 ### Added State & Handler
+
 ```typescript
 const [reloadKey, setReloadKey] = useState(0);
 
 const handleReload = () => {
-  setReloadKey(prev => prev + 1);
+  setReloadKey((prev) => prev + 1);
 };
 ```
 
 ### Enhanced Loading State
+
 ```typescript
 // Before: Simple "Loading projections..." text
 // After: TableSkeleton with proper structure
@@ -240,6 +252,7 @@ const handleReload = () => {
 ```
 
 ### Added UI Elements
+
 - Reload Data button with icon
 - GlossaryTip on title and sources
 - ReasonChips replacing old reason display
@@ -266,4 +279,3 @@ const handleReload = () => {
 5. Deploy to Vercel preview for review
 
 Ready for PR! 🚀
-

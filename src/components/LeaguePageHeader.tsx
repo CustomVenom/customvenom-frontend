@@ -85,4 +85,3 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
     </div>
   );
 }
-

@@ -14,6 +14,7 @@ This session completed two major initiatives:
 2. **Auth & Access Control System** - Implemented enterprise-grade RBAC with admin protection
 
 Both systems are **fully functional** and **tested**. The application now has:
+
 - ✅ Persistent analytics storage in PostgreSQL
 - ✅ Role-based access control (4 tiers)
 - ✅ Master admin access (owner can never be locked out)
@@ -27,11 +28,13 @@ Both systems are **fully functional** and **tested**. The application now has:
 ### 1. Database Migration to Neon PostgreSQL
 
 #### Environment Setup
+
 - ✅ DATABASE_URL configured locally (.env.local created)
 - ✅ Windows environment variable set (`setx DATABASE_URL`)
 - ✅ Neon connection string tested and verified
 
 #### Database Schema
+
 - ✅ Prisma schema pushed to Neon database
 - ✅ Tables created and verified:
   - `AnalyticsEvent` - Individual analytics events
@@ -40,17 +43,20 @@ Both systems are **fully functional** and **tested**. The application now has:
   - `League`, `UserPreferences` - User data tables (existing)
 
 #### API Endpoints
+
 - ✅ **POST /api/analytics/track** - Store analytics events (200 OK)
 - ✅ **GET /api/analytics/rollups?hours=24** - Retrieve rollup data (200 OK)
 - ✅ **GET /api/analytics/track?hours=24** - Retrieve recent events (200 OK)
 
 #### Verification
+
 - ✅ Database connection verified
 - ✅ Events successfully stored and retrieved
 - ✅ Rollups calculated correctly
 - ✅ /ops/metrics page rendering with data
 
 **Database Connection:**
+
 ```
 Host: ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech
 Database: neondb
@@ -63,6 +69,7 @@ Status: Connected and operational
 ### 2. Authentication & Access Control System
 
 #### Files Created
+
 1. **`src/lib/rbac.ts`** (142 lines)
    - Role-based access control system
    - 4 roles: Admin, Team, Pro, Free
@@ -106,6 +113,7 @@ Status: Connected and operational
    - Important notes
 
 #### Files Modified
+
 1. **`src/lib/entitlements.ts`**
    - Integrated with RBAC system
    - Enhanced entitlements interface
@@ -125,6 +133,7 @@ Status: Connected and operational
 #### Key Features Implemented
 
 **Role Hierarchy:**
+
 ```
 ADMIN (100)  ← Owner - Full system access
   ↓
@@ -146,6 +155,7 @@ FREE (10)    ← Free tier users
 | Manage Users | ✅ | ❌ | ❌ | ❌ |
 
 **Security Features:**
+
 - ✅ Hardcoded admin email protection (can't be locked out)
 - ✅ Database session storage (not JWT)
 - ✅ SSL/TLS encryption
@@ -159,17 +169,20 @@ FREE (10)    ← Free tier users
 ## 🚀 Current State
 
 ### Development Environment
+
 - **Server:** Running on http://localhost:3000 (or 3001)
 - **Database:** Connected to Neon PostgreSQL
 - **Prisma Studio:** Available on http://localhost:5555
 - **Environment:** .env.local configured with DATABASE_URL
 
 ### Production Deployment Status
+
 - **Status:** NOT YET DEPLOYED
 - **Reason:** Awaiting owner email configuration and testing
 - **Readiness:** Code is production-ready
 
 ### What Works Right Now
+
 1. ✅ User authentication (Google OAuth)
 2. ✅ Analytics event storage in database
 3. ✅ Analytics rollup calculations
@@ -178,6 +191,7 @@ FREE (10)    ← Free tier users
 6. ✅ Admin email override system
 
 ### What Needs Configuration
+
 1. ⏭️ Add owner's email to `ADMIN_EMAILS` array
 2. ⏭️ Configure production environment variables
 3. ⏭️ Set up Stripe webhook in production
@@ -193,6 +207,7 @@ FREE (10)    ← Free tier users
 **File:** `customvenom-frontend/src/lib/rbac.ts` (Line 19)
 
 **Current State:**
+
 ```typescript
 const ADMIN_EMAILS = [
   // Add your email here
@@ -201,19 +216,22 @@ const ADMIN_EMAILS = [
 ```
 
 **Required Action:**
+
 ```typescript
 const ADMIN_EMAILS = [
-  'owner@customvenom.com',  // ← ADD OWNER EMAIL HERE
+  'owner@customvenom.com', // ← ADD OWNER EMAIL HERE
 ];
 ```
 
 **Why This Matters:**
+
 - This email will ALWAYS have admin access
 - Can never be locked out of the system
 - Overrides any database role changes
 - Required for accessing /ops/metrics and admin features
 
 **Testing:**
+
 1. Add email to array
 2. Sign out and sign in with that email
 3. Go to /ops/metrics
@@ -251,6 +269,7 @@ API_BASE="https://your-workers-api.workers.dev"
 ```
 
 **Security Notes:**
+
 - ⚠️ DATABASE_URL contains credentials - keep secret
 - ⚠️ Never commit .env.local to git (already in .gitignore)
 - ⚠️ Rotate AUTH_SECRET regularly
@@ -263,6 +282,7 @@ API_BASE="https://your-workers-api.workers.dev"
 **When to do this:** Before accepting real payments
 
 **Steps:**
+
 1. Go to Stripe Dashboard → Webhooks
 2. Click "Add endpoint"
 3. URL: `https://yourdomain.com/api/stripe/webhook`
@@ -275,6 +295,7 @@ API_BASE="https://your-workers-api.workers.dev"
 6. Set as `STRIPE_WEBHOOK_SECRET` in Vercel
 
 **Test locally:**
+
 ```bash
 # Install Stripe CLI
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -290,6 +311,7 @@ stripe trigger checkout.session.completed
 ### Key Tables
 
 #### AnalyticsEvent
+
 ```prisma
 model AnalyticsEvent {
   id         String   @id @default(cuid())
@@ -302,9 +324,9 @@ model AnalyticsEvent {
   demoMode   Boolean  @default(true)
   timestamp  DateTime @default(now())
   receivedAt DateTime @default(now())
-  
+
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
+
   @@index([userId, eventType])
   @@index([timestamp])
   @@index([sessionId])
@@ -314,6 +336,7 @@ model AnalyticsEvent {
 ```
 
 #### HourlyRollup
+
 ```prisma
 model HourlyRollup {
   id               String   @id @default(cuid())
@@ -325,12 +348,13 @@ model HourlyRollup {
   totalEvents      Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  
+
   @@index([hour])
 }
 ```
 
 #### User (Relevant Fields)
+
 ```prisma
 model User {
   id                 String   @id @default(cuid())
@@ -340,7 +364,7 @@ model User {
   tier               String?  // pro, team
   stripeCustomerId   String?  @unique
   paidUntil          DateTime?
-  
+
   events AnalyticsEvent[]
   // ... other relations
 }
@@ -353,28 +377,33 @@ model User {
 ### Local Testing (Before Production)
 
 **Database Connection:**
+
 - [ ] `npx prisma studio` opens successfully
 - [ ] Can see AnalyticsEvent and HourlyRollup tables
 - [ ] Tables have data from local testing
 
 **Authentication:**
+
 - [ ] Can sign in with Google
 - [ ] Session persists on refresh
 - [ ] Can sign out successfully
 
 **Admin Access:**
+
 - [ ] Added email to `ADMIN_EMAILS`
 - [ ] Signed in with admin email
 - [ ] Can access /ops/metrics without paywall
 - [ ] Database shows `role: "admin"` for admin user
 
 **Analytics Endpoints:**
+
 - [ ] POST /api/analytics/track returns 200
 - [ ] Events appear in database
 - [ ] GET /api/analytics/rollups returns data
 - [ ] Rollup calculations are correct
 
 **Access Control:**
+
 - [ ] Admin can access all features
 - [ ] Free users see paywalls on Pro features
 - [ ] Non-admin users can't access /ops/metrics
@@ -382,17 +411,20 @@ model User {
 ### Production Testing (After Deployment)
 
 **Environment:**
+
 - [ ] All environment variables set in Vercel
 - [ ] DATABASE_URL points to production database
 - [ ] Auth secrets are production values
 
 **Stripe Integration:**
+
 - [ ] Webhook endpoint configured
 - [ ] Test subscription flow (test mode)
 - [ ] User role updates after payment
 - [ ] Cancellation removes Pro access
 
 **Security:**
+
 - [ ] Admin email access works in production
 - [ ] SSL/HTTPS working on all pages
 - [ ] No sensitive data in client-side code
@@ -403,6 +435,7 @@ model User {
 ## 🚨 Important Notes & Gotchas
 
 ### Database
+
 1. **Connection String Security**
    - Contains password - never commit to git
    - Already in .env.local (which is gitignored)
@@ -493,12 +526,14 @@ customvenom-frontend/
 ## 🔄 Next Steps (Prioritized)
 
 ### Immediate (Before Production)
+
 1. **Add admin email** to `src/lib/rbac.ts` ADMIN_EMAILS array
 2. **Test admin access** locally
 3. **Review security docs** in SECURITY_AND_ACCESS_CONTROL.md
 4. **Set up Vercel project** (if not already done)
 
 ### Pre-Deployment
+
 5. **Configure environment variables** in Vercel
 6. **Set up Stripe webhook** (test mode first)
 7. **Test subscription flow** end-to-end
@@ -506,6 +541,7 @@ customvenom-frontend/
 9. **Check admin access** works in preview deployment
 
 ### Production Launch
+
 10. **Deploy to production** on Vercel
 11. **Update Stripe webhook** to production URL
 12. **Switch to live Stripe keys**
@@ -514,6 +550,7 @@ customvenom-frontend/
 15. **Verify admin access** in production
 
 ### Post-Launch
+
 16. **Monitor error logs** (Sentry, Vercel logs)
 17. **Check database performance** (Neon dashboard)
 18. **Review user access patterns**
@@ -527,6 +564,7 @@ customvenom-frontend/
 ### "Can't access /ops/metrics - seeing paywall"
 
 **Solution:**
+
 1. Check `src/lib/rbac.ts` - is your email in `ADMIN_EMAILS`?
 2. Sign out completely
 3. Sign in with the email you added
@@ -535,6 +573,7 @@ customvenom-frontend/
 ### "Database connection failed"
 
 **Solution:**
+
 1. Check `.env.local` exists and has `DATABASE_URL`
 2. Verify connection string is correct
 3. Test with: `npx prisma studio`
@@ -543,6 +582,7 @@ customvenom-frontend/
 ### "Analytics events not saving"
 
 **Solution:**
+
 1. Check browser console for errors
 2. Check server logs for POST /api/analytics/track
 3. Verify DATABASE_URL is accessible
@@ -551,6 +591,7 @@ customvenom-frontend/
 ### "User still has Pro after canceling"
 
 **Solution:**
+
 1. Check Stripe webhook is configured
 2. Verify `STRIPE_WEBHOOK_SECRET` is set correctly
 3. Check webhook logs in Stripe Dashboard
@@ -559,6 +600,7 @@ customvenom-frontend/
 ### "Admin access not working in production"
 
 **Solution:**
+
 1. Verify code was deployed with your email in `ADMIN_EMAILS`
 2. Check you're signed in with the correct email
 3. Sign out and sign in again
@@ -570,12 +612,14 @@ customvenom-frontend/
 ## 📞 Support Resources
 
 ### Documentation
+
 - **Security Guide:** `SECURITY_AND_ACCESS_CONTROL.md`
 - **Admin Setup:** `ADMIN_SETUP_GUIDE.md`
 - **System Summary:** `AUTH_SYSTEM_SUMMARY.md`
 - **DB Migration:** `MIGRATION_VERIFICATION.md`
 
 ### External Resources
+
 - **Prisma Docs:** https://www.prisma.io/docs
 - **NextAuth.js:** https://next-auth.js.org
 - **Stripe Webhooks:** https://stripe.com/docs/webhooks
@@ -583,6 +627,7 @@ customvenom-frontend/
 - **Vercel Deploy:** https://vercel.com/docs
 
 ### Database Management
+
 - **Prisma Studio:** `npx prisma studio` (GUI for data)
 - **Neon Console:** https://console.neon.tech
 - **Direct SQL:** Use Neon SQL Editor for queries
@@ -592,6 +637,7 @@ customvenom-frontend/
 ## ✅ Acceptance Criteria Met
 
 ### Database Migration (Phase 2.1b)
+
 - [x] DATABASE_URL configured locally
 - [x] Prisma schema pushed to Neon
 - [x] AnalyticsEvent table created and working
@@ -602,6 +648,7 @@ customvenom-frontend/
 - [x] All tests passing
 
 ### Auth & Access Control
+
 - [x] RBAC system implemented
 - [x] 4 roles with hierarchy
 - [x] 10 granular permissions
@@ -616,12 +663,14 @@ customvenom-frontend/
 ## 🎯 Success Metrics
 
 ### System Performance
+
 - ✅ Database queries < 100ms average
 - ✅ Analytics API endpoints < 3s response time
 - ✅ Page load times acceptable
 - ✅ No errors in linting
 
 ### Security Posture
+
 - ✅ SSL/TLS encryption on all connections
 - ✅ Admin access cannot be revoked
 - ✅ User data isolated per account
@@ -629,6 +678,7 @@ customvenom-frontend/
 - ✅ Stripe webhooks signature-verified
 
 ### User Experience
+
 - ✅ Seamless authentication flow
 - ✅ Clear access control messaging
 - ✅ No regressions on existing features
@@ -639,6 +689,7 @@ customvenom-frontend/
 ## 📝 Summary
 
 **What works:**
+
 - Complete database migration to Neon PostgreSQL
 - Enterprise-grade authentication & access control
 - Analytics event tracking and rollups
@@ -647,6 +698,7 @@ customvenom-frontend/
 - Stripe subscription integration (ready)
 
 **What's needed:**
+
 - Add owner email to ADMIN_EMAILS
 - Configure production environment variables
 - Set up Stripe webhook in production
@@ -662,6 +714,7 @@ customvenom-frontend/
 ## 🎉 Session Complete
 
 **Total Implementation:**
+
 - 7 new files created
 - 3 existing files enhanced
 - 0 linting errors
@@ -669,6 +722,7 @@ customvenom-frontend/
 - 100% backward compatible
 
 **Next Developer:**
+
 1. Read this handoff document
 2. Read ADMIN_SETUP_GUIDE.md for quick start
 3. Add your email to ADMIN_EMAILS
@@ -681,7 +735,6 @@ customvenom-frontend/
 
 **End of Handoff Document**
 
-*Generated: October 18, 2025*  
-*Session Duration: ~2 hours*  
-*Status: Complete*
-
+_Generated: October 18, 2025_  
+_Session Duration: ~2 hours_  
+_Status: Complete_

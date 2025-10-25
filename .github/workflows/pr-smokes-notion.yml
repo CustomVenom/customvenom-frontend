@@ -116,7 +116,7 @@ jobs:
 
           # Build check results (if tests ran)
           if [ "${{ steps.checks.outcome }}" = "success" ]; then
-            CHECK_RESULTS="Build Checks: ${{ steps.checks.outputs.status_emoji }} ${{ steps.checks.outputs.overall_status }} • TypeScript: ${{ steps.checks.outputs.test1 }} • Next.js Build: ${{ steps.checks.outputs.test2 }} • Linting: ${{ steps.checks.outputs.test3 }}"
+            CHECK_RESULTS="Build Checks: ${{ steps.checks.outputs.status_emoji }} ${{ steps.checks.outputs.overall_status }} ï¿½ TypeScript: ${{ steps.checks.outputs.test1 }} ï¿½ Next.js Build: ${{ steps.checks.outputs.test2 }} ï¿½ Linting: ${{ steps.checks.outputs.test3 }}"
           else
             CHECK_RESULTS="Build checks skipped (PR closed or checks failed to run)"
           fi
@@ -133,7 +133,7 @@ jobs:
               children: [
                 {heading_3: {rich_text: [{type:"text", text:{content: $title}}]}},
                 {paragraph: {rich_text: [
-                  {type:"text", text:{content: ($status + "  •  ")}},
+                  {type:"text", text:{content: ($status + "  ï¿½  ")}},
                   {type:"text", text:{content: "View PR", link:{url: $url}}}
                 ]}},
                 {paragraph: {rich_text: [{type:"text", text:{content: ("Repo: " + $repo)}}]}},
@@ -157,4 +157,3 @@ jobs:
           else
             echo "[WARN] Notion response: $RESPONSE"
           fi
-

@@ -7,7 +7,9 @@ import { LeagueChooser } from './LeagueChooser';
 import type { MeLeaguesResponse } from '@/types/leagues';
 
 export function LeagueSwitcher() {
-  const [data, setData] = useState<MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } | null>(null);
+  const [data, setData] = useState<
+    (MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string }) | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -29,7 +31,7 @@ export function LeagueSwitcher() {
       });
       localStorage.setItem('cv_last_league', newActive);
       setSelectedLeague(newActive);
-      setData((prev) => prev ? { ...prev, active_league: newActive } : null);
+      setData((prev) => (prev ? { ...prev, active_league: newActive } : null));
     } catch (err) {
       console.error('[LeagueSwitcher] Failed to update active league', err);
     } finally {
@@ -45,23 +47,29 @@ export function LeagueSwitcher() {
 
       const res = await fetch('/api/leagues', {
         cache: 'no-store',
-        headers: { 'accept': 'application/json' },
-        signal: controller.signal
+        headers: { accept: 'application/json' },
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
       requestId = res.headers.get('x-request-id') || 'no-request-id';
 
       if (res.status === 404) {
-        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
+        setErrorDetails(
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
+        );
         throw new Error('leagues_endpoint_not_found');
       }
       if (res.status === 401) {
-        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
+        setErrorDetails(
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
+        );
         throw new Error('auth_required');
       }
       if (!res.ok) {
-        setErrorDetails(JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2));
+        setErrorDetails(
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
+        );
         throw new Error(`HTTP ${res.status}`);
       }
 
@@ -70,7 +78,8 @@ export function LeagueSwitcher() {
         throw new Error('Non-JSON response');
       }
 
-      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } = await res.json();
+      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } =
+        await res.json();
 
       // Handle empty leagues array explicitly
       if (!json.leagues || json.leagues.length === 0) {
@@ -81,11 +90,17 @@ export function LeagueSwitcher() {
           synced_leagues: [],
         });
         setError('No leagues found. Try refreshing your league data.');
-        setErrorDetails(JSON.stringify({
-          requestId,
-          connections: json.connections?.length || 0,
-          leagueCount: json.leagues?.length || 0
-        }, null, 2));
+        setErrorDetails(
+          JSON.stringify(
+            {
+              requestId,
+              connections: json.connections?.length || 0,
+              leagueCount: json.leagues?.length || 0,
+            },
+            null,
+            2,
+          ),
+        );
         return;
       }
 
@@ -111,11 +126,17 @@ export function LeagueSwitcher() {
       console.error('[LeagueSwitcher]', err);
       const message = err instanceof Error ? err.message : 'Failed to load leagues';
       setError(message);
-      setErrorDetails(JSON.stringify({
-        requestId,
-        error: err instanceof Error ? err.message : String(err),
-        stack: err instanceof Error ? err.stack : undefined
-      }, null, 2));
+      setErrorDetails(
+        JSON.stringify(
+          {
+            requestId,
+            error: err instanceof Error ? err.message : String(err),
+            stack: err instanceof Error ? err.stack : undefined,
+          },
+          null,
+          2,
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -126,7 +147,7 @@ export function LeagueSwitcher() {
     try {
       const res = await fetch('/api/leagues/refresh', {
         method: 'POST',
-        headers: { 'accept': 'application/json' },
+        headers: { accept: 'application/json' },
       });
 
       if (res.ok) {
@@ -151,11 +172,12 @@ export function LeagueSwitcher() {
   }
 
   if (error) {
-    const errorMessage = error === 'leagues_endpoint_not_found'
-      ? 'Leagues endpoint not ready'
-      : error === 'auth_required'
-      ? 'Authentication required'
-      : error;
+    const errorMessage =
+      error === 'leagues_endpoint_not_found'
+        ? 'Leagues endpoint not ready'
+        : error === 'auth_required'
+          ? 'Authentication required'
+          : error;
 
     return (
       <div className="flex flex-col gap-2">
@@ -222,9 +244,7 @@ export function LeagueSwitcher() {
   }
 
   const active = selectedLeague ?? data.active_league ?? data.synced_leagues[0];
-  const lastSyncDisplay = data.lastSync
-    ? new Date(data.lastSync).toLocaleDateString()
-    : null;
+  const lastSyncDisplay = data.lastSync ? new Date(data.lastSync).toLocaleDateString() : null;
 
   return (
     <div className="flex items-center gap-3">

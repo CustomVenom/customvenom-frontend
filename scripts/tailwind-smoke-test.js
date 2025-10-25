@@ -41,7 +41,11 @@ function checkGlobalsCSS() {
   }
 
   // Check for Tailwind v3 directives (fallback)
-  if (content.includes('@tailwind base') && content.includes('@tailwind components') && content.includes('@tailwind utilities')) {
+  if (
+    content.includes('@tailwind base') &&
+    content.includes('@tailwind components') &&
+    content.includes('@tailwind utilities')
+  ) {
     console.log('✅ globals.css has Tailwind v3 directives');
     return true;
   }
@@ -66,11 +70,11 @@ function checkTailwindConfig() {
     './src/hooks/**/*.{js,ts,jsx,tsx,mdx}',
     './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
-    './tests/**/*.{js,ts,jsx,tsx,mdx}'
+    './tests/**/*.{js,ts,jsx,tsx,mdx}',
   ];
 
   let allPathsFound = true;
-  requiredPaths.forEach(requiredPath => {
+  requiredPaths.forEach((requiredPath) => {
     if (content.includes(requiredPath)) {
       console.log(`✅ Content path found: ${requiredPath}`);
     } else {
@@ -131,12 +135,12 @@ function main() {
     { name: 'Package.json', fn: checkPackageJSON },
     { name: 'PostCSS Config', fn: checkPostCSSConfig },
     { name: 'Tailwind Config', fn: checkTailwindConfig },
-    { name: 'Globals CSS', fn: checkGlobalsCSS }
+    { name: 'Globals CSS', fn: checkGlobalsCSS },
   ];
 
   let allPassed = true;
 
-  checks.forEach(check => {
+  checks.forEach((check) => {
     console.log(`\n📋 ${check.name}:`);
     if (!check.fn()) {
       allPassed = false;

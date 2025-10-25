@@ -45,13 +45,13 @@ export async function POST(req: NextRequest) {
     const headers = new Headers();
     headers.append(
       'Set-Cookie',
-      `y_at=${encodeURIComponent(json.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`
+      `y_at=${encodeURIComponent(json.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`,
     );
 
     if (json.refresh_token) {
       headers.append(
         'Set-Cookie',
-        `y_rt=${encodeURIComponent(json.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+        `y_rt=${encodeURIComponent(json.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`,
       );
     }
 
@@ -61,4 +61,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }
-

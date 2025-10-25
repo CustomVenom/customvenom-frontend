@@ -21,4 +21,3 @@ test('@yahoo-oauth shows connected state after callback', async ({ page, context
   await page.goto('/settings?yahoo=connected', { waitUntil: 'networkidle' });
   await expect(page.getByTestId('yahoo-connected')).toContainText('GUID-123');
 });
-

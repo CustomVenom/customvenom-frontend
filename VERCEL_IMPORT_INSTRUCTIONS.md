@@ -6,6 +6,7 @@
 **Limit resets**: Midnight UTC (~7-8 PM your local time today)
 
 **DO THIS NOW** (before limit resets):
+
 1. Set up environment variables ✅
 2. Create database ✅
 3. Configure OAuth ✅
@@ -41,6 +42,7 @@
 #### File 1: `VERCEL_ENV_PREVIEW.env`
 
 Find and replace these 3 lines:
+
 ```env
 DATABASE_URL=REPLACE_WITH_YOUR_NEON_CONNECTION_STRING
 GOOGLE_CLIENT_ID=REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID
@@ -48,6 +50,7 @@ GOOGLE_CLIENT_SECRET=REPLACE_WITH_YOUR_GOOGLE_CLIENT_SECRET
 ```
 
 With your actual values:
+
 ```env
 DATABASE_URL=postgresql://username:password@ep-xxx.neon.tech/neondb?sslmode=require
 GOOGLE_CLIENT_ID=123456789.apps.googleusercontent.com
@@ -161,12 +164,14 @@ NEXT_PUBLIC_LOGS_ENABLED=false
 **Then add these SEPARATELY (different per environment):**
 
 **NEXTAUTH_URL for Preview:**
+
 ```
 Value: https://customvenom-frontend-git-main-customvenom.vercel.app
 Environment: ☑️ Preview only
 ```
 
 **NEXTAUTH_URL for Production:**
+
 ```
 Value: https://customvenom-frontend.vercel.app
 Environment: ☑️ Production only
@@ -179,6 +184,7 @@ Environment: ☑️ Production only
 ### 1. Get Your Database URL (2 minutes)
 
 **Quick Neon Setup:**
+
 ```
 1. Visit: https://neon.tech
 2. Sign up with GitHub
@@ -230,6 +236,7 @@ npx prisma studio
 ### Step 3: Deploy (After Limit Resets)
 
 Either:
+
 - **Push a new commit** (triggers auto-deploy)
 - **OR manually redeploy** in Vercel dashboard
 
@@ -237,14 +244,14 @@ Either:
 
 ## 📝 Quick Reference
 
-| Variable | Preview Value | Production Value | Both? |
-|----------|--------------|------------------|-------|
-| NEXTAUTH_URL | git-main URL | .vercel.app URL | ❌ Different |
-| AUTH_SECRET | Same secret | Same secret | ✅ Same |
-| DATABASE_URL | Your DB | Your DB | ✅ Same (or separate) |
-| GOOGLE_CLIENT_ID | Your ID | Same ID | ✅ Same |
-| GOOGLE_CLIENT_SECRET | Your Secret | Same Secret | ✅ Same |
-| API_BASE | Workers URL | Workers URL | ✅ Same |
+| Variable             | Preview Value | Production Value | Both?                 |
+| -------------------- | ------------- | ---------------- | --------------------- |
+| NEXTAUTH_URL         | git-main URL  | .vercel.app URL  | ❌ Different          |
+| AUTH_SECRET          | Same secret   | Same secret      | ✅ Same               |
+| DATABASE_URL         | Your DB       | Your DB          | ✅ Same (or separate) |
+| GOOGLE_CLIENT_ID     | Your ID       | Same ID          | ✅ Same               |
+| GOOGLE_CLIENT_SECRET | Your Secret   | Same Secret      | ✅ Same               |
+| API_BASE             | Workers URL   | Workers URL      | ✅ Same               |
 
 ---
 
@@ -264,10 +271,9 @@ Either:
 ---
 
 **Files Created:**
+
 - `VERCEL_ENV_PREVIEW.env` - Copy/paste for Preview
 - `VERCEL_ENV_PRODUCTION.env` - Copy/paste for Production
 - `ENV_LOCAL_REFERENCE.txt` - For local development
 
 **Status**: Ready to import when you have DATABASE_URL and Google OAuth credentials
-
-

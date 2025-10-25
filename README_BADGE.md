@@ -48,11 +48,13 @@ Replace `your-username` and `customvenom-frontend` with your actual values:
 ## **Advanced Badge Options**
 
 ### **Branch-Specific Badge**
+
 ```markdown
 [![E2E Tests](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml/badge.svg?branch=main)](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml)
 ```
 
 ### **Custom Style**
+
 ```markdown
 [![E2E Tests](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml/badge.svg?style=flat-square)](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml)
 ```

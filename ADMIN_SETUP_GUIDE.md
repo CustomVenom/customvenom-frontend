@@ -10,7 +10,7 @@
 
 ```typescript
 const ADMIN_EMAILS = [
-  'your.actual.email@gmail.com',  // ← Replace with YOUR email
+  'your.actual.email@gmail.com', // ← Replace with YOUR email
 ];
 ```
 
@@ -109,7 +109,7 @@ If you need to manually grant someone access:
 ```sql
 -- Connect to your Neon database
 -- Update user role
-UPDATE "User" 
+UPDATE "User"
 SET role = 'pro', tier = 'pro'
 WHERE email = 'user@example.com';
 ```
@@ -195,7 +195,7 @@ npx prisma studio
 Use Prisma Studio or SQL:
 
 ```sql
-SELECT 
+SELECT
   email,
   role,
   tier,
@@ -208,7 +208,7 @@ ORDER BY createdAt DESC;
 ### Check Active Subscriptions
 
 ```sql
-SELECT 
+SELECT
   email,
   role,
   subscriptionStatus,
@@ -220,7 +220,7 @@ WHERE subscriptionStatus = 'active';
 ### Check Analytics Events
 
 ```sql
-SELECT 
+SELECT
   eventType,
   COUNT(*) as count
 FROM "AnalyticsEvent"
@@ -251,7 +251,7 @@ Add their email to `ADMIN_EMAILS`:
 ```typescript
 const ADMIN_EMAILS = [
   'you@example.com',
-  'cofounder@example.com',  // ← Add here
+  'cofounder@example.com', // ← Add here
 ];
 ```
 
@@ -297,4 +297,3 @@ They'll get admin access on their next sign-in.
 **You're all set! 🎉**
 
 Your CustomVenom app now has enterprise-grade access control and you'll never get locked out of your own system.
-

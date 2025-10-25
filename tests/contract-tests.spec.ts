@@ -24,7 +24,9 @@ test.describe('UI Contract Tests', () => {
     await expect(page.locator('[data-testid="leagues-table"]')).toBeVisible();
 
     // Check that loading spinner disappears
-    await expect(page.locator('[data-testid="loading-spinner"]')).not.toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="loading-spinner"]')).not.toBeVisible({
+      timeout: 10000,
+    });
 
     // If there's an error, check that details with requestId are shown
     const errorDetails = page.locator('[data-testid="error-details"]');
@@ -35,17 +37,17 @@ test.describe('UI Contract Tests', () => {
 
   test('protection mode badge shows when x-stale=true', async ({ page }) => {
     // Mock API response with x-stale header
-    await page.route('**/api/leagues', async route => {
+    await page.route('**/api/leagues', async (route) => {
       await route.fulfill({
         status: 200,
         headers: {
           'x-stale': 'true',
-          'x-request-id': 'test-request-id'
+          'x-request-id': 'test-request-id',
         },
         body: JSON.stringify({
           leagues: [],
-          stale: true
-        })
+          stale: true,
+        }),
       });
     });
 
@@ -55,7 +57,9 @@ test.describe('UI Contract Tests', () => {
     await expect(page.locator('[data-testid="protection-mode-badge"]')).toBeVisible();
 
     // Check badge text
-    await expect(page.locator('[data-testid="protection-mode-badge"]')).toContainText('Protection Mode');
+    await expect(page.locator('[data-testid="protection-mode-badge"]')).toContainText(
+      'Protection Mode',
+    );
   });
 
   test('health endpoint returns correct contract', async ({ page }) => {

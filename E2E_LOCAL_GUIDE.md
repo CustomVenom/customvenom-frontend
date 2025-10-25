@@ -3,6 +3,7 @@
 ## **Quick Start**
 
 ### **1. Start the Development Server**
+
 ```bash
 # Terminal 1: Start the Next.js dev server
 npm run dev
@@ -10,6 +11,7 @@ npm run dev
 ```
 
 ### **2. Run E2E Tests**
+
 ```bash
 # Terminal 2: Run Playwright tests
 npx playwright test
@@ -23,32 +25,38 @@ npx playwright test tests/protection-mode-badge.spec.ts
 ## **Test Categories**
 
 ### **Core Functionality Tests**
+
 - `tests/trust-snapshot.spec.ts` - Trust Snapshot rendering
 - `tests/start-sit.spec.ts` - Start/Sit tool functionality
 - `tests/protection-mode-badge.spec.ts` - Protection mode badge
 
 ### **Contract Tests**
+
 - `tests/contract-tests.spec.ts` - API contract validation
 - `tests/league/prolock.spec.ts` - ProLock component
 - `tests/leagues-selection.spec.ts` - League selection flow
 
 ### **Navigation Tests**
+
 - `tests/nav/dock.spec.ts` - Mobile dock navigation
 - `tests/nav/nav.spec.ts` - Navigation components
 
 ### **Visual Tests**
+
 - `tests/visual/cls.spec.ts` - Cumulative Layout Shift
 - `tests/visual/tools-header.vrt.spec.ts` - Visual regression
 
 ## **Environment Setup**
 
 ### **Required Environment Variables**
+
 ```bash
 # Set API base to staging for tests
 $env:NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev"
 ```
 
 ### **Test Configuration**
+
 - **Base URL**: `http://localhost:3000`
 - **Test Directory**: `tests/`
 - **Test Pattern**: `**/*.spec.ts`, `**/*.pw.ts`
@@ -61,24 +69,31 @@ $env:NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.wor
 ### **Common Issues**
 
 **1. Connection Refused**
+
 ```
 Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000
 ```
+
 **Solution**: Ensure dev server is running with `npm run dev`
 
 **2. Test Discovery Issues**
+
 ```
 Error: Playwright Test did not expect test.describe() to be called here
 ```
+
 **Solution**: This is fixed - we have a single Playwright version enforced
 
 **3. Import Path Issues**
+
 ```
 Error: Cannot find package '@/lib/logger'
 ```
+
 **Solution**: Tests should not import app code - they interact via browser only
 
 ### **Debug Mode**
+
 ```bash
 # Run tests in headed mode (see browser)
 npx playwright test --headed
@@ -93,6 +108,7 @@ npx playwright show-trace test-results/[test-name]/trace.zip
 ## **Test Results**
 
 ### **Expected Output**
+
 ```
 Running 41 tests using 1 worker
 
@@ -104,6 +120,7 @@ Running 41 tests using 1 worker
 ```
 
 ### **Test Reports**
+
 - **HTML Report**: `npx playwright show-report`
 - **Trace Files**: `test-results/[test-name]/trace.zip`
 - **Screenshots**: `test-results/[test-name]/screenshot.png`
@@ -111,6 +128,7 @@ Running 41 tests using 1 worker
 ## **CI Integration**
 
 ### **GitHub Actions Workflow**
+
 ```yaml
 name: frontend:e2e
 on: [push, pull_request]
@@ -129,6 +147,7 @@ jobs:
 ```
 
 ### **Required Secrets**
+
 - `API_BASE`: Staging Workers API URL
 - `NEXT_PUBLIC_API_BASE`: Frontend API base URL
 

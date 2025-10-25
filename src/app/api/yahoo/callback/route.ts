@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         route: '/api/yahoo/callback',
         code_present: !!code,
         state_present: !!state,
-      })
+      }),
     );
 
     // Parse state cookie to extract returnTo
@@ -113,13 +113,13 @@ export async function GET(req: NextRequest) {
     // Cookie domain: .customvenom.com for cross-subdomain, Secure for HTTPS only
     res.headers.append(
       'Set-Cookie',
-      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`
+      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`,
     );
 
     if (tok.xoauth_yahoo_guid) {
       res.headers.append(
         'Set-Cookie',
-        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=2592000`
+        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=2592000`,
       );
     }
 
@@ -129,4 +129,3 @@ export async function GET(req: NextRequest) {
     return new NextResponse(`Server error: ${msg}`, { status: 500 });
   }
 }
-

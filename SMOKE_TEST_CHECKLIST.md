@@ -1,6 +1,7 @@
 # Smoke Test Checklist - Auth & Pro Paywalls
 
 ## Prerequisites
+
 - ✅ All dependencies installed
 - ✅ Database configured and migrated
 - ✅ Environment variables set
@@ -12,6 +13,7 @@
 ## Quick Smoke Tests (2-3 minutes)
 
 ### Test 1: Google Sign-In → Settings Shows role=free
+
 ```bash
 # Manual steps:
 1. Navigate to http://localhost:3000
@@ -30,6 +32,7 @@
 ```
 
 ### Test 2: Stripe Test Checkout → role=pro → Manage Billing
+
 ```bash
 # Manual steps:
 1. While signed in, click "Upgrade to Pro"
@@ -54,6 +57,7 @@ Look for: "User {email} upgraded to Pro (customer: cus_...)"
 ```
 
 ### Test 3: Pro Route Access Control
+
 ```bash
 # Manual steps (while signed in as FREE user):
 1. Navigate to http://localhost:3000/pro
@@ -72,6 +76,7 @@ Look for: "User {email} upgraded to Pro (customer: cus_...)"
 ## Comprehensive Tests (5-10 minutes)
 
 ### Authentication Flow
+
 ```bash
 # Test: Sign in with each provider
 ✅ Google OAuth works
@@ -89,6 +94,7 @@ Look for: "User {email} upgraded to Pro (customer: cus_...)"
 ```
 
 ### Settings Page
+
 ```bash
 # Test: Free user view
 ✅ Email displayed correctly
@@ -106,6 +112,7 @@ Look for: "User {email} upgraded to Pro (customer: cus_...)"
 ```
 
 ### Go Pro Page
+
 ```bash
 # Test: Page content
 ✅ Title: "Upgrade to Pro"
@@ -123,6 +130,7 @@ Look for: "User {email} upgraded to Pro (customer: cus_...)"
 ```
 
 ### Stripe Webhook
+
 ```bash
 # Test: Webhook events
 ✅ checkout.session.completed upgrades user
@@ -137,6 +145,7 @@ npx prisma studio
 ```
 
 ### Middleware Protection
+
 ```bash
 # Test: Route protection
 ✅ /pro route requires Pro subscription
@@ -151,6 +160,7 @@ npx prisma studio
 ```
 
 ### ProLock Component
+
 ```bash
 # Test: Content gating (if implemented)
 ✅ Free users see blurred content
@@ -185,6 +195,7 @@ npx prisma studio
 ## API Route Tests
 
 ### Auth API
+
 ```bash
 # Test: NextAuth endpoints
 curl http://localhost:3000/api/auth/providers
@@ -195,6 +206,7 @@ curl http://localhost:3000/api/auth/csrf
 ```
 
 ### Stripe API
+
 ```bash
 # Test: Checkout (requires auth)
 curl -X POST http://localhost:3000/api/stripe/checkout \
@@ -212,6 +224,7 @@ stripe trigger checkout.session.completed
 ## Error Scenarios
 
 ### Invalid Scenarios to Test
+
 ```bash
 # Test: Unauthenticated checkout
 ✅ POST /api/stripe/checkout → 401 Unauthorized
@@ -287,24 +300,28 @@ stripe trigger checkout.session.completed
 ## Common Issues & Fixes
 
 ### Issue: "Adapter is not assignable"
+
 ```bash
 Fix: Cast adapter in auth.ts
 adapter: PrismaAdapter(prisma) as any
 ```
 
 ### Issue: Webhook signature failed
+
 ```bash
 Fix: Verify STRIPE_WEBHOOK_SECRET matches Stripe CLI output
 stripe listen --print-secret
 ```
 
 ### Issue: OAuth redirect mismatch
+
 ```bash
 Fix: Add callback URL to provider:
 {NEXTAUTH_URL}/api/auth/callback/{provider}
 ```
 
 ### Issue: Session not persisting
+
 ```bash
 Fix: Check database connection
 npx prisma studio
@@ -339,4 +356,3 @@ stripe trigger checkout.session.completed
 
 **All tests passing?** ✅ Ready for production!
 **Issues found?** 📝 Check troubleshooting section in AUTH_IMPLEMENTATION.md
-

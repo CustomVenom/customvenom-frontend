@@ -16,26 +16,31 @@ https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-
 These are **real values** you can copy-paste as-is:
 
 ### 1. AUTH_SECRET (Copy this exactly)
+
 ```
 mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 ```
 
 ### 2. NEXTAUTH_SECRET (Same as above)
+
 ```
 mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=
 ```
 
 ### 3. NEXTAUTH_URL for Preview
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
-### 4. NEXTAUTH_URL for Production  
+### 4. NEXTAUTH_URL for Production
+
 ```
 https://customvenom-frontend-incarcer-incarcers-projects.vercel.app
 ```
 
 ### 5. API URLs (Same for both environments)
+
 ```
 https://api.customvenom.com
 ```
@@ -47,19 +52,23 @@ https://api.customvenom.com
 These are **placeholders** - you need to get the real values:
 
 ### 1. Google OAuth (You need to get these)
+
 - `<from-google-console>` ← **NOT a real value!**
 - `<your-google-client-id>` ← **NOT a real value!**
 
 **How to get them:**
+
 - Go to: https://console.cloud.google.com/apis/credentials
 - Create OAuth 2.0 Client ID
 - Copy the Client ID and Client Secret
 - Use those instead
 
 ### 2. Database URL (You need to create this)
+
 - `<from-neon-or-vercel>` ← **NOT a real value!**
 
 **How to get it:**
+
 - Go to: https://neon.tech
 - Sign up (free)
 - Create a database
@@ -67,6 +76,7 @@ These are **placeholders** - you need to get the real values:
 - Use that instead
 
 ### 3. Stripe Keys (Optional for now)
+
 - `<from-stripe>` ← **NOT a real value!**
 
 **You can skip Stripe for now if you're just testing.**
@@ -117,6 +127,7 @@ Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/envir
 ### Step 4: Add API URLs
 
 **First one:**
+
 1. Click **"Add New"**
 2. Fill in:
    - **Name:** `NEXT_PUBLIC_API_BASE`
@@ -125,6 +136,7 @@ Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/envir
 3. Click **"Save"**
 
 **Second one:**
+
 1. Click **"Add New"**
 2. Fill in:
    - **Name:** `API_BASE`
@@ -181,6 +193,7 @@ After adding those 6 environment variables:
 After redeploy finishes:
 
 **Open this URL in your browser:**
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/providers
 ```
@@ -235,9 +248,10 @@ Once the above works, we'll add:
 
 ### Q: Do I delete values already there?
 
-**A:** Only if they're wrong or placeholders like `<from-google-console>`. 
+**A:** Only if they're wrong or placeholders like `<from-google-console>`.
 
 If you see:
+
 - A real URL or value → Keep it
 - A placeholder with `<` and `>` → Replace it
 
@@ -246,18 +260,21 @@ If you see:
 **A:** It's a placeholder meaning "use the same value you already set in Vercel."
 
 Example:
+
 - If you already set `GOOGLE_CLIENT_ID` in Preview
 - When adding Production, use the same value
 
 ### Q: Can I skip some variables?
 
 **A:** These are **REQUIRED** (app won't work without them):
+
 - `DATABASE_URL` ← Most important!
 - `AUTH_SECRET`
 - `NEXTAUTH_URL`
 - `API_BASE`
 
 You can skip:
+
 - Google OAuth (for now)
 - Stripe (for now)
 - Sentry (optional)
@@ -265,6 +282,7 @@ You can skip:
 ### Q: How do I know if it worked?
 
 **A:** Visit this URL:
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/providers
 ```
@@ -278,7 +296,7 @@ If you see JSON (not 404), it worked! 🎉
 If you get stuck:
 
 1. **Check Vercel Build Logs** for errors
-2. **Screenshot the error** 
+2. **Screenshot the error**
 3. **Tell me:**
    - What you see when you visit `/api/auth/providers`
    - Any errors in the build logs
@@ -291,4 +309,3 @@ I'll help you fix it! 😊
 **Last Updated:** October 17, 2025  
 **Status:** Ready for you to add 6 environment variables  
 **Difficulty:** 🟢 Beginner-friendly
-

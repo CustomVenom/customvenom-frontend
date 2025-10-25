@@ -20,7 +20,7 @@ export default function OpsDashboard() {
     cache_hit_rate: null,
     coverage_pct: 0,
     pinball_loss: 0,
-    chip_speak_vs_suppress: { speak: 0, suppress: 0 }
+    chip_speak_vs_suppress: { speak: 0, suppress: 0 },
   });
   const [loading, setLoading] = useState(true);
   const [logsAvailable, setLogsAvailable] = useState(false);
@@ -44,8 +44,8 @@ export default function OpsDashboard() {
           pinball_loss: opsData?.pinball?.overall || 0,
           chip_speak_vs_suppress: {
             speak: opsData?.chips?.speak || 0,
-            suppress: opsData?.chips?.suppress || 0
-          }
+            suppress: opsData?.chips?.suppress || 0,
+          },
         });
 
         setLogsAvailable(!!logMetrics);
@@ -132,7 +132,11 @@ export default function OpsDashboard() {
           title="Chip Speak vs Suppress"
           values={metrics.chip_speak_vs_suppress}
           label="Reason generation ratio"
-          status={(metrics.chip_speak_vs_suppress.speak > 0 || metrics.chip_speak_vs_suppress.suppress > 0) ? 'live' : 'placeholder'}
+          status={
+            metrics.chip_speak_vs_suppress.speak > 0 || metrics.chip_speak_vs_suppress.suppress > 0
+              ? 'live'
+              : 'placeholder'
+          }
           loading={loading}
         />
       </div>
@@ -140,9 +144,16 @@ export default function OpsDashboard() {
       <div className="bg-gray-50 rounded-xl p-6 mt-8">
         <h3 className="text-xl font-semibold text-gray-800 mb-4 mt-0">Notes</h3>
         <ul className="m-0 pl-6 text-gray-700 leading-relaxed">
-          <li className="mb-2"><strong className="text-gray-800">LIVE tiles</strong> show data once logs exist</li>
-          <li className="mb-2"><strong className="text-gray-800">5xx & P95:</strong> From Cloudflare Workers logs</li>
-          <li className="mb-2"><strong className="text-gray-800">Cache, Coverage, Pinball, Chips:</strong> From /ops-data endpoint</li>
+          <li className="mb-2">
+            <strong className="text-gray-800">LIVE tiles</strong> show data once logs exist
+          </li>
+          <li className="mb-2">
+            <strong className="text-gray-800">5xx & P95:</strong> From Cloudflare Workers logs
+          </li>
+          <li className="mb-2">
+            <strong className="text-gray-800">Cache, Coverage, Pinball, Chips:</strong> From
+            /ops-data endpoint
+          </li>
           <li className="mb-2">Dashboard auto-refreshes every 60 seconds</li>
           <li className="mb-2">Aim: 5xx = 0, P95 &lt; 300ms, Cache &gt; 80%</li>
         </ul>
@@ -150,5 +161,3 @@ export default function OpsDashboard() {
     </div>
   );
 }
-
-

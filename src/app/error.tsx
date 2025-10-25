@@ -39,15 +39,15 @@ export default function Error({
             />
           </svg>
         </div>
-        
+
         <h2 className="text-2xl font-bold text-[rgb(var(--text-primary))] text-center mb-2">
           Something went wrong
         </h2>
-        
+
         <p className="text-[rgb(var(--text-secondary))] text-center mb-6">
           We&apos;ve been notified and are looking into it.
         </p>
-        
+
         {error.message && (
           <div className="bg-[rgb(var(--bg-input))] rounded p-4 mb-6 border border-[rgba(148,163,184,0.1)]">
             <p className="text-sm text-[rgb(var(--text-primary))] font-mono break-words">
@@ -55,13 +55,13 @@ export default function Error({
             </p>
           </div>
         )}
-        
+
         {(error.requestId || error.digest) && (
           <div className="text-center text-xs text-[rgb(var(--text-muted))] mb-6">
             Error ID: {error.requestId || error.digest}
           </div>
         )}
-        
+
         <div className="flex gap-3">
           <button
             onClick={reset}
@@ -69,9 +69,9 @@ export default function Error({
           >
             Try again
           </button>
-          
+
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => (window.location.href = '/')}
             className="flex-1 px-4 py-2 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all text-center font-semibold border border-[rgba(148,163,184,0.2)]"
           >
             Go home
@@ -81,4 +81,3 @@ export default function Error({
     </div>
   );
 }
-

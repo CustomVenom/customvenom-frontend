@@ -9,7 +9,7 @@ export function setCookie(
     sameSite: 'Lax' | 'Strict' | 'None';
     path: string;
     maxAge: number;
-  }> = {}
+  }> = {},
 ) {
   const o = { httpOnly: true, secure: true, sameSite: 'Lax', path: '/', ...opts };
   const parts = [
@@ -25,7 +25,7 @@ export function setCookie(
 
 export function clearCookie(
   res: { headers: { set: (name: string, value: string) => void } },
-  name: string
+  name: string,
 ) {
   res.headers.set('Set-Cookie', `${name}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
 }

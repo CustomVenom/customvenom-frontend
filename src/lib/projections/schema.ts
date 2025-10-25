@@ -6,7 +6,7 @@ export const ReasonSchema = z.object({
   key: z.string(),
   label: z.string().optional(),
   // effect may be fraction (0.021) or percent (2.1)
-  effect: z.number().optional()
+  effect: z.number().optional(),
 });
 
 export const ReasonsSchema = z.array(ReasonSchema);
@@ -17,7 +17,7 @@ export const ProjectionItemSchema = z.object({
     id: z.string().or(z.number()).transform(String),
     name: z.string(),
     team: z.string().optional(),
-    pos: z.string().optional()
+    pos: z.string().optional(),
   }),
   // required guardrail fields
   schema_version: z.string().or(z.number()).transform(String),
@@ -27,14 +27,14 @@ export const ProjectionItemSchema = z.object({
   floor: z.number().optional(),
   ceiling: z.number().optional(),
   // reasons may be absent if none apply
-  reasons: ReasonsSchema.optional()
+  reasons: ReasonsSchema.optional(),
 });
 
 export const ProjectionsPayloadSchema = z.object({
   ok: z.boolean().default(true),
   schema_version: z.string().or(z.number()).transform(String),
   last_refresh: z.string(),
-  items: z.array(ProjectionItemSchema)
+  items: z.array(ProjectionItemSchema),
 });
 
 export type ProjectionItem = z.infer<typeof ProjectionItemSchema>;

@@ -60,7 +60,7 @@ test.describe('Yahoo OAuth Flow', () => {
       {
         name: 'y_state',
         value: encodeURIComponent(
-          JSON.stringify({ state: 'test-state', returnTo: '/tools/leagues' })
+          JSON.stringify({ state: 'test-state', returnTo: '/tools/leagues' }),
         ),
         url: process.env['FRONTEND_BASE'] || 'http://localhost:3000',
       },
@@ -82,4 +82,3 @@ test.describe('Yahoo OAuth Flow', () => {
     expect(page.url()).toContain('/tools/leagues');
   });
 });
-

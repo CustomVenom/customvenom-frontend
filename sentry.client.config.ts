@@ -33,4 +33,3 @@ Sentry.init({
     return event;
   },
 });
-

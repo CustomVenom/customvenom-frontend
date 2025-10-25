@@ -101,8 +101,7 @@ export async function getEntitlementsFromCheckout(sessionId: string): Promise<En
 // Check if user has specific feature access
 export function hasFeature(
   entitlements: Entitlements,
-  feature: keyof Entitlements['features']
+  feature: keyof Entitlements['features'],
 ): boolean {
   return entitlements.features[feature];
 }
-

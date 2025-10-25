@@ -20,26 +20,17 @@ export async function POST() {
     // Require authentication
     const session = await getServerSession();
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Require Pro subscription
     if (session.user.role !== 'pro') {
-      return NextResponse.json(
-        { error: 'Pro subscription required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Pro subscription required' }, { status: 403 });
     }
 
     // Require Stripe customer ID
     if (!session.user.stripeCustomerId) {
-      return NextResponse.json(
-        { error: 'No Stripe customer found' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No Stripe customer found' }, { status: 400 });
     }
 
     // Create billing portal session
@@ -51,11 +42,6 @@ export async function POST() {
     return NextResponse.json({ url: portalSession.url });
   } catch (error) {
     console.error('Stripe portal error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create portal session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create portal session' }, { status: 500 });
   }
 }
-
-

@@ -1,0 +1,145 @@
+# 🧪 **Frontend E2E Workflow - Ready to Use**
+
+## **GitHub Actions Workflow**
+
+Create this file as `.github/workflows/frontend-e2e.yml`:
+
+```yaml
+name: Frontend E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Health precheck
+        run: |
+          set -euo pipefail
+          echo "Checking API health..."
+          curl -fsS "$NEXT_PUBLIC_API_BASE/health" | jq -e '.ok and .ready and .schema_version and .last_refresh and .r2_key' >/dev/null
+          curl -fsSI "$NEXT_PUBLIC_API_BASE/health" | grep -qi '^cache-control: .*no-store'
+          echo "✅ API health check passed"
+
+      - name: Start dev server
+        run: |
+          npm run dev &
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+          echo "✅ Dev server is running"
+
+      - name: Run E2E tests
+        run: |
+          npx playwright test tests/trust-snapshot.spec.ts tests/protection-mode-badge.spec.ts --reporter=list
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results/
+          retention-days: 7
+```
+
+## **Environment Variables**
+
+Add these secrets in GitHub → Settings → Secrets and variables → Actions:
+
+- `API_BASE`: `https://customvenom-workers-api-staging.jdewett81.workers.dev`
+- `NEXT_PUBLIC_API_BASE`: `https://customvenom-workers-api-staging.jdewett81.workers.dev`
+
+## **Required Checks Setup**
+
+1. Go to GitHub → Settings → Branches
+2. Select `main` branch
+3. Add rule: "Require status checks to pass before merging"
+4. Select `Frontend E2E Tests` as the only required check
+5. Check "Require branches to be up to date before merging"
+
+## **Production Variant**
+
+For production deployments, add this job:
+
+```yaml
+  e2e-prod:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Health precheck (Production)
+        run: |
+          set -euo pipefail
+          echo "Checking production API health..."
+          curl -fsS "$NEXT_PUBLIC_API_BASE/health" | jq -e '.ok and .ready and .schema_version and .last_refresh and .r2_key' >/dev/null
+          curl -fsSI "$NEXT_PUBLIC_API_BASE/health" | grep -qi '^cache-control: .*no-store'
+          echo "✅ Production API health check passed"
+
+      - name: Start dev server
+        run: |
+          npm run dev &
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+          echo "✅ Dev server is running"
+
+      - name: Run E2E tests
+        run: |
+          npx playwright test tests/trust-snapshot.spec.ts tests/protection-mode-badge.spec.ts --reporter=list
+```
+
+## **README Badge**
+
+Add this to your README.md:
+
+```markdown
+[![Frontend E2E](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml/badge.svg?label=Frontend%20E2E)](https://github.com/your-username/customvenom-frontend/actions/workflows/frontend-e2e.yml)
+```
+
+## **Features**
+
+- ✅ **Health Gate**: Fast-fail API check before tests
+- ✅ **Focused Tests**: Only runs essential tests
+- ✅ **Artifact Upload**: Test results on failure
+- ✅ **Timeout Protection**: 15-minute timeout
+- ✅ **Production Ready**: Separate prod job
+- ✅ **Cache Optimization**: npm cache enabled
+
+---
+
+**✅ Copy-paste ready! Just replace `your-username` with your actual GitHub username.**

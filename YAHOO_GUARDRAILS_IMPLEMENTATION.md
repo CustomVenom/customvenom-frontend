@@ -5,6 +5,7 @@
 All Yahoo guardrails have been successfully implemented across the CustomVenom system:
 
 ### Frontend Changes
+
 1. **UI Gating Logic** - Added to `ConnectYahoo.tsx` and `YahooConnect.tsx`
    - Feature flag: `NEXT_PUBLIC_YAHOO_CONNECT_ENABLED`
    - Maintenance switch: `NEXT_PUBLIC_YAHOO_MAINTENANCE`
@@ -20,6 +21,7 @@ All Yahoo guardrails have been successfully implemented across the CustomVenom s
    - Added `prefetch={false}` to retry link for better performance
 
 ### Workers API Changes
+
 1. **Guardrails Middleware** - Updated `routes/yahoo.ts`
    - Maintenance mode: Returns 503 with friendly message when `YAHOO_MAINTENANCE=true`
    - Disabled mode: Returns 503 with clear error when `YAHOO_CONNECT_ENABLED=false`
@@ -33,6 +35,7 @@ All Yahoo guardrails have been successfully implemented across the CustomVenom s
 ## 🔧 Environment Variables to Set
 
 ### Vercel Production Environment
+
 ```bash
 NEXTAUTH_URL=https://customvenom.com
 NEXTAUTH_SECRET=<generate-new-random-secret>
@@ -46,17 +49,20 @@ NEXTAUTH_DEBUG=true  # Remove after verification
 ```
 
 ### Cloudflare Workers API Environment
+
 ```bash
 YAHOO_CONNECT_ENABLED=true
 YAHOO_MAINTENANCE=false
 ```
 
 ### Yahoo Developer Console
+
 - **Redirect URI**: `https://customvenom.com/api/auth/callback/yahoo`
 
 ## 🧪 Verification Checklist
 
 ### Production Verification Steps
+
 1. **Auth Provider Check**
    - `GET /api/auth/providers` → should show `yahoo` provider
    - `GET /api/auth/csrf` → should return valid JSON
@@ -79,11 +85,13 @@ YAHOO_MAINTENANCE=false
 ## 🚨 Rollback Procedures
 
 ### Emergency Rollback Options
+
 1. **Quick Disable**: Set `NEXT_PUBLIC_YAHOO_MAINTENANCE=true` (no redeploy needed)
 2. **Full Disable**: Set `NEXT_PUBLIC_YAHOO_CONNECT_ENABLED=false` (no redeploy needed)
 3. **API Only**: Set `YAHOO_MAINTENANCE=true` in Workers environment
 
 ### Post-Verification Cleanup
+
 1. Remove `NEXTAUTH_DEBUG=true` after successful verification
 2. Expand `YAHOO_CANARY_EMAILS` list as needed
 3. Remove canary check to enable for all users when ready
@@ -99,7 +107,7 @@ YAHOO_MAINTENANCE=false
 
 ## 🔒 Security Notes
 
-- All environment variables are properly scoped (NEXT_PUBLIC_ for client-side)
+- All environment variables are properly scoped (NEXT*PUBLIC* for client-side)
 - CORS headers properly echo Origin and allow credentials
 - Contract headers (`schema_version`, `last_refresh`) included in all responses
 - Rate limiting with exponential backoff implemented

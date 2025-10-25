@@ -15,6 +15,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 **Files Updated (6):**
+
 - `ENV_VALUES_REFERENCE.md` - All Preview URLs updated
 - `VERCEL_ENV_SETUP.md` - Setup guide URLs updated
 - `SECURITY_CHECKLIST.md` - Security checklist URLs updated
@@ -30,6 +31,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ## ⚠️ **Issue: NextAuth Routes Still 404**
 
 **Test Result:**
+
 ```powershell
 Invoke-WebRequest -Uri "https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/providers"
 # Result: 404 - This page could not be found
@@ -43,13 +45,16 @@ The NextAuth route **exists locally** at `src/app/api/auth/[...nextauth]/route.t
 ## 🔍 **Diagnostic Steps**
 
 ### 1. Verify Route Exists Locally ✅
+
 ```
 src/app/api/auth/[...nextauth]/route.ts - EXISTS
 src/lib/auth.ts - EXISTS (configuration)
 ```
 
 ### 2. Check Vercel Build Logs 🔍
+
 **Action Required:**
+
 1. Go to: https://vercel.com/incarcers-projects/customvenom-frontend/deployments
 2. Click on deployment: `b3aoume16`
 3. Check "Build Logs" tab
@@ -64,18 +69,23 @@ src/lib/auth.ts - EXISTS (configuration)
 **Possible Issues:**
 
 #### A. Missing Environment Variables (Build-Time)
+
 If `NEXTAUTH_SECRET` or other vars are required at build time:
+
 - NextAuth might fail silently
 - Route won't be generated
 - No error in logs
 
 **Fix:** Ensure these are set in Vercel (Preview environment):
+
 ```
 DATABASE_URL=<required-for-prisma-adapter>
 ```
 
 #### B. Prisma Adapter Issue
+
 Your `auth.ts` uses:
+
 ```typescript
 adapter: PrismaAdapter(prisma) as Adapter,
 ```
@@ -85,11 +95,13 @@ If `DATABASE_URL` is missing, Prisma can't generate, build fails.
 **Fix:** Add `DATABASE_URL` to Vercel Preview environment
 
 #### C. Build/Export Configuration
+
 Next.js 15 might have changed how API routes are exported.
 
 **Fix:** Check `next.config.ts` for any export settings
 
 #### D. Git Branch Mismatch
+
 The deployed code might be from a different commit.
 
 **Fix:** Verify Vercel is deploying the correct commit
@@ -105,6 +117,7 @@ This is **required** for the build to succeed:
 1. Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 
 2. Add for **Preview** environment:
+
    ```
    Name: DATABASE_URL
    Value: <get from Neon.tech or Vercel Postgres>
@@ -165,11 +178,13 @@ Expected: **200 OK** with JSON listing providers
 ## 📋 **Quick Reference**
 
 ### Current Preview URL
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app
 ```
 
 ### Test Commands
+
 ```powershell
 # Test providers endpoint
 Invoke-WebRequest -Uri "https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/providers"
@@ -184,6 +199,7 @@ Invoke-WebRequest -Uri "https://customvenom-frontend-b3aoume16-incarcers-project
 ### Google OAuth Redirect URIs
 
 Add this to Google Console:
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google
 ```
@@ -226,4 +242,3 @@ Check these:
 **Last Updated:** October 17, 2025  
 **Status:** Waiting for DATABASE_URL and redeploy  
 **Next Action:** Add environment variables in Vercel
-

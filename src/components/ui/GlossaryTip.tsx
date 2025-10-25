@@ -19,15 +19,13 @@ export function GlossaryTip({ term, children, className = '' }: Props) {
 
   return (
     <span className={`inline-flex items-center gap-1 ${className}`}>
-      <span className="underline decoration-dotted underline-offset-2">
-        {children ?? label}
-      </span>
+      <span className="underline decoration-dotted underline-offset-2">{children ?? label}</span>
       <button
         className="cv-btn-ghost text-xs px-2 py-1"
         aria-describedby={open ? id : undefined}
         aria-expanded={open}
         aria-label={`Definition: ${label}`}
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
@@ -45,4 +43,3 @@ export function GlossaryTip({ term, children, className = '' }: Props) {
     </span>
   );
 }
-

@@ -139,4 +139,3 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
     </div>
   );
 }
-

@@ -1,14 +1,17 @@
 # Sentry Integration - Frontend
 
 ## Overview
+
 Minimal, off-by-default Sentry stub implementation for Next.js frontend. No events will be sent until DSNs are configured and sampling rates are increased.
 
 ## What Was Added
 
 ### 1. Package Dependencies
+
 - Added `@sentry/nextjs` (v8.0.0) to `package.json`
 
 ### 2. Configuration Files
+
 - **`sentry.client.config.ts`** - Client-side Sentry configuration
   - Uses `NEXT_PUBLIC_SENTRY_DSN` environment variable
   - `tracesSampleRate: 0.0` (off by default)
@@ -21,9 +24,11 @@ Minimal, off-by-default Sentry stub implementation for Next.js frontend. No even
   - Only enabled when DSN is present
 
 ### 3. Integration
+
 - Updated `src/app/layout.tsx` to import both Sentry configs at the top
 
 ### 4. Environment Variables (to be added to .env)
+
 ```
 SENTRY_DSN=
 NEXT_PUBLIC_SENTRY_DSN=
@@ -52,12 +57,14 @@ NEXT_PUBLIC_SENTRY_DSN=
 ## How to Enable (Future)
 
 1. **Add DSNs to environment:**
+
    ```
    SENTRY_DSN=https://[YOUR_DSN]@sentry.io/[PROJECT]
    NEXT_PUBLIC_SENTRY_DSN=https://[YOUR_DSN]@sentry.io/[PROJECT]
    ```
 
 2. **Increase sampling rates** in config files:
+
    ```typescript
    tracesSampleRate: 0.05,  // Start with 5% on staging
    replaysSessionSampleRate: 0.05,
@@ -83,4 +90,3 @@ Add Sentry stubs (frontend) - off by default
 - ✅ Safe to merge
 - ✅ Ready for future enablement when needed
 ```
-

@@ -20,7 +20,10 @@ export function MobileDock() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Mobile navigation" className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 z-50">
+    <nav
+      aria-label="Mobile navigation"
+      className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 z-50"
+    >
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const isActive = pathname?.startsWith(item.href);
@@ -29,9 +32,7 @@ export function MobileDock() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                isActive
-                  ? 'text-[rgb(var(--cv-primary))]'
-                  : 'text-gray-600 dark:text-gray-300'
+                isActive ? 'text-[rgb(var(--cv-primary))]' : 'text-gray-600 dark:text-gray-300'
               }`}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -44,4 +45,3 @@ export function MobileDock() {
     </nav>
   );
 }
-

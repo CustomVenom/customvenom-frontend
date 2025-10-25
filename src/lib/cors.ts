@@ -33,7 +33,7 @@ export function parseAllowedOrigins(envValue?: string): string[] {
  */
 export function createCorsHeaders(
   origin: string | null,
-  options: CorsOptions
+  options: CorsOptions,
 ): Record<string, string> {
   const {
     allowedOrigins,
@@ -89,7 +89,7 @@ export function handlePreflightRequest(request: Request, options: CorsOptions): 
 export function addCorsHeaders(
   response: Response,
   origin: string | null,
-  options: CorsOptions
+  options: CorsOptions,
 ): Response {
   const corsHeaders = createCorsHeaders(origin, options);
 
