@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { LeagueImport } from '@/components/LeagueImport';
 import { YahooStatusBadge } from '@/components/YahooStatusBadge';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import YahooPanel from './YahooPanel';
+import YahooPanelClient from '@/components/YahooPanelClient';
 import { getServerSession } from '@/lib/auth-helpers';
 
 export const metadata = {
@@ -138,7 +138,7 @@ export default async function SettingsPage() {
                 </div>
               }
             >
-              <YahooPanel />
+              <YahooPanelClient />
             </ErrorBoundary>
           </div>
           <LeagueImport />
