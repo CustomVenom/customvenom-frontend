@@ -22,11 +22,17 @@ function Card({
 }
 
 export default function YahooPanelClient() {
-  const baseRaw = process.env['NEXT_PUBLIC_API_BASE'] || '';
+  // Do not read env if not in browser
+  const baseRaw = typeof window !== 'undefined' ? (process.env['NEXT_PUBLIC_API_BASE'] || '') : '';
   const apiBase = useMemo(() => {
     if (!baseRaw) return '';
     return baseRaw.startsWith('http') ? baseRaw : `https://${baseRaw}`;
   }, [baseRaw]);
+
+  // Short-circuit on disabled flag (read once on client)
+  const enabled = typeof window !== 'undefined'
+    ? ((window as unknown as { __CV_ENABLE_YAHOO__?: boolean })?.__CV_ENABLE_YAHOO__ ?? (process.env['NEXT_PUBLIC_ENABLE_YAHOO'] === 'true'))
+    : false;
 
   const [loading, setLoading] = useState(true);
   const [leagues, setLeagues] = useState<YahooLeague[] | null>(null);
@@ -35,6 +41,10 @@ export default function YahooPanelClient() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
 
     async function run() {
@@ -106,7 +116,11 @@ export default function YahooPanelClient() {
     return () => {
       cancelled = true;
     };
-  }, [apiBase]);
+  }, [apiBase, enabled]);
+
+  if (!enabled) {
+    return <div className="p-3 bg-gray-50 border rounded">Yahoo disabled</div>;
+  }
 
   if (loading) {
     return (
