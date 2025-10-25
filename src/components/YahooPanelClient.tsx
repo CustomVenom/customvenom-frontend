@@ -1,20 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
 type YahooLeague = { key: string; name: string; season: string };
 type YahooTeam = { key: string; name: string; manager?: string };
-
-type PanelState =
-  | { status: 'loading' }
-  | { status: 'not-configured' }
-  | { status: 'not-connected' }
-  | {
-      status: 'connected';
-      league: YahooLeague;
-      players: Array<{ id: string; name: string; pos: string; team: string }>;
-    };
+type YahooRoster = { players: Array<{ id: string; name: string; pos: string; team: string }> };
 
 function Card({
   children,
@@ -32,79 +22,101 @@ function Card({
 }
 
 export default function YahooPanelClient() {
-  const [state, setState] = useState<PanelState>({ status: 'loading' });
+  const baseRaw = process.env['NEXT_PUBLIC_API_BASE'] || '';
+  const apiBase = useMemo(() => {
+    if (!baseRaw) return '';
+    return baseRaw.startsWith('http') ? baseRaw : `https://${baseRaw}`;
+  }, [baseRaw]);
+
+  const [loading, setLoading] = useState(true);
+  const [leagues, setLeagues] = useState<YahooLeague[] | null>(null);
+  const [_teamKey, setTeamKey] = useState<string | null>(null);
+  const [roster, setRoster] = useState<YahooRoster | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
+    let cancelled = false;
+
+    async function run() {
       try {
-        const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
         if (!apiBase) {
-          setState({ status: 'not-configured' });
+          setError('not_configured');
           return;
         }
+        // Fetch leagues
+        const r = await fetch(`${apiBase}/yahoo/leagues`, { credentials: 'include' });
+        if (!r.ok) {
+          setError(r.status === 401 ? 'not_connected' : `http_${r.status}`);
+          return;
+        }
+        const data = await r.json().catch(() => null);
+        const arr: YahooLeague[] = Array.isArray(data?.leagues) ? data.leagues : [];
+        if (!arr.length) {
+          setError('not_connected');
+          return;
+        }
+        if (cancelled) return;
+        setLeagues(arr);
 
-        const res = await fetch(`${apiBase}/yahoo/leagues`, {
-          cache: 'no-store',
-          credentials: 'include', // Send cookies
+        // Fetch teams for first league
+        const league = arr[0];
+        if (!league) {
+          setError('not_connected');
+          return;
+        }
+        const rt = await fetch(
+          `${apiBase}/yahoo/leagues/${encodeURIComponent(league.key)}/teams`,
+          { credentials: 'include' }
+        );
+        if (!rt.ok) {
+          setError(rt.status === 401 ? 'not_connected' : `http_${rt.status}`);
+          return;
+        }
+        const tdata = await rt.json().catch(() => null);
+        const teams: YahooTeam[] = Array.isArray(tdata?.teams) ? tdata.teams : [];
+        const team = teams[0];
+        if (!team) {
+          setTeamKey(null);
+          setRoster({ players: [] });
+          return;
+        }
+        if (cancelled) return;
+        setTeamKey(team.key);
+
+        // Fetch roster
+        const rr = await fetch(`${apiBase}/yahoo/team/${encodeURIComponent(team.key)}/roster`, {
+          credentials: 'include',
         });
-
-        if (!res.ok) {
-          setState({ status: 'not-connected' });
+        if (!rr.ok) {
+          setError(rr.status === 401 ? 'not_connected' : `http_${rr.status}`);
           return;
         }
-
-        const data = await res.json();
-        if (!data?.leagues || !Array.isArray(data.leagues) || data.leagues.length === 0) {
-          setState({ status: 'not-connected' });
-          return;
-        }
-
-        const league = data.leagues[0];
-        const players: Array<{ id: string; name: string; pos: string; team: string }> = [];
-
-        // Try to fetch roster if we have a league
-        if (league.key) {
-          try {
-            const teamsRes = await fetch(`${apiBase}/yahoo/leagues/${encodeURIComponent(league.key)}/teams`, {
-              credentials: 'include',
-            });
-            if (teamsRes.ok) {
-              const teamsData = await teamsRes.json();
-              const team = teamsData?.teams?.[0];
-              if (team?.key) {
-                const rosterRes = await fetch(`${apiBase}/yahoo/team/${encodeURIComponent(team.key)}/roster`, {
-                  credentials: 'include',
-                });
-                if (rosterRes.ok) {
-                  const rosterData = await rosterRes.json();
-                  players.push(...(rosterData?.players || []));
-                }
-              }
-            }
-          } catch {
-            // Ignore roster fetch errors
-          }
-        }
-
-        setState({ status: 'connected', league, players });
-      } catch (error) {
-        console.error('Yahoo panel fetch error:', error);
-        setState({ status: 'not-connected' });
+        const rdata: YahooRoster | null = await rr.json().catch(() => null);
+        if (cancelled) return;
+        setRoster(rdata && Array.isArray(rdata.players) ? rdata : { players: [] });
+      } catch (e: unknown) {
+        console.error(JSON.stringify({ scope: '[settings.yahoo].client', message: String(e) }));
+        setError('unknown');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
-    fetchData();
-  }, []);
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
 
-  if (state.status === 'loading') {
+  if (loading) {
     return (
       <Card tone="yellow">
-        <div className="animate-pulse">Loading Yahoo data...</div>
+        <div className="animate-pulse">Loading Yahoo…</div>
       </Card>
     );
   }
 
-  if (state.status === 'not-configured') {
+  if (!apiBase) {
     return (
       <Card tone="yellow" data-testid="yahoo-status">
         Yahoo: not configured. Set NEXT_PUBLIC_API_BASE.
@@ -112,38 +124,43 @@ export default function YahooPanelClient() {
     );
   }
 
-  if (state.status === 'not-connected') {
+  if (error === 'not_connected') {
     return (
       <Card tone="yellow" data-testid="yahoo-status">
         <div className="flex items-center gap-2">
           <span>Yahoo: not connected.</span>
-          <Link
-            href="/api/yahoo/connect?returnTo=/settings"
-            className="underline"
-            data-testid="yahoo-connect-btn"
-          >
+          <a href="/api/yahoo/connect?returnTo=/settings" className="underline" data-testid="yahoo-connect-btn">
             Connect Yahoo
-          </Link>
+          </a>
         </div>
       </Card>
     );
   }
 
+  if (error) {
+    return (
+      <Card tone="red">
+        Yahoo error: {error}. <a href="/api/yahoo/connect?returnTo=/settings" className="underline">Reconnect</a>
+      </Card>
+    );
+  }
+
+  const league = leagues?.[0] || null;
+  const players = roster?.players ?? [];
+
   return (
     <Card tone="green">
       <div className="flex items-center justify-between mb-2">
         <div data-testid="yahoo-connected" className="font-medium">
-          Yahoo Connected — {state.league.name} ({state.league.season})
+          Yahoo Connected{league ? ` — ${league.name} (${league.season})` : ''}
         </div>
-        <Link href="/api/yahoo/connect?returnTo=/settings" className="underline opacity-80">
+        <a href="/api/yahoo/connect?returnTo=/settings" className="underline opacity-80">
           Reconnect
-        </Link>
+        </a>
       </div>
 
-      {state.players.length === 0 ? (
-        <div className="text-sm opacity-80">
-          No roster data yet. Try refreshing after consent.
-        </div>
+      {players.length === 0 ? (
+        <div className="text-sm opacity-80">No roster data yet.</div>
       ) : (
         <table className="w-full text-sm border-separate border-spacing-y-1">
           <thead>
@@ -154,7 +171,7 @@ export default function YahooPanelClient() {
             </tr>
           </thead>
           <tbody>
-            {state.players.map((p) => (
+            {players.map((p) => (
               <tr key={p.id}>
                 <td className="pr-4">{p.name}</td>
                 <td className="pr-4">{p.pos}</td>
