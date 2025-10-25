@@ -1,6 +1,7 @@
 // ESLint rule to prevent process.env.FOO dot-access regression
 // Add this to your ESLint config to catch any future violations
 
+/* eslint-env node */
 module.exports = {
   rules: {
     'no-restricted-syntax': [
