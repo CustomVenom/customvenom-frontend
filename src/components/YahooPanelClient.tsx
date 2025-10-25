@@ -134,17 +134,18 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   if (!apiBase) {
     return (
       <Card tone="yellow" data-testid="yahoo-status">
-        Yahoo: not configured. Set NEXT_PUBLIC_API_BASE.
+        API not configured.
       </Card>
     );
   }
 
   if (error === 'not_connected') {
+    const CONNECT = apiBase ? `${apiBase}/api/yahoo/connect?returnTo=/settings` : '';
     return (
       <Card tone="yellow" data-testid="yahoo-status">
         <div className="flex items-center gap-2">
-          <span>Yahoo: not connected.</span>
-          <a href="/api/yahoo/connect?returnTo=/settings" className="underline" data-testid="yahoo-connect-btn">
+          Yahoo: not connected.
+          <a href={CONNECT} className="underline" data-testid="yahoo-connect-btn">
             Connect Yahoo
           </a>
         </div>
@@ -153,9 +154,10 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   }
 
   if (error) {
+    const CONNECT = apiBase ? `${apiBase}/api/yahoo/connect?returnTo=/settings` : '';
     return (
       <Card tone="red">
-        Yahoo error: {error}. <a href="/api/yahoo/connect?returnTo=/settings" className="underline">Reconnect</a>
+        Yahoo error: {error}. <a href={CONNECT} className="underline">Reconnect</a>
       </Card>
     );
   }
@@ -169,7 +171,7 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
         <div data-testid="yahoo-connected" className="font-medium">
           Yahoo Connected{league ? ` — ${league.name} (${league.season})` : ''}
         </div>
-        <a href="/api/yahoo/connect?returnTo=/settings" className="underline opacity-80">
+        <a href={`${apiBase}/api/yahoo/connect?returnTo=/settings`} className="underline opacity-80">
           Reconnect
         </a>
       </div>
