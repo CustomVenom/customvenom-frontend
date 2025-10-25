@@ -4,6 +4,7 @@ import Link from 'next/link';
 import DebugRequestId from '@/components/DebugRequestId';
 import ToolsTabs from '@/components/ToolsTabs';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
+import YahooConnectButton from './YahooConnectButton';
 
 export const metadata: Metadata = {
   title: 'Tools — Custom Venom',
@@ -27,6 +28,8 @@ export default function ToolsPage() {
 
       <div className="section space-y-6">
         <p className="text-muted">Interactive decision tools powered by explainable projections.</p>
+
+        <YahooConnectButton />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link

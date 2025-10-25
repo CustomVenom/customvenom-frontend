@@ -27,10 +27,7 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-3xl py-8">
       <h1 className="text-2xl font-semibold mb-8">Settings</h1>
-      <div className="mb-10 pb-10 border-b border-gray-200">
-        <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration (Preview)</h2>
-        <YahooPanelMount enabled={process.env['NEXT_PUBLIC_ENABLE_YAHOO'] === 'true'} />
-      </div>
+      {/* Yahoo removed from Settings — single-page flow lives on /tools */}
     </div>
   );
 }
