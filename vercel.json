@@ -1,12 +1,12 @@
 {
-  "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
+  "env": {
+    "NEXT_PUBLIC_API_BASE": "https://customvenom-workers-api.jdewett81.workers.dev",
+    "NEXT_PUBLIC_ENABLE_YAHOO": "true"
   },
   "build": {
     "env": {
-      "NODE_VERSION": "20.18.0"
+      "NEXT_PUBLIC_API_BASE": "https://customvenom-workers-api.jdewett81.workers.dev",
+      "NEXT_PUBLIC_ENABLE_YAHOO": "true"
     }
   }
 }
