@@ -70,7 +70,46 @@ export default function YahooPanelClient() {
         }
         if (cancelled) return;
         setLeagues(arr);
-        // (Defer teams/roster to Step 4)
+
+        // Teams
+        const league = arr[0];
+        if (!league) {
+          setError('not_connected');
+          return;
+        }
+        const rt = await fetch(`${apiBase}/yahoo/leagues/${encodeURIComponent(league.key)}/teams`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'accept': 'application/json' }
+        });
+        if (!rt.ok) {
+          setError(rt.status === 401 ? 'not_connected' : `http_${rt.status}`);
+          return;
+        }
+        const tdata = await rt.json().catch(() => null);
+        const teams: YahooTeam[] = Array.isArray(tdata?.teams) ? tdata.teams : [];
+        const team = teams[0] || null;
+        if (!team) {
+          setTeamKey(null);
+          setRoster({ players: [] });
+          return;
+        }
+        if (cancelled) return;
+        setTeamKey(team.key);
+
+        // Roster
+        const rr = await fetch(`${apiBase}/yahoo/team/${encodeURIComponent(team.key)}/roster`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'accept': 'application/json' }
+        });
+        if (!rr.ok) {
+          setError(rr.status === 401 ? 'not_connected' : `http_${rr.status}`);
+          return;
+        }
+        const rdata: YahooRoster | null = await rr.json().catch(() => null);
+        if (cancelled) return;
+        setRoster(rdata && Array.isArray(rdata.players) ? rdata : { players: [] });
       } catch (e: unknown) {
         console.error(JSON.stringify({ scope: '[settings.yahoo].client', message: String(e) }));
         setError('unknown');
@@ -127,6 +166,7 @@ export default function YahooPanelClient() {
   }
 
   const league = leagues?.[0] || null;
+  const players = roster?.players ?? [];
 
   return (
     <Card tone="green">
@@ -138,7 +178,29 @@ export default function YahooPanelClient() {
           Reconnect
         </a>
       </div>
-      <div className="text-sm opacity-80">Leagues loaded.</div>
+
+      {players.length === 0 ? (
+        <div className="text-sm opacity-80">No roster data yet.</div>
+      ) : (
+        <table className="w-full text-sm border-separate border-spacing-y-1">
+          <thead>
+            <tr className="text-left opacity-70">
+              <th className="pr-4">Player</th>
+              <th className="pr-4">Pos</th>
+              <th className="pr-4">Team</th>
+            </tr>
+          </thead>
+          <tbody>
+            {players.map((p) => (
+              <tr key={p.id}>
+                <td className="pr-4">{p.name}</td>
+                <td className="pr-4">{p.pos}</td>
+                <td className="pr-4">{p.team}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </Card>
   );
 }
