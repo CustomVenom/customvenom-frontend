@@ -1,6 +1,6 @@
 # 🎨 UI Redesign Plan - Dark-First Fantasy Football Theme
 
-**Goal**: Modern, dark-first UI inspired by Sleeper, ESPN Fantasy  
+**Goal**: Modern, dark-first UI inspired by Sleeper, ESPN Fantasy
 **Principle**: NO white backgrounds, maximum readability, FF app aesthetics
 
 ---
@@ -174,6 +174,10 @@ Hurts           PHI   QB    24.2   19.5   29.8
 - [ ] User-friendly interactions
 
 ---
+
+## 🛡️ Tailwind Hardening
+
+- **[Tailwind CSS Implementation Reference](./TAILWIND_IMPLEMENTATION_REFERENCE.md)** - Complete setup guide, FOUC prevention, safelist config, and validation snippets
 
 ## 🚀 Quick Wins First
 

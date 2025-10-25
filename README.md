@@ -21,6 +21,10 @@ React 19 + Next.js 15 frontend for fantasy football projections and decision too
 - [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
 - [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
 
+## 🎨 Styling
+
+- **[Tailwind CSS Implementation Reference](./TAILWIND_IMPLEMENTATION_REFERENCE.md)** - Complete setup guide, FOUC prevention, safelist config, and validation snippets
+
 ## 🚀 Quick Start
 
 ```bash

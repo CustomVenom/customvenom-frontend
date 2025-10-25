@@ -6,6 +6,27 @@
 
 ## 🚦 Pre-Push Gate (Required)
 
+**CI Order**: `preflight` → `typecheck` → `lint` → `e2e` (config issues fail fast)
+
+### Frontend Preflight — Lint + Type + Tailwind
+
+**Location**: `customvenom-frontend`
+
+```powershell
+# Run preflight checks (includes Tailwind smoke test)
+npm run preflight
+```
+
+**Acceptance** ✅
+- ESLint passes with 0 errors
+- TypeScript compilation succeeds
+- Tailwind CSS configuration verified
+- All content paths properly configured
+- globals.css imports Tailwind correctly
+- Safelist configured for dynamic classes
+
+**⚠️ Important**: After changing `tailwind.config.js`, restart the dev server (`npm run dev`) for class generation to refresh.
+
 ### Frontend E2E — Trust Snapshot (Staging)
 
 **Location**: `customvenom-frontend`
