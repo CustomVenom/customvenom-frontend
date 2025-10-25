@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   auth.searchParams.set('client_id', process.env['YAHOO_CLIENT_ID']!);
   auth.searchParams.set('redirect_uri', redirectUri);
   auth.searchParams.set('response_type', 'code');
-  auth.searchParams.set('scope', 'fspt-r');
+  auth.searchParams.set('scope', 'openid profile email fspt-r');
   auth.searchParams.set('state', state);
 
   const res = NextResponse.redirect(auth.toString(), { status: 302 });
