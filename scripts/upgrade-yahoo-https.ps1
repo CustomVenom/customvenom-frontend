@@ -6,7 +6,7 @@ Write-Host "🔒 Upgrading Yahoo URLs to HTTPS..." -ForegroundColor Green
 # Find all TS/TSX files in src
 $files = Get-ChildItem -Recurse -Include *.ts,*.tsx -Path .\src | Select-Object -ExpandProperty FullName
 
-$pattern = 'http://([^"\s]*\.)?yahoo\.com'
+$pattern = 'https://([^"\s]*\.)?yahoo\.com'
 $replacement = 'https://$1yahoo.com'
 
 $changed = @()
@@ -43,7 +43,7 @@ if ($changed.Count -gt 0) {
 
 # Optional: Verify no HTTP Yahoo URLs remain
 Write-Host "`n🔍 Verifying no HTTP Yahoo URLs remain..." -ForegroundColor Cyan
-$remaining = Select-String -Path $files -Pattern 'http://[^"]*yahoo\.com' -List
+$remaining = Select-String -Path $files -Pattern 'https://[^"]*yahoo\.com' -List
 
 if ($remaining) {
   Write-Warning "⚠️  Still found HTTP Yahoo URLs:"

@@ -77,8 +77,8 @@ export class YahooClient {
 }
 
 // ❌ WRONG - Don't use direct fetch for Yahoo endpoints
-// const response = await fetch('http://fantasysports.yahoo.com/api', options);
+// const response = await fetch('https://fantasysports.yahoo.com/api', options);
 
 // ✅ CORRECT - Always use safeFetch for Yahoo
-// const response = await safeFetch('http://fantasysports.yahoo.com/api', options);
+// const response = await safeFetch('https://fantasysports.yahoo.com/api', options);
 // Automatically becomes: https://fantasysports.yahoo.com/api

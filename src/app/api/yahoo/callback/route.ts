@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
         const parsedReturnTo = stateData.returnTo;
 
         // Guardrail: reject absolute URLs (only allow internal paths)
-        if (parsedReturnTo.startsWith('http://') || parsedReturnTo.startsWith('https://')) {
+        if (parsedReturnTo.startsWith('https://')) {
           console.error('Rejected absolute URL in returnTo:', parsedReturnTo);
           returnTo = '/tools/leagues'; // Safe fallback
         }
