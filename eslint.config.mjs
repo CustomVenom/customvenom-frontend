@@ -121,7 +121,7 @@ export default [
         {
           selector: "MemberExpression[object.name='process'][property.name='env'][property.type='Identifier']",
           message: "Use process.env['NAME'] instead of process.env.NAME"
-        }
+        },
       ]
     }
   },
