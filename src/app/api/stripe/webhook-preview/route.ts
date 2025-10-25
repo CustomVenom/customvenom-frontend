@@ -2,8 +2,8 @@
 // Logs events but doesn't write to database
 // Use this for testing Stripe integration before going live
 
-import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
 export const runtime = 'nodejs'; // required for raw body
 export const dynamic = 'force-dynamic';

@@ -10,16 +10,18 @@
 // once Workers API endpoints are implemented.
 
 import { cookies } from 'next/headers';
-import ToolsTabs from '@/components/ToolsTabs';
+
 import LeaguesTable from './components/LeaguesTable';
 import { RefreshLeaguesButton } from './components/RefreshLeaguesButton';
+
+import ToolsTabs from '@/components/ToolsTabs';
 import type { MeLeaguesResponse } from '@/types/leagues';
 
 export const dynamic = 'force-dynamic';
 
 async function getMeLeagues(): Promise<MeLeaguesResponse | null> {
   try {
-    const baseUrl = process.env['NEXT_PUBLIC_FRONTEND_BASE'] || 'http://localhost:3000';
+    const baseUrl = process.env['NEXT_PUBLIC_FRONTEND_BASE'] || 'https://www.customvenom.com';
     const r = await fetch(`${baseUrl}/app/me/leagues`, {
       cache: 'no-store',
       headers: {

@@ -3,8 +3,8 @@
 
 'use client';
 
-import { signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { signIn, signOut } from 'next-auth/react';
 
 interface AuthButtonsProps {
   session: Session | null;

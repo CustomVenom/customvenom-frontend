@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
-import type { LeagueSummary } from '@/types/leagues';
+
 import { getYahooAdapter, getSleeperAdapter, getEspnAdapter } from './adapters';
+
+import type { LeagueSummary } from '@/types/leagues';
 
 export async function fetchAllLeagues(apiBase: string): Promise<LeagueSummary[]> {
   const c = await cookies();

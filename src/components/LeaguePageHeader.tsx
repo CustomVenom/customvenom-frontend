@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+
 import { LeagueHeaderControls } from './LeagueHeaderControls';
 import { LeagueSwitcher } from './LeagueSwitcher';
+
 import type { MeLeaguesResponse } from '@/types/leagues';
 
 interface LeaguePageHeaderProps {

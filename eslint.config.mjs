@@ -104,7 +104,15 @@ export default [
     },
     settings: {
       react: { version: 'detect' },
-      'import/resolver': { node: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'] } }
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json'
+        },
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+        }
+      }
     },
     rules: {
       'no-unused-vars': 'off', // prefer TS rule above
@@ -114,8 +122,14 @@ export default [
       // React 17+ JSX transform
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
-      ...reactHooks.configs.recommended.rules,
-      // Prevent process.env.FOO dot-access regression
+      ...reactHooks.configs.recommended.rules
+    }
+  },
+
+  // Enforce env bracket notation in app source only
+  {
+    files: ['src/**/*.{ts,tsx,js,jsx}'],
+    rules: {
       'no-restricted-syntax': [
         'warn',
         {
@@ -123,6 +137,40 @@ export default [
           message: "Use process.env['NAME'] instead of process.env.NAME"
         }
       ]
+    }
+  },
+
+  // Configs and tests: do not enforce the env dot-access rule
+  {
+    files: [
+      '**/*.config.{js,ts,mjs,cjs}',
+      'vitest.config.{js,ts,mjs,cjs}',
+      'jest.config.{js,ts,mjs,cjs}',
+      '**/*.test.{ts,tsx,js,jsx}',
+      'tests/**/*',
+      'scripts/**/*'
+    ],
+    rules: {
+      'no-restricted-syntax': 'off'
+    }
+  },
+
+  // Scripts override with node globals
+  {
+    files: ['scripts/**/*.{js,ts,mjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly'
+      }
     }
   },
 

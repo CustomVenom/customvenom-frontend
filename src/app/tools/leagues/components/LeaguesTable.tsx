@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+
+import ProtectionModeBadge from '@/components/ProtectionModeBadge';
 import type { MeLeaguesResponse, LeagueKey } from '@/types/leagues';
 
 interface LeaguesTableProps {
@@ -11,16 +13,40 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
   const [data, setData] = useState<MeLeaguesResponse>(initialData);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isStale, setIsStale] = useState(false);
 
   const refreshData = async () => {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 10000);
+
     try {
-      const r = await fetch('/app/me/leagues', { cache: 'no-store' });
-      if (r.ok) {
-        const newData = await r.json();
-        setData(newData);
+      let r = await fetch('/app/me/leagues', {
+        cache: 'no-store',
+        signal: ctrl.signal
+      });
+
+      if (!r.ok && r.status >= 500) {
+        // One retry on 5xx with 500ms delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        r = await fetch('/app/me/leagues', {
+          cache: 'no-store',
+          signal: ctrl.signal
+        });
       }
+
+      if (!r.ok) {
+        throw new Error(`leagues_${r.status}`);
+      }
+
+      const newData = await r.json();
+      setData(newData);
+      setError(null);
+      setIsStale(r.headers.get('x-stale') === 'true');
     } catch (err) {
       console.error('[LeaguesTable] Failed to refresh', err);
+      setError('Service busy. Try again in a moment. See details for requestId.');
+    } finally {
+      clearTimeout(t);
     }
   };
 
@@ -30,12 +56,27 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
     setSyncing(true);
     setError(null);
 
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 10000);
+
     try {
-      const r = await fetch('/app/me/synced-leagues', {
+      let r = await fetch('/app/me/synced-leagues', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ league_keys }),
+        signal: ctrl.signal,
       });
+
+      if (!r.ok && r.status >= 500) {
+        // One retry on 5xx with 500ms delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        r = await fetch('/app/me/synced-leagues', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ league_keys }),
+          signal: ctrl.signal,
+        });
+      }
 
       if (!r.ok) {
         const result = await r.json();
@@ -55,10 +96,11 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
       // Refresh to get accurate entitlements
       await refreshData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sync leagues');
+      setError(err instanceof Error ? err.message : 'Service busy. Try again in a moment.');
       await refreshData(); // Revert optimistic update
     } finally {
       setSyncing(false);
+      clearTimeout(t);
     }
   };
 
@@ -117,12 +159,15 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
   return (
     <div className="space-y-4">
       {/* Slot Meter */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-        <div className="text-sm">
-          <span className="font-medium">Sync Slots:</span>{' '}
-          <span className="text-gray-600 dark:text-gray-400">
-            {ent.used_slots} of {ent.is_superuser ? '∞' : ent.max_sync_slots} used
-          </span>
+      <div data-testid="leagues-table-header" className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+        <div className="flex items-center gap-3">
+          <div className="text-sm">
+            <span className="font-medium">Sync Slots:</span>{' '}
+            <span className="text-gray-600 dark:text-gray-400">
+              {ent.used_slots} of {ent.is_superuser ? '∞' : ent.max_sync_slots} used
+            </span>
+          </div>
+          <ProtectionModeBadge isStale={isStale} />
         </div>
         {atCapacity && !ent.is_superuser && (
           <button className="text-sm text-purple-600 dark:text-purple-400 hover:underline">

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { PageFrame } from '../src/components/PageFrame';
 
 const meta: Meta<typeof PageFrame> = {

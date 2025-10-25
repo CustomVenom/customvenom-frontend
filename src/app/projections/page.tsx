@@ -1,16 +1,17 @@
 ﻿'use client';
 import { useEffect, useState } from 'react';
-import GoProButton from '@/components/GoProButton';
-import { type Entitlements } from '@/lib/entitlements';
-import { TrustSnapshot } from '@/components/TrustSnapshot';
-import { FaabBands } from '@/components/FaabBands';
-import { RiskDial } from '@/components/RiskDial';
-import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
-import { GlossaryTip } from '@/components/ui/GlossaryTip';
-import { TableSkeleton } from '@/components/ui/TableSkeleton';
-import { type Reason } from '@/lib/reasonsClamp';
+
 import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
 import DemoBadge from '@/components/DemoBadge';
+import { FaabBands } from '@/components/FaabBands';
+import GoProButton from '@/components/GoProButton';
+import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
+import { RiskDial } from '@/components/RiskDial';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { type Entitlements } from '@/lib/entitlements';
+import { type Reason } from '@/lib/reasonsClamp';
 
 interface ProjectionData {
   player_id: string;

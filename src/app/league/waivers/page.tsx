@@ -1,7 +1,7 @@
-import { getServerSession } from '@/lib/auth-helpers';
+import { LeaguePageHeader } from '@/components/LeaguePageHeader';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
-import { LeaguePageHeader } from '@/components/LeaguePageHeader';
+import { getServerSession } from '@/lib/auth-helpers';
 
 export const metadata = {
   title: 'Waivers - CustomVenom',

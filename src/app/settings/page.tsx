@@ -1,11 +1,12 @@
 // Settings Page
 // Shows account details, role, and manage billing for Pro users
 
-import { getServerSession } from '@/lib/auth-helpers';
 import { cookies } from 'next/headers';
+import Link from 'next/link';
+
 import { LeagueImport } from '@/components/LeagueImport';
 import { YahooStatusBadge } from '@/components/YahooStatusBadge';
-import Link from 'next/link';
+import { getServerSession } from '@/lib/auth-helpers';
 
 export const metadata = {
   title: 'Settings - CustomVenom',

@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { MeLeaguesResponse } from '@/types/leagues';
+
 import { LeagueChooser } from './LeagueChooser';
+
+import type { MeLeaguesResponse } from '@/types/leagues';
 
 export function LeagueSwitcher() {
   const [data, setData] = useState<MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } | null>(null);

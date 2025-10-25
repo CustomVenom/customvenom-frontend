@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+
 import { clampChips, type Row } from '@/lib/tools';
 
 type Props = {

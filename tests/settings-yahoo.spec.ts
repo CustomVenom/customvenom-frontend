@@ -11,13 +11,14 @@ test('@yahoo-oauth settings loads signed-out without redirect', async ({ page })
 test('@yahoo-oauth shows connected state after callback', async ({ page, context }) => {
   // Seed cookies to simulate callback having run
   await context.addCookies([
-    { name: 'y_at', value: 'stub', url: process.env.FRONTEND_BASE || 'http://localhost:3000' },
+    { name: 'y_at', value: 'stub', url: process.env['FRONTEND_BASE'] || 'http://localhost:3000' },
     {
       name: 'y_guid',
       value: 'GUID-123',
-      url: process.env.FRONTEND_BASE || 'http://localhost:3000',
+      url: process.env['FRONTEND_BASE'] || 'http://localhost:3000',
     },
   ]);
   await page.goto('/settings?yahoo=connected', { waitUntil: 'networkidle' });
   await expect(page.getByTestId('yahoo-connected')).toContainText('GUID-123');
 });
+

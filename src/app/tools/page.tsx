@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import DebugRequestId from '@/components/DebugRequestId';
 import ToolsTabs from '@/components/ToolsTabs';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
-import DebugRequestId from '@/components/DebugRequestId';
 
 export const metadata: Metadata = {
   title: 'Tools — Custom Venom',

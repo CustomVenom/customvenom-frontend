@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 // Redirect shim: /tools/yahoo → /tools/leagues
 // Keeps backward compatibility for old links while maintaining canonical OAuth destination

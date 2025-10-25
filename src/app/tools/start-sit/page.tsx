@@ -1,18 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ToolsTabs from '@/components/ToolsTabs';
-import PlayerDrawer from '@/components/PlayerDrawer';
-import PlayerSearch from '@/components/PlayerSearch';
-import EmptyState from '@/components/EmptyState';
+
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
-import { type Row, fetchProjections } from '@/lib/tools';
-import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import EmptyState from '@/components/EmptyState';
+import PlayerDrawer from '@/components/PlayerDrawer';
+import PlayerSearch from '@/components/PlayerSearch';
 import { useToast } from '@/components/Toast';
-import { startSitSummary } from '@/lib/summary';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import ToolsTabs from '@/components/ToolsTabs';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
+import { startSitSummary } from '@/lib/summary';
+import { type Row, fetchProjections } from '@/lib/tools';
 
 function StartSitContent() {
   const [playerA, setPlayerA] = useState('');

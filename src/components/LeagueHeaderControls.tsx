@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+
 import { ProLock } from '@/components/ProLock';
 import { canActivateAnotherLeague } from '@/lib/leagueGate';
 

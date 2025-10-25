@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.FRONTEND_BASE ?? 'http://localhost:3000';
+const BASE = process.env['FRONTEND_BASE'] ?? 'http://localhost:3000';
 
 test('Projections renders and has no console errors', async ({ page }) => {
   const errors: string[] = [];
@@ -21,3 +21,4 @@ test('Projections renders and has no console errors', async ({ page }) => {
   // No console errors
   expect(errors, errors.join('\n')).toHaveLength(0);
 });
+

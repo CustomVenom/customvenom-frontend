@@ -1,13 +1,13 @@
 ﻿// NextAuth.js configuration
 // Supports Google, Yahoo, Twitter (X), and Facebook social login
 
-import NextAuth from 'next-auth';
-import { getServerSession } from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
+import FacebookProvider from 'next-auth/providers/facebook';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
-import FacebookProvider from 'next-auth/providers/facebook';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+
 import { prisma } from './db';
 // Note: Yahoo OAuth is handled separately via custom /api/yahoo/* routes
 // Only include providers that have credentials configured

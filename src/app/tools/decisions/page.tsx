@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ToolsTabs from '@/components/ToolsTabs';
-import PlayerDrawer from '@/components/PlayerDrawer';
-import EmptyState from '@/components/EmptyState';
+
 import ActionBar from '@/components/ActionBar';
-import { type Row } from '@/lib/tools';
-import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import EmptyState from '@/components/EmptyState';
+import PlayerDrawer from '@/components/PlayerDrawer';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import ToolsTabs from '@/components/ToolsTabs';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
+import { type Row } from '@/lib/tools';
 
 function DecisionsContent() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');

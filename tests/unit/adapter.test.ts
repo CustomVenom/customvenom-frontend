@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { toReasonChips } from '../../src/lib/reasons/adapter';
 import { parseRawReasons } from '../../src/lib/reasons/schema';
 

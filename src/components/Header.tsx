@@ -1,10 +1,11 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import Brand from '@/components/Brand';
-import ThemeToggle from '@/components/ThemeToggle';
 import DensityToggle from '@/components/DensityToggle';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const links = [
   { href: '/projections', label: 'Projections' },

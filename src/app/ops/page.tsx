@@ -1,5 +1,6 @@
 ﻿'use client';
 import { useEffect, useState } from 'react';
+
 import { Tile, DualTile } from '@/components/Tile';
 import { fetchLogMetrics } from '@/lib/logs';
 

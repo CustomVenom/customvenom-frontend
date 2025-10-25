@@ -1,7 +1,7 @@
 // Runtime validation guards for auth features
 
-import { Session } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { Session } from 'next-auth';
 
 /**
  * Validate Yahoo session has required fields

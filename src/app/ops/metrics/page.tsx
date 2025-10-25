@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useState, useEffect, useCallback } from 'react';
+
 import { getEventsSince, getEventCountsByType, getToolUsageStats, getRiskModeDistribution } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
-import { type Entitlements } from '@/lib/entitlements';
 import { getCacheStats } from '@/lib/cache';
+import { type Entitlements } from '@/lib/entitlements';
 
 interface MetricsData {
   totalEvents: number;

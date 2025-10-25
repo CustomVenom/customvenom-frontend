@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import OpsStatus from '@/components/OpsStatus';
 
 export default function Footer() {

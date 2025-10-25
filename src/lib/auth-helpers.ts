@@ -1,8 +1,9 @@
 // Auth helper functions for server components and API routes
 
-import { getServerSession as nextAuthGetServerSession } from 'next-auth/next';
-import { authOptions } from './auth';
 import { redirect } from 'next/navigation';
+import { getServerSession as nextAuthGetServerSession } from 'next-auth/next';
+
+import { authOptions } from './auth';
 
 /**
  * Get the current session (server-side only)

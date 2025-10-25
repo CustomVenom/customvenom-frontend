@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { GlossaryTip } from '@/components/ui/GlossaryTip'
-import { TableSkeleton } from '@/components/ui/TableSkeleton'
-import { Table } from '@/components/ui/Table'
+
 import { ReasonChips, type Reason } from '@/components/ReasonChips'
+import { GlossaryTip } from '@/components/ui/GlossaryTip'
+import { Table } from '@/components/ui/Table'
+import { TableSkeleton } from '@/components/ui/TableSkeleton'
 
 export default function DemoPage() {
 	const [isLoading, setIsLoading] = useState(true)

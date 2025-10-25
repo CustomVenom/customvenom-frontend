@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'missing_price_id' }, { status: 400 });
     }
 
-    const base = process.env['FRONTEND_BASE'] || process.env['NEXTAUTH_URL'] || 'http://localhost:3000';
+    const base = process.env['FRONTEND_BASE'] || process.env['NEXTAUTH_URL'] || 'https://www.customvenom.com';
     const successUrl = `${base}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${base}/checkout/cancel`;
 

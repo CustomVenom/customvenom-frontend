@@ -1,13 +1,13 @@
 'use client';
 
 import CacheWarmer from '@/components/CacheWarmer';
-import KeyboardCheatsheet from '@/components/KeyboardCheatsheet';
-import { TrustRibbon } from '@/components/TrustRibbon';
 import { DevOverlay } from '@/components/DevOverlay';
-import { SideNav } from '@/components/SideNav';
+import KeyboardCheatsheet from '@/components/KeyboardCheatsheet';
 import { MobileDock } from '@/components/MobileDock';
-import { SkipLink } from '@/components/SkipLink';
 import { QuickNav } from '@/components/QuickNav';
+import { SideNav } from '@/components/SideNav';
+import { SkipLink } from '@/components/SkipLink';
+import { TrustRibbon } from '@/components/TrustRibbon';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (

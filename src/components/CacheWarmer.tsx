@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { warmProjectionsCacheBackground } from '@/lib/tools';
 
 /**

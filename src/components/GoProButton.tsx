@@ -1,6 +1,6 @@
 ﻿'use client';
-import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { useState } from 'react';
 
 interface GoProButtonProps {
   priceId: string;

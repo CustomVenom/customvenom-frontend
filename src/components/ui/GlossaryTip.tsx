@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
+
 import { GLOSSARY } from '@/lib/glossary';
 
 type Props = {

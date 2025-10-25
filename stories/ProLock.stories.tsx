@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { ProLock } from '../src/components/ProLock';
 
 const meta: Meta<typeof ProLock> = {

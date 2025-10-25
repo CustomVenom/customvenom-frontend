@@ -190,3 +190,30 @@ cd customvenom-frontend
 npm run build
 # Push to main for auto-deploy or manual Vercel deploy
 ```
+
+## Receipts — Cloudflare Verification
+
+### Production /health
+- Body: ok=true, ready=true, schema_version=v1, last_refresh=2025-10-25T02:53:58.504Z, r2_key=data/projections/nfl/2025/week=2025-06/baseline.json
+- Headers: cache-control=no-store, x-request-id=8be660d8-a421-4cd0-b921-968797d215bc, content-type=application/json
+
+### Staging /health
+- Body: ok=true, ready=true, schema_version=v1, last_refresh=2025-10-25T02:54:05.574Z, r2_key=data/projections/nfl/2025/week=2025-06/baseline.json
+- Headers: cache-control=no-store, x-request-id=12cd2f88-ccaa-48ac-b41f-170630da7f16, content-type=application/json
+
+### R2 artifact (sample)
+- schema_version=v1, last_refresh=2025-10-15T08:00:00.000Z
+
+### Bindings sanity
+- Deployments: latest f5fd7379 (Oct 23, 2025), 10 active
+- KV: staging-OPS_KV, staging-OPS_KV_preview
+- R2: customvenom-data, customvenom-data-staging
+
+### Acceptance
+- ✅ /health body fields present
+- ✅ cache-control=no-store and x-request-id present
+- ✅ R2 bucket + key path exist for current week
+- ✅ Sample artifact JSON valid with schema_version + last_refresh
+- ✅ Both staging and prod 200 with request_id captured
+
+**Note**: On older Wrangler versions without r2 object list, direct object get + prefix knowledge is an acceptable receipt. If you upgrade Wrangler later, you can add object listings for the same prefixes to your receipts.

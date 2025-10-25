@@ -3,6 +3,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+
 import { getServerSession } from '@/lib/auth-helpers';
 
 const stripe = process.env['STRIPE_SECRET_KEY']
@@ -44,7 +45,7 @@ export async function POST() {
     // Create billing portal session
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: session.user.stripeCustomerId,
-      return_url: `${process.env['NEXTAUTH_URL'] || 'http://localhost:3000'}/settings`,
+      return_url: `${process.env['NEXTAUTH_URL'] || 'https://www.customvenom.com'}/settings`,
     });
 
     return NextResponse.json({ url: portalSession.url });

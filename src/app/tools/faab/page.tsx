@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ToolsTabs from '@/components/ToolsTabs';
-import EmptyState from '@/components/EmptyState';
+
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
+import EmptyState from '@/components/EmptyState';
 import { useToast } from '@/components/Toast';
-import { GlossaryTip } from '@/components/ui/GlossaryTip';
-import { faabSummary } from '@/lib/summary';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import ToolsTabs from '@/components/ToolsTabs';
+import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { trackToolUsage, trackFeatureInteraction } from '@/lib/analytics';
+import { faabSummary } from '@/lib/summary';
 
 function FaabContent() {
   const [player, setPlayer] = useState('');
