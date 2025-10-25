@@ -30,6 +30,23 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE;
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 ```
 
+### Yahoo HTTPS Security
+
+**All Yahoo API calls must use HTTPS for security compliance:**
+
+```typescript
+// ✅ CORRECT - Use safeFetch for Yahoo endpoints
+import { safeFetch } from '@/lib/http-guard';
+
+const response = await safeFetch('http://fantasysports.yahoo.com/api/leagues', options);
+// Automatically upgrades to: https://fantasysports.yahoo.com/api/leagues
+
+// ❌ WRONG - Direct fetch can bypass HTTPS enforcement
+const response = await fetch('http://fantasysports.yahoo.com/api/leagues', options);
+```
+
+**Preflight checks will block any `http://*.yahoo.com` references in source code.**
+
 ### Quick Quality Check
 
 **Always run `npm run preflight` before pushing.**

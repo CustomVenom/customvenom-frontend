@@ -1,0 +1,66 @@
+# GitHub Actions Workflow: Preflight Quality Gate
+# Runs comprehensive quality checks on PRs and main branch
+
+name: Preflight
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run preflight checks
+        run: npm run preflight
+        env:
+          # Optional: Set environment variables for testing
+          NODE_ENV: test
+          
+      - name: Upload test results (if any)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            coverage/
+          retention-days: 7
+
+  # Optional: Security scan for Yahoo HTTPS compliance
+  security-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Scan for HTTP Yahoo URLs
+        run: |
+          echo "🔍 Scanning for HTTP Yahoo URLs..."
+          if git grep -nE "http://[^\"']*yahoo\.com" -- 'src/**/*.{ts,tsx,js,jsx}'; then
+            echo "❌ Found HTTP Yahoo references. Use HTTPS only."
+            echo "💡 Use safeFetch() from @/lib/http-guard for Yahoo API calls."
+            exit 1
+          else
+            echo "✅ No HTTP Yahoo URLs found."
+          fi
+          
+      - name: Security scan passed
+        run: echo "🛡️ Yahoo HTTPS security compliance verified"
