@@ -82,7 +82,7 @@ curl -s "$API_BASE/yahoo/leagues" | jq '.'
 
 ### If OAuth redirect fails:
 
-1. Check redirect URI in Workers API: `https://www.customvenom.com/api/yahoo/callback`
+1. Check redirect URI in Workers API: `https://api.customvenom.com/api/yahoo/callback`
 2. Verify redirect URI matches in Yahoo Developer Console
 3. Check CORS headers on Workers API
 

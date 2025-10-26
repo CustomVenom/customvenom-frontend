@@ -77,7 +77,7 @@ curl -sS -I "$FRONTEND/settings" | grep -i '^location' || echo "OK: no redirect"
 
 ### Callback Shape
 ```bash
-curl -sSD - "https://www.customvenom.com/api/yahoo/callback?code=dummy" -o /dev/null | grep -i '^location' || echo "Check via real flow"
+curl -sSD - "https://api.customvenom.com/api/yahoo/callback?code=dummy" -o /dev/null | grep -i '^location' || echo "Check via real flow"
 # Result: 400 Bad Request (expected - OAuth state validation - no Location header for invalid state)
 ```
 
@@ -153,12 +153,12 @@ Production OAuth flow was redirecting to `/settings?yahoo=connected` but Setting
 # 1. Connect endpoint (should 302 to Yahoo)
 curl -sS -D- -o /dev/null "https://www.customvenom.com/api/yahoo/connect"
 Status: 302
-Location: https://api.login.yahoo.com/oauth2/request_auth?client_id=...&redirect_uri=https%3A%2F%2Fwww.customvenom.com%2Fapi%2Fyahoo%2Fcallback&response_type=code&scope=fspt-r&state=...
+Location: https://api.login.yahoo.com/oauth2/request_auth?client_id=...&redirect_uri=https%3A%2F%2Fapi.customvenom.com%2Fapi%2Fyahoo%2Fcallback&response_type=code&scope=fspt-r&state=...
 X-Vercel-Id: iad1::iad1::sbhqb-1761280390281-b6e6c8700969
 ✅ PASS: Redirects to Yahoo auth
 
 # 2. Callback error path (should 400)
-curl -sS -D- "https://www.customvenom.com/api/yahoo/callback?code=bad&state=bad" -o /dev/null
+curl -sS -D- "https://api.customvenom.com/api/yahoo/callback?code=bad&state=bad" -o /dev/null
 Status: 400 Bad Request
 Content: Invalid OAuth state
 X-Vercel-Id: iad1::iad1::l5h5j-1761280403099-9cfda18280d9
