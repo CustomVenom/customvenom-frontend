@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { leagueKey: string } }
+  req: Request,
+  ctx: unknown
 ): Promise<Response> {
+  const { leagueKey } = (ctx as { params: { leagueKey: string } }).params;
   const reqId = crypto.randomUUID();
 
   try {
@@ -22,7 +23,7 @@ export async function GET(
 
     // Call Workers API with session token
     const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    const r = await fetch(`${apiBase}/api/yahoo/leagues/${params.leagueKey}/teams`, {
+    const r = await fetch(`${apiBase}/api/yahoo/leagues/${leagueKey}/teams`, {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
