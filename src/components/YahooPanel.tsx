@@ -27,10 +27,11 @@ export default async function YahooPanel() {
       );
     }
 
-    const cookieStore = await cookies();
-    const yahooToken = cookieStore.get('y_at')?.value;
+    // Get NextAuth session
+    const { auth } = await import('../lib/auth');
+    const session = await auth();
 
-    if (!yahooToken) {
+    if (!session?.user?.sub) {
       return (
         <div
           data-testid="yahoo-status"
@@ -38,7 +39,7 @@ export default async function YahooPanel() {
         >
           Yahoo: not connected.{' '}
           <Link
-            href="/api/yahoo/connect?returnTo=/settings"
+            href="/api/auth/signin/yahoo?callbackUrl=/settings"
             className="underline text-blue-600"
             data-testid="yahoo-connect-btn"
           >
@@ -50,9 +51,9 @@ export default async function YahooPanel() {
 
     // Fetch user info
     const userInfo = await safeJson<{ user?: { email?: string } }>(
-      fetch(`${base}/yahoo/me`, {
+      fetch(`${base}/api/yahoo/me`, {
         headers: {
-          Cookie: `y_at=${yahooToken}`,
+          'authorization': `Bearer ${session.user.sub}`,
         },
         cache: 'no-store',
       })
@@ -60,9 +61,9 @@ export default async function YahooPanel() {
 
     // Fetch leagues
     const leagues = await safeJson<{ leagues?: unknown[] }>(
-      fetch(`${base}/yahoo/leagues`, {
+      fetch(`${base}/api/yahoo/leagues`, {
         headers: {
-          Cookie: `y_at=${yahooToken}`,
+          'authorization': `Bearer ${session.user.sub}`,
         },
         cache: 'no-store',
       })

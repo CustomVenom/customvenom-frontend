@@ -1,26 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function GET(request: NextRequest, { params }: { params: { leagueKey: string } }) {
   const reqId = crypto.randomUUID();
 
   try {
     // Get NextAuth session
-    const { auth } = await import('../../../../lib/auth');
+    const { auth } = await import('../../../../../lib/auth');
     const session = await auth();
 
     if (!session?.user?.sub) {
       return NextResponse.json(
-        { queued: false, error: 'not_authenticated' },
+        { connected: false, teams: [], error: 'not_authenticated' },
         { status: 401 }
       );
     }
 
     // Call Workers API with session token
     const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    const r = await fetch(`${apiBase}/api/me/leagues/refresh`, {
-      method: 'POST',
+    const r = await fetch(`${apiBase}/api/yahoo/leagues/${params.leagueKey}/teams`, {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
@@ -31,15 +30,8 @@ export async function POST() {
 
     if (!r.ok) {
       return NextResponse.json(
-        { queued: false, error: 'upstream_error' },
-        {
-          status: r.status,
-          headers: {
-            'content-type': 'application/json',
-            'cache-control': 'no-store',
-            'x-request-id': reqId,
-          },
-        }
+        { connected: false, teams: [], error: 'upstream_unavailable' },
+        { status: r.status }
       );
     }
 
@@ -52,18 +44,10 @@ export async function POST() {
       },
     });
   } catch (error) {
-    console.error('[api/leagues/refresh]', error);
+    console.error('[api/leagues/teams]', error);
     return NextResponse.json(
-      { queued: false, error: 'internal_error' },
-      {
-        status: 500,
-        headers: {
-          'content-type': 'application/json',
-          'cache-control': 'no-store',
-          'x-request-id': reqId,
-        },
-      }
+      { connected: false, teams: [], error: 'internal_error' },
+      { status: 500 }
     );
   }
 }
-

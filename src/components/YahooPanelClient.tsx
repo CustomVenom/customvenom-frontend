@@ -48,7 +48,7 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
           setError('not_configured');
           return;
         }
-        const r = await fetch('/api/yahoo/leagues', {
+        const r = await fetch('/api/leagues', {
           credentials: 'include',
           cache: 'no-store',
           headers: { 'accept': 'application/json' }
@@ -72,7 +72,7 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
           setError('not_connected');
           return;
         }
-        const rt = await fetch(`/api/yahoo/leagues/${encodeURIComponent(league.key)}/teams`, {
+        const rt = await fetch(`/api/leagues/${encodeURIComponent(league.key)}/teams`, {
           credentials: 'include',
           cache: 'no-store',
           headers: { 'accept': 'application/json' }
@@ -93,7 +93,7 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
         setTeamKey(team.key);
 
         // Roster
-        const rr = await fetch(`/api/yahoo/team/${encodeURIComponent(team.key)}/roster`, {
+        const rr = await fetch(`/api/team/${encodeURIComponent(team.key)}/roster`, {
           credentials: 'include',
           cache: 'no-store',
           headers: { 'accept': 'application/json' }

@@ -4,9 +4,10 @@
 import { cookies } from 'next/headers';
 
 export async function YahooStatusBadge() {
-  const cookieStore = await cookies();
-  const yahooToken = cookieStore.get('y_at')?.value;
-  const yahooGuid = cookieStore.get('y_guid')?.value;
+  const { auth } = await import('../lib/auth');
+  const session = await auth();
+  const yahooToken = session?.user?.sub;
+  const yahooGuid = session?.user?.yah;
 
   if (!yahooToken) {
     return (

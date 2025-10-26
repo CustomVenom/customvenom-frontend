@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { getServerSession } from '@/lib/auth-helpers';
 
 async function getLeagueRoster(userId: string, leagueId: string) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('y_at')?.value;
+  const { auth } = await import('../../../../lib/auth');
+  const session = await auth();
+  const accessToken = session?.user?.sub;
 
   if (!accessToken) {
     return null;

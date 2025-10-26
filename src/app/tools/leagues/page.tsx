@@ -45,7 +45,9 @@ export default async function LeaguesPage() {
   const cookieStore = await cookies();
 
   // Check for provider tokens as fallback
-  const yahooToken = cookieStore.get('y_at')?.value;
+  const { auth } = await import('../../../lib/auth');
+  const session = await auth();
+  const yahooToken = session?.user?.sub;
   const sleeperToken = cookieStore.get('sl_at')?.value;
   const espnToken = cookieStore.get('espn_at')?.value;
 

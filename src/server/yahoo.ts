@@ -9,8 +9,9 @@ function kvKey(_userId: string) {
 
 // Get Yahoo tokens from cookies
 async function getYahooTokens(_userId: string): Promise<{ accessToken: string } | null> {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('y_at')?.value;
+  const { auth } = await import('../lib/auth');
+  const session = await auth();
+  const accessToken = session?.user?.sub;
   if (!accessToken) return null;
   return { accessToken };
 }
@@ -27,9 +28,9 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
   // Fetch leagues from Workers API
   try {
     const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    const response = await fetch(`${apiBase}/yahoo/leagues`, {
+    const response = await fetch(`${apiBase}/api/yahoo/leagues`, {
       headers: {
-        Cookie: `y_at=${t.accessToken}`,
+        'authorization': `Bearer ${t.accessToken}`,
       },
       cache: 'no-store',
     });

@@ -8,8 +8,10 @@ export async function fetchAllLeagues(apiBase: string): Promise<LeagueSummary[]>
   const c = await cookies();
   const tasks: Promise<LeagueSummary[]>[] = [];
 
-  // Only call adapters for connected providers (based on presence of cookies)
-  if (c.get('y_at')?.value) tasks.push(getYahooAdapter(apiBase).listLeagues());
+  // Only call adapters for connected providers (based on NextAuth session)
+  const { auth } = await import('../auth');
+  const session = await auth();
+  if (session?.user?.sub) tasks.push(getYahooAdapter(apiBase).listLeagues());
   if (c.get('sl_at')?.value) tasks.push(getSleeperAdapter(apiBase).listLeagues());
   if (c.get('espn_at')?.value) tasks.push(getEspnAdapter(apiBase).listLeagues());
 

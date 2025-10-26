@@ -3,18 +3,28 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const apiBase =
-    process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const reqId = crypto.randomUUID();
 
   try {
+    // Get NextAuth session
+    const { auth } = await import('../../../lib/auth');
+    const session = await auth();
+
+    if (!session?.user?.sub) {
+      return NextResponse.json(
+        { connected: false, leagues: [], error: 'not_authenticated' },
+        { status: 401 }
+      );
+    }
+
+    // Call Workers API with session token
+    const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const r = await fetch(`${apiBase}/yahoo/leagues?season=2025`, {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
-        'cookie': request.headers.get('cookie') || '',
+        'authorization': `Bearer ${session.user.sub}`,
       },
-      credentials: 'include',
       cache: 'no-store',
     });
 
