@@ -34,7 +34,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
       setError(null);
 
       const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
-      const response = await fetch(`${apiBase}/yahoo/leagues`, {
+      const response = await fetch('/api/yahoo/leagues', {
         credentials: 'include',
       });
 
