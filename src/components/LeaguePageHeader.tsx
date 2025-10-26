@@ -21,7 +21,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    void fetch('/api/leagues')
+    void fetch('/api/leagues', { credentials: 'include' })
       .then((r) => r.json())
       .then((json: LeagueData) => {
         setData(json);
@@ -61,6 +61,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
       await fetch('/api/leagues/set-active', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ leagueId: id }),
       });
     } catch (err: unknown) {

@@ -25,6 +25,7 @@ export function LeagueSwitcher() {
       await fetch('/app/me/active-league', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ league_key: newActive }),
       });
       localStorage.setItem('cv_last_league', newActive);
@@ -46,6 +47,7 @@ export function LeagueSwitcher() {
       const res = await fetch('/api/leagues', {
         cache: 'no-store',
         headers: { 'accept': 'application/json' },
+        credentials: 'include',
         signal: controller.signal
       });
 
@@ -127,6 +129,7 @@ export function LeagueSwitcher() {
       const res = await fetch('/api/leagues/refresh', {
         method: 'POST',
         headers: { 'accept': 'application/json' },
+        credentials: 'include',
       });
 
       if (res.ok) {
