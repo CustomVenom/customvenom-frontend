@@ -2,33 +2,25 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(
-  req: Request,
-  ctx: unknown
-): Promise<Response> {
+export async function GET(req: Request, ctx: unknown): Promise<Response> {
   const { leagueKey } = (ctx as { params: { leagueKey: string } }).params;
   const reqId = crypto.randomUUID();
 
   try {
-    // Get NextAuth session
-    const { auth } = await import('../../../../../lib/auth');
-    const session = await auth();
-
-    if (!session?.user?.sub) {
-      return NextResponse.json(
-        { connected: false, teams: [], error: 'not_authenticated' },
-        { status: 401 }
-      );
-    }
-
-    // Call Workers API with session token
-    const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+    // Workers-only: forward the browser cookie to API (no NextAuth)
+    const apiBase =
+      process.env['API_BASE'] ||
+      process.env['NEXT_PUBLIC_API_BASE'] ||
+      'https://api.customvenom.com';
+    const cookie = req.headers.get('cookie') || '';
     const r = await fetch(`${apiBase}/api/yahoo/leagues/${leagueKey}/teams`, {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
-        'authorization': `Bearer ${session.user.sub}`,
+        // Forward Yahoo cookie to API for auth
+        'cookie': cookie,
       },
+      // Do not cache auth-protected data at the edge
       cache: 'no-store',
     });
 
