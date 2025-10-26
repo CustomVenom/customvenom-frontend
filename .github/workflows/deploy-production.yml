@@ -30,9 +30,9 @@ jobs:
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # yamllint disable-line
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # yamllint disable-line
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # yamllint disable-line
           vercel-args: '--prod'
         env:
           NEXT_PUBLIC_API_BASE: https://customvenom-workers-api.jdewett81.workers.dev
