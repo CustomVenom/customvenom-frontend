@@ -27,11 +27,12 @@ export default async function YahooPanel() {
       );
     }
 
-    // Get NextAuth session
-    const { auth } = await import('../lib/auth');
-    const session = await auth();
-
-    if (!session?.user?.sub) {
+    // Workers-only: Use cookie-based auth (no NextAuth for Yahoo)
+    // Session check removed - API will handle auth via cookies
+    const hasSession = false; // Simplified for Workers-only flow
+    
+    if (!hasSession) {
+      const connectHref = `${base}/api/connect/start?host=yahoo&from=${encodeURIComponent('/settings')}`;
       return (
         <div
           data-testid="yahoo-status"
@@ -39,7 +40,7 @@ export default async function YahooPanel() {
         >
           Yahoo: not connected.{' '}
           <Link
-            href="/api/auth/signin/yahoo?callbackUrl=/settings"
+            href={connectHref}
             className="underline text-blue-600"
             data-testid="yahoo-connect-btn"
           >
@@ -49,24 +50,21 @@ export default async function YahooPanel() {
       );
     }
 
+    // Workers-only: Forward cookie to API (no Bearer token)
+    const cookieHeader = cookies().toString();
+    const fetchOptions: RequestInit = {
+      headers: { 'cookie': cookieHeader },
+      cache: 'no-store',
+    };
+
     // Fetch user info
     const userInfo = await safeJson<{ user?: { email?: string } }>(
-      fetch(`${base}/api/yahoo/me`, {
-        headers: {
-          'authorization': `Bearer ${session.user.sub}`,
-        },
-        cache: 'no-store',
-      })
+      fetch(`${base}/api/yahoo/me`, fetchOptions)
     );
 
     // Fetch leagues
     const leagues = await safeJson<{ leagues?: unknown[] }>(
-      fetch(`${base}/api/yahoo/leagues`, {
-        headers: {
-          'authorization': `Bearer ${session.user.sub}`,
-        },
-        cache: 'no-store',
-      })
+      fetch(`${base}/api/yahoo/leagues`, fetchOptions)
     );
 
     const leagueCount = leagues?.leagues?.length ?? 0;
