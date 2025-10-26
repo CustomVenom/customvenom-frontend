@@ -1,5 +1,10 @@
 import { defineConfig } from '@playwright/test';
 
+// Local vs CI Environment Parity:
+// - CI: FRONTEND_BASE=https://www.customvenom.com (set in workflow)
+// - Local: baseURL=http://localhost:3000 (local dev server)
+// - Both use same test logic, different base URLs
+
 export default defineConfig({
   testIgnore: ['tests/**/*.test.ts'],
   timeout: 60000,

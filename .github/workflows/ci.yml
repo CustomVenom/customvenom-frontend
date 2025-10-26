@@ -5,13 +5,16 @@
 # - Route contract: /health = .ok only; /projections = trust headers + schema.
 # - Use scripts + jq; avoid inline JSON in YAML.
 
-name: Frontend CI
+name: CI
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch: {}
+  schedule:
+    - cron: "0 2 * * *" # nightly smokes
+    - cron: "0 9 * * 1" # weekly Monday smokes (DNS/SSL drift)
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.run_attempt }}
@@ -23,58 +26,88 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Boot
         run: echo "runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version: 20
-          cache: npm
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
       - run: npm ci
       - run: npm run build
+
+  frontend-smokes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ build ]
+    steps:
+      - name: Boot
+        run: echo "frontend-smokes runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci
+      - name: Run frontend smokes
+        run: |
+          chmod +x scripts/smoke_frontend.sh
+          FRONTEND_BASE="${FRONTEND_BASE:-https://www.customvenom.com}" ./scripts/smoke_frontend.sh
+          # print single-line summary for quick scanning
+          if [ -f receipts/summary.txt ]; then
+            echo "::notice title=Frontend Smokes::$(cat receipts/summary.txt)"
+          else
+            echo "::notice title=Frontend Smokes::SMOKES PASS (no summary file found)"
+          fi
+
+      - name: Upload smoke receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-smoke-receipts-${{ github.sha }}
+          path: receipts/**
+          if-no-files-found: ignore
+          retention-days: 7
+
 
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [ build, frontend-smokes ]
+    env:
+      FRONTEND_BASE: https://www.customvenom.com
     steps:
       - name: Boot
         run: echo "e2e runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version: 20
-          cache: npm
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
       - run: npm ci
-      - run: npx playwright install
-      - name: Run E2E Tests
-        run: |
-          export NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev"
-          npx playwright test --reporter=line
+      - run: npx playwright install --with-deps
+      - run: npx playwright test
 
   guardrails:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: [ build ]
     steps:
       - name: Boot
         run: echo "guardrails runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - uses: actions/checkout@v4
 
-      - name: Check for NextAuth Yahoo references
+      - name: Guardrail checks
         run: |
+          set -euo pipefail
+          # Check for NextAuth Yahoo references
           if grep -r "/api/auth/signin/yahoo" src/; then
             echo "❌ Found NextAuth Yahoo references in src/ - these should be removed"
             exit 1
           fi
           echo "✅ No NextAuth Yahoo references found in src/"
 
-      - name: Check for missing credentials in API calls
-        run: |
-          # Check for fetch calls to api.customvenom.com without credentials: 'include'
+          # Check for missing credentials in API calls
           if grep -r "fetch.*api\.customvenom\.com" src/ | grep -v "credentials.*include"; then
             echo "❌ Found fetch calls to api.customvenom.com without credentials: 'include'"
             echo "All API calls must include credentials: 'include' for cookie-based auth"

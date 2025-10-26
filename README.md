@@ -21,6 +21,26 @@ React 19 + Next.js 15 frontend for fantasy football projections and decision too
 - [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
 - [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
 
+## 🧪 Testing
+
+Run tests with CI parity (same environment as GitHub Actions):
+
+```bash
+# Smoke tests against production
+make smoke-prod
+
+# E2E tests against production
+make e2e-prod
+
+# Show all available targets
+make help
+```
+
+**Environment Variables:**
+- `FRONTEND_BASE=https://www.customvenom.com` - Target domain for testing
+- `CANON=https://www.customvenom.com` - Canonical domain (should be primary)
+- `ALT=https://customvenom.com` - Non-canonical domain (should redirect to CANON)
+
 ## 🚀 Quick Start
 
 ```bash
