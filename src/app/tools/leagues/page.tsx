@@ -71,7 +71,7 @@ export default async function LeaguesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="/api/yahoo/connect?returnTo=/tools/leagues"
+                href="https://api.customvenom.com/api/yahoo/connect"
                 className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
                 aria-label="Connect Yahoo"
               >

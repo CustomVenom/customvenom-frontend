@@ -12,7 +12,7 @@ test.describe('Yahoo Connect Flow', () => {
     await expect(connectButton).toBeVisible();
 
     const href = await connectButton.getAttribute('href');
-    expect(href).toBe('https://www.customvenom.com/api/yahoo/connect?returnTo=/settings'));
+    expect(href).toBe('https://api.customvenom.com/api/yahoo/connect');
   });
 
   test('should complete Yahoo OAuth flow and show connected state', async ({ page }) => {
@@ -22,18 +22,18 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': 'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://www.customvenom.com/api/auth/callback/yahoo&response_type=code&scope=fspt-r&state=test-state'
+          'Location': 'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state'
         }
       });
     });
 
     // Mock the callback processing
-    await page.route('**/api/auth/callback/yahoo*', async (route) => {
+    await page.route('**/api/yahoo/callback*', async (route) => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': '/settings',
-          'Set-Cookie': 'y_at=test-token; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=3600'
+          'Location': 'https://www.customvenom.com/tools?connected=yahoo',
+          'Set-Cookie': 'cv_yahoo=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400'
         }
       });
     });

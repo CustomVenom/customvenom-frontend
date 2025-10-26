@@ -9,7 +9,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 
 import { prisma } from './db';
-import { YahooProvider } from './integrations/yahoo/provider';
+// Yahoo removed - using Workers-only OAuth flow
+// import { YahooProvider } from './integrations/yahoo/provider';
+
 // Only include providers that have credentials configured
 const providers = [];
 
@@ -35,16 +37,12 @@ if (process.env['FACEBOOK_CLIENT_ID'] && process.env['FACEBOOK_CLIENT_SECRET']) 
   );
 }
 
-// Yahoo OAuth (required for fantasy sports integration)
-if (process.env['YAHOO_CLIENT_ID'] && process.env['YAHOO_CLIENT_SECRET']) {
-  providers.push(YahooProvider);
-}
+// Yahoo OAuth (removed - using Workers-only flow via /api/yahoo/connect)
+// Yahoo tokens stored in separate cv_yahoo cookie, not NextAuth session
 
 // Minimal runtime env presence log (remove after verification)
 console.log('[auth] NEXTAUTH_URL:', process.env['NEXTAUTH_URL']);
 console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env['NEXTAUTH_SECRET']));
-console.log('[auth] YAHOO_CLIENT_ID set:', Boolean(process.env['YAHOO_CLIENT_ID']));
-console.log('[auth] YAHOO_CLIENT_SECRET set:', Boolean(process.env['YAHOO_CLIENT_SECRET']));
 console.log('[auth] Providers count:', providers.length);
 
 export const authOptions = {
