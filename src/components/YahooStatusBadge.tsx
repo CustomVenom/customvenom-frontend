@@ -22,7 +22,7 @@ export async function YahooStatusBadge() {
         </div>
         <a
           data-testid="yahoo-connect-btn"
-          href="https://www.customvenom.com/api/yahoo/connect"
+          href="https://api.customvenom.com/api/connect/start?host=yahoo&from=/tools"
           className="ml-auto px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition-colors"
         >
           Connect Yahoo

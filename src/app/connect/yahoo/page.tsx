@@ -8,7 +8,7 @@ export default function YahooConnect() {
 
   useEffect(() => {
     // Redirect to custom Yahoo OAuth connect endpoint
-    router.push('https://www.customvenom.com/api/yahoo/connect');
+    router.push('https://api.customvenom.com/api/connect/start?host=yahoo&from=/tools');
   }, [router]);
 
   return (

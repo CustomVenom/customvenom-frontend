@@ -30,7 +30,7 @@ export default async function YahooPanel() {
     // Workers-only: Use cookie-based auth (no NextAuth for Yahoo)
     // Session check removed - API will handle auth via cookies
     const hasSession = false; // Simplified for Workers-only flow
-    
+
     if (!hasSession) {
       const connectHref = `${base}/api/connect/start?host=yahoo&from=${encodeURIComponent('/settings')}`;
       return (

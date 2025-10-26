@@ -12,12 +12,12 @@ test.describe('Yahoo Connect Flow', () => {
     await expect(connectButton).toBeVisible();
 
     const href = await connectButton.getAttribute('href');
-    expect(href).toBe('https://api.customvenom.com/api/yahoo/connect');
+    expect(href).toBe('https://api.customvenom.com/api/connect/start?host=yahoo&from=%2Fsettings');
   });
 
   test('should complete Yahoo OAuth flow and show connected state', async ({ page }) => {
-    // Mock the Workers API response for leagues
-    await page.route('**/api/yahoo/connect', async (route) => {
+    // Mock the Workers API response for connect start
+    await page.route('**/api/connect/start*', async (route) => {
       // Simulate redirect to Yahoo OAuth
       await route.fulfill({
         status: 302,
@@ -156,5 +156,86 @@ test.describe('Yahoo Connect Flow', () => {
     // Connect button should be visible
     const connectButton = page.locator('[data-testid="yahoo-connect-btn"]');
     await expect(connectButton).toBeVisible();
+  });
+
+  test('should complete /tools connect flow and verify session', async ({ page }) => {
+    // Mock the Workers API connect start endpoint
+    await page.route('**/api/connect/start*', async (route) => {
+      await route.fulfill({
+        status: 302,
+        headers: {
+          'Location': 'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state'
+        }
+      });
+    });
+
+    // Mock the callback processing
+    await page.route('**/api/yahoo/callback*', async (route) => {
+      await route.fulfill({
+        status: 302,
+        headers: {
+          'Location': 'https://www.customvenom.com/tools?connected=yahoo',
+          'Set-Cookie': 'y_at=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400'
+        }
+      });
+    });
+
+    // Mock session check endpoint
+    await page.route('**/api/yahoo/session', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          hasCookie: true
+        })
+      });
+    });
+
+    // Mock session/me endpoint
+    await page.route('**/api/yahoo/session/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { email: 'test@example.com' }
+        })
+      });
+    });
+
+    // Start from /tools page
+    await page.goto('/tools');
+    await page.waitForLoadState('networkidle');
+
+    // Find and click Connect Yahoo button
+    const connectButton = page.locator('[data-testid="yahoo-connect-btn"]');
+    await expect(connectButton).toBeVisible();
+    await connectButton.click();
+
+    // Wait for redirect to Yahoo OAuth
+    await page.waitForURL('**/oauth2/request_auth**');
+
+    // Simulate successful OAuth callback
+    await page.goto('/tools?connected=yahoo');
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're back on the same page with connected parameter
+    expect(page.url()).toContain('?connected=yahoo');
+
+    // Test session endpoints
+    const sessionResponse = await page.evaluate(async () => {
+      const response = await fetch('https://api.customvenom.com/api/yahoo/session', {
+        credentials: 'include'
+      });
+      return response.json();
+    });
+    expect(sessionResponse.hasCookie).toBe(true);
+
+    const sessionMeResponse = await page.evaluate(async () => {
+      const response = await fetch('https://api.customvenom.com/api/yahoo/session/me', {
+        credentials: 'include'
+      });
+      return response.status;
+    });
+    expect(sessionMeResponse).toBe(200);
   });
 });

@@ -3,20 +3,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    // Get NextAuth session
-    const { auth } = await import('../../../../lib/auth');
-    const session = await auth();
-
-    if (!session?.user?.sub) {
-      return NextResponse.json({ ok: false, error: 'not_connected' }, { status: 401 });
-    }
-
-    // Call Workers API with session token
+    // Workers-only: forward the browser cookie to API (no NextAuth)
     const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+    const cookie = req.headers.get('cookie') || '';
     const r = await fetch(`${apiBase}/api/yahoo/me`, {
       headers: {
         'accept': 'application/json',
-        'authorization': `Bearer ${session.user.sub}`,
+        // Forward Yahoo cookie to API for auth
+        'cookie': cookie,
       },
       cache: 'no-store',
     });

@@ -12,6 +12,7 @@ export async function safeFetchJson<T>(
     const res = await fetch(url, {
       cache: 'no-store',
       signal: controller.signal,
+      credentials: 'include',
       ...init,
     });
 

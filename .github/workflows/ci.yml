@@ -54,3 +54,20 @@ jobs:
         run: |
           export NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev"
           npx playwright test --reporter=line
+
+  guardrails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Boot
+        run: echo "guardrails runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Check for NextAuth Yahoo references
+        run: |
+          if grep -r "/api/auth/signin/yahoo" src/; then
+            echo "❌ Found NextAuth Yahoo references in src/ - these should be removed"
+            exit 1
+          fi
+          echo "✅ No NextAuth Yahoo references found in src/"

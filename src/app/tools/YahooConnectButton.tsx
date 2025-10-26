@@ -1,7 +1,7 @@
 export default function YahooConnectButton() {
   const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const href = `${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent('/tools')}`;
-  
+
   return (
     <div className="p-4 border rounded-lg bg-yellow-50">
       <div className="flex items-center justify-between">

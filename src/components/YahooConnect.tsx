@@ -86,7 +86,7 @@ export default function YahooConnect(_props: YahooConnectProps = {}) {
             </div>
           ) : (
             <a
-              href="https://www.customvenom.com/api/yahoo/connect"
+              href="https://api.customvenom.com/api/connect/start?host=yahoo&from=/tools"
               className="cv-btn-primary"
               rel="nofollow"
             >

@@ -7,13 +7,13 @@ function kvKey(_userId: string) {
   return `yahoo:leagues:${_userId}`;
 }
 
-// Get Yahoo tokens from cookies
+// Get Yahoo tokens from cookies (Workers-only flow)
 async function getYahooTokens(_userId: string): Promise<{ accessToken: string } | null> {
-  const { auth } = await import('../lib/auth');
-  const session = await auth();
-  const accessToken = session?.user?.sub;
-  if (!accessToken) return null;
-  return { accessToken };
+  // Workers-only: Check for Yahoo session cookie instead of NextAuth
+  const cookieStore = await cookies();
+  const yahooCookie = cookieStore.get('y_at');
+  if (!yahooCookie) return null;
+  return { accessToken: yahooCookie.value };
 }
 
 export async function getYahooStatus(userId: string) {
@@ -30,7 +30,7 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
     const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const response = await fetch(`${apiBase}/api/yahoo/leagues`, {
       headers: {
-        'authorization': `Bearer ${t.accessToken}`,
+        'cookie': `y_at=${t.accessToken}`,
       },
       cache: 'no-store',
     });
