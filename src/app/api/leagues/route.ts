@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
         'accept': 'application/json',
         'cookie': request.headers.get('cookie') || '',
       },
+      credentials: 'include',
       cache: 'no-store',
     });
 
