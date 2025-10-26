@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const apiBase =
     process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const reqId = crypto.randomUUID();
@@ -12,6 +12,7 @@ export async function GET() {
       headers: {
         'x-request-id': reqId,
         'accept': 'application/json',
+        'cookie': request.headers.get('cookie') || '',
       },
       cache: 'no-store',
     });
