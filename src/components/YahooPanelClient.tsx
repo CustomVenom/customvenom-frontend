@@ -140,7 +140,8 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   }
 
   if (error === 'not_connected') {
-    const CONNECT = apiBase ? `${apiBase}/api/yahoo/connect` : '';
+    const from = typeof window !== 'undefined' ? `${location.pathname}${location.search}` : '/settings';
+    const CONNECT = apiBase ? `${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent(from)}` : '';
     return (
       <Card tone="yellow" data-testid="yahoo-status">
         <div className="flex items-center gap-2">
@@ -154,7 +155,8 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   }
 
   if (error) {
-    const CONNECT = apiBase ? `${apiBase}/api/yahoo/connect` : '';
+    const from = typeof window !== 'undefined' ? `${location.pathname}${location.search}` : '/settings';
+    const CONNECT = apiBase ? `${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent(from)}` : '';
     return (
       <Card tone="red">
         Yahoo error: {error}. <a href={CONNECT} className="underline">Reconnect</a>
@@ -165,13 +167,14 @@ export default function YahooPanelClient({ enabled }: { enabled: boolean }) {
   const league = leagues?.[0] || null;
   const players = roster?.players ?? [];
 
+  const from = typeof window !== 'undefined' ? `${location.pathname}${location.search}` : '/settings';
   return (
     <Card tone="green">
       <div className="flex items-center justify-between mb-2">
         <div data-testid="yahoo-connected" className="font-medium">
           Yahoo Connected{league ? ` — ${league.name} (${league.season})` : ''}
         </div>
-        <a href={`${apiBase}/api/yahoo/connect`} className="underline opacity-80">
+        <a href={`${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent(from)}`} className="underline opacity-80">
           Reconnect
         </a>
       </div>

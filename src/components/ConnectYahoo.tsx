@@ -19,9 +19,13 @@ export function ConnectYahoo() {
     return null;
   }
 
+  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+  const from = typeof window !== 'undefined' ? `${location.pathname}${location.search}` : '/tools';
+  const href = `${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent(from)}`;
+
   return (
     <a
-      href="https://api.customvenom.com/api/yahoo/connect"
+      href={href}
       className="cv-btn-primary inline-block px-6 py-2 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
       rel="nofollow"
     >

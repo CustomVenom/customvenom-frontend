@@ -52,7 +52,7 @@ export default async function YahooPanel() {
           <div className="flex items-center gap-2">
             <span>Yahoo: not connected.</span>
             <Link
-              href="https://api.customvenom.com/api/yahoo/connect"
+              href={`${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent('/settings')}`}
               className="underline"
               data-testid="yahoo-connect-btn"
             >
@@ -70,7 +70,7 @@ export default async function YahooPanel() {
       return (
         <Card tone="yellow" data-testid="yahoo-status">
           No leagues found.{' '}
-          <Link href="https://api.customvenom.com/api/yahoo/connect" className="underline">
+          <Link href={`${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent('/settings')}`} className="underline">
             Connect Yahoo
           </Link>
         </Card>
@@ -98,7 +98,7 @@ export default async function YahooPanel() {
           <div data-testid="yahoo-connected" className="font-medium">
             Yahoo Connected — {league.name} ({league.season})
           </div>
-          <Link href="https://api.customvenom.com/api/yahoo/connect" className="underline opacity-80">
+          <Link href={`${apiBase}/api/connect/start?host=yahoo&from=${encodeURIComponent('/settings')}`} className="underline opacity-80">
             Reconnect
           </Link>
         </div>
