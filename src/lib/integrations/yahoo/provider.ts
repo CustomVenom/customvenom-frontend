@@ -9,7 +9,6 @@ export const YahooProvider = {
   id: 'yahoo',
   name: 'Yahoo',
   type: 'oauth' as const,
-  checks: ['pkce', 'state'],
   authorization: {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
     params: {

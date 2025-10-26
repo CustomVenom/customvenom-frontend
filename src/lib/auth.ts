@@ -9,7 +9,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 
 import { prisma } from './db';
-// Note: Yahoo OAuth is handled separately via custom /api/yahoo/* routes
+import { YahooProvider } from './integrations/yahoo/provider';
 // Only include providers that have credentials configured
 const providers = [];
 
@@ -41,6 +41,11 @@ if (process.env['FACEBOOK_CLIENT_ID'] && process.env['FACEBOOK_CLIENT_SECRET']) 
       clientSecret: process.env['FACEBOOK_CLIENT_SECRET'],
     })
   );
+}
+
+// Yahoo OAuth (required for fantasy sports integration)
+if (process.env['YAHOO_CLIENT_ID'] && process.env['YAHOO_CLIENT_SECRET']) {
+  providers.push(YahooProvider);
 }
 
 // Minimal runtime env presence log (remove after verification)
