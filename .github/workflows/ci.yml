@@ -71,3 +71,13 @@ jobs:
             exit 1
           fi
           echo "✅ No NextAuth Yahoo references found in src/"
+
+      - name: Check for missing credentials in API calls
+        run: |
+          # Check for fetch calls to api.customvenom.com without credentials: 'include'
+          if grep -r "fetch.*api\.customvenom\.com" src/ | grep -v "credentials.*include"; then
+            echo "❌ Found fetch calls to api.customvenom.com without credentials: 'include'"
+            echo "All API calls must include credentials: 'include' for cookie-based auth"
+            exit 1
+          fi
+          echo "✅ All API calls include credentials: 'include'"
