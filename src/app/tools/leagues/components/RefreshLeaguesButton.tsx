@@ -13,7 +13,11 @@ export function RefreshLeaguesButton() {
         try {
           setLoading(true);
           // Trigger Yahoo fetch (which triggers upsert)
-          await fetch('/api/providers/yahoo/leagues', { cache: 'no-store' });
+          await fetch('/api/providers/yahoo/leagues', {
+            cache: 'no-store',
+            credentials: 'include',
+            headers: { accept: 'application/json' }
+          });
           // Refresh the page to show updated data
           location.reload();
         } catch (err) {

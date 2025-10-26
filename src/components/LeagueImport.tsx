@@ -23,7 +23,10 @@ export function LeagueImport() {
   useEffect(() => {
     const checkYahooConnection = async () => {
       try {
-        const response = await fetch('/api/yahoo/me');
+        const response = await fetch('/api/yahoo/me', {
+          credentials: 'include',
+          headers: { accept: 'application/json' }
+        });
         if (response.ok) {
           const data = await response.json();
           setYahooConnected(true);
@@ -43,7 +46,10 @@ export function LeagueImport() {
     setFetchingLeagues(true);
     setError(null);
     try {
-      const response = await fetch('/api/yahoo/leagues');
+      const response = await fetch('/api/yahoo/leagues', {
+        credentials: 'include',
+        headers: { accept: 'application/json' }
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch leagues');
       }
