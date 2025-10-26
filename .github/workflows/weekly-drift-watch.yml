@@ -1,0 +1,124 @@
+name: Weekly Yahoo OAuth Drift Watch
+
+on:
+  schedule:
+    # Every Wednesday at 9:00 AM ET (14:00 UTC)
+    - cron: '0 14 * * 3'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  drift-watch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run drift watch
+        id: drift-watch
+        run: |
+          echo "=== Yahoo OAuth Drift Watch - $(date) ==="
+
+          # Set environment variables for testing
+          export NEXTAUTH_URL="https://www.customvenom.com"
+
+          # Run the drift watch script
+          npm run drift-watch > drift-output.txt 2>&1
+
+          # Check if there were any errors
+          if grep -q "❌" drift-output.txt; then
+            echo "status=fail" >> $GITHUB_OUTPUT
+            echo "found_errors=true" >> $GITHUB_OUTPUT
+          else
+            echo "status=pass" >> $GITHUB_OUTPUT
+            echo "found_errors=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Extract summary for posting
+          echo "summary<<EOF" >> $GITHUB_OUTPUT
+          tail -n 10 drift-output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+        env:
+          NEXTAUTH_URL: https://www.customvenom.com
+
+      - name: Upload drift watch log
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-watch-${{ github.run_number }}
+          path: drift-output.txt
+          retention-days: 30
+
+      - name: Post to Weekly Readout
+        if: always()
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          STATUS="${{ steps.drift-watch.outputs.status }}"
+          ERRORS="${{ steps.drift-watch.outputs.found_errors }}"
+
+          if [ "$STATUS" = "pass" ]; then
+            MESSAGE="✅ Yahoo OAuth Drift Watch $DATE: All URLs aligned to https://www.customvenom.com"
+            EMOJI="✅"
+          else
+            MESSAGE="❌ Yahoo OAuth Drift Watch $DATE: Issues found - see drift-watch-${{ github.run_number }} artifact"
+            EMOJI="❌"
+          fi
+
+          echo "## Weekly Drift Watch Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $DATE" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** $EMOJI $STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "**Errors Found:** $ERRORS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Summary:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.drift-watch.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Copy to Weekly Readout:**" >> $GITHUB_STEP_SUMMARY
+          echo "> $MESSAGE" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Artifacts:**" >> $GITHUB_STEP_SUMMARY
+          echo "- [drift-watch-${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create issue on failure
+        if: steps.drift-watch.outputs.status == 'fail'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `Yahoo OAuth Drift Watch Failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `## Yahoo OAuth Drift Watch Failure
+
+            The weekly drift watch detected issues with Yahoo OAuth URL alignment.
+
+            **Run:** [${context.runNumber}](https://github.com/${context.repository}/actions/runs/${context.runId})
+            **Date:** ${new Date().toISOString().split('T')[0]}
+
+            **Next Steps:**
+            1. Check the [drift-watch-${context.runNumber} artifact](https://github.com/${context.repository}/actions/runs/${context.runId}) for details
+            2. Review and fix any URL misalignments
+            3. Re-run drift watch to verify fixes
+            4. Close this issue once resolved
+
+            **Expected URLs:**
+            - NEXTAUTH_URL: \`https://www.customvenom.com\`
+            - Yahoo redirect URI: \`https://www.customvenom.com/api/auth/callback/yahoo\`
+            - Scope: \`fspt-r\`
+            - All Connect Yahoo buttons: \`https://www.customvenom.com/api/yahoo/connect\``;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['drift-watch', 'yahoo-oauth', 'urgent']
+            });

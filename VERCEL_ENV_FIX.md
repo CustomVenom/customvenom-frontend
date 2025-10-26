@@ -27,23 +27,23 @@ After redeploy, run these to verify:
 
 ```bash
 # Health through frontend proxy
-curl -sSD - "https://customvenom.com/api/health" -o /dev/null | grep -Ei '^(cache-control|x-request-id|access-control-allow-origin)'
+curl -sSD - "https://www.customvenom.com/api/health" -o /dev/null | grep -Ei '^(cache-control|x-request-id|access-control-allow-origin)'
 
-# Projections through frontend proxy  
-curl -sS "https://customvenom.com/api/projections?week=2025-06" | jq -e '(.schema_version|length>0) and (.last_refresh|length>0)'
+# Projections through frontend proxy
+curl -sS "https://www.customvenom.com/api/projections?week=2025-06" | jq -e '(.schema_version|length>0) and (.last_refresh|length>0)'
 
 # Yahoo flow unchanged
-curl -i "https://customvenom.com/api/yahoo/connect" | grep -i ^Location
+curl -i "https://www.customvenom.com/api/yahoo/connect" | grep -i ^Location
 ```
 
 ## Expected Results
 - ✅ /api/health → 200 with required headers and fields
-- ✅ /api/projections?week=… → 200 with schema_version and last_refresh  
+- ✅ /api/projections?week=… → 200 with schema_version and last_refresh
 - ✅ Yahoo connect still 302 → Yahoo
 
 ## If Still Failing
 If projections is still 404 after redeploy, run:
 ```bash
-curl -i "https://customvenom.com/api/projections?week=2025-06"
+curl -i "https://www.customvenom.com/api/projections?week=2025-06"
 ```
 And paste the first 10 lines for the one-line fix.

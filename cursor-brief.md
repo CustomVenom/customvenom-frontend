@@ -156,7 +156,7 @@ One feature per PR with:
 
 ## PATCH NOTE: UI shell + Tools + Design Preview + Command Palette
 
-**Date:** 2025-10-17  
+**Date:** 2025-10-17
 **Status:** Implemented (ready for Cursor)
 
 ### What changed
@@ -230,7 +230,7 @@ export const metadata: Metadata = {
     title: 'Custom Venom — Pick Your Poison',
     description: 'Fantasy football projections and decisions powered by explainable AI.',
     type: 'website',
-    url: 'https://customvenom.com',
+    url: 'https://www.customvenom.com',
     siteName: 'Custom Venom',
   },
   twitter: {
@@ -282,7 +282,7 @@ import Brand from '@/components/Brand';
 - title: "Custom Venom — Pick Your Poison"
 - description: "Fantasy football projections and decisions powered by explainable AI."
 - type: website
-- url: https://customvenom.com
+- url: https://www.customvenom.com
 - siteName: Custom Venom
 - images: [/og.png] // optional
 
@@ -300,7 +300,7 @@ export const metadata = {
     title: 'Custom Venom — Pick Your Poison',
     description: 'Fantasy football projections and decisions powered by explainable AI.',
     type: 'website',
-    url: 'https://customvenom.com',
+    url: 'https://www.customvenom.com',
     siteName: 'Custom Venom',
     images: ['/og.png'], // optional
   },
@@ -316,9 +316,9 @@ Bluesky share intent: `https://bsky.app/intent/compose?text=<ENCODED_TEXT>&url=<
 ```tsx
 'use client';
 
-export default function ShareButtons({ 
-  text = 'Check out Custom Venom — Pick Your Poison', 
-  url = 'https://customvenom.com' 
+export default function ShareButtons({
+  text = 'Check out Custom Venom — Pick Your Poison',
+  url = 'https://www.customvenom.com'
 }) {
   const encodedText = encodeURIComponent(text);
   const encodedUrl = encodeURIComponent(url);

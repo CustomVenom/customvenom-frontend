@@ -126,8 +126,8 @@ curl https://api.customvenom.com/health
 curl "https://api.customvenom.com/projections?week=2025-06"
 
 # Test Frontend (after deployment)
-curl https://customvenom.com/api/health
-curl "https://customvenom.com/api/projections?week=2025-06"
+curl https://www.customvenom.com/api/health
+curl "https://www.customvenom.com/api/projections?week=2025-06"
 ```
 
 ## Deployment Steps
@@ -172,8 +172,8 @@ npm start
 
 ```bash
 # Test frontend API routes
-curl https://customvenom.com/api/health
-curl "https://customvenom.com/api/projections?week=2025-06"
+curl https://www.customvenom.com/api/health
+curl "https://www.customvenom.com/api/projections?week=2025-06"
 ```
 
 ## Troubleshooting
@@ -271,7 +271,7 @@ async function fetchProjections(week: string) {
 2. ✅ Test locally: Start both Workers API and Frontend
 3. ✅ Deploy Workers API with custom domain
 4. ✅ Deploy Frontend with production environment
-5. ✅ Verify end-to-end: `curl https://customvenom.com/api/health`
+5. ✅ Verify end-to-end: `curl https://www.customvenom.com/api/health`
 
 ---
 
@@ -290,7 +290,7 @@ cd customvenom-frontend && npm run build && npm start
 curl http://localhost:8787/health                    # Workers API (local)
 curl http://localhost:3000/api/health                # Frontend proxy (local)
 curl https://api.customvenom.com/health              # Workers API (production)
-curl https://customvenom.com/api/health              # Frontend proxy (production)
+curl https://www.customvenom.com/api/health              # Frontend proxy (production)
 ```
 
 

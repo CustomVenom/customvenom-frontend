@@ -48,7 +48,7 @@ Expected:
 ## HTTPS Verification
 ```bash
 # HTTP redirect to HTTPS
-curl -sSD - "http://customvenom-workers-api.jdewett81.workers.dev/health" | head -1
+curl -sSD - "https://customvenom-workers-api.jdewett81.workers.dev/health" | head -1
 # Expected: HTTP/1.1 301 Moved Permanently
 
 # HSTS header present

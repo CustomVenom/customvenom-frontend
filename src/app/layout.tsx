@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'Custom Venom — Pick Your Poison',
     description: 'Fantasy football projections and decisions powered by explainable AI.',
     type: 'website',
-    url: 'https://customvenom.com',
+    url: 'https://www.customvenom.com',
     siteName: 'Custom Venom',
     images: ['/og.png'], // Add this when og.png is created
   },

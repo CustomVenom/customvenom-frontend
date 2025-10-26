@@ -13,7 +13,7 @@ What "good" looks like
 
 ## DNS and SSL
 
-- Domain: [customvenom.com](http://customvenom.com)
+- Domain: [customvenom.com](https://www.customvenom.com)
 - DNS
   - Apex: A or CNAME per Cloudflare Pages guidance
   - www: CNAME to Pages project

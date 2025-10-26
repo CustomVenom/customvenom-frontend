@@ -21,6 +21,7 @@
     "preflight": "npm run preflight:grep && eslint . --max-warnings=2 && npm run type-check && npm run test && npm run preflight:contracts",
     "preflight:contracts": "npx playwright test tests/contract-tests.spec.ts",
     "cors:test": "curl -sSD - \"$NEXT_PUBLIC_API_BASE/health\" -H \"Origin: https://www.customvenom.com\" -o /dev/null | sed -n '1,30p'",
+    "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",
     "prepare": "husky install",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",

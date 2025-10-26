@@ -13,7 +13,7 @@ export const YahooProvider = {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
     params: {
       response_type: 'code',
-      redirect_uri: `${process.env['NEXTAUTH_URL']}/api/auth/callback/yahoo`,
+      redirect_uri: 'https://www.customvenom.com/api/auth/callback/yahoo',
       scope: 'fspt-r',
     },
   },

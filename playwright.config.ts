@@ -10,5 +10,11 @@ export default defineConfig({
     timeout: 120000,
     reuseExistingServer: !process.env['CI'],
   },
+  projects: [
+    {
+      name: 'yahoo-connect',
+      testMatch: 'tests/yahoo-connect.spec.ts',
+    },
+  ],
 });
 

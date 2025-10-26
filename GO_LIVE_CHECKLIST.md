@@ -1,7 +1,7 @@
 # 🚀 Go-Live Checklist - Production Ready
 
-**Date:** October 18, 2025  
-**Status:** Pre-Production Verification  
+**Date:** October 18, 2025
+**Status:** Pre-Production Verification
 **Owner:** jdewett81@gmail.com
 
 ---
@@ -220,12 +220,12 @@ cd customvenom-frontend
 
 Preview endpoint:
 - [ ] URL: https://your-preview.vercel.app/api/stripe/webhook
-- [ ] Events: checkout.session.completed, customer.subscription.updated, 
+- [ ] Events: checkout.session.completed, customer.subscription.updated,
               customer.subscription.deleted, invoice.payment_failed
 - [ ] Copy signing secret → Set as STRIPE_WEBHOOK_SECRET (Preview)
 
 Production endpoint:
-- [ ] URL: https://customvenom.com/api/stripe/webhook
+- [ ] URL: https://www.customvenom.com/api/stripe/webhook
 - [ ] Same events as above
 - [ ] Copy signing secret → Set as STRIPE_WEBHOOK_SECRET (Production)
 ```
@@ -260,12 +260,12 @@ Production endpoint:
 Authorized redirect URIs:
 - [ ] http://localhost:3000/api/auth/callback/google  (Local)
 - [ ] https://your-preview.vercel.app/api/auth/callback/google  (Preview)
-- [ ] https://customvenom.com/api/auth/callback/google  (Production)
+- [ ] https://www.customvenom.com/api/auth/callback/google  (Production)
 
 Authorized JavaScript origins:
 - [ ] http://localhost:3000  (Local)
 - [ ] https://your-preview.vercel.app  (Preview)
-- [ ] https://customvenom.com  (Production)
+- [ ] https://www.customvenom.com  (Production)
 ```
 
 **Yahoo OAuth (If Configured):**
@@ -275,7 +275,7 @@ Authorized JavaScript origins:
 Redirect URIs:
 - [ ] http://localhost:3000/api/auth/callback/yahoo
 - [ ] https://your-preview.vercel.app/api/auth/callback/yahoo
-- [ ] https://customvenom.com/api/auth/callback/yahoo
+- [ ] https://www.customvenom.com/api/auth/callback/yahoo
 ```
 
 **Verification:**
@@ -310,7 +310,7 @@ Redirect URIs:
 
 **Type: Plain Text (Public):**
 ```bash
-- [ ] NEXTAUTH_URL (https://customvenom.com for prod)
+- [ ] NEXTAUTH_URL (https://www.customvenom.com for prod)
 - [ ] NEXT_PUBLIC_API_BASE
 - [ ] API_BASE
 - [ ] GOOGLE_CLIENT_ID
@@ -388,7 +388,7 @@ export FRONTEND_BASE="http://localhost:3000"
 export FRONTEND_BASE="https://your-preview.vercel.app"
 
 # For production
-export FRONTEND_BASE="https://customvenom.com"
+export FRONTEND_BASE="https://www.customvenom.com"
 ```
 
 **Manual Browser Tests:**
@@ -465,7 +465,7 @@ curl -s "$FRONTEND_BASE/api/analytics/rollups?hours=24" | jq '.rollups[0]'
 NextAuth Configuration:
 - [ ] NEXTAUTH_URL set correctly for each environment
   - Preview: https://your-preview.vercel.app
-  - Production: https://customvenom.com
+  - Production: https://www.customvenom.com
 - [ ] AUTH_SECRET generated (openssl rand -base64 32)
 - [ ] NEXTAUTH_SECRET same as AUTH_SECRET
 - [ ] Google OAuth credentials configured
@@ -842,8 +842,8 @@ echo "🚀 Next: Switch Stripe to live mode and deploy!"
 
 ---
 
-**Last Updated:** October 18, 2025  
-**Prepared By:** AI Assistant  
-**Reviewed By:** [Pending]  
+**Last Updated:** October 18, 2025
+**Prepared By:** AI Assistant
+**Reviewed By:** [Pending]
 **Status:** Ready for Execution
 

@@ -10,7 +10,7 @@
 |-------------|-----|----------|
 | **Preview** | `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app` | Testing & OAuth setup |
 | **Production** | `https://customvenom-frontend-incarcer-incarcers-projects.vercel.app` | Live deployment |
-| **Custom Domain** | `https://customvenom.com` | Future (after DNS setup) |
+| **Custom Domain** | `https://www.customvenom.com` | Future (after DNS setup) |
 
 ---
 
@@ -391,31 +391,31 @@ API_BASE=https://api-staging.customvenom.com
 ## 🆘 Common Issues & Fixes
 
 ### "Invalid callback URL"
-**Cause:** NEXTAUTH_URL doesn't match site URL  
+**Cause:** NEXTAUTH_URL doesn't match site URL
 **Fix:** Check exact URL (no trailing slash, must be .vercel.app URL, not dashboard)
 
 ### "Google OAuth error: redirect_uri_mismatch"
-**Cause:** Redirect URI not added to Google Console or doesn't match exactly  
-**Fix:** 
+**Cause:** Redirect URI not added to Google Console or doesn't match exactly
+**Fix:**
 1. Go to Google Console
 2. Add exact URI: `https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/auth/callback/google`
 3. Must include `/api/auth/callback/google`
 
 ### "Prisma Client not generated"
-**Cause:** DATABASE_URL missing or database schema not deployed  
-**Fix:** 
+**Cause:** DATABASE_URL missing or database schema not deployed
+**Fix:**
 ```bash
 npx vercel env pull .env.production.local
 npx prisma db push
 ```
 
 ### Variables not updating
-**Cause:** Changes not deployed  
+**Cause:** Changes not deployed
 **Fix:** Must redeploy after changing environment variables
 
 ### "Session is not available"
-**Cause:** AUTH_SECRET or NEXTAUTH_URL wrong  
-**Fix:** 
+**Cause:** AUTH_SECRET or NEXTAUTH_URL wrong
+**Fix:**
 1. Verify AUTH_SECRET set in Vercel
 2. Check NEXTAUTH_URL matches deployment URL exactly
 3. Redeploy
@@ -465,6 +465,6 @@ Expected headers:
 
 ---
 
-**Last Updated:** October 17, 2025  
+**Last Updated:** October 17, 2025
 **Status:** Ready for setup ✅
 

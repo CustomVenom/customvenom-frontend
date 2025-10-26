@@ -34,7 +34,7 @@ All Yahoo guardrails have been successfully implemented across the CustomVenom s
 
 ### Vercel Production Environment
 ```bash
-NEXTAUTH_URL=https://customvenom.com
+NEXTAUTH_URL=https://www.customvenom.com
 NEXTAUTH_SECRET=<generate-new-random-secret>
 YAHOO_CLIENT_ID=<production-yahoo-app-id>
 YAHOO_CLIENT_SECRET=<production-yahoo-app-secret>
@@ -52,7 +52,7 @@ YAHOO_MAINTENANCE=false
 ```
 
 ### Yahoo Developer Console
-- **Redirect URI**: `https://customvenom.com/api/auth/callback/yahoo`
+- **Redirect URI**: `https://www.customvenom.com/api/auth/callback/yahoo`
 
 ## 🧪 Verification Checklist
 
@@ -63,7 +63,7 @@ YAHOO_MAINTENANCE=false
 
 2. **Sign-in Flow**
    - `GET /api/auth/signin/yahoo` → should redirect to Yahoo OAuth
-   - Check DevTools: `redirect_uri` should be `https://customvenom.com/api/auth/callback/yahoo`
+   - Check DevTools: `redirect_uri` should be `https://www.customvenom.com/api/auth/callback/yahoo`
    - After consent → should land on `/tools/yahoo`
 
 3. **API Endpoints**

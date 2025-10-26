@@ -25,16 +25,16 @@ Run these commands to verify:
 
 ```bash
 # Test proxy health headers
-curl -sS "https://customvenom.com/api/health" -I | grep -Ei '^(x-request-id|access-control-allow-origin|cache-control)'
+curl -sS "https://www.customvenom.com/api/health" -I | grep -Ei '^(x-request-id|access-control-allow-origin|cache-control)'
 
 # Test proxy projections contract
-curl -sS "https://customvenom.com/api/projections?week=2025-06" | jq -e '(.schema_version|length>0) and (.last_refresh|length>0)'
+curl -sS "https://www.customvenom.com/api/projections?week=2025-06" | jq -e '(.schema_version|length>0) and (.last_refresh|length>0)'
 
 # Test Yahoo flow unchanged
-curl -i "https://customvenom.com/api/yahoo/connect" | grep -i ^Location
+curl -i "https://www.customvenom.com/api/yahoo/connect" | grep -i ^Location
 ```
 
 ### Expected Results:
 - ✅ Frontend proxies return 200 with required headers and fields
-- ✅ No more 400/404 from /api/projections  
+- ✅ No more 400/404 from /api/projections
 - ✅ Yahoo connect still 302 → Yahoo, callback sets y_at cookie

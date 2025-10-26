@@ -1,6 +1,6 @@
 # 🌐 Custom Domain Setup Guide
 
-**Problem:** `customvenom.com` shows "site can't be reached"  
+**Problem:** `customvenom.com` shows "site can't be reached"
 **Solution:** Connect domain to Vercel frontend
 
 ---
@@ -18,7 +18,7 @@
 ## 🎯 Goal
 
 Connect `customvenom.com` to your Vercel frontend so users can access your app at:
-- **Frontend:** `https://customvenom.com`
+- **Frontend:** `https://www.customvenom.com`
 - **API:** `https://api.customvenom.com` (already working)
 
 ---
@@ -57,7 +57,7 @@ Connect `customvenom.com` to your Vercel frontend so users can access your app a
 
 **Note:** Use the CNAME record provided by Vercel (see table above). Each domain gets a unique CNAME target.
 
-**Important:** 
+**Important:**
 - Do NOT proxy through Cloudflare (keep cloud gray, not orange)
 - Keep existing `api` subdomain as-is (it's working)
 
@@ -90,7 +90,7 @@ app.customvenom.com
 ## 🔒 SSL Certificate
 
 Vercel automatically provisions SSL certificates (Let's Encrypt). Once DNS propagates:
-- ✅ `https://customvenom.com` will work with SSL
+- ✅ `https://www.customvenom.com` will work with SSL
 - ✅ Certificate auto-renews
 
 ---
@@ -105,7 +105,7 @@ Vercel automatically provisions SSL certificates (Let's Encrypt). Once DNS propa
 nslookup customvenom.com
 
 # Test HTTPS
-https://customvenom.com
+https://www.customvenom.com
 ```
 
 **Tools to verify:**
@@ -134,7 +134,7 @@ After domain is live, update in Vercel:
 
 **Update:**
 ```bash
-NEXTAUTH_URL=https://customvenom.com
+NEXTAUTH_URL=https://www.customvenom.com
 ```
 
 **Redeploy** to apply changes.
@@ -146,7 +146,7 @@ NEXTAUTH_URL=https://customvenom.com
 ### 1. Test Frontend
 ```bash
 # Should load your Next.js app
-https://customvenom.com
+https://www.customvenom.com
 ```
 
 ### 2. Test API (already working)
@@ -156,7 +156,7 @@ curl https://api.customvenom.com/health
 
 ### 3. Test OAuth Redirects
 Update redirect URIs in:
-- Google Console: `https://customvenom.com/api/auth/callback/google`
+- Google Console: `https://www.customvenom.com/api/auth/callback/google`
 - Stripe Dashboard: Update webhook URL if needed
 
 ---
@@ -183,19 +183,19 @@ Your Cloudflare Workers will continue working at `api.customvenom.com` - no chan
 **Solution:** Domain might be added to another Vercel project. Remove it there first.
 
 ### "Invalid DNS Configuration"
-**Solution:** 
+**Solution:**
 1. Verify DNS records in Cloudflare
 2. Wait 5-10 minutes for propagation
 3. Check cloud icon is gray (not orange)
 
 ### "Too Many Redirects"
-**Solution:** 
+**Solution:**
 1. Disable Cloudflare proxy (gray cloud)
 2. Clear browser cache
 3. Check no redirect rules in Cloudflare Page Rules
 
 ### "NET::ERR_CERT_COMMON_NAME_INVALID"
-**Solution:** 
+**Solution:**
 1. Wait for Vercel to provision SSL (takes 5-15 minutes)
 2. Check domain shows as "Valid" in Vercel
 3. Force refresh certificate in Vercel settings
@@ -232,7 +232,7 @@ Your Cloudflare Workers will continue working at `api.customvenom.com` - no chan
 ## ✅ Success Checklist
 
 Once complete:
-- [ ] `https://customvenom.com` loads frontend
+- [ ] `https://www.customvenom.com` loads frontend
 - [ ] `https://www.customvenom.com` redirects to root
 - [ ] `https://api.customvenom.com/health` returns 200
 - [ ] SSL certificate shows valid (green lock)
@@ -254,6 +254,6 @@ https://vercel.com/docs/projects/domains/add-a-domain
 
 ---
 
-**Last Updated:** October 17, 2025  
+**Last Updated:** October 17, 2025
 **Status:** Waiting for domain configuration
 

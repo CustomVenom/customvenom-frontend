@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="${BASE:-https://customvenom.com}"
+BASE="${BASE:-https://www.customvenom.com}"
 
 echo "== /api/health headers =="
 curl -sSD - "$BASE/api/health" -o /dev/null | grep -Ei '^(HTTP/|cache-control|x-request-id|access-control-allow-origin)' || true

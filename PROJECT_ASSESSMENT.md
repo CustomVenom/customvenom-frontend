@@ -1,7 +1,7 @@
 # CustomVenom - Cross-Repo Project Assessment
 
-**Date:** October 18, 2025  
-**Scope:** All 3 repositories (Workers API, Frontend, Data Pipelines)  
+**Date:** October 18, 2025
+**Scope:** All 3 repositories (Workers API, Frontend, Data Pipelines)
 **Status:** Operational with identified improvements
 
 ---
@@ -35,11 +35,11 @@
   - Trim profile documentation
   - Combined smoke tests
   - Per-IP rate limiting (merged or queued)
-  
+
 - **Request Tracking:**
   - Request ID propagation into error responses (PR open)
   - Proper error handling and logging
-  
+
 - **Documentation:**
   - Synced from Notion Manual
   - API Reference guide complete
@@ -71,12 +71,12 @@ jobs:
         run: |
           # Fetch current response
           curl -s https://staging-api.customvenom.com/projections > current.json
-          
+
           # Compare with golden
           diff <(jq -S . tests/golden/projections.json) \
                <(jq -S . current.json) \
                || (echo "❌ Contract drift detected" && exit 1)
-          
+
           echo "✅ Contract stable"
 ```
 
@@ -106,17 +106,17 @@ export function standardHeaders(options: {
     'x-request-id': options.requestId,
     'access-control-allow-origin': '*',
   });
-  
+
   if (options.cacheKey) {
     headers.set('x-key', options.cacheKey);
   }
-  
+
   if (options.maxAge !== undefined) {
-    headers.set('cache-control', 
+    headers.set('cache-control',
       `public, max-age=${options.maxAge}, stale-if-error=86400`
     );
   }
-  
+
   return headers;
 }
 ```
@@ -131,7 +131,7 @@ export function standardHeaders(options: {
   - 5% trace sampling
   - Release tagging via `COMMIT_SHA`
   - Error grouping by route
-  
+
 **Watch volume for 1 week, then decide production rollout**
 
 **Implementation:**
@@ -203,7 +203,7 @@ return new Response(JSON.stringify({
 - **Request Tracking:**
   - Request ID surfaced in errors and logging
   - Sentry stubs integrated
-  
+
 - **Documentation:**
   - Domain cutover checklist complete
   - Environment setup guides thorough
@@ -231,7 +231,7 @@ import { test, expect } from '@playwright/test';
 
 test('TrustSnapshot shows stale badge without CLS', async ({ page }) => {
   await page.goto('/projections');
-  
+
   // Measure CLS
   const cls = await page.evaluate(() => {
     return new Promise((resolve) => {
@@ -244,13 +244,13 @@ test('TrustSnapshot shows stale badge without CLS', async ({ page }) => {
         }
         resolve(clsValue);
       }).observe({ entryTypes: ['layout-shift'] });
-      
+
       setTimeout(() => resolve(clsValue), 3000);
     });
   });
-  
+
   expect(cls).toBeLessThan(0.1);
-  
+
   // Check stale badge appears when x-stale header present
   // (Would need to mock API response with stale header)
 });
@@ -285,7 +285,7 @@ jobs:
             http://localhost:3000/
             http://localhost:3000/projections
           budgetPath: ./lighthouse-budget.json
-          
+
   bundle-size:
     runs-on: ubuntu-latest
     steps:
@@ -307,7 +307,7 @@ jobs:
 const envs = {
   local: 'http://localhost:3000',
   preview: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://preview.customvenom.com',
-  production: 'https://customvenom.com'
+  production: 'https://www.customvenom.com'
 };
 
 console.log('OAuth Redirect URIs:\n');
@@ -407,7 +407,7 @@ def write_artifact(data: list, path: str) -> None:
     """Write artifact with deterministic formatting"""
     # Sort by player_id for consistent diffs
     sorted_data = sorted(data, key=lambda x: x.get('player_id', ''))
-    
+
     # Round all numeric values to 3 decimals
     def round_floats(obj):
         if isinstance(obj, float):
@@ -417,9 +417,9 @@ def write_artifact(data: list, path: str) -> None:
         elif isinstance(obj, list):
             return [round_floats(item) for item in obj]
         return obj
-    
+
     clean_data = round_floats(sorted_data)
-    
+
     # Write with consistent formatting
     with open(path, 'w') as f:
         json.dump(clean_data, f, indent=2, sort_keys=True, ensure_ascii=False)
@@ -442,12 +442,12 @@ import duckdb
 
 def ingest_nflverse_to_usage(week: str, output_path: str):
     """Read nflverse parquet and generate usage artifact"""
-    
+
     con = duckdb.connect()
-    
+
     # Load nflverse play-by-play data
     query = f"""
-    SELECT 
+    SELECT
         player_id,
         player_name,
         COUNT(*) as total_snaps,
@@ -459,9 +459,9 @@ def ingest_nflverse_to_usage(week: str, output_path: str):
     GROUP BY player_id, player_name
     ORDER BY player_id
     """
-    
+
     df = con.execute(query).fetchdf()
-    
+
     # Convert to usage artifact format
     usage_data = []
     for _, row in df.iterrows():
@@ -475,7 +475,7 @@ def ingest_nflverse_to_usage(week: str, output_path: str):
             'schema_version': 'v1',
             'last_refresh': datetime.now().isoformat()
         })
-    
+
     write_artifact(usage_data, output_path)
 ```
 
@@ -503,15 +503,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--week', required=True, help='Week to process (YYYY-WW)')
     args = parser.parse_args()
-    
+
     # Generate calibration report
     calibration = generate_calibration_report(args.week)
     upload_to_r2(calibration, f'calibration/{args.week}/report_v1.json')
-    
+
     # Generate ops summary
     ops_summary = generate_ops_summary(args.week)
     upload_to_r2(ops_summary, f'ops/weeklies/{args.week}/summary_v1.json')
-    
+
     print(f"✅ Weekly job complete for {args.week}")
 
 if __name__ == '__main__':
