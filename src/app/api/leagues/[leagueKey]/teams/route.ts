@@ -1,10 +1,11 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-type Ctx = { params: { leagueKey: string } };
-export async function GET(request: NextRequest, { params }: Ctx): Promise<Response> {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { leagueKey: string } }
+): Promise<Response> {
   const reqId = crypto.randomUUID();
 
   try {
