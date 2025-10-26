@@ -163,7 +163,7 @@ export function LeagueImport() {
           </button>
         ) : (
           <a
-            href="https://api.customvenom.com/api/connect/start?host=yahoo&from=/tools"
+            href="/tools"
             style={{
               display: 'inline-block',
               backgroundColor: '#3b82f6',
@@ -175,7 +175,7 @@ export function LeagueImport() {
               fontWeight: 500,
             }}
           >
-            Connect Yahoo
+            Go to Tools to Connect
           </a>
         )}
       </div>

@@ -1,5 +1,3 @@
-import YahooPanelMount from '@/components/YahooPanelMount';
-
 export default function SettingsPage() {
   console.error(
     JSON.stringify({

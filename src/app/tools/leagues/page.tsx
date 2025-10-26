@@ -63,35 +63,18 @@ export default async function LeaguesPage() {
 
       <div className="section">
         {!hasAnyConnection && !meData ? (
-          // No providers connected - show connect card
+          // No providers connected - redirect to tools page
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
             <h2 className="h2 mb-4">Connect Your Fantasy League</h2>
             <p className="text-muted mb-6">
-              Link your Yahoo, Sleeper, or ESPN account to view and manage your leagues.
+              To connect your fantasy league, please go to the Tools page.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href={`${process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com'}/api/connect/start?host=yahoo&from=${encodeURIComponent('/tools/leagues')}`}
-                className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
-                aria-label="Connect Yahoo"
-              >
-                Connect Yahoo
-              </a>
-              <button
-                disabled
-                className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-gray-400 cursor-not-allowed opacity-50"
-                aria-label="Connect Sleeper (Coming Soon)"
-              >
-                Connect Sleeper (Coming Soon)
-              </button>
-              <button
-                disabled
-                className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-gray-400 cursor-not-allowed opacity-50"
-                aria-label="Connect ESPN (Coming Soon)"
-              >
-                Connect ESPN (Coming Soon)
-              </button>
-            </div>
+            <a
+              href="/tools"
+              className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+            >
+              Go to Tools
+            </a>
           </div>
         ) : meData ? (
           // API data available - show entitlement-aware table
