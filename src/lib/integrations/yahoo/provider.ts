@@ -1,5 +1,5 @@
 ﻿/**
- * Yahoo OAuth Provider for NextAuth
+ * Yahoo OAuth Provider for NextAuth v4
  *
  * App ID: hLyo9VQ2
  * Docs: https://developer.yahoo.com/oauth2/guide/
@@ -11,18 +11,15 @@ export const YahooProvider = {
   type: 'oauth' as const,
   authorization: {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
-    params: {
-      response_type: 'code',
-      redirect_uri: 'https://www.customvenom.com/api/auth/callback/yahoo',
-      scope: 'fspt-r',
-    },
+    params: { scope: 'fspt-r', response_type: 'code' }
   },
-  token: {
-    url: 'https://api.login.yahoo.com/oauth2/get_token',
+  token: { url: 'https://api.login.yahoo.com/oauth2/get_token' },
+  userinfo: {
+    url: 'https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1?format=json'
   },
-  userinfo: 'https://api.login.yahoo.com/openid/v1/userinfo',
-  clientId: process.env['YAHOO_CLIENT_ID'] || 'placeholder',
-  clientSecret: process.env['YAHOO_CLIENT_SECRET'] || 'placeholder',
+  clientId: process.env['YAHOO_CLIENT_ID']!,
+  clientSecret: process.env['YAHOO_CLIENT_SECRET']!,
+  // NOTE: omit `checks` entirely → v4 stays state-only (no PKCE)
   profile(profile: {
     sub?: string;
     user_id?: string;
