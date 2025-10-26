@@ -13,15 +13,7 @@ import { YahooProvider } from './integrations/yahoo/provider';
 // Only include providers that have credentials configured
 const providers = [];
 
-// Google OAuth (required for now)
-if (process.env['GOOGLE_CLIENT_ID'] && process.env['GOOGLE_CLIENT_SECRET']) {
-  providers.push(
-    GoogleProvider({
-      clientId: process.env['GOOGLE_CLIENT_ID'],
-      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
-    })
-  );
-}
+// Google OAuth removed - Yahoo only
 
 // Twitter OAuth (optional - add when needed)
 if (process.env['TWITTER_CLIENT_ID'] && process.env['TWITTER_CLIENT_SECRET']) {

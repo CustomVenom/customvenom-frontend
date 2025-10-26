@@ -2,8 +2,8 @@
 
 export default function YahooConnectButton() {
   const connect = () => {
-    // Use NextAuth.js directly to ensure state cookie is set on same domain
-    window.location.href = `/api/auth/signin?provider=yahoo&callbackUrl=${encodeURIComponent('/tools')}`;
+    // Point directly to Workers API connect route
+    window.location.href = `https://customvenom-workers-api.jdewett81.workers.dev/api/yahoo/connect?returnTo=${encodeURIComponent('/tools')}`;
   }
 
   return (
