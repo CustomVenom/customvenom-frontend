@@ -51,6 +51,9 @@ if (process.env['YAHOO_CLIENT_ID'] && process.env['YAHOO_CLIENT_SECRET']) {
 // Minimal runtime env presence log (remove after verification)
 console.log('[auth] NEXTAUTH_URL:', process.env['NEXTAUTH_URL']);
 console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env['NEXTAUTH_SECRET']));
+console.log('[auth] YAHOO_CLIENT_ID set:', Boolean(process.env['YAHOO_CLIENT_ID']));
+console.log('[auth] YAHOO_CLIENT_SECRET set:', Boolean(process.env['YAHOO_CLIENT_SECRET']));
+console.log('[auth] Providers count:', providers.length);
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
