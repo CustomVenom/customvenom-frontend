@@ -6,7 +6,7 @@ export default function YahooConnectButton() {
           <div className="font-medium">Yahoo Fantasy (read‑only)</div>
           <div className="text-sm opacity-80">Connect once, always return here.</div>
         </div>
-        <a href="/api/auth/signin/yahoo?callbackUrl=/tools" className="px-3 py-2 rounded bg-black text-white">
+        <a href="https://api.customvenom.com/api/yahoo/connect?returnTo=/tools" className="px-3 py-2 rounded bg-black text-white">
           Connect Yahoo
         </a>
       </div>
