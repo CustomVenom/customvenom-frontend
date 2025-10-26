@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
-const PROD_HOST = 'https://www.customvenom.com';
+const PROD_HOST = 'https://api.customvenom.com';
 
 // Yahoo OAuth: MUST use production domain with www
 function yahooRedirectUri(): string {
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     // Yahoo OAuth: enforce absolute https://www... redirect
     const redirectUri = yahooRedirectUri();
-    if (!redirectUri.startsWith('https://www.customvenom.com/api/yahoo/callback')) {
+    if (!redirectUri.startsWith('https://api.customvenom.com/api/yahoo/callback')) {
       return new NextResponse('Invalid redirect URI configuration', { status: 500 });
     }
 
