@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 
-const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
+const _TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
 export const dynamic = 'force-dynamic';
 

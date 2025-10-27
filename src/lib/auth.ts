@@ -5,7 +5,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
 import FacebookProvider from 'next-auth/providers/facebook';
-import GoogleProvider from 'next-auth/providers/google';
+// import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 
 import { prisma } from './db';
