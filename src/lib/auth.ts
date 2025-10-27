@@ -123,4 +123,3 @@ export default NextAuth(authOptions);
 export async function auth() {
   return getServerSession(authOptions);
 }
-
