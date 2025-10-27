@@ -52,7 +52,7 @@ jobs:
           NEXTAUTH_URL: https://www.customvenom.com
 
       - name: Upload drift watch log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: drift-watch-${{ github.run_number }}
           path: drift-output.txt
