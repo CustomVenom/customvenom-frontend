@@ -126,11 +126,17 @@ export default [
     }
   },
 
-  // Enforce env bracket notation in app source only (off by default - too noisy)
+  // Enforce env bracket notation in app source only
   {
     files: ['src/**/*.{ts,tsx,js,jsx}'],
     rules: {
-      'no-restricted-syntax': 'off'
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "MemberExpression[object.object.name='process'][object.property.name='env'][property.name=/^NEXT_PUBLIC_/]",
+          message: "Use bracket access: process.env['NEXT_PUBLIC_…']"
+        }
+      ]
     }
   },
 
