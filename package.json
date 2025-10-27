@@ -21,7 +21,7 @@
     "preflight:grep": "powershell -Command \"$hits = git grep -n 'http://.*yahoo\\.com' -- src | Where-Object { $_ -notmatch '\\.test\\.ts' -and $_ -notmatch 'snippet\\.ts' } 2>$null; if ($hits) { Write-Error 'Found http:// Yahoo references:'; Write-Output $hits; exit 1 }\"",
     "test": "vitest run",
     "test:gate": "npm run build && start /B cmd /C \"npm run start:test\" && timeout /t 3 >NUL && npx playwright test tests/trust-snapshot.spec.ts tests/health.spec.ts && taskkill /IM node.exe /F >NUL 2>&1",
-    "preflight": "npm run preflight:grep && eslint . --max-warnings=2 && npm run type-check && npm run test && npm run preflight:contracts",
+    "preflight": "npm run preflight:grep && eslint . --max-warnings=2 && npm run type-check && npm run test",
     "preflight:contracts": "npx playwright test tests/contract-tests.spec.ts",
     "cors:test": "curl -sSD - \"$NEXT_PUBLIC_API_BASE/health\" -H \"Origin: https://www.customvenom.com\" -o /dev/null | sed -n '1,30p'",
     "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",

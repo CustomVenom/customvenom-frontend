@@ -6,7 +6,7 @@ import { defineConfig } from '@playwright/test';
 // - Both use same test logic, different base URLs
 
 export default defineConfig({
-  testIgnore: ['tests/**/*.test.ts'],
+  testIgnore: ['tests/**/*.test.ts', 'tests/unit/**/*'],
   timeout: 60000,
   use: {
     baseURL: 'http://localhost:3000',
