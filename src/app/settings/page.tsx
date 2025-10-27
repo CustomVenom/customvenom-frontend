@@ -1,3 +1,7 @@
+'use client';
+
+import { ConnectYahoo } from './ConnectYahoo';
+
 export default function SettingsPage() {
   console.error(
     JSON.stringify({
@@ -25,7 +29,10 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-3xl py-8">
       <h1 className="text-2xl font-semibold mb-8">Settings</h1>
-      {/* Yahoo removed from Settings — single-page flow lives on /tools */}
+      <div className="mb-10 pb-10 border-b border-gray-200">
+        <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration</h2>
+        <ConnectYahoo />
+      </div>
     </div>
   );
 }

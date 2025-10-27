@@ -8,16 +8,19 @@ export default function YahooConnectButton() {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState<boolean | null>(null);
 
-  // 1) Probe connection (reads your app's /api/me or similar)
+  // 1) Probe connection (reads your app's /yahoo/me or similar)
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const res = await fetch('/api/me', { credentials: 'include', cache: 'no-store' });
-        const data = await res.json();
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+        const res = await fetch(`${API_BASE}/yahoo/me`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { accept: 'application/json' }
+        });
         if (!alive) return;
-        // assume your shape has "connected" or similar
-        setConnected(Boolean(data?.connected === true || (data?.connections ?? []).includes?.('yahoo')));
+        setConnected(res.ok);
       } catch {
         if (alive) setConnected(false);
       }
@@ -27,14 +30,22 @@ export default function YahooConnectButton() {
 
   // 2) Actions
   const connect = () => {
-    window.location.href = 'https://api.customvenom.com/api/connect/start?host=yahoo&from=%2Ftools'; // one hop only
+    const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+    const currentPath = window.location.pathname + window.location.search;
+    window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(currentPath)}`;
   };
 
   const refresh = async () => {
     try {
       setLoading(true);
+      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
       // hit your refresh endpoint or re-pull leagues
-      await fetch('/api/leagues/refresh', { method: 'POST', credentials: 'include', cache: 'no-store' });
+      await fetch(`${API_BASE}/yahoo/leagues`, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { accept: 'application/json' }
+      });
       router.refresh(); // revalidate page state
     } finally {
       setLoading(false);
@@ -92,6 +103,7 @@ export default function YahooConnectButton() {
         </div>
         <button
           onClick={connect}
+          data-testid="yahoo-connect-btn"
           className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800"
           aria-label="Connect Yahoo"
         >
