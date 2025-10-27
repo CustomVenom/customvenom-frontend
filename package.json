@@ -27,7 +27,7 @@
     "preflight:contracts": "npm run build && start /B cmd /C \"npm run start:test\" && timeout /t 5 >NUL && npx playwright test tests/contract-tests.spec.ts && taskkill /IM node.exe /F >NUL 2>&1",
     "cors:test": "curl -sSD - \"$NEXT_PUBLIC_API_BASE/health\" -H \"Origin: https://www.customvenom.com\" -o /dev/null | sed -n '1,30p'",
     "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",
-    "prepare": "husky install",
+    "prepare": "husky install || echo 'husky skipped'",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
     "storybook": "storybook dev -p 6006",
