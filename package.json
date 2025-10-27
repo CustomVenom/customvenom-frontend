@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit",
     "qa": "npm run typecheck && npm run lint",
     "pre-commit": "npm run lint && npm run type-check",
-    "preflight:grep": "powershell -Command \"if (git grep -n 'http://.*yahoo\\.com' -- src 2>$null) { Write-Error 'Found http:// Yahoo references'; exit 1 }\"",
+    "preflight:grep": "powershell -Command \"if (git grep -n 'http://.*yahoo\\.com' -- src 2>$null) { Write-Error 'Found http:// Yahoo references'; exit 1 }; if (git grep -n 'process\\.env\\.[A-Z_]' -- src 2>$null) { Write-Error 'Found dot-access env vars - use bracket access'; exit 1 }\"",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
