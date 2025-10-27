@@ -32,6 +32,9 @@ export const metadata: Metadata = {
     siteName: 'Custom Venom',
     images: ['/og.png'], // Add this when og.png is created
   },
+  other: {
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.customvenom.com https://fantasysports.yahooapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
+  },
 };
 
 export default function RootLayout({
