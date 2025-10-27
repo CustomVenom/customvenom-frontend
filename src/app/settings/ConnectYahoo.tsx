@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from 'react';
 
+import { SportChooserHidden } from '@/components/SportChooser';
+
 interface League {
   id: string;
   name: string;
   season: string;
+}
+
+type Sport = 'nfl' | 'nba' | 'mlb' | 'nhl';
+
+function multiSportEnabled() {
+  return process.env['NEXT_PUBLIC_ENABLE_MULTI_SPORT'] === 'true'
+    && typeof window !== 'undefined'
+    && localStorage.getItem('cv:multiSport') === 'on';
 }
 
 export function ConnectYahoo() {
@@ -13,6 +23,7 @@ export function ConnectYahoo() {
   const [connected, setConnected] = useState<boolean | null>(null);
   const [leagues, setLeagues] = useState<League[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [sport, setSport] = useState<Sport>('nfl');
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'];
 
@@ -40,8 +51,10 @@ export function ConnectYahoo() {
           await userRes.json();
           setConnected(true);
 
-          // Fetch leagues
-          const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues`, {
+          // Fetch leagues (clamp to NFL unless multi-sport enabled)
+          const effective = multiSportEnabled() ? sport : 'nfl';
+          const leaguesUrl = `${API_BASE}/yahoo/leagues${effective === 'nfl' ? '' : `?game=${encodeURIComponent(effective)}`}`;
+          const leaguesRes = await fetch(leaguesUrl, {
             credentials: 'include',
             cache: 'no-store',
             headers: { accept: 'application/json' }
@@ -49,7 +62,7 @@ export function ConnectYahoo() {
 
           if (leaguesRes.ok) {
             const leaguesData = await leaguesRes.json();
-            setLeagues(leaguesData.items || []);
+            setLeagues(leaguesData.leagues || []);
           }
         } else {
           setConnected(false);
@@ -65,7 +78,7 @@ export function ConnectYahoo() {
 
     checkConnection();
     return () => { alive = false; };
-  }, [API_BASE]);
+  }, [API_BASE, sport]);
 
   const refresh = async () => {
     if (!API_BASE) return;
@@ -74,8 +87,10 @@ export function ConnectYahoo() {
       setLoading(true);
       setError(null);
 
-      // Refresh leagues
-      const res = await fetch(`${API_BASE}/yahoo/leagues`, {
+      // Refresh leagues (clamp to NFL unless multi-sport enabled)
+      const effective = multiSportEnabled() ? sport : 'nfl';
+      const refreshUrl = `${API_BASE}/yahoo/leagues${effective === 'nfl' ? '' : `?game=${encodeURIComponent(effective)}`}`;
+      const res = await fetch(refreshUrl, {
         credentials: 'include',
         cache: 'no-store',
         headers: { accept: 'application/json' }
@@ -83,7 +98,7 @@ export function ConnectYahoo() {
 
       if (res.ok) {
         const data = await res.json();
-        setLeagues(data.items || []);
+        setLeagues(data.leagues || []);
       } else {
         setError('Failed to refresh leagues');
       }
@@ -132,6 +147,8 @@ export function ConnectYahoo() {
   if (connected) {
     return (
       <div className="space-y-4">
+        <SportChooserHidden value={sport} onChange={setSport} />
+
         <div className="p-4 border rounded-lg bg-green-50">
           <div className="flex items-center justify-between">
             <div>
