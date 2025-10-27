@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSelectedTeam } from '@/lib/selection';
 
 export default function YahooConnectButton() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState<boolean | null>(null);
+  const { team_key } = useSelectedTeam();
 
   // 1) Probe connection (reads your app's /yahoo/me or similar)
   useEffect(() => {
@@ -58,11 +60,11 @@ export default function YahooConnectButton() {
       <div className="p-4 border rounded-lg bg-yellow-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
             <div className="text-sm opacity-80">Checking connection status...</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
-            Checking Yahoo…
+            Checking…
           </button>
         </div>
       </div>
@@ -74,10 +76,10 @@ export default function YahooConnectButton() {
       <div className="p-4 border rounded-lg bg-green-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
             <div className="text-sm opacity-80 flex items-center gap-2">
               <span className="inline-flex items-center rounded px-2 py-1 text-xs bg-green-100 text-green-800">
-                Yahoo connected ✓
+                {team_key ? 'Connected ✓' : 'Yahoo connected ✓'}
               </span>
             </div>
           </div>
@@ -85,7 +87,7 @@ export default function YahooConnectButton() {
             onClick={refresh}
             disabled={loading}
             className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
-            aria-label="Refresh leagues from Yahoo"
+            aria-label="Refresh leagues"
           >
             {loading ? 'Refreshing…' : 'Refresh leagues'}
           </button>
@@ -98,16 +100,16 @@ export default function YahooConnectButton() {
     <div className="p-4 border rounded-lg bg-yellow-50">
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+          <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
           <div className="text-sm opacity-80">Connect once, always return here.</div>
         </div>
         <button
           onClick={connect}
           data-testid="yahoo-connect-btn"
           className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800"
-          aria-label="Connect Yahoo"
+          aria-label="Connect leagues"
         >
-          Connect Yahoo
+          Connect Leagues
         </button>
       </div>
     </div>

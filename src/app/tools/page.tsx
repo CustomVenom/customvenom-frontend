@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import DebugRequestId from '@/components/DebugRequestId';
+import TeamSelectionStatus from '@/components/TeamSelectionStatus';
 import ToolsTabs from '@/components/ToolsTabs';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 import YahooConnectButton from './YahooConnectButton';
@@ -30,6 +31,7 @@ export default function ToolsPage() {
         <p className="text-muted">Interactive decision tools powered by explainable projections.</p>
 
         <YahooConnectButton />
+        <TeamSelectionStatus />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
@@ -63,13 +65,13 @@ export default function ToolsPage() {
           </Link>
 
           <Link
-            href="/tools/yahoo"
+            href="/tools/leagues"
             prefetch={false}
             className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-brand-primary dark:hover:border-brand-accent transition-colors"
           >
-            <h2 className="h2 mb-2">🏈 Yahoo</h2>
+            <h2 className="h2 mb-2">🏈 Leagues</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Connect your Yahoo Fantasy leagues and view your teams and rosters.
+              Connect your fantasy leagues and view your teams and rosters.
             </p>
           </Link>
         </div>

@@ -6,6 +6,7 @@ import ClientLayout from './ClientLayout';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import { SelectionProvider } from '@/lib/selection';
 
 import { Analytics } from '@vercel/analytics/react';
 
@@ -51,12 +52,14 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <Header />
-        <ClientLayout>
-          <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">
-            {children}
-          </main>
-        </ClientLayout>
+        <SelectionProvider>
+          <Header />
+          <ClientLayout>
+            <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">
+              {children}
+            </main>
+          </ClientLayout>
+        </SelectionProvider>
         <Footer />
         <Analytics />
       </body>

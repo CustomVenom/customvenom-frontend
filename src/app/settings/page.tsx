@@ -1,5 +1,6 @@
 'use client';
 
+import TeamSelectionStatus from '@/components/TeamSelectionStatus';
 import { ConnectYahoo } from './ConnectYahoo';
 
 export default function SettingsPage() {
@@ -32,6 +33,9 @@ export default function SettingsPage() {
       <div className="mb-10 pb-10 border-b border-gray-200">
         <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration</h2>
         <ConnectYahoo />
+        <div className="mt-4">
+          <TeamSelectionStatus />
+        </div>
       </div>
     </div>
   );

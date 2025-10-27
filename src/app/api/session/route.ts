@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const url = new URL(request.url);
-    const queryString = url.search;
-
-    const r = await fetch(`${apiBase}/yahoo/leagues${queryString}`, {
+    const r = await fetch(`${apiBase}/session`, {
       headers: {
         cookie: request.headers.get('cookie') || ''
       },
@@ -25,7 +22,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Yahoo leagues proxy error:', error);
-    return NextResponse.json({ error: 'Leagues fetch failed' }, { status: 500 });
+    console.error('Session proxy error:', error);
+    return NextResponse.json({ error: 'Session fetch failed' }, { status: 500 });
   }
 }

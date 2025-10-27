@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { SportChooserHidden } from '@/components/SportChooser';
+import { useSelectedTeam } from '@/lib/selection';
 
 interface League {
   id: string;
@@ -24,6 +25,7 @@ export function ConnectYahoo() {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [sport, setSport] = useState<Sport>('nfl');
+  const { team_key } = useSelectedTeam();
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'];
 
@@ -68,7 +70,7 @@ export function ConnectYahoo() {
           setConnected(false);
           setLeagues([]);
         }
-      } catch (_err) {
+      } catch {
         if (alive) {
           setConnected(false);
           setError('Failed to check connection status');
@@ -102,7 +104,7 @@ export function ConnectYahoo() {
       } else {
         setError('Failed to refresh leagues');
       }
-    } catch (_err) {
+    } catch {
       setError('Failed to refresh leagues');
     } finally {
       setLoading(false);
@@ -115,7 +117,7 @@ export function ConnectYahoo() {
       <div className="p-4 border rounded-lg bg-gray-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
             <div className="text-sm opacity-80">API not configured. Set NEXT_PUBLIC_API_BASE.</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
@@ -132,11 +134,11 @@ export function ConnectYahoo() {
       <div className="p-4 border rounded-lg bg-yellow-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
             <div className="text-sm opacity-80">Checking connection status...</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
-            Checking Yahoo…
+            Checking…
           </button>
         </div>
       </div>
@@ -152,10 +154,10 @@ export function ConnectYahoo() {
         <div className="p-4 border rounded-lg bg-green-50">
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+              <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
               <div className="text-sm opacity-80 flex items-center gap-2">
                 <span className="inline-flex items-center rounded px-2 py-1 text-xs bg-green-100 text-green-800">
-                  Yahoo connected ✓
+                  {team_key ? 'Connected ✓' : 'Yahoo connected ✓'}
                 </span>
                 {leagues.length > 0 && (
                   <span className="text-gray-600">
@@ -168,7 +170,7 @@ export function ConnectYahoo() {
               onClick={refresh}
               disabled={loading}
               className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
-              aria-label="Refresh leagues from Yahoo"
+              aria-label="Refresh leagues"
             >
               {loading ? 'Refreshing…' : 'Refresh leagues'}
             </button>
@@ -203,7 +205,7 @@ export function ConnectYahoo() {
     <div className="p-4 border rounded-lg bg-gray-50">
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-medium">Yahoo Fantasy (read‑only)</div>
+          <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
           <div className="text-sm opacity-80">Not connected. <a href="/tools" className="text-blue-600 hover:underline">Go to Tools to connect</a>.</div>
         </div>
         <span className="px-3 py-2 rounded bg-gray-100 text-gray-600 text-sm">

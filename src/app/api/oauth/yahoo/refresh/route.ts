@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
   if (!apiBase) {
     return NextResponse.json({ error: 'API_BASE not configured' }, { status: 500 });
   }
 
   try {
-    const url = new URL(request.url);
-    const queryString = url.search;
-
-    const r = await fetch(`${apiBase}/yahoo/leagues${queryString}`, {
+    const r = await fetch(`${apiBase}/oauth/yahoo/refresh`, {
+      method: 'POST',
       headers: {
         cookie: request.headers.get('cookie') || ''
       },
@@ -25,7 +23,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Yahoo leagues proxy error:', error);
-    return NextResponse.json({ error: 'Leagues fetch failed' }, { status: 500 });
+    console.error('OAuth refresh proxy error:', error);
+    return NextResponse.json({ error: 'Refresh failed' }, { status: 500 });
   }
 }
