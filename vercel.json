@@ -1,6 +1,6 @@
 {
   "build": { "env": {} },
   "git": {
-    "ignoreCommand": "git diff --name-only $VERCEL_GIT_COMMIT_SHA~1 | grep -Ev '^(src|app|pages|components|public|package\.json|next\.config\.js)' >/dev/null || exit 1"
+    "ignoreCommand": "git diff --name-only $VERCEL_GIT_COMMIT_SHA~1 | grep -Ev '^(src|app|pages|components|public|package\\.json|next\\.config\\.js)' >/dev/null || exit 1"
   }
 }

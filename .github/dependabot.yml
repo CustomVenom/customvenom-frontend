@@ -1,50 +1,8 @@
-# Dependabot v2 config
-
 version: 2
-
 updates:
-  # NPM (frontend)
   - package-ecosystem: "npm"
     directory: "/"
-    schedule:
-      interval: "weekly"          # Options: daily, weekly, monthly
-      day: "monday"               # Optional: day for weekly
-      time: "09:00"               # Optional: UTC time
-    open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
-      - "automerge"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    groups:
-      minor-and-patch:
-        applies-to: version-updates
-        update-types:
-          - "minor"
-          - "patch"
-      tooling:
-        patterns:
-          - "@types/*"
-          - "@eslint/*"
-          - "eslint*"
-          - "prettier*"
-
-  # GitHub Actions (CI)
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:05"
-    labels:
-      - "dependencies"
-      - "ci"
-      - "automerge"
-    commit-message:
-      prefix: "ci"
-      include: "scope"
-
-# Notes:
-# - Label "automerge" allows Auto-merge to pick these up once checks pass
-# - Grouping minor/patch reduces PR noise while keeping majors separate
+    schedule: { interval: "weekly" }
+    ignore:
+      - dependency-name: "next"
+        versions: [">=16.0.0"]

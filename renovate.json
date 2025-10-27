@@ -1,0 +1,13 @@
+{
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["next"],
+      "allowedVersions": "<16"
+    },
+    {
+      "matchPackageNames": ["next", "@sentry/nextjs"],
+      "groupName": "next+sentry"
+    }
+  ]
+}
