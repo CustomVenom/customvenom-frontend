@@ -8,20 +8,21 @@
 
 Clean up remaining ESLint warnings to ensure pre-push hook stays green.
 
-## 📋 **Current ESLint Warnings**
+## 📋 **Current Issues**
 
-Based on last run, the following warnings need to be addressed:
-
-### **Unused Variables (5 warnings)**
+### **ESLint Warnings (7 warnings)**
 - `src/app/api/yahoo/refresh/route.ts:3:7` - `TOKEN_URL` is assigned but never used
 - `src/app/settings/ConnectYahoo.tsx:71:16` - `_err` is defined but never used  
 - `src/app/settings/ConnectYahoo.tsx:105:14` - `_err` is defined but never used
 - `src/app/tools/yahoo/[leagueId]/page.tsx:1:10` - `cookies` is defined but never used
 - `src/lib/auth.ts:8:8` - `GoogleProvider` is defined but never used
-
-### **Import Resolution (2 warnings)**
 - `src/server/yahoo.ts:1:8` - Unable to resolve path to module 'server-only'
 - `src/utils/safeFetchJson.ts:1:8` - Unable to resolve path to module 'server-only'
+
+### **Test Issues (20 failed tests)**
+- Playwright tests failing due to configuration issues
+- Missing `@/lib/logger` import causing test failures
+- Test runner configuration needs fixing
 
 ## 🔧 **Fix Strategy**
 
