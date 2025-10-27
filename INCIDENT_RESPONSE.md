@@ -7,10 +7,10 @@
 - **Resolution**: Pinned Next.js to 15.5.6 to maintain compatibility
 
 ## Resolution Applied (Path A)
-✅ **Next.js Version Pinned**: `next@15.5.6` in package.json  
-✅ **Lockfile Updated**: package-lock.json reflects pinned version  
-✅ **Build Verified**: Local build succeeds with pinned version  
-✅ **Committed & Pushed**: Changes deployed to main branch  
+✅ **Next.js Version Pinned**: `next@15.5.6` in package.json
+✅ **Lockfile Updated**: package-lock.json reflects pinned version
+✅ **Build Verified**: Local build succeeds with pinned version
+✅ **Committed & Pushed**: Changes deployed to main branch
 
 ## Vercel Configuration
 **Project → Settings → Build & Development Settings:**
@@ -33,10 +33,10 @@
 - [ ] CORS headers include preview origin with ACAC=true
 
 ## Prevention Measures
-✅ **Renovate Rule**: Blocks Next >=16 until Sentry supports it  
-✅ **Dependabot Config**: Ignores Next 16+ updates  
-✅ **Vercel Ignore Command**: Skips builds for non-source changes  
-✅ **Package.json Engines**: Enforces Node 20.x  
+✅ **Renovate Rule**: Blocks Next >=16 until Sentry supports it
+✅ **Dependabot Config**: Ignores Next 16+ updates
+✅ **Vercel Ignore Command**: Skips builds for non-source changes
+✅ **Package.json Engines**: Enforces Node 20.x
 
 ## Rollback Plan
 If issues arise after future upgrades:

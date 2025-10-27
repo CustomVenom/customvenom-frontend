@@ -8,18 +8,45 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testIgnore: ['tests/**/*.test.ts'],
   timeout: 60000,
-  use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
+  },
   webServer: {
-    command: 'npm run build && npm run start',
+    command: 'npm run build && npm run start:test',
     url: 'http://localhost:3000',
     timeout: 120000,
-    reuseExistingServer: !process.env['CI'],
+    reuseExistingServer: true,
+    env: {
+      NEXT_PUBLIC_API_BASE: 'https://customvenom-workers-api-staging.jdewett81.workers.dev',
+    },
   },
   projects: [
     {
+      name: 'trust-snapshot',
+      testMatch: 'tests/trust-snapshot.spec.ts',
+      use: {
+        actionTimeout: 5000,
+        navigationTimeout: 15000,
+      },
+    },
+    {
+      name: 'health',
+      testMatch: 'tests/health.spec.ts',
+      use: {
+        actionTimeout: 10000,
+        navigationTimeout: 15000,
+      },
+    },
+    {
       name: 'yahoo-connect',
       testMatch: 'tests/yahoo-connect.spec.ts',
+      use: {
+        actionTimeout: 10000,
+        navigationTimeout: 30000,
+      },
     },
   ],
 });
-

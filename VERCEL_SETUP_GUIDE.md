@@ -50,7 +50,7 @@ Ensure your Workers API allows the Vercel preview origin:
 ```json
 {
   "orgId": "your-org-id",
-  "projectId": "your-project-id", 
+  "projectId": "your-project-id",
   "settings": {
     "framework": "nextjs",
     "buildCommand": "vercel build",
