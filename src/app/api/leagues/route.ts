@@ -92,9 +92,9 @@ export async function GET(request: NextRequest) {
     const body = await r.json();
 
     // Transform Workers API response to frontend format
-    if (body.ok && body.items) {
+    if (body.ok && body.leagues) {
       // Transform Yahoo leagues to frontend format
-      const leagues = body.items.map((item: { id: string; name: string; season: string }) => ({
+      const leagues = body.leagues.map((item: { id: string; name: string; season: string }) => ({
         key: `yahoo:${item.id}`,
         provider: 'yahoo' as const,
         external_league_id: item.id,
