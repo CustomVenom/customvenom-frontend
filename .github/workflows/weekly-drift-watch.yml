@@ -92,7 +92,7 @@ jobs:
 
       - name: Create issue on failure
         if: steps.drift-watch.outputs.status == 'fail'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const title = `Yahoo OAuth Drift Watch Failed - ${new Date().toISOString().split('T')[0]}`;
