@@ -22,7 +22,7 @@ export function LeagueSwitcher() {
 
     setUpdating(true);
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+      const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
       await fetch(`${API_BASE}/app/me/active-league`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -44,7 +44,7 @@ export function LeagueSwitcher() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+      const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
 
       const res = await fetch(`${API_BASE}/api/leagues`, {
         cache: 'no-store',
@@ -128,7 +128,7 @@ export function LeagueSwitcher() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+      const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
       const res = await fetch(`${API_BASE}/api/leagues/refresh`, {
         method: 'POST',
         headers: { 'accept': 'application/json' },

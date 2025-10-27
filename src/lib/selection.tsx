@@ -42,7 +42,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     }
     ;(async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
         const res = await fetch(`${API_BASE}/api/session/selection`, { credentials: 'include' })
         if (res.ok) {
           const b = await res.json()
@@ -67,7 +67,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
         pinned: typeof next.pinned === 'boolean' ? next.pinned : selection.pinned,
       }
       // Server source of truth
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+      const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
         credentials: 'include',
