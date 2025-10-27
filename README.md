@@ -1,6 +1,7 @@
 # CustomVenom Frontend
 
-[![e2e](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml)
+[![trust-gate](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml)
+[![pr-lite](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml)
 
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
@@ -56,6 +57,24 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+## 🚪 Local Gate
+
+Quick validation before commits (Windows-optimized):
+
+```bash
+# Full local gate (build + start server + run tests + cleanup)
+npm run test:gate
+
+# Individual checks
+npm run preflight:grep    # Check for http:// Yahoo references
+npm run lint              # ESLint with max 2 warnings
+npm run typecheck         # TypeScript validation
+npm run test:unit         # Vitest unit tests only
+npm run test:e2e          # Playwright E2E tests
+```
+
+**Pre-push hooks** run `npm run preflight` automatically on every commit.
 
 ## 🧪 E2E: Trust Snapshot
 

@@ -30,7 +30,7 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
     const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const response = await fetch(`${apiBase}/api/yahoo/leagues`, {
       headers: {
-        'cookie': `y_at=${t.accessToken}`,
+        cookie: `y_at=${t.accessToken}`,
       },
       cache: 'no-store',
     });
@@ -75,4 +75,3 @@ export async function getCachedLeagues(userId: string): Promise<YahooLeague[]> {
   mem.set(key, { at: now, data: leagues });
   return leagues;
 }
-

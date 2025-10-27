@@ -1,9 +1,6 @@
 // import 'server-only';
 
-export async function safeFetchJson<T>(
-  url: string,
-  init?: RequestInit
-): Promise<T | null> {
+export async function safeFetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
   try {
     // Add timeout to prevent hangs
     const controller = new AbortController();
