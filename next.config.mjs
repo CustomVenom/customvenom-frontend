@@ -5,6 +5,7 @@ const nextConfig = {
   // run ESLint via pre-commit or a separate CI step.
   eslint: { ignoreDuringBuilds: true },
   async rewrites() {
+    // eslint-disable-next-line no-undef
     const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
     return [
       { source: '/api/yahoo/:path*', destination: `${apiBase}/api/yahoo/:path*` },
