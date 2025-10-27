@@ -76,6 +76,36 @@ npm run test:e2e          # Playwright E2E tests
 
 **Pre-push hooks** run `npm run preflight` automatically on every commit.
 
+### 🔧 **Operator Commands**
+
+**Local gate validation:**
+```bash
+npm run test:gate
+```
+
+**Deterministic install:**
+```bash
+npx -y npm@10.7.0 ci
+```
+
+**Production smoke tests:**
+```bash
+# Trust Snapshot render
+curl -s "https://www.customvenom.com/tools" | grep -i "trust\|schema\|calibrated\|stale"
+
+# Health endpoint contract
+curl -sSD - "https://api.customvenom.com/health" -o /dev/null | head -20
+curl -s "https://api.customvenom.com/health" | jq -e '.ok and .ready and .schema_version and .last_refresh and .r2_key'
+
+# Yahoo session probe (expects 401)
+curl -sSD - "https://api.customvenom.com/yahoo/me" -o /dev/null
+
+# Preflight CORS
+curl -sSD - -X OPTIONS "https://api.customvenom.com/yahoo/leagues" \
+  -H "Origin: https://www.customvenom.com" \
+  -H "Access-Control-Request-Method: GET" -o /dev/null
+```
+
 ## 🧪 E2E: Trust Snapshot
 
 Test the Trust Snapshot UI component against staging:

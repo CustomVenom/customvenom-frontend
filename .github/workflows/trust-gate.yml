@@ -30,6 +30,6 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Trust Gate Tests
-        run: npx playwright test tests/trust-snapshot.spec.ts tests/health.spec.ts
+        run: npx playwright test tests/trust-snapshot.spec.ts tests/health.spec.ts tests/prod-smoke.spec.ts
         env:
           NEXT_PUBLIC_API_BASE: https://customvenom-workers-api-staging.jdewett81.workers.dev
