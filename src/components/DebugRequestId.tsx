@@ -7,7 +7,8 @@ export default function DebugRequestId() {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch('/api/health', { cache: 'no-store' });
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+      const res = await fetch(`${API_BASE}/api/health`, { cache: 'no-store' });
       setRid(res.headers.get('x-request-id'));
     })();
   }, []);
