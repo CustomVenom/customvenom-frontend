@@ -45,7 +45,7 @@ test.describe('Leagues Selection', () => {
           synced_leagues: [],
           active_league: null,
         }),
-      })
+      }),
     );
 
     await page.goto('/tools/leagues');
@@ -95,7 +95,7 @@ test.describe('Leagues Selection', () => {
           synced_leagues: ['yahoo:123:tmA'],
           active_league: 'yahoo:123:tmA',
         }),
-      })
+      }),
     );
 
     await page.goto('/tools/leagues');
@@ -149,7 +149,7 @@ test.describe('Leagues Selection', () => {
           synced_leagues: [],
           active_league: null,
         }),
-      })
+      }),
     );
 
     await page.goto('/tools/leagues');
@@ -202,7 +202,7 @@ test.describe('Leagues Selection', () => {
           synced_leagues: ['yahoo:123:tmA'],
           active_league: 'yahoo:123:tmA',
         }),
-      })
+      }),
     );
 
     await page.goto('/tools/leagues');

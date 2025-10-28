@@ -34,4 +34,3 @@ export const MissingData: Story = {
     stale: false,
   },
 };
-

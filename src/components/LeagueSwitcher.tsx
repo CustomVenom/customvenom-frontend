@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 import { LeagueChooser } from './LeagueChooser';
-import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
 
@@ -25,7 +24,7 @@ export function LeagueSwitcher() {
 
     setUpdating(true);
     try {
-      await fetchJson('/api/me/active-league', {
+      await fetch('/app/me/active-league', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ league_key: newActive }),
@@ -41,45 +40,66 @@ export function LeagueSwitcher() {
   };
 
   const fetchLeagues = async () => {
+    let requestId = 'no-request-id';
     try {
-      const result = await fetchJson<MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string }>('/api/leagues');
-      const requestId = getReqId(result);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      if (!result.ok) {
-        if (result.error === 'auth_required') {
-          throw new Error('auth_required');
-        }
+      const res = await fetch('/api/leagues', {
+        cache: 'no-store',
+        headers: { accept: 'application/json' },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      requestId = res.headers.get('x-request-id') || 'no-request-id';
+
+      if (res.status === 404) {
         setErrorDetails(
-          JSON.stringify({ requestId, error: result.error, status: result.status }, null, 2)
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
         );
-        throw new Error(result.error || `HTTP ${result.status}`);
+        throw new Error('leagues_endpoint_not_found');
+      }
+      if (res.status === 401) {
+        setErrorDetails(
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
+        );
+        throw new Error('auth_required');
+      }
+      if (!res.ok) {
+        setErrorDetails(
+          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
+        );
+        throw new Error(`HTTP ${res.status}`);
       }
 
-      const json = result.data;
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Non-JSON response');
+      }
+
+      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } =
+        await res.json();
 
       // Handle empty leagues array explicitly
-      if (!json?.leagues || json.leagues.length === 0) {
+      if (!json.leagues || json.leagues.length === 0) {
         console.warn('[LeagueSwitcher] Empty leagues array returned');
         setData({
-          connections: json?.connections || [],
-          entitlements: json?.entitlements || { is_superuser: false, free_slots: 1, purchased_slots: 0, max_sync_slots: 1, used_slots: 0 },
+          ...json,
           leagues: [],
           synced_leagues: [],
-          active_league: json?.active_league || null,
-          ...(json?.defaultLeagueId && { defaultLeagueId: json.defaultLeagueId }),
-          ...(json?.lastSync && { lastSync: json.lastSync }),
         });
         setError('No leagues found. Try refreshing your league data.');
         setErrorDetails(
           JSON.stringify(
             {
               requestId,
-              connections: json?.connections?.length || 0,
-              leagueCount: json?.leagues?.length || 0,
+              connections: json.connections?.length || 0,
+              leagueCount: json.leagues?.length || 0,
             },
             null,
-            2
-          )
+            2,
+          ),
         );
         return;
       }
@@ -109,12 +129,13 @@ export function LeagueSwitcher() {
       setErrorDetails(
         JSON.stringify(
           {
-            requestId: 'unavailable',
+            requestId,
             error: err instanceof Error ? err.message : String(err),
+            stack: err instanceof Error ? err.stack : undefined,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     } finally {
       setLoading(false);
@@ -124,12 +145,12 @@ export function LeagueSwitcher() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const result = await fetchJson('/api/leagues/refresh', {
+      const res = await fetch('/api/leagues/refresh', {
         method: 'POST',
         headers: { accept: 'application/json' },
       });
 
-      if (result.ok) {
+      if (res.ok) {
         // Wait a moment for backend to process, then reload
         setTimeout(() => {
           fetchLeagues();
@@ -151,39 +172,12 @@ export function LeagueSwitcher() {
   }
 
   if (error) {
-    if (error === 'auth_required') {
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-      const currentPath =
-        typeof window !== 'undefined'
-          ? window.location.pathname + window.location.search
-          : '/tools';
-      const connectUrl = `${API_BASE}/api/yahoo/signin?from=${encodeURIComponent(currentPath)}`;
-
-      return (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500">Authentication required</span>
-            <a
-              href={connectUrl}
-              className="px-2 py-1 text-xs bg-black text-white hover:bg-gray-800 rounded"
-            >
-              Connect Yahoo
-            </a>
-          </div>
-          {errorDetails && (
-            <div className="text-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">Request ID:</span>
-                <span className="font-mono text-gray-600">{errorDetails}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
     const errorMessage =
-      error === 'leagues_endpoint_not_found' ? 'Leagues endpoint not ready' : error;
+      error === 'leagues_endpoint_not_found'
+        ? 'Leagues endpoint not ready'
+        : error === 'auth_required'
+          ? 'Authentication required'
+          : error;
 
     return (
       <div className="flex flex-col gap-2">

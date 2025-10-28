@@ -5,19 +5,17 @@
 
 // Role hierarchy (higher = more access)
 export const ROLES = {
-  ADMIN: 'admin',      // Full system access (you)
-  TEAM: 'team',        // Team tier customers
-  PRO: 'pro',          // Pro tier customers
-  FREE: 'free',        // Free tier users
+  ADMIN: 'admin', // Full system access (you)
+  TEAM: 'team', // Team tier customers
+  PRO: 'pro', // Pro tier customers
+  FREE: 'free', // Free tier users
 } as const;
 
-export type Role = typeof ROLES[keyof typeof ROLES];
+export type Role = (typeof ROLES)[keyof typeof ROLES];
 
 // Admin emails (YOU - hardcoded for security)
 // These emails will ALWAYS have admin access, regardless of database state
-const ADMIN_EMAILS = [
-  'jdewett81@gmail.com',
-];
+const ADMIN_EMAILS = ['jdewett81@gmail.com'];
 
 // Check if an email is a hardcoded admin
 export function isAdminEmail(email?: string | null): boolean {
@@ -51,16 +49,16 @@ export function getEffectiveRole(userRole: Role, email?: string | null): Role {
 export const PERMISSIONS = {
   // Analytics & Metrics
   VIEW_ANALYTICS: [ROLES.ADMIN, ROLES.PRO, ROLES.TEAM],
-  
+
   // Tool Features
   USE_COMPARE_VIEW: [ROLES.ADMIN, ROLES.PRO, ROLES.TEAM],
   EXPORT_CSV: [ROLES.ADMIN, ROLES.PRO, ROLES.TEAM],
   WEEKLY_RECAP_EMAIL: [ROLES.ADMIN, ROLES.PRO, ROLES.TEAM],
-  
+
   // League Management
   IMPORT_LEAGUES: [ROLES.ADMIN, ROLES.FREE, ROLES.PRO, ROLES.TEAM], // Everyone
   MULTIPLE_LEAGUES: [ROLES.ADMIN, ROLES.PRO, ROLES.TEAM],
-  
+
   // Admin Features
   VIEW_ALL_USERS: [ROLES.ADMIN],
   MANAGE_SUBSCRIPTIONS: [ROLES.ADMIN],
@@ -74,19 +72,16 @@ export type Permission = keyof typeof PERMISSIONS;
 export function hasPermission(
   userRole: Role,
   permission: Permission,
-  email?: string | null
+  email?: string | null,
 ): boolean {
   const effectiveRole = getEffectiveRole(userRole, email);
   return (PERMISSIONS[permission] as readonly Role[]).includes(effectiveRole);
 }
 
 // Get user entitlements based on role
-export function getEntitlementsFromRole(
-  role: Role,
-  email?: string | null
-) {
+export function getEntitlementsFromRole(role: Role, email?: string | null) {
   const effectiveRole = getEffectiveRole(role, email);
-  
+
   return {
     role: effectiveRole,
     isAdmin: effectiveRole === ROLES.ADMIN,
@@ -113,12 +108,12 @@ export function isActiveSubscription(subscriptionStatus?: string | null): boolea
 // Determine role from Stripe subscription
 export function getRoleFromSubscription(
   subscriptionStatus?: string | null,
-  tier?: string | null
+  tier?: string | null,
 ): Role {
   if (!isActiveSubscription(subscriptionStatus)) {
     return ROLES.FREE;
   }
-  
+
   // Map tier to role
   switch (tier?.toLowerCase()) {
     case 'team':
@@ -129,4 +124,3 @@ export function getRoleFromSubscription(
       return ROLES.FREE;
   }
 }
-

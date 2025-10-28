@@ -10,4 +10,3 @@ export function safeJson<T = unknown>(input: string | null | undefined, fallback
     return fallback;
   }
 }
-

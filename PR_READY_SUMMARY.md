@@ -9,12 +9,14 @@ Integrated all four UI features into `/projections` page in a minimal, slice-siz
 ## What Changed
 
 ### Files Modified (2)
+
 1. `src/app/projections/page.tsx` - Main integration
 2. `src/app/projections/page.module.css` - Styles for new elements
 
 ### Changes Made
 
 **Imports Added:**
+
 ```typescript
 import { ReasonChips } from '@/components/ReasonChips';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
@@ -23,15 +25,18 @@ import { Reason } from '@/lib/reasonsClamp';
 ```
 
 **Component Removals:**
+
 - Removed `ReasonsDisplay` component (replaced by `ReasonChips`)
 
 **Interface Updates:**
+
 ```typescript
 // Updated to use Reason type instead of string[]
 reasons?: Reason[] // Was: reasons?: string[]
 ```
 
 **New Features:**
+
 1. **Reload Data button** - Triggers refetch with skeleton animation
 2. **TableSkeleton** - Shows during loading/reload
 3. **ReasonChips** - Max 2 chips, ±3.5% clamp, confidence ≥ 0.65
@@ -41,18 +46,19 @@ reasons?: Reason[] // Was: reasons?: string[]
 
 ## Acceptance Criteria ✅
 
-| Criteria | Status | Implementation |
-|----------|--------|----------------|
+| Criteria                                                   | Status  | Implementation                                 |
+| ---------------------------------------------------------- | ------- | ---------------------------------------------- |
 | Density toggle persists and adjusts table padding globally | ✅ PASS | Already in layout, CSS vars work automatically |
-| Skeletons prevent layout shift on reload | ✅ PASS | TableSkeleton shows 8×4 grid during load |
-| Reason chips max 2 with ±3.5% clamp | ✅ PASS | Enforced by clampReasons() utility |
-| Tooltips accessible by keyboard and screen readers | ✅ PASS | Radix UI tooltips, tabIndex={0}, proper ARIA |
+| Skeletons prevent layout shift on reload                   | ✅ PASS | TableSkeleton shows 8×4 grid during load       |
+| Reason chips max 2 with ±3.5% clamp                        | ✅ PASS | Enforced by clampReasons() utility             |
+| Tooltips accessible by keyboard and screen readers         | ✅ PASS | Radix UI tooltips, tabIndex={0}, proper ARIA   |
 
 ---
 
 ## Testing
 
 ### Quick Test
+
 ```bash
 cd customvenom-frontend
 npm run dev
@@ -60,6 +66,7 @@ npm run dev
 ```
 
 ### Test Steps
+
 1. ✅ Click "Reload Data" → See skeletons appear
 2. ✅ Click density toggle (top-right) → See spacing change
 3. ✅ Hover "Projections" → See tooltip definition
@@ -73,6 +80,7 @@ npm run dev
 The page now expects `reasons` as `Reason[]` objects, not `string[]`.
 
 ### Required Format:
+
 ```typescript
 {
   "reasons": [
@@ -83,6 +91,7 @@ The page now expects `reasons` as `Reason[]` objects, not `string[]`.
 ```
 
 ### If API still returns strings:
+
 Add this adapter temporarily in `page.tsx`:
 
 ```typescript
@@ -90,7 +99,7 @@ Add this adapter temporarily in `page.tsx`:
 function adaptReasons(reasons: any): Reason[] {
   if (!reasons || reasons.length === 0) return [];
   if (typeof reasons[0] === 'object') return reasons;
-  
+
   return reasons.map((r: string) => ({
     label: r.substring(0, 20),
     effect: 0,
@@ -99,7 +108,7 @@ function adaptReasons(reasons: any): Reason[] {
 }
 
 // Use it:
-reasons: adaptReasons(data.projections.reasons)
+reasons: adaptReasons(data.projections.reasons);
 ```
 
 ---
@@ -164,6 +173,7 @@ Small, focused PR ready for review! 🎯
 ## Deployment
 
 Ready for Vercel preview:
+
 ```bash
 git add src/app/projections/
 git commit -m "feat(projections): integrate UI features"
@@ -184,4 +194,3 @@ Create PR → Vercel will auto-deploy preview → Test → Merge
 ---
 
 Ready to proceed! 🚀
-

@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
-const PROD_HOST = 'https://api.customvenom.com';
+const PROD_HOST = 'https://www.customvenom.com';
 
 // Yahoo OAuth: MUST use production domain with www
 function yahooRedirectUri(): string {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         route: '/api/yahoo/callback',
         code_present: !!code,
         state_present: !!state,
-      })
+      }),
     );
 
     // Parse state cookie to extract returnTo
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
         const parsedReturnTo = stateData.returnTo;
 
         // Guardrail: reject absolute URLs (only allow internal paths)
-        if (parsedReturnTo.startsWith('https://')) {
+        if (parsedReturnTo.startsWith('http://') || parsedReturnTo.startsWith('https://')) {
           console.error('Rejected absolute URL in returnTo:', parsedReturnTo);
           returnTo = '/tools/leagues'; // Safe fallback
         }
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     // Yahoo OAuth: enforce absolute https://www... redirect
     const redirectUri = yahooRedirectUri();
-    if (!redirectUri.startsWith('https://api.customvenom.com/api/yahoo/callback')) {
+    if (!redirectUri.startsWith('https://www.customvenom.com/api/yahoo/callback')) {
       return new NextResponse('Invalid redirect URI configuration', { status: 500 });
     }
 
@@ -111,16 +111,15 @@ export async function GET(req: NextRequest) {
     const to = new URL(returnTo, req.nextUrl.origin);
     const res = NextResponse.redirect(to, { status: 302 });
     // Cookie domain: .customvenom.com for cross-subdomain, Secure for HTTPS only
-    // Set cv_yahoo cookie that the Workers API expects
     res.headers.append(
       'Set-Cookie',
-      `cv_yahoo=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`
+      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`,
     );
 
     if (tok.xoauth_yahoo_guid) {
       res.headers.append(
         'Set-Cookie',
-        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=2592000`
+        `y_guid=${encodeURIComponent(tok.xoauth_yahoo_guid)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=2592000`,
       );
     }
 
@@ -130,4 +129,3 @@ export async function GET(req: NextRequest) {
     return new NextResponse(`Server error: ${msg}`, { status: 500 });
   }
 }
-

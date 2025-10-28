@@ -46,12 +46,12 @@ STRIPE_SECRET_KEY=sk_live_...
 
 ## Environment Variables Reference
 
-| Variable | Required | Description | Example |
-|----------|----------|-------------|---------|
-| `NEXT_PUBLIC_API_BASE` | Yes | API base URL | `https://api.customvenom.com` |
-| `API_BASE` | Optional | Server-side API URL | `https://api.customvenom.com` |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Stripe public key | `pk_live_...` |
-| `STRIPE_SECRET_KEY` | No | Stripe secret key | `sk_live_...` |
+| Variable                             | Required | Description         | Example                       |
+| ------------------------------------ | -------- | ------------------- | ----------------------------- |
+| `NEXT_PUBLIC_API_BASE`               | Yes      | API base URL        | `https://api.customvenom.com` |
+| `API_BASE`                           | Optional | Server-side API URL | `https://api.customvenom.com` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No       | Stripe public key   | `pk_live_...`                 |
+| `STRIPE_SECRET_KEY`                  | No       | Stripe secret key   | `sk_live_...`                 |
 
 ## Usage in Code
 
@@ -84,17 +84,20 @@ Frontend → Next.js API Route → Cloudflare Worker → R2 Data
 Update components to call the API directly:
 
 **Before:**
+
 ```typescript
 const response = await fetch('/api/projections?week=2025-06');
 ```
 
 **After:**
+
 ```typescript
 const apiBase = process.env.NEXT_PUBLIC_API_BASE;
 const response = await fetch(`${apiBase}/projections?week=2025-06`);
 ```
 
 **Benefits:**
+
 - Faster (no extra hop through Next.js)
 - Lower hosting costs
 - Better caching at CDN edge
@@ -109,6 +112,7 @@ API_BASE=https://api.customvenom.com
 ```
 
 **Benefits:**
+
 - No frontend code changes needed
 - Can add auth/middleware in Next.js
 - Can transform responses
@@ -118,16 +122,19 @@ API_BASE=https://api.customvenom.com
 ### Vercel
 
 Vercel automatically loads environment variables from:
+
 1. `.env.local` (local dev, not committed)
 2. `.env.production` (production build)
 3. Vercel Dashboard → Project → Settings → Environment Variables
 
 Set in Vercel Dashboard:
+
 - `NEXT_PUBLIC_API_BASE` = `https://api.customvenom.com`
 
 ### Other Platforms
 
 Set environment variables in your hosting platform:
+
 - Netlify: Site Settings → Build & Deploy → Environment
 - AWS Amplify: App Settings → Environment Variables
 - Railway: Project → Variables
@@ -164,4 +171,3 @@ npm start
 
 → Check `.env.local` vs `.env.production`
 → Restart dev server after changing env vars
-

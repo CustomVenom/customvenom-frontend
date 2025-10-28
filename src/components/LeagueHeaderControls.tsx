@@ -55,7 +55,9 @@ export function LeagueHeaderControls({
                 <button
                   onClick={() => requestChange(l.id)}
                   className={`w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                    l.id === activeId ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300'
+                    l.id === activeId
+                      ? 'text-blue-600 dark:text-blue-400 font-medium'
+                      : 'text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   {l.name} {l.id === activeId ? '• Active' : ''}
@@ -77,7 +79,10 @@ export function LeagueHeaderControls({
           {!isPro && wantId && wantId !== activeId && (
             <div className="mt-3">
               <ProLock isPro={false}>
-                <a href="#upgrade" className="rounded border border-blue-500 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 text-blue-600 dark:text-blue-400">
+                <a
+                  href="#upgrade"
+                  className="rounded border border-blue-500 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 text-blue-600 dark:text-blue-400"
+                >
                   Go Pro
                 </a>
               </ProLock>
@@ -88,4 +93,3 @@ export function LeagueHeaderControls({
     </div>
   );
 }
-

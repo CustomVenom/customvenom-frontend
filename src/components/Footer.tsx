@@ -14,18 +14,27 @@ export default function Footer() {
           <Link href="/ops" className="hover:text-[rgb(var(--cv-primary))] transition-colors">
             Ops
           </Link>
-          <Link href="/status" className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline">
+          <Link
+            href="/status"
+            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+          >
             Status
           </Link>
-          <Link href="/design-preview" className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline">
+          <Link
+            href="/design-preview"
+            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+          >
             Design
           </Link>
-          <Link href="/privacy" className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline">
+          <Link
+            href="/privacy"
+            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+          >
             Privacy
           </Link>
-          <a 
-            href="https://bsky.app" 
-            target="_blank" 
+          <a
+            href="https://bsky.app"
+            target="_blank"
             rel="noopener noreferrer"
             className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
           >
@@ -36,4 +45,3 @@ export default function Footer() {
     </footer>
   );
 }
-

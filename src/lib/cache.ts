@@ -26,9 +26,9 @@ function getCurrentWeek(): string {
  */
 function getCacheStatus(cached: CachedProjections | null): 'fresh' | 'stale' | 'expired' | 'none' {
   if (!cached) return 'none';
-  
+
   const age = Date.now() - cached.timestamp;
-  
+
   if (age < FRESH_TIME) return 'fresh';
   if (age < STALE_TIME) return 'stale';
   return 'expired';
@@ -39,18 +39,18 @@ function getCacheStatus(cached: CachedProjections | null): 'fresh' | 'stale' | '
  */
 export function getCachedProjections(): CachedProjections | null {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
-    
+
     const parsed: CachedProjections = JSON.parse(cached);
-    
+
     // Validate cache structure
     if (!parsed.data || !parsed.timestamp || !parsed.week) {
       return null;
     }
-    
+
     return parsed;
   } catch (error) {
     console.warn('Failed to read projections cache:', error);
@@ -63,16 +63,16 @@ export function getCachedProjections(): CachedProjections | null {
  */
 export function setCachedProjections(data: unknown, week?: string): void {
   if (typeof window === 'undefined') return;
-  
+
   try {
     const cached: CachedProjections = {
       data,
       timestamp: Date.now(),
       week: week || getCurrentWeek(),
     };
-    
+
     localStorage.setItem(CACHE_KEY, JSON.stringify(cached));
-    
+
     trackEvent('cache_write', {
       type: 'projections',
       week: cached.week,
@@ -100,7 +100,7 @@ export async function getProjectionsWithCache(
   options: {
     forceRefresh?: boolean;
     week?: string;
-  } = {}
+  } = {},
 ): Promise<{
   data: unknown;
   fromCache: boolean;
@@ -108,99 +108,101 @@ export async function getProjectionsWithCache(
 }> {
   const startTime = performance.now();
   const week = options.week || getCurrentWeek();
-  
+
   // Check cache first
   const cached = getCachedProjections();
   const status = getCacheStatus(cached);
-  
+
   // Force refresh bypasses cache
   if (options.forceRefresh) {
     trackEvent('cache_miss', {
       reason: 'force_refresh',
       week,
     });
-    
+
     const data = await fetchFn();
     setCachedProjections(data, week);
-    
+
     const duration = Math.round(performance.now() - startTime);
     trackEvent('fetch_complete', {
       source: 'api',
       duration_ms: duration,
       week,
     });
-    
+
     return {
       data,
       fromCache: false,
       cacheStatus: 'none',
     };
   }
-  
+
   // Fresh cache: Return immediately
   if (status === 'fresh' && cached) {
     const duration = Math.round(performance.now() - startTime);
-    
+
     trackEvent('cache_hit', {
       status: 'fresh',
       duration_ms: duration,
       age_minutes: Math.round((Date.now() - cached.timestamp) / 60000),
       week,
     });
-    
+
     return {
       data: cached.data,
       fromCache: true,
       cacheStatus: 'fresh',
     };
   }
-  
+
   // Stale cache: Return cached data + refresh in background
   if (status === 'stale' && cached) {
     const duration = Math.round(performance.now() - startTime);
-    
+
     trackEvent('cache_hit', {
       status: 'stale',
       duration_ms: duration,
       age_minutes: Math.round((Date.now() - cached.timestamp) / 60000),
       week,
     });
-    
+
     // Background refresh (don't await)
-    fetchFn().then(data => {
-      setCachedProjections(data, week);
-      trackEvent('cache_refresh', {
-        reason: 'stale',
-        week,
+    fetchFn()
+      .then((data) => {
+        setCachedProjections(data, week);
+        trackEvent('cache_refresh', {
+          reason: 'stale',
+          week,
+        });
+      })
+      .catch((error) => {
+        console.warn('Background cache refresh failed:', error);
       });
-    }).catch(error => {
-      console.warn('Background cache refresh failed:', error);
-    });
-    
+
     return {
       data: cached.data,
       fromCache: true,
       cacheStatus: 'stale',
     };
   }
-  
+
   // Expired or no cache: Fetch fresh data
   trackEvent('cache_miss', {
     reason: status === 'expired' ? 'expired' : 'not_found',
     week,
   });
-  
+
   try {
     const data = await fetchFn();
     setCachedProjections(data, week);
-    
+
     const duration = Math.round(performance.now() - startTime);
     trackEvent('fetch_complete', {
       source: 'api',
       duration_ms: duration,
       week,
     });
-    
+
     return {
       data,
       fromCache: false,
@@ -214,14 +216,14 @@ export async function getProjectionsWithCache(
         age_minutes: Math.round((Date.now() - cached.timestamp) / 60000),
         week,
       });
-      
+
       return {
         data: cached.data,
         fromCache: true,
         cacheStatus: 'expired',
       };
     }
-    
+
     // No cache and fetch failed - propagate error
     throw error;
   }
@@ -236,16 +238,16 @@ export async function warmProjectionsCache(
   options: {
     silent?: boolean; // Don't throw errors, just log
     week?: string;
-  } = {}
+  } = {},
 ): Promise<void> {
   try {
     trackEvent('cache_warmup', {
       type: 'projections',
       week: options.week || getCurrentWeek(),
     });
-    
+
     const result = await getProjectionsWithCache(fetchFn, options);
-    
+
     trackEvent('cache_warmup_complete', {
       from_cache: result.fromCache,
       cache_status: result.cacheStatus,
@@ -253,7 +255,7 @@ export async function warmProjectionsCache(
     });
   } catch (error) {
     console.warn('Cache warmup failed:', error);
-    
+
     if (!options.silent) {
       throw error;
     }
@@ -271,7 +273,7 @@ export function getCacheStats(): {
   size_kb: number;
 } | null {
   const cached = getCachedProjections();
-  
+
   if (!cached) {
     return {
       exists: false,
@@ -281,9 +283,9 @@ export function getCacheStats(): {
       size_kb: 0,
     };
   }
-  
+
   const age = Date.now() - cached.timestamp;
-  
+
   return {
     exists: true,
     age_minutes: Math.round(age / 60000),
@@ -292,4 +294,3 @@ export function getCacheStats(): {
     size_kb: Math.round(JSON.stringify(cached.data).length / 1024),
   };
 }
-

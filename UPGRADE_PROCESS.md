@@ -7,6 +7,7 @@ This document provides a repeatable process for safely upgrading dependencies on
 ## 🎯 Upgrade Philosophy
 
 **ONE DEPENDENCY FAMILY AT A TIME**
+
 - Upgrade related packages together (e.g., Next.js + React together)
 - Test thoroughly before moving to next family
 - Each upgrade gets its own branch and PR
@@ -22,12 +23,14 @@ Copy this checklist for each upgrade PR:
 ## Upgrade: [Dependency Name] to [Version]
 
 ### Pre-Upgrade
-- [ ] Current version: ___
-- [ ] Target version: ___
+
+- [ ] Current version: \_\_\_
+- [ ] Target version: \_\_\_
 - [ ] Reviewed CHANGELOG for breaking changes
 - [ ] Checked compatibility with other dependencies
 
 ### Upgrade Steps
+
 - [ ] Created feature branch: `upgrade/[name]-[version]`
 - [ ] Updated `package.json` with exact version
 - [ ] Ran `npm ci` to clean install
@@ -38,6 +41,7 @@ Copy this checklist for each upgrade PR:
 - [ ] Tested key pages: /projections, /ops/metrics, auth flow
 
 ### Verification
+
 - [ ] Committed changes
 - [ ] Pushed to GitHub
 - [ ] CI workflow passed
@@ -47,6 +51,7 @@ Copy this checklist for each upgrade PR:
 - [ ] Performance unchanged
 
 ### Merge
+
 - [ ] PR approved
 - [ ] Merged to main
 - [ ] Production deployment successful
@@ -60,6 +65,7 @@ Copy this checklist for each upgrade PR:
 Upgrade in this order to minimize conflicts:
 
 ### 1. Next.js + React (Together)
+
 **Why together:** Tightly coupled, version compatibility required
 
 ```bash
@@ -83,6 +89,7 @@ npm run dev
 ```
 
 **Critical Tests:**
+
 - [ ] `/projections` renders
 - [ ] Server components work
 - [ ] Client components work
@@ -92,6 +99,7 @@ npm run dev
 ---
 
 ### 2. Tailwind CSS + PostCSS
+
 **Why together:** Tailwind v4+ requires specific PostCSS setup
 
 ```bash
@@ -113,6 +121,7 @@ npm run dev
 ```
 
 **Critical Tests:**
+
 - [ ] All pages render with styles
 - [ ] Dark mode toggle works
 - [ ] Responsive breakpoints work
@@ -122,6 +131,7 @@ npm run dev
 ---
 
 ### 3. Stripe SDK
+
 **Why separate:** Financial integration, needs careful testing
 
 ```bash
@@ -142,6 +152,7 @@ npm run build
 ```
 
 **Critical Tests:**
+
 - [ ] Checkout page loads
 - [ ] Can create checkout session
 - [ ] Webhook signature verification works
@@ -151,6 +162,7 @@ npm run build
 ---
 
 ### 4. Auth Libraries (NextAuth + Prisma)
+
 **Why together:** Database adapter compatibility
 
 ```bash
@@ -175,6 +187,7 @@ npm run build
 ```
 
 **Critical Tests:**
+
 - [ ] Sign in with Google works
 - [ ] Session persists
 - [ ] User data saved to database
@@ -185,6 +198,7 @@ npm run build
 ---
 
 ### 5. Dev Dependencies (ESLint, TypeScript, etc.)
+
 **Why last:** Least likely to break runtime, but may need config updates
 
 ```bash
@@ -209,6 +223,7 @@ npm run build
 ```
 
 **Critical Tests:**
+
 - [ ] Lint rules still apply
 - [ ] Type checking passes
 - [ ] Build succeeds
@@ -219,6 +234,7 @@ npm run build
 ## 🚨 Breaking Change Detection
 
 ### Before Upgrading
+
 Always check for breaking changes:
 
 ```bash
@@ -233,6 +249,7 @@ npm view [package-name] homepage
 ### Common Breaking Changes to Watch For
 
 **Next.js:**
+
 - App Router changes
 - Config file format changes
 - Middleware changes
@@ -240,16 +257,19 @@ npm view [package-name] homepage
 - Environment variable handling
 
 **React:**
+
 - Hook behavior changes
 - Server component rules
 - Hydration changes
 
 **Tailwind:**
+
 - Config format changes (v3 → v4)
 - Class name changes
 - Plugin API changes
 
 **Stripe:**
+
 - API version updates
 - Webhook event structure changes
 - SDK method signature changes
@@ -261,6 +281,7 @@ npm view [package-name] homepage
 If issues are found after merge:
 
 ### Option 1: Revert PR (Fast)
+
 ```bash
 # Find the merge commit
 git log --oneline -10
@@ -273,6 +294,7 @@ git push origin main
 ```
 
 ### Option 2: Revert to Specific Commit
+
 ```bash
 # Find last known good commit
 git log --oneline -20
@@ -289,6 +311,7 @@ git push origin revert/[issue-name]
 ```
 
 ### Emergency Rollback in Vercel
+
 1. Go to Vercel Dashboard
 2. Select deployment before the upgrade
 3. Click "Promote to Production"
@@ -301,6 +324,7 @@ git push origin revert/[issue-name]
 After each upgrade is merged to production:
 
 ### Immediate (First Hour)
+
 - [ ] Check Vercel deployment logs (no errors)
 - [ ] Visit production site (loads correctly)
 - [ ] Test critical flows (auth, projections, ops)
@@ -308,12 +332,14 @@ After each upgrade is merged to production:
 - [ ] Verify no performance regression
 
 ### First Day
+
 - [ ] Monitor uptime alerts (no new failures)
 - [ ] Check Sentry for new errors (if enabled)
 - [ ] Review Vercel analytics (no traffic drop)
 - [ ] Test on multiple devices/browsers
 
 ### First Week
+
 - [ ] No user-reported issues
 - [ ] Performance metrics stable
 - [ ] Error rate unchanged
@@ -386,11 +412,13 @@ git push origin upgrade/next-15.6.0
 ## 🔒 Lockfile Management
 
 **ALWAYS commit `package-lock.json`:**
+
 - Ensures reproducible builds
 - Locks transitive dependencies
 - Critical for CI/CD stability
 
 **NEVER commit `node_modules`:**
+
 - Use `.gitignore` to exclude
 - Let `npm ci` rebuild on deployment
 
@@ -404,6 +432,7 @@ Keep a log of all upgrades:
 # Upgrade Log
 
 ## 2025-10-18: Next.js 15.5.4 → 15.6.0
+
 - **PR:** #123
 - **Deployed:** 2025-10-18 14:30 UTC
 - **Status:** ✅ Success
@@ -411,6 +440,7 @@ Keep a log of all upgrades:
 - **Rollback:** Not needed
 
 ## 2025-10-20: Tailwind 4.1.14 → 4.1.20
+
 - **PR:** #124
 - **Deployed:** 2025-10-20 10:15 UTC
 - **Status:** ✅ Success
@@ -434,10 +464,9 @@ An upgrade is successful when:
 
 ---
 
-**Remember:** 
+**Remember:**
+
 - One upgrade at a time
 - Test thoroughly
 - Monitor after deployment
 - Don't rush - stability over speed
-
-

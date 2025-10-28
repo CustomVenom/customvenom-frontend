@@ -14,11 +14,13 @@
 ## 📁 Documentation Structure
 
 ### [guides/](./guides/) - Development Guides
+
 - **[DEVELOPER_GUIDE.md](./guides/DEVELOPER_GUIDE.md)** - Workflows, patterns, testing
 - **[TROUBLESHOOTING.md](./guides/TROUBLESHOOTING.md)** - Common issues & fixes
 - **[QUICK_REFERENCE.md](./guides/QUICK_REFERENCE.md)** - One-page cheat sheet
 
 ### [features/](./features/) - Feature Documentation
+
 - (Ready for feature-specific docs)
 
 ---
@@ -42,4 +44,3 @@
 
 **Last Updated**: October 17, 2025  
 **Status**: Production-ready ✅
-

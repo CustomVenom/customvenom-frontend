@@ -22,10 +22,10 @@
 - game_id: string
 - week: number
 - opponent: string
-- stat_name: string  // e.g., "targets", "yards", "xg", "minutes"
+- stat_name: string // e.g., "targets", "yards", "xg", "minutes"
 - value: number
-- unit: string       // e.g., "count", "yards", "minutes"
-- source: string     // e.g., "espn", "freeapi1"
+- unit: string // e.g., "count", "yards", "minutes"
+- source: string // e.g., "espn", "freeapi1"
 - ingested_at: ISO-8601 string
 
 ## JSON layout in storage (R2)
@@ -66,8 +66,8 @@ Keep notes below per source.
 ## Sources to start
 
 - Source A: espn (public HTML or lightweight endpoints)
-    - Headers: User-Agent, Accept: application/json
-    - Throttle: 1 req/sec
+  - Headers: User-Agent, Accept: application/json
+  - Throttle: 1 req/sec
 - Source B: freeapi1 (document later)
-    - Auth: none
-    - Throttle: respect x-ratelimit headers
+  - Auth: none
+  - Throttle: respect x-ratelimit headers

@@ -10,12 +10,14 @@
 ## 🎯 What This Migration Does
 
 ### Before (Phase 2.1a)
+
 - ❌ Events stored in-memory (lost on restart)
 - ❌ Rollups lost on redeploy
 - ❌ 10k event limit
 - ❌ No historical trends
 
 ### After (Phase 2.1b)
+
 - ✅ Events persisted in PostgreSQL
 - ✅ Rollups durable across restarts
 - ✅ 30-day retention (configurable)
@@ -130,6 +132,7 @@ curl http://localhost:3000/api/analytics/track?hours=1
 ## 📊 Schema Changes
 
 ### AnalyticsEvent Table
+
 ```prisma
 model AnalyticsEvent {
   id         String   @id @default(cuid())
@@ -143,7 +146,7 @@ model AnalyticsEvent {
   timestamp  DateTime @default(now())
   receivedAt DateTime @default(now())
   user       User?    @relation(...)
-  
+
   // Indices for performance
   @@index([userId, eventType])
   @@index([timestamp])
@@ -154,6 +157,7 @@ model AnalyticsEvent {
 ```
 
 ### HourlyRollup Table
+
 ```prisma
 model HourlyRollup {
   id               String   @id @default(cuid())
@@ -165,7 +169,7 @@ model HourlyRollup {
   totalEvents      Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  
+
   @@index([hour])
 }
 ```
@@ -175,6 +179,7 @@ model HourlyRollup {
 ## 🎯 API Contract (Unchanged)
 
 ### POST /api/analytics/track
+
 ```typescript
 // Request (same as before)
 {
@@ -192,6 +197,7 @@ model HourlyRollup {
 ```
 
 ### GET /api/analytics/track?hours=24
+
 ```typescript
 // Response (compatible, enhanced)
 {
@@ -203,6 +209,7 @@ model HourlyRollup {
 ```
 
 ### GET /api/analytics/rollups?hours=168
+
 ```typescript
 // Response (now has actual data!)
 {
@@ -232,11 +239,13 @@ model HourlyRollup {
 ## 💾 Data Retention Policy
 
 ### AnalyticsEvent
+
 - **Retention**: 30 days
 - **Cleanup**: Automatic (1% of requests)
 - **Configurable**: Change in track/route.ts
 
 ### HourlyRollup
+
 - **Retention**: 90 days
 - **Cleanup**: Automatic (1% of requests)
 - **Why longer**: Aggregated data is much smaller
@@ -248,12 +257,14 @@ model HourlyRollup {
 If issues arise:
 
 ### Rollback Code
+
 ```bash
 git revert HEAD  # Revert latest commit
 git push
 ```
 
 ### Rollback Database
+
 ```bash
 # Drop new tables
 npx prisma migrate reset
@@ -264,9 +275,10 @@ npx prisma migrate dev
 ```
 
 ### Fallback to In-Memory
+
 ```typescript
 // In src/lib/analytics.ts:
-const SEND_TO_BACKEND = false;  // Disable server persistence
+const SEND_TO_BACKEND = false; // Disable server persistence
 ```
 
 ---
@@ -274,16 +286,19 @@ const SEND_TO_BACKEND = false;  // Disable server persistence
 ## 📈 Expected Benefits
 
 ### Performance
+
 - **Query speed**: Indexed queries much faster than array iteration
 - **Scalability**: Handles millions of events
 - **Efficiency**: Rollups reduce query load by 60x
 
 ### Reliability
+
 - **Durability**: Survives restarts/redeploys
 - **Integrity**: ACID transactions
 - **Consistency**: Single source of truth
 
 ### Features Unlocked
+
 - Week-over-week trend analysis
 - User cohort tracking
 - Conversion funnel analysis
@@ -297,12 +312,14 @@ const SEND_TO_BACKEND = false;  // Disable server persistence
 After migration, verify:
 
 ### Technical
+
 - [ ] ✅ All tests pass
 - [ ] ✅ No linter errors
 - [ ] ✅ Prisma client generates
 - [ ] ✅ Migration applies cleanly
 
 ### Functional
+
 - [ ] Events stored in database
 - [ ] Rollups update on each event
 - [ ] GET endpoints return data
@@ -310,6 +327,7 @@ After migration, verify:
 - [ ] Network tab shows 200 OK
 
 ### Business
+
 - [ ] Zero downtime
 - [ ] No data loss
 - [ ] API contract maintained
@@ -320,6 +338,7 @@ After migration, verify:
 ## 💰 Cost Analysis
 
 ### Database Storage
+
 - **Events**: ~1KB per event
 - **Daily volume**: ~1000 events = 1MB/day
 - **30 days**: 30MB
@@ -330,6 +349,7 @@ After migration, verify:
 **Cost**: Negligible (well under any DB plan limits)
 
 ### Query Performance
+
 - **Indexed queries**: <10ms
 - **Rollup queries**: <5ms (aggregated)
 - **User impact**: Zero
@@ -339,11 +359,13 @@ After migration, verify:
 ## 📚 Documentation
 
 ### Code Comments
+
 - All functions documented in route files
 - Schema annotated with field descriptions
 - Backfill script has usage instructions
 
 ### Files
+
 - **This guide**: Migration procedure
 - **PHASE_2.1_COMPLETE.md**: Phase 2.1 features
 - **PHASE_2_ANALYTICS_REPORT.md**: Original analytics system
@@ -364,4 +386,3 @@ After migration, verify:
 **Created**: October 18, 2025  
 **Status**: ✅ Ready for execution  
 **Next Step**: Run `npx prisma migrate dev --name add_analytics_tables`
-

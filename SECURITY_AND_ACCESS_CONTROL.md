@@ -16,7 +16,7 @@ CustomVenom uses a comprehensive Role-Based Access Control (RBAC) system with mu
 
 ```typescript
 const ADMIN_EMAILS = [
-  'your.email@gmail.com',  // ← Add your actual email here
+  'your.email@gmail.com', // ← Add your actual email here
 ];
 ```
 
@@ -53,17 +53,17 @@ Higher roles inherit all permissions from lower roles.
 
 ### Current Permissions
 
-| Permission | Admin | Team | Pro | Free |
-|------------|-------|------|-----|------|
-| View Analytics | ✅ | ✅ | ✅ | ❌ |
-| Compare View | ✅ | ✅ | ✅ | ❌ |
-| CSV Export | ✅ | ✅ | ✅ | ❌ |
-| Weekly Recap Email | ✅ | ✅ | ✅ | ❌ |
-| Multiple Leagues | ✅ | ✅ | ✅ | ❌ |
-| Import Leagues | ✅ | ✅ | ✅ | ✅ |
-| Access Ops Dashboard | ✅ | ❌ | ❌ | ❌ |
-| View All Users | ✅ | ❌ | ❌ | ❌ |
-| Manage Subscriptions | ✅ | ❌ | ❌ | ❌ |
+| Permission           | Admin | Team | Pro | Free |
+| -------------------- | ----- | ---- | --- | ---- |
+| View Analytics       | ✅    | ✅   | ✅  | ❌   |
+| Compare View         | ✅    | ✅   | ✅  | ❌   |
+| CSV Export           | ✅    | ✅   | ✅  | ❌   |
+| Weekly Recap Email   | ✅    | ✅   | ✅  | ❌   |
+| Multiple Leagues     | ✅    | ✅   | ✅  | ❌   |
+| Import Leagues       | ✅    | ✅   | ✅  | ✅   |
+| Access Ops Dashboard | ✅    | ❌   | ❌  | ❌   |
+| View All Users       | ✅    | ❌   | ❌  | ❌   |
+| Manage Subscriptions | ✅    | ❌   | ❌  | ❌   |
 
 ### Adding New Permissions
 
@@ -72,7 +72,7 @@ Edit `src/lib/rbac.ts`:
 ```typescript
 export const PERMISSIONS = {
   // ... existing permissions
-  
+
   MY_NEW_FEATURE: [ROLES.ADMIN, ROLES.PRO], // Pro+ only
 } as const;
 ```
@@ -89,7 +89,7 @@ import { requireAdmin } from '@/lib/auth-guards';
 
 export default async function AdminPage() {
   const { session, entitlements } = await requireAdmin();
-  
+
   return (
     <div>
       <h1>Admin Dashboard</h1>
@@ -128,15 +128,15 @@ import { getEntitlements } from '@/lib/entitlements';
 
 export function ProFeature() {
   const [entitlements, setEntitlements] = useState(null);
-  
+
   useEffect(() => {
     getEntitlements().then(setEntitlements);
   }, []);
-  
+
   if (!entitlements?.isPro) {
     return <div>Pro feature - upgrade to access</div>;
   }
-  
+
   return <div>Pro content here</div>;
 }
 ```
@@ -154,6 +154,7 @@ export function ProFeature() {
 ### 2. Database Security
 
 Your Prisma setup includes:
+
 - ✅ SSL/TLS connections (`sslmode=require`)
 - ✅ Channel binding for extra security
 - ✅ Unique indexes on email/session tokens
@@ -172,11 +173,7 @@ Always verify webhook signatures:
 ```typescript
 // app/api/stripe/webhook/route.ts
 const signature = request.headers.get('stripe-signature');
-const event = stripe.webhooks.constructEvent(
-  body,
-  signature,
-  process.env.STRIPE_WEBHOOK_SECRET
-);
+const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
 ```
 
 ### 5. API Route Protection
@@ -187,7 +184,7 @@ import { requireAdmin } from '@/lib/auth-guards';
 
 export async function GET() {
   await requireAdmin(); // Throws if not admin
-  
+
   // Admin-only logic here
   return Response.json({ data: 'sensitive info' });
 }
@@ -244,11 +241,11 @@ model User {
   subscriptionStatus String?
   tier             String?
   stripeCustomerId String?  @unique  // ← Unique, indexed
-  
+
   // Relations
   accounts         Account[]  // Cascade delete
   sessions         Session[]  // Cascade delete
-  
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -314,15 +311,17 @@ Run: `npx tsx scripts/test-admin.ts`
 ### Recommended Monitoring
 
 1. **Track admin actions** via analytics events:
+
 ```typescript
 trackEvent('admin_action', {
   action: 'user_role_changed',
   targetUser: userId,
-  newRole: 'pro'
+  newRole: 'pro',
 });
 ```
 
 2. **Log subscription changes**:
+
 ```typescript
 console.log(`User ${userId} subscription changed: ${oldStatus} → ${newStatus}`);
 ```
@@ -351,13 +350,15 @@ console.log(`User ${userId} subscription changed: ${oldStatus} → ${newStatus}`
 If you ever get completely locked out:
 
 1. **Database Direct Access**:
+
 ```sql
-UPDATE "User" 
-SET role = 'admin' 
+UPDATE "User"
+SET role = 'admin'
 WHERE email = 'your@email.com';
 ```
 
 2. **Temporary Override** (emergency only):
+
 ```typescript
 // src/lib/entitlements.ts - Add at top of getEntitlements()
 if (process.env.EMERGENCY_ADMIN === 'true') {
@@ -391,4 +392,3 @@ Your CustomVenom application now has:
 7. ✅ **User data security** - Proper isolation and cleanup
 
 **Next Step**: Add your email to `ADMIN_EMAILS` and sign in to test!
-

@@ -28,9 +28,7 @@ export default function PlayerSearch({
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return [];
-    return rows
-      .filter(r => (r.player_name || '').toLowerCase().includes(s))
-      .slice(0, 20);
+    return rows.filter((r) => (r.player_name || '').toLowerCase().includes(s)).slice(0, 20);
   }, [q, rows]);
 
   function choose(i: number) {
@@ -47,10 +45,10 @@ export default function PlayerSearch({
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActive(a => Math.min(a + 1, results.length - 1));
+      setActive((a) => Math.min(a + 1, results.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActive(a => Math.max(a - 1, 0));
+      setActive((a) => Math.max(a - 1, 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
       choose(active);
@@ -72,7 +70,11 @@ export default function PlayerSearch({
       <input
         ref={inputRef}
         value={q}
-        onChange={e => { setQ(e.target.value); setOpen(true); setActive(0); }}
+        onChange={(e) => {
+          setQ(e.target.value);
+          setOpen(true);
+          setActive(0);
+        }}
         onKeyDown={onKeyDown}
         onFocus={() => q && setOpen(true)}
         placeholder={placeholder}
@@ -95,16 +97,21 @@ export default function PlayerSearch({
               role="option"
               aria-selected={i === active}
               className={`cursor-pointer rounded px-3 py-2 transition-all ${
-                i === active 
-                  ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg' 
+                i === active
+                  ? 'bg-[rgb(var(--cv-primary))] text-[#0A0E1A] shadow-lg'
                   : 'text-[rgb(var(--text-primary))] hover:bg-[rgba(16,185,129,0.1)]'
               }`}
               onMouseEnter={() => setActive(i)}
-              onMouseDown={e => { e.preventDefault(); choose(i); }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                choose(i);
+              }}
             >
               <div className="font-medium">{r.player_name ?? '—'}</div>
               {(r.team || r.position) && (
-                <div className={`text-xs ${i === active ? 'text-[#0A0E1A]/70' : 'text-[rgb(var(--text-dim))]'}`}>
+                <div
+                  className={`text-xs ${i === active ? 'text-[#0A0E1A]/70' : 'text-[rgb(var(--text-dim))]'}`}
+                >
                   {r.team && <span>{r.team}</span>}
                   {r.team && r.position && <span> · </span>}
                   {r.position && <span>{r.position}</span>}
@@ -117,4 +124,3 @@ export default function PlayerSearch({
     </div>
   );
 }
-

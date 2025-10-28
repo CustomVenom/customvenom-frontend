@@ -1,7 +1,7 @@
 /**
  * Backfill script: Migrate analytics events from localStorage to database
  * Run this once after database migration to preserve existing analytics data
- * 
+ *
  * Usage: npm run backfill-analytics
  */
 
@@ -23,7 +23,7 @@ interface _LocalStorageEvent {
 
 /**
  * Backfill events from localStorage JSON export
- * 
+ *
  * How to use:
  * 1. In browser console: localStorage.getItem('cv_analytics_events')
  * 2. Copy the JSON output
@@ -33,12 +33,12 @@ interface _LocalStorageEvent {
  */
 async function backfillEvents() {
   console.log('🔄 Starting analytics backfill...\n');
-  
+
   // For manual backfill:
   // 1. Export from localStorage in browser
   // 2. Parse JSON
   // 3. Insert into database
-  
+
   console.log('📋 Manual Backfill Instructions:');
   console.log('');
   console.log('1. In browser console, run:');
@@ -64,7 +64,7 @@ async function backfillEvents() {
   console.log('   }');
   console.log('');
   console.log('✅ For automated backfill, uncomment the code below and provide events.json');
-  
+
   // Uncomment for automated backfill:
   /*
   const fs = require('fs');
@@ -111,4 +111,3 @@ backfillEvents()
     console.error('\n❌ Backfill script failed:', error);
     process.exit(1);
   });
-

@@ -5,17 +5,23 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
 import FacebookProvider from 'next-auth/providers/facebook';
-// import GoogleProvider from 'next-auth/providers/google';
+import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 
 import { prisma } from './db';
-// Yahoo removed - using Workers-only OAuth flow
-// import { YahooProvider } from './integrations/yahoo/provider';
-
+// Note: Yahoo OAuth is handled separately via custom /api/yahoo/* routes
 // Only include providers that have credentials configured
 const providers = [];
 
-// Google OAuth removed - Yahoo only
+// Google OAuth (required for now)
+if (process.env['GOOGLE_CLIENT_ID'] && process.env['GOOGLE_CLIENT_SECRET']) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env['GOOGLE_CLIENT_ID'],
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
+    }),
+  );
+}
 
 // Twitter OAuth (optional - add when needed)
 if (process.env['TWITTER_CLIENT_ID'] && process.env['TWITTER_CLIENT_SECRET']) {
@@ -23,7 +29,7 @@ if (process.env['TWITTER_CLIENT_ID'] && process.env['TWITTER_CLIENT_SECRET']) {
     TwitterProvider({
       clientId: process.env['TWITTER_CLIENT_ID'],
       clientSecret: process.env['TWITTER_CLIENT_SECRET'],
-    })
+    }),
   );
 }
 
@@ -33,17 +39,13 @@ if (process.env['FACEBOOK_CLIENT_ID'] && process.env['FACEBOOK_CLIENT_SECRET']) 
     FacebookProvider({
       clientId: process.env['FACEBOOK_CLIENT_ID'],
       clientSecret: process.env['FACEBOOK_CLIENT_SECRET'],
-    })
+    }),
   );
 }
-
-// Yahoo OAuth (removed - using Workers-only flow via /api/yahoo/connect)
-// Yahoo tokens stored in separate cv_yahoo cookie, not NextAuth session
 
 // Minimal runtime env presence log (remove after verification)
 console.log('[auth] NEXTAUTH_URL:', process.env['NEXTAUTH_URL']);
 console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env['NEXTAUTH_SECRET']));
-console.log('[auth] Providers count:', providers.length);
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),

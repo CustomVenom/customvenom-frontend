@@ -19,4 +19,3 @@ export default function EmptyState({ title, children, onExample }: EmptyStatePro
     </div>
   );
 }
-

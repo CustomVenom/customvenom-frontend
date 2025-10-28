@@ -3,6 +3,7 @@
 ## Manual Validation
 
 ### Setup
+
 ```bash
 cd customvenom-frontend
 npm run dev
@@ -11,6 +12,7 @@ npm run dev
 ### Test 1: Simulate API Failure
 
 **Method A: Invalid API URL**
+
 ```bash
 # Edit .env.local
 NEXT_PUBLIC_API_BASE=http://invalid-api-url-for-testing
@@ -20,6 +22,7 @@ NEXT_PUBLIC_API_BASE=http://invalid-api-url-for-testing
 Navigate to: `http://localhost:3000/projections?week=invalid`
 
 ### Expected Results
+
 - ✅ Friendly error message appears
 - ✅ "Retry" button visible and clickable
 - ✅ No blank page, no crash
@@ -44,4 +47,3 @@ Navigate to: `http://localhost:3000/projections?week=invalid`
 - [ ] Retry button works
 - [ ] No app crash
 - [ ] Logs are structured
-

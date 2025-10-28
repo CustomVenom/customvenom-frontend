@@ -4,10 +4,14 @@ const nextConfig = {
   // Temporarily bypass Next's built-in ESLint during build;
   // run ESLint via pre-commit or a separate CI step.
   eslint: { ignoreDuringBuilds: true },
-  async rewrites() {
-    // eslint-disable-next-line no-undef
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
-    return [{ source: '/api/yahoo/:path*', destination: `${apiBase}/api/yahoo/:path*` }];
+  webpack: (config) => {
+    config.ignoreWarnings = [
+      {
+        module: /@opentelemetry\/instrumentation/,
+        message: /the request of a dependency is an expression/,
+      },
+    ];
+    return config;
   },
 };
 

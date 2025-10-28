@@ -16,9 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added UI shell guidance and nav: Projections · Tools · Ops · Settings
 - Tools hub with three interactive tools powered by /projections:
-    - **Start/Sit Tie‑Breaker**: two players + risk → recommendation with ranges and ≤2 reason chips
-    - **FAAB Bid Helper**: player + budget → min/likely/max bids with one rationale chip
-    - **Important Decisions**: top 3 items with "why" and one next step
+  - **Start/Sit Tie‑Breaker**: two players + risk → recommendation with ranges and ≤2 reason chips
+  - **FAAB Bid Helper**: player + budget → min/likely/max bids with one rationale chip
+  - **Important Decisions**: top 3 items with "why" and one next step
 - **Design Preview** sandbox (/design-preview): theme tokens (primary/accent), Dark mode, Density, Radius. Live updates with localStorage persistence
 - **Command palette** (Ctrl/⌘+K): quick actions for Tools, Projections, Design Preview, Toggle Dark, Toggle Density
 - Trust Snapshot on tool pages, Quick Tips banner, and UI guardrails baked in
@@ -107,4 +107,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [Live Production](https://customvenom-frontend-incarcer-incarcers-projects.vercel.app)
 - [Repository](https://github.com/Incarcer/customvenom-frontend)
 - [Documentation](./docs/)
-

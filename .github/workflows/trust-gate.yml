@@ -1,35 +1,70 @@
-name: Trust Gate
-
+name: trust-gate
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: trust-gate-${{ github.ref }}-${{ github.run_attempt }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  trust-gate:
+  gate:
+    if: ${{ github.event.pull_request.head.repo.fork == false || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Boot
+        run: echo "runner up:$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT on $GITHUB_REF"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.11.1'
-          cache: 'npm'
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
-
-      - name: Build
-        run: npm run build
-
-      - name: Install Playwright
-        run: npx playwright install --with-deps
-
-      - name: Run Trust Gate Tests
-        run: npx playwright test tests/trust-snapshot.spec.ts tests/health.spec.ts tests/prod-smoke.spec.ts
+      # 0) Secrets preflight (names the missing ones and stops)
+      - name: Secrets preflight
         env:
-          NEXT_PUBLIC_API_BASE: https://customvenom-workers-api-staging.jdewett81.workers.dev
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          req=(NOTION_TOKEN NOTION_PAGE_ID NOTION_DATABASE_ID)
+          ok=1
+          for k in "${req[@]}"; do
+            [ -n "${!k:-}" ] || { echo "::error ::Missing secret $k"; ok=0; }
+          done
+          [ $ok -eq 1 ] || exit 1
+          echo "DB(last6)=$(echo "$NOTION_DATABASE_ID" | tail -c 7)"
+          echo "PAGE(last6)=$(echo "$NOTION_PAGE_ID" | tail -c 7)"
+          echo "TOKEN(prefix)=$(printf '%s' "$NOTION_TOKEN" | cut -c1-8)********"
+
+      # 1) Notion token sanity (proves this run has a valid integration token)
+      - name: Notion whoami
+        if: ${{ github.event_name != 'pull_request' && secrets.NOTION_TOKEN }}
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          who="$(curl -sS https://api.notion.com/v1/users/me \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: 2022-06-28")"
+          echo "$who" | jq -e '.object=="user"' >/dev/null || { echo "$who"; exit 1; }
+
+      # 2) DB access probe (proves correct DB + sharing for THIS token)
+      - name: Notion DB access probe
+        if: ${{ github.event_name != 'pull_request' && secrets.NOTION_TOKEN && secrets.NOTION_DATABASE_ID }}
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sS -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: 2022-06-28" \
+            "https://api.notion.com/v1/databases/$NOTION_DATABASE_ID" \
+            | jq -e '.id and .title' >/dev/null

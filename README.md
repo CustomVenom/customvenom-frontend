@@ -1,8 +1,6 @@
 # CustomVenom Frontend
 
-[![trust-gate](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml)
-[![pr-lite](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml)
-[![pr-smoke](https://github.com/CustomVenom/customvenom-workers-api/actions/workflows/pr-smoke.yml/badge.svg)](https://github.com/CustomVenom/customvenom-workers-api/actions/workflows/pr-smoke.yml)
+[![e2e](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml)
 
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
@@ -20,28 +18,13 @@ React 19 + Next.js 15 frontend for fantasy football projections and decision too
 - ✅ **League Import Stub** - Test endpoint ready at `/api/league/import`
 
 **Setup Guides:**
+
 - [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
 - [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
 
-## 🧪 Testing
+## 🎨 Styling
 
-Run tests with CI parity (same environment as GitHub Actions):
-
-```bash
-# Smoke tests against production
-make smoke-prod
-
-# E2E tests against production
-make e2e-prod
-
-# Show all available targets
-make help
-```
-
-**Environment Variables:**
-- `FRONTEND_BASE=https://www.customvenom.com` - Target domain for testing
-- `CANON=https://www.customvenom.com` - Canonical domain (should be primary)
-- `ALT=https://customvenom.com` - Non-canonical domain (should redirect to CANON)
+- **[Tailwind CSS Implementation Reference](./TAILWIND_IMPLEMENTATION_REFERENCE.md)** - Complete setup guide, FOUC prevention, safelist config, and validation snippets
 
 ## 🚀 Quick Start
 
@@ -58,54 +41,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
-
-## 🚪 Local Gate
-
-Quick validation before commits (Windows-optimized):
-
-```bash
-# Full local gate (build + start server + run tests + cleanup)
-npm run test:gate
-
-# Individual checks
-npm run preflight:grep    # Check for http:// Yahoo references
-npm run lint              # ESLint with max 2 warnings
-npm run typecheck         # TypeScript validation
-npm run test:unit         # Vitest unit tests only
-npm run test:e2e          # Playwright E2E tests
-```
-
-**Pre-push hooks** run `npm run preflight` automatically on every commit.
-
-### 🔧 **Operator Commands**
-
-**Local gate validation:**
-```bash
-npm run test:gate
-```
-
-**Deterministic install:**
-```bash
-npx -y npm@10.7.0 ci
-```
-
-**Production smoke tests:**
-```bash
-# Trust Snapshot render
-curl -s "https://www.customvenom.com/tools" | grep -i "trust\|schema\|calibrated\|stale"
-
-# Health endpoint contract
-curl -sSD - "https://api.customvenom.com/health" -o /dev/null | head -20
-curl -s "https://api.customvenom.com/health" | jq -e '.ok and .ready and .schema_version and .last_refresh and .r2_key'
-
-# Yahoo session probe (expects 401)
-curl -sSD - "https://api.customvenom.com/yahoo/me" -o /dev/null
-
-# Preflight CORS
-curl -sSD - -X OPTIONS "https://api.customvenom.com/yahoo/leagues" \
-  -H "Origin: https://www.customvenom.com" \
-  -H "Access-Control-Request-Method: GET" -o /dev/null
-```
 
 ## 🧪 E2E: Trust Snapshot
 

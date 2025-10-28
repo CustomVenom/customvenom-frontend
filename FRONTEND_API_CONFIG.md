@@ -58,11 +58,13 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE || process.env.API_BASE;
 ### 1. Health Check
 
 **Request:**
+
 ```bash
 GET /api/health
 ```
 
 **Response:**
+
 ```json
 {
   "ok": true,
@@ -74,11 +76,13 @@ GET /api/health
 ### 2. Projections
 
 **Request:**
+
 ```bash
 GET /api/projections?week=2025-06
 ```
 
 **Response:**
+
 ```json
 {
   "schema_version": "v1",
@@ -91,10 +95,7 @@ GET /api/projections?week=2025-06
       "method": "avg(vendor_values)",
       "sources_used": 2,
       "confidence": 0.8,
-      "reasons": [
-        "Based on 2 data sources",
-        "Averaged across multiple vendor projections"
-      ]
+      "reasons": ["Based on 2 data sources", "Averaged across multiple vendor projections"]
     }
   ]
 }
@@ -181,6 +182,7 @@ curl "https://www.customvenom.com/api/projections?week=2025-06"
 ### Issue: API_BASE not defined
 
 **Error:**
+
 ```json
 {
   "ok": false,
@@ -189,6 +191,7 @@ curl "https://www.customvenom.com/api/projections?week=2025-06"
 ```
 
 **Solution:**
+
 1. Create `.env.local` with `API_BASE=http://127.0.0.1:8787`
 2. Restart the Next.js dev server
 3. Verify: `echo $env:API_BASE` (PowerShell) or `echo $API_BASE` (bash)
@@ -196,6 +199,7 @@ curl "https://www.customvenom.com/api/projections?week=2025-06"
 ### Issue: CORS errors
 
 **Error:**
+
 ```
 Access to fetch at 'https://api.customvenom.com/health' has been blocked by CORS policy
 ```
@@ -208,6 +212,7 @@ curl -I https://api.customvenom.com/health
 ```
 
 Should include:
+
 ```
 access-control-allow-origin: *
 access-control-allow-methods: GET, OPTIONS
@@ -217,11 +222,13 @@ access-control-allow-headers: Content-Type
 ### Issue: 404 Not Found on Workers API
 
 **Possible causes:**
+
 1. Worker not deployed
 2. Custom domain not configured
 3. DNS not proxied through Cloudflare
 
 **Solution:**
+
 1. Check deployment: `cd customvenom-workers-api && npm run deploy:production`
 2. Verify custom domain in Cloudflare Dashboard: Workers & Pages → Your Worker → Triggers
 3. Check DNS: Cloudflare Dashboard → DNS → Ensure `api` is **Proxied** (orange cloud)
@@ -235,6 +242,7 @@ curl -I "https://api.customvenom.com/projections?week=2025-06"
 ```
 
 Look for:
+
 ```
 x-stale: true
 cache-control: public, max-age=60, stale-if-error=86400
@@ -244,9 +252,9 @@ This is expected behavior - the API serves stale data as a fallback when R2 is s
 
 ## Environment Variable Reference
 
-| Variable | Usage | Example |
-|----------|-------|---------|
-| `API_BASE` | Server-side API calls | `http://127.0.0.1:8787` |
+| Variable               | Usage                 | Example                       |
+| ---------------------- | --------------------- | ----------------------------- |
+| `API_BASE`             | Server-side API calls | `http://127.0.0.1:8787`       |
 | `NEXT_PUBLIC_API_BASE` | Client-side API calls | `https://api.customvenom.com` |
 
 **Note:** `NEXT_PUBLIC_*` variables are exposed to the browser, while `API_BASE` is server-side only.
@@ -292,7 +300,3 @@ curl http://localhost:3000/api/health                # Frontend proxy (local)
 curl https://api.customvenom.com/health              # Workers API (production)
 curl https://www.customvenom.com/api/health              # Frontend proxy (production)
 ```
-
-
-
-

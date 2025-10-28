@@ -5,11 +5,13 @@
 ### 🚀 New Capabilities
 
 **Tools Hub** - Three interactive decision tools:
+
 - 🆚 **Start/Sit Tie-Breaker** - Compare players with risk preferences
 - 💰 **FAAB Bid Helper** - Smart waiver bid recommendations
 - ⭐ **Important Decisions** - Top 3 weekly actions
 
 **Design Preview Sandbox** (`/design-preview`):
+
 - Live theme customization (primary/accent colors)
 - Dark mode toggle
 - Density controls (compact/comfortable)
@@ -17,6 +19,7 @@
 - Persists to localStorage
 
 **Command Palette** (Ctrl/⌘+K):
+
 - Quick navigation to all tools
 - Theme and density toggles
 - Keyboard shortcuts
@@ -41,51 +44,61 @@ See `cursor-brief.md` and `CHANGELOG.md` for complete details.
 ✅ **4 core UI features** + **Zod adapter** integrated into `/projections`  
 ✅ **12 unit tests** passing  
 ✅ **Zero linter errors**  
-✅ **7 docs** included  
+✅ **7 docs** included
 
 ---
 
 ## 🚀 New Features
 
 ### 1. **Density Toggle** 🎚️
+
 ```tsx
 // In header (top-right)
 Compact ⇄ Comfortable
 ```
+
 - Persists in localStorage
 - Adjusts table padding globally
 - CSS variable based
 
 ### 2. **Loading Skeletons** ⏳
+
 ```tsx
 <TableSkeleton rows={8} cols={4} />
 ```
+
 - Prevents layout shift
 - Animated pulse effect
 - Grid-based structure
 
 ### 3. **Reason Chips** 🏷️
+
 ```tsx
 <ReasonChipsAdapter reasons={apiData.reasons} />
 ```
+
 - Max 2 chips (sorted by impact)
 - ±3.5% effect clamp
 - Auto color mapping (positive/warning/neutral)
 - **NEW:** Zod validation
 
 ### 4. **Glossary Tooltips** 💬
+
 ```tsx
 <GlossaryTip term="Baseline">Projections</GlossaryTip>
 ```
+
 - Keyboard accessible
 - Screen reader friendly
 - Centralized definitions
 
 ### 5. **Zod Adapter** 🛡️ **NEW!**
+
 ```tsx
 // Validates API data at runtime
 const chips = toReasonChips(apiData.reasons);
 ```
+
 - Fail-closed (returns `[]` on bad data)
 - Converts fractions ↔ percentages
 - Logs issues in dev mode
@@ -127,6 +140,7 @@ src/
 ## 🎯 Where It's Used
 
 ### `/projections` Page
+
 - ✅ Reload Data button (triggers skeleton)
 - ✅ ReasonChipsAdapter in decisions
 - ✅ ReasonChipsAdapter in projections
@@ -134,12 +148,14 @@ src/
 - ✅ TableSkeleton during loading
 
 ### `/demo` Page
+
 - ✅ All 4 features showcased
 - ✅ Interactive examples
 - ✅ Live reload button
 - ✅ Combined example
 
 ### Global Layout
+
 - ✅ DensityToggle in header
 - ✅ CSS variables for all tables
 
@@ -178,20 +194,25 @@ Hover "Sources" label → see definition
 ## 📊 Before & After
 
 ### Before
+
 ```tsx
 // Manual, brittle, no validation
 <div className="reasons">
-  {reasons?.map(r => <span>{r}</span>)}
+  {reasons?.map((r) => (
+    <span>{r}</span>
+  ))}
 </div>
 ```
 
 ### After
+
 ```tsx
 // Validated, clamped, defensive
 <ReasonChipsAdapter reasons={apiData.reasons} />
 ```
 
 **Benefits:**
+
 - ✅ Runtime validation with Zod
 - ✅ Automatic effect clamping
 - ✅ Fail-closed on bad data
@@ -203,6 +224,7 @@ Hover "Sources" label → see definition
 ## 🔧 Quick Integration
 
 ### Step 1: Import
+
 ```tsx
 import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
@@ -210,6 +232,7 @@ import { TableSkeleton } from '@/components/ui/TableSkeleton';
 ```
 
 ### Step 2: Use
+
 ```tsx
 // Loading state
 {isLoading && <TableSkeleton rows={8} cols={4} />}
@@ -222,6 +245,7 @@ import { TableSkeleton } from '@/components/ui/TableSkeleton';
 ```
 
 ### Step 3: Done!
+
 Density toggle is already in the global header. No extra setup needed.
 
 ---
@@ -229,6 +253,7 @@ Density toggle is already in the global header. No extra setup needed.
 ## 🎨 Customization
 
 ### Add Glossary Terms
+
 ```typescript
 // src/lib/glossary.ts
 export const GLOSSARY = {
@@ -237,6 +262,7 @@ export const GLOSSARY = {
 ```
 
 ### Add Reason Labels
+
 ```typescript
 // src/lib/reasons/adapter.ts
 const LABEL_MAP = {
@@ -245,9 +271,10 @@ const LABEL_MAP = {
 ```
 
 ### Adjust Chip Limits
+
 ```typescript
 // src/lib/reasons/adapter.ts
-const MAX_CHIPS = 3;        // Default: 2
+const MAX_CHIPS = 3; // Default: 2
 const MAX_ABS_EFFECT = 5.0; // Default: 3.5
 ```
 
@@ -255,34 +282,37 @@ const MAX_ABS_EFFECT = 5.0; // Default: 3.5
 
 ## 📚 Documentation
 
-| File | Purpose |
-|------|---------|
-| `INTEGRATION_COMPLETE.md` | Full overview (you are here) |
-| `REASONS_ADAPTER.md` | Deep dive on adapter |
-| `ADAPTER_QUICKSTART.md` | Fast integration guide |
-| `UI_FEATURES.md` | All UI features explained |
-| `PROJECTIONS_INTEGRATION.md` | /projections integration |
-| `PR_READY_SUMMARY.md` | PR checklist |
+| File                         | Purpose                      |
+| ---------------------------- | ---------------------------- |
+| `INTEGRATION_COMPLETE.md`    | Full overview (you are here) |
+| `REASONS_ADAPTER.md`         | Deep dive on adapter         |
+| `ADAPTER_QUICKSTART.md`      | Fast integration guide       |
+| `UI_FEATURES.md`             | All UI features explained    |
+| `PROJECTIONS_INTEGRATION.md` | /projections integration     |
+| `PR_READY_SUMMARY.md`        | PR checklist                 |
 
 ---
 
 ## 🚨 Important Notes
 
 ### API Format Required
+
 ```json
 {
   "reasons": [
     {
-      "key": "usage:increase",  // Required
-      "label": "Usage up",      // Optional
-      "effect": 0.021           // Optional (0.021 or 2.1)
+      "key": "usage:increase", // Required
+      "label": "Usage up", // Optional
+      "effect": 0.021 // Optional (0.021 or 2.1)
     }
   ]
 }
 ```
 
 ### If API Returns Strings
+
 The adapter will fail validation and return `[]`. You'll see:
+
 ```
 [reasons] invalid payload: [...]
 ```
@@ -322,4 +352,3 @@ git push
 ---
 
 **Questions?** Check the docs or test it at `/demo`! 🚀
-

@@ -22,6 +22,7 @@ DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
 ```
 
 **Options:**
+
 - **Vercel Postgres** (recommended): https://vercel.com/docs/storage/vercel-postgres
   - Go to Storage tab → Create Database → Copy DATABASE_URL
 - **Neon.tech** (free tier): https://neon.tech
@@ -29,6 +30,7 @@ DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
 - **Railway** (free tier): https://railway.app
 
 **Quick Fix (Neon - Free):**
+
 1. Go to https://neon.tech
 2. Sign up (free)
 3. Create a new project
@@ -49,6 +51,7 @@ NEXTAUTH_URL=https://customvenom-frontend.vercel.app
 ```
 
 **Generate AUTH_SECRET:**
+
 ```bash
 # On your local machine:
 openssl rand -base64 32
@@ -58,6 +61,7 @@ openssl rand -base64 32
 ### 3. OAuth Providers (At least ONE required)
 
 **Google OAuth:**
+
 ```bash
 GOOGLE_CLIENT_ID=<your-google-client-id>
 GOOGLE_CLIENT_SECRET=<your-google-secret>
@@ -66,6 +70,7 @@ GOOGLE_CLIENT_SECRET=<your-google-secret>
 Setup: https://console.cloud.google.com/apis/credentials
 
 **Twitter (X) OAuth:**
+
 ```bash
 TWITTER_CLIENT_ID=<your-twitter-client-id>
 TWITTER_CLIENT_SECRET=<your-twitter-secret>
@@ -74,6 +79,7 @@ TWITTER_CLIENT_SECRET=<your-twitter-secret>
 Setup: https://developer.twitter.com/en/portal/dashboard
 
 **Facebook OAuth:**
+
 ```bash
 FACEBOOK_CLIENT_ID=<your-facebook-app-id>
 FACEBOOK_CLIENT_SECRET=<your-facebook-secret>
@@ -99,6 +105,7 @@ API_BASE=https://api.customvenom.com
 ```
 
 Or for staging:
+
 ```bash
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
 API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
@@ -120,6 +127,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
 **Set these in Vercel:**
 
 1. **DATABASE_URL** - Use Neon.tech free tier (fastest):
+
    ```
    1. Visit https://neon.tech
    2. Sign up with GitHub
@@ -128,17 +136,20 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
    ```
 
 2. **AUTH_SECRET** - Generate locally:
+
    ```bash
    openssl rand -base64 32
    # Add output to Vercel
    ```
 
 3. **NEXTAUTH_URL**:
+
    ```
    https://customvenom-frontend.vercel.app
    ```
 
 4. **Google OAuth** (easiest provider):
+
    ```
    1. https://console.cloud.google.com
    2. Create project → APIs & Services → Credentials
@@ -149,6 +160,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
    ```
 
 5. **Stripe Test Keys**:
+
    ```
    1. https://dashboard.stripe.com/test/apikeys
    2. Copy test keys to Vercel (start with test mode)
@@ -176,6 +188,7 @@ NEXT_PUBLIC_SENTRY_DSN=              # Leave empty for now
 Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 
 Add all required variables above. Use these environment settings:
+
 - Production ✅
 - Preview ✅
 - Development ✅
@@ -185,6 +198,7 @@ Add all required variables above. Use these environment settings:
 After setting DATABASE_URL, you need to push the Prisma schema:
 
 **Option A: From Local Machine**
+
 ```bash
 cd customvenom-frontend
 
@@ -199,6 +213,7 @@ npx prisma migrate deploy
 ```
 
 **Option B: From Vercel CLI**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -242,7 +257,8 @@ Visit: https://customvenom-frontend.vercel.app
 ### Error: "Prisma Client could not be generated"
 
 **Cause:** Missing DATABASE_URL or build failed  
-**Fix:** 
+**Fix:**
+
 1. Add DATABASE_URL to Vercel env vars
 2. Add this to package.json:
    ```json
@@ -264,7 +280,8 @@ Visit: https://customvenom-frontend.vercel.app
 ### Error: "Cannot connect to database"
 
 **Cause:** Invalid DATABASE_URL or firewall  
-**Fix:** 
+**Fix:**
+
 1. Verify DATABASE_URL format
 2. Ensure database allows connections from anywhere (0.0.0.0/0)
 3. Check SSL mode is enabled
@@ -317,12 +334,15 @@ After deployment, set up Stripe webhook:
 For each OAuth provider, add production callback URL:
 
 **Google:**
+
 - https://customvenom-frontend.vercel.app/api/auth/callback/google
 
 **Twitter:**
+
 - https://customvenom-frontend.vercel.app/api/auth/callback/twitter
 
 **Facebook:**
+
 - https://customvenom-frontend.vercel.app/api/auth/callback/facebook
 
 ### 3. Test Full Flow
@@ -338,12 +358,15 @@ For each OAuth provider, add production callback URL:
 ## Need Help?
 
 **Check Vercel logs:**
+
 - https://vercel.com/incarcers-projects/customvenom-frontend-fop8/logs
 
 **Check build logs:**
+
 - https://vercel.com/incarcers-projects/customvenom-frontend-fop8/deployments
 
 **Common log errors to search for:**
+
 - "DATABASE_URL"
 - "AUTH_SECRET"
 - "Prisma"
@@ -353,4 +376,3 @@ For each OAuth provider, add production callback URL:
 
 **Last Updated:** October 16, 2025  
 **Status:** Ready for configuration ✅
-

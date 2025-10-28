@@ -6,18 +6,18 @@ This document explains how to configure environment variables for the CustomVeno
 
 ### API Configuration
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `API_BASE` | Server-side API endpoint | `https://api.customvenom.com` |
+| Variable               | Description              | Example                       |
+| ---------------------- | ------------------------ | ----------------------------- |
+| `API_BASE`             | Server-side API endpoint | `https://api.customvenom.com` |
 | `NEXT_PUBLIC_API_BASE` | Client-side API endpoint | `https://api.customvenom.com` |
 
 ### Stripe Configuration (Optional)
 
-| Variable | Description | Example |
-|----------|-------------|---------|
+| Variable                             | Description            | Example                        |
+| ------------------------------------ | ---------------------- | ------------------------------ |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | `pk_test_...` or `pk_live_...` |
-| `STRIPE_SECRET_KEY` | Stripe secret key | `sk_test_...` or `sk_live_...` |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | `whsec_...` |
+| `STRIPE_SECRET_KEY`                  | Stripe secret key      | `sk_test_...` or `sk_live_...` |
+| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook secret  | `whsec_...`                    |
 
 ## Setup Instructions
 
@@ -32,12 +32,14 @@ NEXT_PUBLIC_API_BASE=http://127.0.0.1:8787
 ```
 
 2. Start the Workers API locally:
+
 ```bash
 cd ../customvenom-workers-api
 npm run dev
 ```
 
 3. Start the frontend:
+
 ```bash
 cd ../customvenom-frontend
 npm run dev
@@ -74,8 +76,9 @@ When deploying to Vercel, set these environment variables in the Vercel dashboar
    - `NEXT_PUBLIC_API_BASE`: `https://api.customvenom.com`
 
 For staging deployments, create separate environment variables:
-   - `API_BASE`: `https://api-staging.customvenom.com` (Preview only)
-   - `NEXT_PUBLIC_API_BASE`: `https://api-staging.customvenom.com` (Preview only)
+
+- `API_BASE`: `https://api-staging.customvenom.com` (Preview only)
+- `NEXT_PUBLIC_API_BASE`: `https://api-staging.customvenom.com` (Preview only)
 
 ## Testing the Configuration
 
@@ -96,7 +99,3 @@ curl "http://localhost:3000/api/projections?week=2025-06"
 - `.env.staging` is used for staging builds
 - `NEXT_PUBLIC_*` variables are exposed to the browser
 - Regular environment variables (without `NEXT_PUBLIC_`) are server-side only
-
-
-
-

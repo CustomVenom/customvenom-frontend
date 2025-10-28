@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json(
         { error: `Failed to fetch projections: ${response.status}` },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       console.warn(
         'Unsupported schema version received:',
         dataSchemaVersion,
-        '- proceeding with caution'
+        '- proceeding with caution',
       );
       // Still proceed to show data, but log for monitoring
     }
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       (nextResponse.headers.get('Access-Control-Expose-Headers') || '')
         .split(',')
         .map((s) => s.trim())
-        .filter(Boolean)
+        .filter(Boolean),
     );
     exposed.add('x-request-id');
     nextResponse.headers.set('Access-Control-Expose-Headers', Array.from(exposed).join(', '));

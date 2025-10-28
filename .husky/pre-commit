@@ -1,6 +1,5 @@
-# Run lint-staged (lints only changed files)
-npx lint-staged
-
-# Run type check
-npm run type-check
-
+#!/usr/bin/env bash
+set -euo pipefail
+npm run fmt
+npm run type -- --skipLibCheck
+npm run lint

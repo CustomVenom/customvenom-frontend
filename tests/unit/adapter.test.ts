@@ -29,9 +29,9 @@ describe('toReasonChips', () => {
 
   it('limits to max 2 chips and clamps to ±3.5%', () => {
     const chips = toReasonChips([
-      { key: 'market_delta:up', effect: 0.06 },     // 6% → clamp to 3.5
+      { key: 'market_delta:up', effect: 0.06 }, // 6% → clamp to 3.5
       { key: 'injury:workload_guard', effect: -7 }, // -7% → clamp to -3.5 (already percent)
-      { key: 'volatility', effect: 0.005 },         // 0.5% → eligible but should be dropped (top2 rule)
+      { key: 'volatility', effect: 0.005 }, // 0.5% → eligible but should be dropped (top2 rule)
     ]);
     expect(chips.length).toBe(2);
     // Sorted by absolute magnitude, first two remain
@@ -51,7 +51,7 @@ describe('toReasonChips', () => {
 
   it('assigns type by sign', () => {
     const chips = toReasonChips([
-      { key: 'a', effect: 0.01 },  // +1.0%
+      { key: 'a', effect: 0.01 }, // +1.0%
       { key: 'b', effect: -0.01 }, // -1.0%
     ]);
     expect(chips[0].type).toBe('positive');
@@ -76,9 +76,7 @@ describe('toReasonChips', () => {
   });
 
   it('uses API-provided label over defaults', () => {
-    const chips = toReasonChips([
-      { key: 'usage:increase', label: 'Custom Label', effect: 0.02 }
-    ]);
+    const chips = toReasonChips([{ key: 'usage:increase', label: 'Custom Label', effect: 0.02 }]);
     expect(chips[0].label).toBe('Custom Label');
   });
 
@@ -87,7 +85,7 @@ describe('toReasonChips', () => {
     const chips = toReasonChips([
       { key: 'a', effect: 0 },
       { key: 'b', effect: 0.0001 }, // 0.01% after conversion, at threshold
-      { key: 'c', effect: 0.02 }     // 2.0% after conversion, should show
+      { key: 'c', effect: 0.02 }, // 2.0% after conversion, should show
     ]);
     // Only 'c' should show (2.0%)
     expect(chips.length).toBe(1);
@@ -106,7 +104,7 @@ describe('toReasonChips', () => {
       { key: 'a', effect: NaN },
       { key: 'b', effect: Infinity },
       { key: 'c', effect: -Infinity },
-      { key: 'd', effect: 0.02 } // Valid one
+      { key: 'd', effect: 0.02 }, // Valid one
     ]);
     // Zod filters out invalid numbers, returns empty array
     expect(chips.length).toBe(0);
@@ -114,9 +112,9 @@ describe('toReasonChips', () => {
 
   it('uses improved fraction detection (< 1.0)', () => {
     const chips = toReasonChips([
-      { key: 'a', effect: 0.5 },   // 0.5 as fraction → 50%
-      { key: 'b', effect: 1.0 },   // 1.0 as percent → 1.0%
-      { key: 'c', effect: 0.99 }   // 0.99 as fraction → 99% → clamped to 3.5%
+      { key: 'a', effect: 0.5 }, // 0.5 as fraction → 50%
+      { key: 'b', effect: 1.0 }, // 1.0 as percent → 1.0%
+      { key: 'c', effect: 0.99 }, // 0.99 as fraction → 99% → clamped to 3.5%
     ]);
     expect(chips.length).toBe(2); // Max 2 chips
     // First should be clamped 50% → 3.5%
@@ -130,7 +128,7 @@ describe('toReasonChips', () => {
     const chips = toReasonChips([
       { key: 'a', effect: 2.0 },
       { key: 'b', effect: -2.0 },
-      { key: 'c', effect: 2.0 }
+      { key: 'c', effect: 2.0 },
     ]);
     // All have same abs value, should be in input order
     // But limited to 2 chips, so first two
@@ -139,4 +137,3 @@ describe('toReasonChips', () => {
     expect(chips[1].effectPct).toBe(-2.0);
   });
 });
-

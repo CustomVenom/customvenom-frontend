@@ -55,23 +55,28 @@
 ## 6) Guardrails (build-time)
 
 ### Contracts
+
 - No breaking renames or removals without schema_version bump
 - Keep ranges as defined quantiles for Floor, Median, Ceiling
 
 ### Driver chips
+
 - ≤ 2 visible per row
 - confidence ≥ 0.65
 - Suppress unstable or conflicting signals
 
 ### Deltas and clamps
+
 - Total per-player |Δ| ≤ 3–4% across all modifiers
 - Enforced in serialization
 
 ### Reliability
+
 - stale-if-error up to 24h with a visible badge
 - Trim mode permitted but must preserve contract keys
 
 ### Security
+
 - No secrets in repo or logs
 - CORS per route policy for public GETs
 
@@ -91,15 +96,18 @@
 ## 9) Acceptance Checks (copy-ready)
 
 ### API
+
 - /health returns ok plus schema_version
 - /projections returns valid contract with ranges, chips ≤ 2, confidence gates respected
 - last_refresh present and accurate; stale mode shows badge
 
 ### Ops
+
 - Local and Preview smokes PASS
 - Intentional red cases trip guards in CI
 
 ### UI
+
 - Bands render without CLS
 - Chips capped and conflict-resolved
 - Trust snapshot visible
@@ -107,11 +115,13 @@
 ## 10) Smokes (examples)
 
 ### Health
+
 ```bash
 curl -sS https://YOUR_API/health | jq '{ok, schema_version}'
 ```
 
 ### Projections
+
 ```bash
 curl -sS https://YOUR_API/projections | jq '.[0] | {schema_version, last_refresh, floor, median, ceiling, chips_count: (.chips | length)}'
 ```
@@ -137,6 +147,7 @@ curl -sS https://YOUR_API/projections | jq '.[0] | {schema_version, last_refresh
 ## 14) Working Style for PRs
 
 One feature per PR with:
+
 - Summary, acceptance checks, links to smokes
 - Example payloads before/after if contract changes
 - Guardrail notes: chips count, confidence gates, |Δ| clamp evidence
@@ -156,16 +167,16 @@ One feature per PR with:
 
 ## PATCH NOTE: UI shell + Tools + Design Preview + Command Palette
 
-**Date:** 2025-10-17
+**Date:** 2025-10-17  
 **Status:** Implemented (ready for Cursor)
 
 ### What changed
 
 - Added UI shell guidance and nav: Projections · Tools · Ops · Settings
 - Tools hub with three interactive tools powered by /projections:
-    - **Start/Sit Tie‑Breaker**: two players + risk → recommendation with ranges and ≤2 reason chips
-    - **FAAB Bid Helper**: player + budget → min/likely/max bids with one rationale chip
-    - **Important Decisions**: top 3 items with "why" and one next step
+  - **Start/Sit Tie‑Breaker**: two players + risk → recommendation with ranges and ≤2 reason chips
+  - **FAAB Bid Helper**: player + budget → min/likely/max bids with one rationale chip
+  - **Important Decisions**: top 3 items with "why" and one next step
 - **Design Preview** sandbox (/design-preview): theme tokens (primary/accent), Dark mode, Density, Radius. Live updates with localStorage persistence
 - **Command palette** (Ctrl/⌘+K): quick actions for Tools, Projections, Design Preview, Toggle Dark, Toggle Density
 - Trust Snapshot on tool pages, Quick Tips banner, and UI guardrails baked in
@@ -222,6 +233,7 @@ One feature per PR with:
 ### Metadata Standards
 
 **Global metadata** (src/app/layout.tsx):
+
 ```typescript
 export const metadata: Metadata = {
   title: 'Custom Venom — Pick Your Poison',
@@ -230,7 +242,7 @@ export const metadata: Metadata = {
     title: 'Custom Venom — Pick Your Poison',
     description: 'Fantasy football projections and decisions powered by explainable AI.',
     type: 'website',
-    url: 'https://www.customvenom.com',
+    url: 'https://customvenom.com',
     siteName: 'Custom Venom',
   },
   twitter: {
@@ -242,6 +254,7 @@ export const metadata: Metadata = {
 ```
 
 **Per-page overrides** (when needed):
+
 ```typescript
 // src/app/tools/page.tsx
 export const metadata: Metadata = {
@@ -275,14 +288,16 @@ import Brand from '@/components/Brand';
 ### Meta Standard
 
 **Required fields:**
+
 - **title:** "Custom Venom — Pick Your Poison"
 - **description:** "Fantasy football projections and decisions powered by explainable AI."
 
 **OpenGraph:**
+
 - title: "Custom Venom — Pick Your Poison"
 - description: "Fantasy football projections and decisions powered by explainable AI."
 - type: website
-- url: https://www.customvenom.com
+- url: https://customvenom.com
 - siteName: Custom Venom
 - images: [/og.png] // optional
 
@@ -300,7 +315,7 @@ export const metadata = {
     title: 'Custom Venom — Pick Your Poison',
     description: 'Fantasy football projections and decisions powered by explainable AI.',
     type: 'website',
-    url: 'https://www.customvenom.com',
+    url: 'https://customvenom.com',
     siteName: 'Custom Venom',
     images: ['/og.png'], // optional
   },
@@ -318,7 +333,7 @@ Bluesky share intent: `https://bsky.app/intent/compose?text=<ENCODED_TEXT>&url=<
 
 export default function ShareButtons({
   text = 'Check out Custom Venom — Pick Your Poison',
-  url = 'https://www.customvenom.com'
+  url = 'https://customvenom.com',
 }) {
   const encodedText = encodeURIComponent(text);
   const encodedUrl = encodeURIComponent(url);
@@ -329,13 +344,10 @@ export default function ShareButtons({
       <a href={bsky} target="_blank" rel="noopener" className="cv-btn-secondary">
         Share on Bluesky
       </a>
-      <button onClick={() => navigator.clipboard.writeText(`${text} ${url}`)}>
-        Copy link
-      </button>
+      <button onClick={() => navigator.clipboard.writeText(`${text} ${url}`)}>Copy link</button>
     </div>
   );
 }
 ```
 
 **Usage:** Add to Projections, Tools results, and Proof/Lift pages to encourage sharing.
-

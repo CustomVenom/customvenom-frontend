@@ -3,17 +3,17 @@ import { test, expect } from '@playwright/test';
 test.describe('Protection Mode Badge', () => {
   test('shows protection mode badge when x-stale=true', async ({ page }) => {
     // Mock API response with x-stale header
-    await page.route('**/api/leagues', async route => {
+    await page.route('**/api/leagues', async (route) => {
       await route.fulfill({
         status: 200,
         headers: {
           'x-stale': 'true',
-          'x-request-id': 'test-request-id'
+          'x-request-id': 'test-request-id',
         },
         body: JSON.stringify({
           leagues: [],
-          stale: true
-        })
+          stale: true,
+        }),
       });
     });
 
@@ -37,16 +37,16 @@ test.describe('Protection Mode Badge', () => {
 
   test('does not show protection mode badge when x-stale=false', async ({ page }) => {
     // Mock API response without x-stale header
-    await page.route('**/api/leagues', async route => {
+    await page.route('**/api/leagues', async (route) => {
       await route.fulfill({
         status: 200,
         headers: {
-          'x-request-id': 'test-request-id'
+          'x-request-id': 'test-request-id',
         },
         body: JSON.stringify({
           leagues: [],
-          stale: false
-        })
+          stale: false,
+        }),
       });
     });
 
@@ -59,17 +59,17 @@ test.describe('Protection Mode Badge', () => {
 
   test('protection mode badge has correct accessibility attributes', async ({ page }) => {
     // Mock API response with x-stale header
-    await page.route('**/api/leagues', async route => {
+    await page.route('**/api/leagues', async (route) => {
       await route.fulfill({
         status: 200,
         headers: {
           'x-stale': 'true',
-          'x-request-id': 'test-request-id'
+          'x-request-id': 'test-request-id',
         },
         body: JSON.stringify({
           leagues: [],
-          stale: true
-        })
+          stale: true,
+        }),
       });
     });
 
@@ -85,17 +85,17 @@ test.describe('Protection Mode Badge', () => {
 
   test('protection mode badge appears in correct location', async ({ page }) => {
     // Mock API response with x-stale header
-    await page.route('**/api/leagues', async route => {
+    await page.route('**/api/leagues', async (route) => {
       await route.fulfill({
         status: 200,
         headers: {
           'x-stale': 'true',
-          'x-request-id': 'test-request-id'
+          'x-request-id': 'test-request-id',
         },
         body: JSON.stringify({
           leagues: [],
-          stale: true
-        })
+          stale: true,
+        }),
       });
     });
 

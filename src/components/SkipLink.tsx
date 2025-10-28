@@ -10,4 +10,3 @@ export function SkipLink() {
     </a>
   );
 }
-

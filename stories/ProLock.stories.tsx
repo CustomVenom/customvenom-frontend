@@ -32,4 +32,3 @@ export const CustomMessage: Story = {
     children: <div className="p-8">Pro content</div>,
   },
 };
-

@@ -1,35 +1,63 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 
-const _TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
+const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    // Workers-only: forward the browser cookie to API (no NextAuth)
-    const apiBase =
-      process.env['API_BASE'] ||
-      process.env['NEXT_PUBLIC_API_BASE'] ||
-      'https://api.customvenom.com';
-    const cookie = req.headers.get('cookie') || '';
-    const r = await fetch(`${apiBase}/api/yahoo/refresh`, {
+    const rt = req.cookies.get('y_rt')?.value;
+    if (!rt) return NextResponse.json({ ok: false, error: 'no_refresh_token' }, { status: 401 });
+
+    const id = process.env['YAHOO_CLIENT_ID']!;
+    const secret = process.env['YAHOO_CLIENT_SECRET']!;
+    const basic = Buffer.from(`${id}:${secret}`).toString('base64');
+
+    const proto = req.headers.get('x-forwarded-proto') || 'https';
+    const host = req.headers.get('host')!;
+    const site = `${proto}://${host}`;
+    const redirectUri = `${site}/api/yahoo/callback`;
+
+    const resp = await fetch(TOKEN_URL, {
       method: 'POST',
       headers: {
-        accept: 'application/json',
-        // Forward Yahoo cookie to API for auth
-        cookie: cookie,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${basic}`,
       },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: rt,
+        redirect_uri: redirectUri,
+      }),
       cache: 'no-store',
     });
 
-    if (!r.ok) {
-      return NextResponse.json({ ok: false, error: 'upstream_unavailable' }, { status: r.status });
+    const text = await resp.text();
+    if (!resp.ok) return new NextResponse(text, { status: 502 });
+
+    const json = JSON.parse(text) as {
+      access_token: string;
+      refresh_token?: string;
+      expires_in?: number;
+      token_type?: string;
+    };
+
+    const headers = new Headers();
+    headers.append(
+      'Set-Cookie',
+      `y_at=${encodeURIComponent(json.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=900`,
+    );
+
+    if (json.refresh_token) {
+      headers.append(
+        'Set-Cookie',
+        `y_rt=${encodeURIComponent(json.refresh_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`,
+      );
     }
 
-    const body = await r.json();
-    return NextResponse.json(body, { status: 200 });
-  } catch (error) {
-    console.error('[api/yahoo/refresh]', error);
-    return NextResponse.json({ ok: false, error: 'internal_error' }, { status: 500 });
+    return new NextResponse(null, { status: 204, headers });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'refresh_failed';
+    return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }

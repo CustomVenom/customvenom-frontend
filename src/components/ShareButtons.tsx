@@ -7,7 +7,7 @@ interface ShareButtonsProps {
 
 export default function ShareButtons({
   text = 'Check out Custom Venom — Pick Your Poison',
-  url = 'https://www.customvenom.com'
+  url = 'https://customvenom.com',
 }: ShareButtonsProps) {
   const encodedText = encodeURIComponent(text);
   const encodedUrl = encodeURIComponent(url);
@@ -38,4 +38,3 @@ export default function ShareButtons({
     </div>
   );
 }
-

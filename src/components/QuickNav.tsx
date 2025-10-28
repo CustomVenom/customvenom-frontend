@@ -46,4 +46,3 @@ export function QuickNav() {
 
   return null; // No UI component
 }
-

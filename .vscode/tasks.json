@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "type", "type": "shell", "command": "npm run type", "problemMatcher": "$tsc" },
+    {
+      "label": "lint",
+      "type": "shell",
+      "command": "npm run lint",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    { "label": "fmt", "type": "shell", "command": "npm run fmt" },
+    { "label": "preflight", "type": "shell", "command": "npm run preflight" }
+  ]
+}

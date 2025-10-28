@@ -87,7 +87,9 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
       },
     });
   } catch (error) {
-    console.error('Failed to update hourly rollup:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Failed to update hourly rollup:', error);
+    }
     // Don't throw - rollup update failure shouldn't block event storage
   }
 }
@@ -123,7 +125,9 @@ export async function POST(request: NextRequest) {
 
     // Update hourly rollup (async, non-blocking)
     updateHourlyRollup(event).catch((err) => {
-      console.error('Rollup update failed (non-critical):', err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Rollup update failed (non-critical):', err);
+      }
     });
 
     // Periodic cleanup: Delete events older than 30 days (every 100th request)
@@ -139,7 +143,9 @@ export async function POST(request: NextRequest) {
           },
         })
         .catch((err) => {
-          console.error('Cleanup failed (non-critical):', err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('Cleanup failed (non-critical):', err);
+          }
         });
 
       // Also cleanup old rollups (>90 days)
@@ -153,7 +159,9 @@ export async function POST(request: NextRequest) {
           },
         })
         .catch((err) => {
-          console.error('Rollup cleanup failed (non-critical):', err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('Rollup cleanup failed (non-critical):', err);
+          }
         });
     }
 
@@ -206,7 +214,9 @@ export async function GET(request: NextRequest) {
       events: recentEvents,
     });
   } catch (error) {
-    console.error('Error retrieving analytics events:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error retrieving analytics events:', error);
+    }
     return NextResponse.json({ error: 'Failed to retrieve events' }, { status: 500 });
   }
 }

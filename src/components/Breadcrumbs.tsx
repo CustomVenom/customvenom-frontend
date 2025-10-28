@@ -9,14 +9,17 @@ export default function Breadcrumbs() {
 
   return (
     <nav className="text-xs text-gray-600 dark:text-gray-400 mb-4">
-      <Link href="/" className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline">
+      <Link
+        href="/"
+        className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+      >
         Home
       </Link>
       {p.map((seg, i) => (
         <span key={i}>
           {' / '}
-          <Link 
-            href={build(i)} 
+          <Link
+            href={build(i)}
             className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline capitalize"
           >
             {seg.replaceAll('-', ' ')}
@@ -26,4 +29,3 @@ export default function Breadcrumbs() {
     </nav>
   );
 }
-

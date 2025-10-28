@@ -26,8 +26,8 @@ export default function ProjectionsTable({ rows }: Props) {
   const columns = ALL_COLUMNS;
 
   const colsToRender = useMemo(
-    () => columns.filter(c => visible[c.key] !== false),
-    [columns, visible]
+    () => columns.filter((c) => visible[c.key] !== false),
+    [columns, visible],
   );
 
   function openDrawer(row: Row) {
@@ -44,11 +44,7 @@ export default function ProjectionsTable({ rows }: Props) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="h2">Weekly Projections</h2>
-        <ColumnToggle
-          columns={columns}
-          onChange={setVisible}
-          className="justify-self-end"
-        />
+        <ColumnToggle columns={columns} onChange={setVisible} className="justify-self-end" />
       </div>
 
       <div className="overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
@@ -58,7 +54,7 @@ export default function ProjectionsTable({ rows }: Props) {
               <th className="sticky-first text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300">
                 Player
               </th>
-              {colsToRender.map(c => (
+              {colsToRender.map((c) => (
                 <th
                   key={c.key}
                   className={`text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300 ${
@@ -89,17 +85,21 @@ export default function ProjectionsTable({ rows }: Props) {
                   </td>
 
                   {visible['team'] !== false && (
-                    <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
-                      ALL_COLUMNS.find(x => x.key === 'team')?.mobileHide ? 'hide-sm' : ''
-                    }`}>
+                    <td
+                      className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
+                        ALL_COLUMNS.find((x) => x.key === 'team')?.mobileHide ? 'hide-sm' : ''
+                      }`}
+                    >
                       {r.team ?? '—'}
                     </td>
                   )}
 
                   {visible['pos'] !== false && (
-                    <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
-                      ALL_COLUMNS.find(x => x.key === 'pos')?.mobileHide ? 'hide-sm' : ''
-                    }`}>
+                    <td
+                      className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
+                        ALL_COLUMNS.find((x) => x.key === 'pos')?.mobileHide ? 'hide-sm' : ''
+                      }`}
+                    >
                       {r.position ?? '—'}
                     </td>
                   )}
@@ -117,9 +117,11 @@ export default function ProjectionsTable({ rows }: Props) {
                   )}
 
                   {visible['ceiling'] !== false && (
-                    <td className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
-                      ALL_COLUMNS.find(x => x.key === 'ceiling')?.mobileHide ? 'hide-sm' : ''
-                    }`}>
+                    <td
+                      className={`px-3 py-2 text-gray-700 dark:text-gray-300 ${
+                        ALL_COLUMNS.find((x) => x.key === 'ceiling')?.mobileHide ? 'hide-sm' : ''
+                      }`}
+                    >
                       {r.range.p90.toFixed(1)}
                     </td>
                   )}
@@ -127,9 +129,7 @@ export default function ProjectionsTable({ rows }: Props) {
                   {visible['reasons'] !== false && (
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap gap-1">
-                        {chips.length === 0 && (
-                          <span className="text-xs text-gray-400">—</span>
-                        )}
+                        {chips.length === 0 && <span className="text-xs text-gray-400">—</span>}
                         {chips.map((chip, idx) => (
                           <span key={idx} className="cv-chip">
                             {chip.component} {chip.delta_points >= 0 ? '+' : ''}
@@ -154,4 +154,3 @@ export default function ProjectionsTable({ rows }: Props) {
     </div>
   );
 }
-

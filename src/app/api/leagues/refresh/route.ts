@@ -3,28 +3,16 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
+  const apiBase =
+    process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
   const reqId = crypto.randomUUID();
 
   try {
-    // Get NextAuth session
-    const { auth } = await import('../../../../lib/auth');
-    const session = await auth();
-
-    if (!session?.user?.sub) {
-      return NextResponse.json(
-        { queued: false, error: 'not_authenticated' },
-        { status: 401 }
-      );
-    }
-
-    // Call Workers API with session token
-    const apiBase = process.env['API_BASE'] || process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const r = await fetch(`${apiBase}/api/me/leagues/refresh`, {
       method: 'POST',
       headers: {
         'x-request-id': reqId,
-        'accept': 'application/json',
-        'authorization': `Bearer ${session.user.sub}`,
+        accept: 'application/json',
       },
       cache: 'no-store',
     });
@@ -39,7 +27,7 @@ export async function POST() {
             'cache-control': 'no-store',
             'x-request-id': reqId,
           },
-        }
+        },
       );
     }
 
@@ -62,8 +50,7 @@ export async function POST() {
           'cache-control': 'no-store',
           'x-request-id': reqId,
         },
-      }
+      },
     );
   }
 }
-

@@ -3,12 +3,14 @@
 ## Rule: Always use bracket notation for `process.env` access
 
 **❌ WRONG:**
+
 ```typescript
 const apiBase = process.env.NEXT_PUBLIC_API_BASE;
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 ```
 
 **✅ CORRECT:**
+
 ```typescript
 const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
 const stripeKey = process.env['STRIPE_SECRET_KEY'];

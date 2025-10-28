@@ -16,10 +16,11 @@
 - Works automatically on sign-in
 
 **How to use it:**
+
 ```typescript
 // src/lib/rbac.ts line 19
 const ADMIN_EMAILS = [
-  'your@email.com',  // ← Add your email here
+  'your@email.com', // ← Add your email here
 ];
 ```
 
@@ -30,12 +31,14 @@ const ADMIN_EMAILS = [
 **File**: `src/lib/rbac.ts`
 
 **4 Roles** (hierarchy):
+
 - `ADMIN` (100) - You - full access
 - `TEAM` (30) - Team tier customers
-- `PRO` (20) - Pro tier customers  
+- `PRO` (20) - Pro tier customers
 - `FREE` (10) - Free users
 
 **10 Permissions**:
+
 - View Analytics
 - Compare View
 - CSV Export
@@ -54,6 +57,7 @@ const ADMIN_EMAILS = [
 **File**: `src/lib/entitlements.ts`
 
 **Old system**:
+
 ```typescript
 {
   isPro: boolean,
@@ -62,6 +66,7 @@ const ADMIN_EMAILS = [
 ```
 
 **New system**:
+
 ```typescript
 {
   role: 'admin' | 'team' | 'pro' | 'free',
@@ -106,11 +111,12 @@ const user = await getCurrentUser(); // null if not logged in
 ```
 
 **Example usage**:
+
 ```typescript
 // app/admin/dashboard/page.tsx
 export default async function AdminDashboard() {
   const { session, entitlements } = await requireAdmin();
-  
+
   return <div>Admin only content</div>;
 }
 ```
@@ -138,6 +144,7 @@ async signIn({ user }) {
 ```
 
 **What this means**:
+
 - You sign in → automatically get admin role
 - Database role changes? Doesn't matter - email check overrides
 - Other users sign in → get 'free' role by default
@@ -152,7 +159,7 @@ async signIn({ user }) {
 model User {
   email            String?  @unique  // ← Prevents duplicates
   stripeCustomerId String?  @unique  // ← Prevents duplicates
-  
+
   accounts  Account[]  // ← Cascade delete
   sessions  Session[]  // ← Cascade delete
   preferences UserPreferences?  // ← Cascade delete
@@ -162,6 +169,7 @@ model User {
 ```
 
 **Security features**:
+
 1. ✅ Unique email constraint (can't have duplicates)
 2. ✅ Cascade deletes (remove user → all data cleaned up)
 3. ✅ SSL connections to database (`sslmode=require`)
@@ -193,6 +201,7 @@ User gets Pro/Team access
 ```
 
 **Admin override**:
+
 - Even if you have no subscription, you get all access
 - Your admin status is separate from payment status
 - Other users need active subscriptions for Pro/Team access
@@ -202,6 +211,7 @@ User gets Pro/Team access
 ## 📁 Files Created/Modified
 
 ### Created:
+
 1. `src/lib/rbac.ts` - Role & permission system
 2. `src/lib/auth-guards.ts` - Route protection functions
 3. `SECURITY_AND_ACCESS_CONTROL.md` - Comprehensive security docs (30 pages!)
@@ -209,6 +219,7 @@ User gets Pro/Team access
 5. `AUTH_SYSTEM_SUMMARY.md` - This file
 
 ### Modified:
+
 1. `src/lib/entitlements.ts` - Enhanced with RBAC
 2. `src/lib/auth.ts` - Added auto admin assignment
 3. `src/app/ops/metrics/page.tsx` - Updated to use new system
@@ -220,9 +231,10 @@ User gets Pro/Team access
 ### 1. Add Your Email
 
 Edit `src/lib/rbac.ts`:
+
 ```typescript
 const ADMIN_EMAILS = [
-  'your@email.com',  // ← Your actual email
+  'your@email.com', // ← Your actual email
 ];
 ```
 
@@ -241,24 +253,27 @@ Go to `/ops/metrics` - you should see the full dashboard
 ## 🔐 Security Guarantees
 
 ### For You (Admin):
+
 ✅ **Can never be locked out** - Email hardcoded in app  
 ✅ **Override any restrictions** - Admin role bypasses all checks  
 ✅ **No payment required** - Admin access separate from subscriptions  
-✅ **Full system access** - All features, all data, all permissions  
+✅ **Full system access** - All features, all data, all permissions
 
 ### For Your Users:
+
 ✅ **Data isolated** - Users can only see their own data  
 ✅ **Secure sessions** - Database-backed, encrypted  
 ✅ **Complete cleanup** - Delete account → all data removed  
 ✅ **Payment privacy** - Stripe customer IDs encrypted in transit  
 ✅ **Anonymous analytics** - Events anonymized if user deleted  
-✅ **No admin access** - Only emails in ADMIN_EMAILS get admin  
+✅ **No admin access** - Only emails in ADMIN_EMAILS get admin
 
 ---
 
 ## 🧪 How to Test
 
 ### Test 1: Your Admin Access
+
 ```bash
 1. Add your email to ADMIN_EMAILS
 2. Sign in with that email
@@ -267,6 +282,7 @@ Go to `/ops/metrics` - you should see the full dashboard
 ```
 
 ### Test 2: Non-Admin User
+
 ```bash
 1. Sign in with different email
 2. Go to /ops/metrics
@@ -274,6 +290,7 @@ Go to `/ops/metrics` - you should see the full dashboard
 ```
 
 ### Test 3: Database Integrity
+
 ```bash
 npx prisma studio
 # Check your user
@@ -292,7 +309,7 @@ import { requireAdmin } from '@/lib/auth-guards';
 
 export default async function UsersPage() {
   await requireAdmin(); // ← Throws if not admin
-  
+
   return <div>Admin only page</div>;
 }
 ```
@@ -305,7 +322,7 @@ import { requireAdmin } from '@/lib/auth-guards';
 
 export async function GET() {
   await requireAdmin();
-  
+
   // Admin-only logic
   return Response.json({ data: 'sensitive' });
 }
@@ -320,19 +337,19 @@ import { getEntitlements } from '@/lib/entitlements';
 
 export function ProFeature() {
   const [ents, setEnts] = useState(null);
-  
+
   useEffect(() => {
     getEntitlements().then(setEnts);
   }, []);
-  
+
   if (ents?.isAdmin) {
     return <div>Admin sees this</div>;
   }
-  
+
   if (ents?.isPro) {
     return <div>Pro sees this</div>;
   }
-  
+
   return <div>Upgrade to Pro</div>;
 }
 ```
@@ -344,13 +361,15 @@ export function ProFeature() {
 If you ever get completely locked out:
 
 ### Option 1: Database Direct
+
 ```sql
-UPDATE "User" 
-SET role = 'admin' 
+UPDATE "User"
+SET role = 'admin'
 WHERE email = 'your@email.com';
 ```
 
 ### Option 2: Emergency Override
+
 ```typescript
 // src/lib/entitlements.ts - Add at top
 if (process.env.EMERGENCY_ADMIN === 'true') {
@@ -395,12 +414,14 @@ Set `EMERGENCY_ADMIN=true` in Vercel (remove after!)
 7. ✅ Production-ready security (SSL, unique indexes, cascade deletes)
 
 **Your users' data is secure:**
+
 - Encrypted in transit (SSL) and at rest (Neon)
 - Isolated per user (can't see each other's data)
 - Completely removed on account deletion
 - Anonymous analytics (no PII)
 
 **You have full control:**
+
 - Hardcoded admin email (can't be changed in DB)
 - Override all restrictions
 - Grant/revoke access to anyone
@@ -411,4 +432,3 @@ Set `EMERGENCY_ADMIN=true` in Vercel (remove after!)
 **Ready to go! 🚀**
 
 Just add your email to `ADMIN_EMAILS` and you'll have complete control over your system while keeping user data secure.
-

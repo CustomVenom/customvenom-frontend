@@ -12,7 +12,7 @@ const tabs = [
   { href: '/tools/decisions', label: 'Decisions' },
 ];
 
-export default function ToolsTabs() {
+export function ToolsTabs() {
   const p = usePathname();
 
   return (
@@ -38,3 +38,5 @@ export default function ToolsTabs() {
     </div>
   );
 }
+
+export default ToolsTabs;

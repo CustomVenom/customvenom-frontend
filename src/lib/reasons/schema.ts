@@ -3,9 +3,9 @@ import { z } from 'zod';
 import { logger } from '@/lib/logger';
 
 export const RawReasonSchema = z.object({
-  key: z.string(),                 // e.g., "market_delta:up"
-  label: z.string().optional(),    // optional friendly label
-  effect: z.number().optional()    // may be 0.021 (2.1%) or 2.1
+  key: z.string(), // e.g., "market_delta:up"
+  label: z.string().optional(), // optional friendly label
+  effect: z.number().optional(), // may be 0.021 (2.1%) or 2.1
 });
 
 export const RawReasonsSchema = z.array(RawReasonSchema);
@@ -23,4 +23,3 @@ export function parseRawReasons(input: unknown) {
   }
   return result.data;
 }
-

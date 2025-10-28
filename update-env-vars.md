@@ -3,10 +3,12 @@
 ## Manual Steps to Fix API Configuration
 
 ### 1. Go to Vercel Dashboard
+
 - Navigate to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/environment-variables
 - Select **Production** environment
 
 ### 2. Add/Update Environment Variables
+
 Add these two variables:
 
 ```
@@ -15,12 +17,14 @@ NEXT_PUBLIC_API_BASE = https://customvenom-workers-api.jdewett81.workers.dev
 ```
 
 ### 3. Redeploy with Clear Build Cache
+
 - Go to Deployments tab
 - Click "Redeploy" on the latest deployment
 - Check "Clear build cache" option
 - Click "Redeploy"
 
 ### 4. Verify After Deployment
+
 Run these commands to verify:
 
 ```bash
@@ -35,6 +39,7 @@ curl -i "https://www.customvenom.com/api/yahoo/connect" | grep -i ^Location
 ```
 
 ### Expected Results:
+
 - ✅ Frontend proxies return 200 with required headers and fields
 - ✅ No more 400/404 from /api/projections
 - ✅ Yahoo connect still 302 → Yahoo, callback sets y_at cookie

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import ProtectionModeBadge from '@/components/ProtectionModeBadge';
+import { ProtectionModeBadge } from '@/components/ProtectionModeBadge';
 import type { MeLeaguesResponse, LeagueKey } from '@/types/leagues';
 
 interface LeaguesTableProps {
@@ -22,15 +22,15 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
     try {
       let r = await fetch('/app/me/leagues', {
         cache: 'no-store',
-        signal: ctrl.signal
+        signal: ctrl.signal,
       });
 
       if (!r.ok && r.status >= 500) {
         // One retry on 5xx with 500ms delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         r = await fetch('/app/me/leagues', {
           cache: 'no-store',
-          signal: ctrl.signal
+          signal: ctrl.signal,
         });
       }
 
@@ -69,7 +69,7 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
 
       if (!r.ok && r.status >= 500) {
         // One retry on 5xx with 500ms delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         r = await fetch('/app/me/synced-leagues', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
@@ -159,7 +159,10 @@ export default function LeaguesTable({ initialData }: LeaguesTableProps) {
   return (
     <div className="space-y-4">
       {/* Slot Meter */}
-      <div data-testid="leagues-table-header" className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div
+        data-testid="leagues-table-header"
+        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg"
+      >
         <div className="flex items-center gap-3">
           <div className="text-sm">
             <span className="font-medium">Sync Slots:</span>{' '}

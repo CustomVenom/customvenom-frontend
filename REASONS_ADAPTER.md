@@ -63,6 +63,7 @@ export function PlayerCard({ player }) {
 ```
 
 **The adapter handles:**
+
 - Missing `label` → generates from `key` ("usage:increase" → "Usage (increase)")
 - Missing `effect` → defaults to 0
 - Decimal format (0.021) → converts to 2.1%
@@ -73,13 +74,13 @@ export function PlayerCard({ player }) {
 
 ## 🎯 Business Rules
 
-| Rule | Implementation |
-|------|----------------|
-| Max 2 chips | Top 2 by `Math.abs(effect)` |
-| Effect clamp | ±3.5% hard limit |
-| Confidence filter | ❌ Not implemented (add if needed) |
-| Sort order | Highest absolute impact first |
-| Badge intent | `>0` = positive, `<0` = warning, `==0` = neutral |
+| Rule              | Implementation                                   |
+| ----------------- | ------------------------------------------------ |
+| Max 2 chips       | Top 2 by `Math.abs(effect)`                      |
+| Effect clamp      | ±3.5% hard limit                                 |
+| Confidence filter | ❌ Not implemented (add if needed)               |
+| Sort order        | Highest absolute impact first                    |
+| Badge intent      | `>0` = positive, `<0` = warning, `==0` = neutral |
 
 ---
 
@@ -124,6 +125,7 @@ const chips = toReasonChips(apiData.reasons);
 ```
 
 **Logic flow:**
+
 1. Parse with Zod → `RawReason[]`
 2. Detect fraction vs percent: `abs(val) <= 0.5` → multiply by 100
 3. Clamp to ±3.5%
@@ -135,7 +137,8 @@ const chips = toReasonChips(apiData.reasons);
 
 ```tsx
 <Badge intent={chip.type}>
-  {chip.label} {chip.effectPct > 0 ? '+' : ''}{chip.effectPct.toFixed(1)}%
+  {chip.label} {chip.effectPct > 0 ? '+' : ''}
+  {chip.effectPct.toFixed(1)}%
 </Badge>
 ```
 
@@ -160,6 +163,7 @@ const LABEL_MAP = {
 ```
 
 **To add more:**
+
 1. Edit `src/lib/reasons/adapter.ts`
 2. Add key-value pair to `LABEL_MAP`
 3. Done! No restart needed (hot reload)
@@ -169,6 +173,7 @@ const LABEL_MAP = {
 ## 🚨 Error Handling
 
 ### Development Mode
+
 ```
 [reasons] invalid payload: [
   {
@@ -181,6 +186,7 @@ const LABEL_MAP = {
 ```
 
 ### Production Mode
+
 - Silent fail (returns `[]`)
 - No console spam
 - Chips don't render
@@ -190,27 +196,28 @@ const LABEL_MAP = {
 ## 🔄 Migration from Old ReasonChips
 
 ### Before (old system)
+
 ```tsx
 import { ReasonChips } from '@/components/ReasonChips';
 import { Reason } from '@/lib/reasonsClamp';
 
 // Required typed data
-const reasons: Reason[] = [
-  { label: 'Usage', effect: 2.1, confidence: 0.78 }
-];
+const reasons: Reason[] = [{ label: 'Usage', effect: 2.1, confidence: 0.78 }];
 
-<ReasonChips reasons={reasons} />
+<ReasonChips reasons={reasons} />;
 ```
 
 ### After (new system)
+
 ```tsx
 import { ReasonChipsAdapter } from '@/components/ReasonChipsAdapter';
 
 // Pass raw API data directly
-<ReasonChipsAdapter reasons={apiData.reasons} />
+<ReasonChipsAdapter reasons={apiData.reasons} />;
 ```
 
 **Benefits:**
+
 - ✅ No manual typing required
 - ✅ Validates at runtime
 - ✅ Handles bad data gracefully
@@ -246,8 +253,8 @@ export const RawReasonSchema = z.object({
 });
 
 // In adapter.ts (inside toReasonChips)
-const filtered = safe.filter(r => (r.confidence ?? 1) >= 0.65);
-const normalized = filtered.map(r => {
+const filtered = safe.filter((r) => (r.confidence ?? 1) >= 0.65);
+const normalized = filtered.map((r) => {
   // ... rest of logic
 });
 ```
@@ -292,7 +299,7 @@ const normalized = filtered.map(r => {
 ## 🤔 FAQ
 
 **Q: Why Zod instead of TypeScript types?**  
-A: TypeScript validates at *compile time*, Zod validates at *runtime*. API data needs runtime validation.
+A: TypeScript validates at _compile time_, Zod validates at _runtime_. API data needs runtime validation.
 
 **Q: What if API returns strings like `["Usage up", "Weather bad"]`?**  
 A: The adapter will fail validation and return `[]`. Update your API to return objects with `key` and `effect`.
@@ -325,4 +332,3 @@ A: Check browser console in dev mode. Zod logs detailed validation errors with `
 ---
 
 **Ready for production!** 🎉
-

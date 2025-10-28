@@ -7,6 +7,7 @@
 ## 🚀 Essential Commands
 
 ### Workers API
+
 ```bash
 # Development
 cd customvenom-workers-api
@@ -30,6 +31,7 @@ npm test -- lib/faab.test.ts              # Specific test
 ```
 
 ### Frontend
+
 ```bash
 # Development
 cd customvenom-frontend
@@ -67,17 +69,20 @@ GitHub:             https://github.com/CustomVenom/
 ## 🧪 Quick Tests
 
 ### API Health Check
+
 ```bash
 curl https://customvenom-workers-api.jdewett81.workers.dev/health | jq '.ok'
 ```
 
 ### Cache Hit Ratio
+
 ```bash
 curl https://customvenom-workers-api.jdewett81.workers.dev/ops-data | jq '.cache.rate'
 # Target: > 0.80
 ```
 
 ### Projections Test (Anonymous)
+
 ```bash
 curl -i "https://customvenom-workers-api.jdewett81.workers.dev/projections?week=2025-05"
 # Should return 2025-06 data (Golden Week)
@@ -85,6 +90,7 @@ curl -i "https://customvenom-workers-api.jdewett81.workers.dev/projections?week=
 ```
 
 ### Projections Test (Authenticated)
+
 ```bash
 curl -i -H "x-cv-signed: YOUR_KEY" \
   "https://customvenom-workers-api.jdewett81.workers.dev/projections?week=2025-05"
@@ -97,6 +103,7 @@ curl -i -H "x-cv-signed: YOUR_KEY" \
 ## 🌍 Environment Variables
 
 ### Workers API
+
 ```bash
 DEMO_MODE=1                    # Enable demo mode (pin to Golden Week)
 DEMO_WEEK=2025-06             # Golden Week identifier
@@ -107,6 +114,7 @@ SENTRY_DSN=<secret>           # Optional: Error tracking
 ```
 
 ### Frontend
+
 ```bash
 # Public (accessible in browser)
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api.jdewett81.workers.dev
@@ -126,6 +134,7 @@ YAHOO_CLIENT_SECRET=<secret>  # OAuth provider
 ## 🔍 Debugging Commands
 
 ### View Logs
+
 ```bash
 # Workers API (live)
 wrangler tail
@@ -139,6 +148,7 @@ wrangler tail --format json | jq 'select(.message | contains("error"))'
 ```
 
 ### Check Deployment Status
+
 ```bash
 # Workers API
 wrangler deployments list
@@ -148,8 +158,9 @@ git log --oneline -5
 ```
 
 ### Test Rate Limiting
+
 ```bash
-for i in {1..110}; do 
+for i in {1..110}; do
   curl -s https://customvenom-workers-api.jdewett81.workers.dev/projections?week=2025-06
 done
 # Should see 429 after ~100 requests
@@ -159,19 +170,20 @@ done
 
 ## 📊 Performance Targets
 
-| Metric | Target | Monitoring |
-|--------|--------|-----------|
-| Cache hit ratio | > 80% | `/ops-data` |
-| API response (p95) | < 300ms | `x-duration-ms` header |
-| LCP (Largest Contentful Paint) | < 2.5s | Lighthouse |
-| FCP (First Contentful Paint) | < 1.5s | Lighthouse |
-| TTI (Time to Interactive) | < 3.5s | Lighthouse |
+| Metric                         | Target  | Monitoring             |
+| ------------------------------ | ------- | ---------------------- |
+| Cache hit ratio                | > 80%   | `/ops-data`            |
+| API response (p95)             | < 300ms | `x-duration-ms` header |
+| LCP (Largest Contentful Paint) | < 2.5s  | Lighthouse             |
+| FCP (First Contentful Paint)   | < 1.5s  | Lighthouse             |
+| TTI (Time to Interactive)      | < 3.5s  | Lighthouse             |
 
 ---
 
 ## 🚨 Emergency Procedures
 
 ### API Down
+
 ```bash
 # 1. Check health
 curl https://customvenom-workers-api.jdewett81.workers.dev/health
@@ -188,6 +200,7 @@ wrangler deploy
 ```
 
 ### Frontend Down
+
 ```bash
 # 1. Check Vercel status
 open https://www.vercel-status.com/
@@ -200,6 +213,7 @@ open https://www.vercel-status.com/
 ```
 
 ### Database Issues
+
 ```bash
 # 1. Check connection
 npx prisma db execute --stdin <<< "SELECT 1"
@@ -216,6 +230,7 @@ npx prisma migrate reset
 ## 🔐 Security Checklist
 
 ### Before Deploy
+
 - [ ] No hardcoded secrets in code
 - [ ] All secrets in wrangler or Vercel
 - [ ] Environment variables set correctly
@@ -224,6 +239,7 @@ npx prisma migrate reset
 - [ ] Authentication tested
 
 ### Monthly Review
+
 - [ ] Rotate secrets
 - [ ] Review access logs
 - [ ] Check for suspicious activity
@@ -250,14 +266,15 @@ chore: update dependencies        # Maintenance tasks
 ## 🎯 Common Patterns
 
 ### Adding New Endpoint (Workers API)
+
 ```typescript
 // 1. Add route
 app.get('/my-endpoint', async (c) => {
   const requestId = c.get('requestId');
   const startTime = c.get('startTime');
-  
+
   // Your logic
-  
+
   return c.json({ data: 'response' });
 });
 
@@ -269,6 +286,7 @@ app.get('/my-endpoint', async (c) => {
 ```
 
 ### Adding New Page (Frontend)
+
 ```tsx
 // 1. Create file: src/app/my-page/page.tsx
 export default function MyPage() {
@@ -284,12 +302,13 @@ export default function MyPage() {
 ```
 
 ### Fetching API Data (Frontend)
+
 ```tsx
 // Server Component
 export default async function MyPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE}/projections?week=2025-06`,
-    { next: { revalidate: 300 } } // Cache 5 minutes
+    { next: { revalidate: 300 } }, // Cache 5 minutes
   );
   const data = await res.json();
   return <DataTable data={data} />;
@@ -301,16 +320,19 @@ export default async function MyPage() {
 ## 🎓 Learning Resources
 
 ### Cloudflare
+
 - [Workers Docs](https://developers.cloudflare.com/workers/)
 - [R2 Storage](https://developers.cloudflare.com/r2/)
 - [Hono Framework](https://hono.dev/)
 
 ### Next.js
+
 - [App Router](https://nextjs.org/docs/app)
 - [Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 - [Data Fetching](https://nextjs.org/docs/app/building-your-application/data-fetching)
 
 ### Internal Docs
+
 - [Developer Guide](./DEVELOPER_GUIDE.md)
 - [API Reference](./API_REFERENCE.md)
 - [Troubleshooting](./TROUBLESHOOTING.md)

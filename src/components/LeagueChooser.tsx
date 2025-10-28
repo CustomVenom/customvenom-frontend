@@ -38,4 +38,3 @@ export function LeagueChooser({ leagues, onPick }: LeagueChooserProps) {
     </div>
   );
 }
-

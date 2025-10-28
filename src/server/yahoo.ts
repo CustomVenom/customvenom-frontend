@@ -54,7 +54,7 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
         name: league.name,
         season: league.season || '2025',
         teams: league.num_teams || 0,
-      })
+      }),
     );
   } catch (error) {
     console.error('[Yahoo Leagues]', error);

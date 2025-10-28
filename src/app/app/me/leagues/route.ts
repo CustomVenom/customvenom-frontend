@@ -11,7 +11,7 @@ export async function GET() {
     const r = await fetch(`${apiBase}/leagues`, {
       headers: {
         'x-request-id': reqId,
-        'accept': 'application/json',
+        accept: 'application/json',
       },
       cache: 'no-store',
     });
@@ -27,7 +27,7 @@ export async function GET() {
             'cache-control': 'no-store',
             'x-request-id': reqId,
           },
-        }
+        },
       );
     }
 
@@ -43,7 +43,7 @@ export async function GET() {
             'cache-control': 'no-store',
             'x-request-id': reqId,
           },
-        }
+        },
       );
     }
 
@@ -67,8 +67,7 @@ export async function GET() {
           'cache-control': 'no-store',
           'x-request-id': reqId,
         },
-      }
+      },
     );
   }
 }
-

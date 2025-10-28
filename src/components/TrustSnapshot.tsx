@@ -11,7 +11,7 @@ export function TrustSnapshot({
   lastRefresh,
   schemaVersion = 'v1',
   stale = false,
-  staleAge
+  staleAge,
 }: TrustSnapshotProps) {
   const formattedDate = lastRefresh
     ? new Date(lastRefresh).toLocaleString('en-US', {
@@ -19,15 +19,13 @@ export function TrustSnapshot({
         day: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
       })
     : '—';
 
   const staleSeconds = staleAge ? parseInt(staleAge, 10) : 0;
   const staleMinutes = Math.floor(staleSeconds / 60);
-  const staleDisplay = staleMinutes > 0
-    ? `${staleMinutes}m ago`
-    : `${staleSeconds}s ago`;
+  const staleDisplay = staleMinutes > 0 ? `${staleMinutes}m ago` : `${staleSeconds}s ago`;
 
   return (
     <div className="flex items-center gap-3 text-sm" aria-label="Trust Snapshot">
@@ -54,4 +52,3 @@ export function TrustSnapshot({
     </div>
   );
 }
-

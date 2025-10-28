@@ -49,4 +49,3 @@ function rewrite(file) {
 }
 
 for (const f of walk(ROOT)) rewrite(f);
-

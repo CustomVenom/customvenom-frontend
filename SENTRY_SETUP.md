@@ -1,6 +1,7 @@
 # Sentry Setup for Preview Environment
 
 ## ✅ Configured Files
+
 - `sentry.client.config.ts` - Already exists
 - `sentry.server.config.ts` - Already exists
 - Integration with Next.js 15 - Already configured
@@ -35,6 +36,7 @@ SENTRY_TRACES_SAMPLE_RATE=0.05
 ```
 
 **Why low sample rates?**
+
 - Preview = staging/testing environment
 - 10% error sampling reduces noise
 - 5% trace sampling minimizes quota usage
@@ -43,12 +45,14 @@ SENTRY_TRACES_SAMPLE_RATE=0.05
 ### Step 3: Configure Sentry Project Settings
 
 **Project Settings → General:**
+
 ```
 Environment: preview
 Release: Enable GitHub integration
 ```
 
 **Project Settings → Integrations:**
+
 - ✅ Enable GitHub integration
 - ✅ Link to: customvenom repository
 - ✅ Auto-assign commits to releases
@@ -58,9 +62,14 @@ Release: Enable GitHub integration
 1. **Deploy to Preview** with Sentry DSN configured
 
 2. **Trigger test error:**
+
    ```tsx
    // Add to any page temporarily
-   <button onClick={() => { throw new Error('Sentry test error'); }}>
+   <button
+     onClick={() => {
+       throw new Error('Sentry test error');
+     }}
+   >
      Test Sentry
    </button>
    ```
@@ -72,6 +81,7 @@ Release: Enable GitHub integration
 ### Step 5: Verify Error Context
 
 **Expected fields in Sentry events:**
+
 ```json
 {
   "tags": {
@@ -98,6 +108,7 @@ Release: Enable GitHub integration
 ### Client Config (`sentry.client.config.ts`)
 
 **Current settings (already configured):**
+
 - Automatically captures unhandled errors
 - Captures unhandled promise rejections
 - Browser performance monitoring
@@ -106,6 +117,7 @@ Release: Enable GitHub integration
 ### Server Config (`sentry.server.config.ts`)
 
 **Current settings (already configured):**
+
 - Captures API route errors
 - Server-side errors
 - Edge function errors (middleware)
@@ -115,18 +127,21 @@ Release: Enable GitHub integration
 ## 🔍 What to Monitor
 
 ### Critical Errors (Alert Immediately)
+
 - 500 Internal Server Error
 - Database connection failures
 - Auth callback failures
 - Stripe webhook failures
 
 ### Warning Errors (Review Daily)
+
 - 400 Bad Request (might be user error)
 - Rate limit hits
 - External API timeouts
 - Failed entitlement checks
 
 ### Ignore (Filter Out)
+
 - Bot/crawler errors
 - Known development errors
 - Third-party script failures
@@ -138,6 +153,7 @@ Release: Enable GitHub integration
 **Sentry → Alerts → Create Alert Rule**
 
 ### Rule 1: Critical Errors
+
 ```
 Name: Critical Errors - Preview
 Condition: Error count > 10 in 5 minutes
@@ -146,6 +162,7 @@ Action: Email to jdewett81@gmail.com
 ```
 
 ### Rule 2: High Error Rate
+
 ```
 Name: High Error Rate - Preview
 Condition: Error rate > 5% in 10 minutes
@@ -154,6 +171,7 @@ Action: Email notification
 ```
 
 ### Rule 3: New Error Type
+
 ```
 Name: New Error Type - Preview
 Condition: First seen error
@@ -166,6 +184,7 @@ Action: Email notification (optional)
 ## 📋 Verification Checklist
 
 ### After Deploy
+
 - [ ] Visit Preview URL
 - [ ] Trigger test error
 - [ ] Check Sentry dashboard (error appears)
@@ -175,6 +194,7 @@ Action: Email notification (optional)
 - [ ] Check sourcemaps uploaded (readable stack trace)
 
 ### Error Context Checklist
+
 - [ ] Request URL included
 - [ ] User email (if authenticated)
 - [ ] Release version (commit SHA)
@@ -187,12 +207,14 @@ Action: Email notification (optional)
 ## 🔒 Security Notes
 
 **DSN is NOT a secret:**
+
 - Client DSN is exposed in browser
 - It's rate-limited by Sentry
 - Only allows sending events to YOUR project
 - Cannot read existing events
 
 **Webhook Secret IS a secret:**
+
 - Used for Stripe webhooks
 - Must not be exposed to client
 - Store in Vercel environment variables only
@@ -202,15 +224,18 @@ Action: Email notification (optional)
 ## 💰 Quota Management
 
 **Sentry Free Tier:**
+
 - 5,000 errors/month
 - 10,000 performance units/month
 - 1 project
 
 **With sampling:**
+
 - 10% error sampling = 50,000 real errors before hitting quota
 - 5% trace sampling = efficient performance monitoring
 
 **Monitor quota:**
+
 - Sentry Dashboard → Settings → Subscription
 - Check usage weekly
 - Adjust sample rates if needed
@@ -222,12 +247,14 @@ Action: Email notification (optional)
 **When ready for production:**
 
 1. **Create separate Sentry project:**
+
    ```
    Project: customvenom-frontend-production
    Environment: production
    ```
 
 2. **Higher sample rates:**
+
    ```env
    SENTRY_SAMPLE_RATE=1.0
    SENTRY_TRACES_SAMPLE_RATE=0.2
@@ -242,15 +269,15 @@ Action: Email notification (optional)
 
 ## ✅ Current Status
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Sentry Integration | ✅ Configured | Files exist |
-| Client Config | ✅ Ready | sentry.client.config.ts |
-| Server Config | ✅ Ready | sentry.server.config.ts |
-| Preview DSN | ⏭️ Need to Add | Get from sentry.io |
-| Production DSN | ⏭️ Later | Separate project |
-| Sourcemaps | ✅ Auto-upload | Next.js handles this |
-| Sample Rates | 📝 Documented | 10% errors, 5% traces |
+| Item               | Status         | Notes                   |
+| ------------------ | -------------- | ----------------------- |
+| Sentry Integration | ✅ Configured  | Files exist             |
+| Client Config      | ✅ Ready       | sentry.client.config.ts |
+| Server Config      | ✅ Ready       | sentry.server.config.ts |
+| Preview DSN        | ⏭️ Need to Add | Get from sentry.io      |
+| Production DSN     | ⏭️ Later       | Separate project        |
+| Sourcemaps         | ✅ Auto-upload | Next.js handles this    |
+| Sample Rates       | 📝 Documented  | 10% errors, 5% traces   |
 
 ---
 
@@ -273,5 +300,3 @@ Action: Email notification (optional)
 7. ⏭️ Adjust sample rates if needed
 
 **Estimated Setup Time:** 10-15 minutes
-
-

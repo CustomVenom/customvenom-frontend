@@ -57,12 +57,11 @@ export class ToolErrorBoundary extends Component<Props, State> {
             </svg>
 
             <div className="flex-1">
-              <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">
-                Tool Error
-              </h3>
+              <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">Tool Error</h3>
 
               <p className="text-sm text-red-800 dark:text-red-200 mb-3">
-                {this.props.toolName || 'This tool'} encountered an error. The issue has been logged.
+                {this.props.toolName || 'This tool'} encountered an error. The issue has been
+                logged.
               </p>
 
               {this.state.error?.message && (
@@ -82,7 +81,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
                 </button>
 
                 <button
-                  onClick={() => window.location.href = '/tools'}
+                  onClick={() => (window.location.href = '/tools')}
                   className="text-sm px-3 py-1.5 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all border border-[rgba(148,163,184,0.2)] font-semibold"
                 >
                   Back to tools
@@ -97,4 +96,3 @@ export class ToolErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
-

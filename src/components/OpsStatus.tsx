@@ -19,7 +19,7 @@ export default function OpsStatus({ api = process.env['NEXT_PUBLIC_API_BASE'] }:
       try {
         const res = await fetch(`${api}/ops-data`, { cache: 'no-store' });
         setOk(res.ok);
-        const data: Ops = await res.json().catch(() => ({} as Ops));
+        const data: Ops = await res.json().catch(() => ({}) as Ops);
         if (!alive) return;
         setRate(data?.cache?.rate ?? null);
       } catch {
@@ -43,9 +43,10 @@ export default function OpsStatus({ api = process.env['NEXT_PUBLIC_API_BASE'] }:
   return (
     <span className="inline-flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400">
       <span className={`w-2 h-2 rounded-full ${color}`}></span>
-      <span>API {label}{cache}</span>
+      <span>
+        API {label}
+        {cache}
+      </span>
     </span>
   );
 }
-
-

@@ -6,6 +6,46 @@
 2. **Generate Prisma client**: `npx prisma generate`
 3. **Run preflight checks**: `npm run preflight`
 
+## Cursor IDE Integration
+
+This project is optimized for Cursor IDE with TypeScript ESLint integration. Cursor learns from our configuration and enforces the same rules automatically.
+
+### ESLint Configuration (Cursor Compatible)
+
+Our ESLint setup uses:
+
+- **Flat config** at repo root: `eslint.config.mjs`
+- **TypeScript ESLint** with typed rules for better Cursor integration
+- **Prettier integration** to avoid stylistic conflicts
+- **Project service** for automatic tsconfig path resolution
+
+### Package Scripts (Cursor Uses These)
+
+Cursor keys off these package.json scripts when proposing or running tasks:
+
+```json
+{
+  "scripts": {
+    "type": "tsc -p . --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "fmt": "prettier --write .",
+    "preflight": "npm run type && npm run lint"
+  }
+}
+```
+
+### Pre-commit Gate (Husky + lint-staged)
+
+Pre-commit hooks ensure Cursor's local edits can't land with lint or type errors:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+npm run fmt
+npm run type
+npm run lint
+```
+
 ## Code Quality Standards
 
 ### Pre-commit Requirements
@@ -58,17 +98,38 @@ const response = await fetch('http://fantasysports.yahoo.com/api/leagues', optio
 - [ ] Check that relative paths work correctly
 
 **Example implementation:**
+
 ```typescript
 import { safeFetch } from '@/lib/http-guard';
 
 // ✅ CORRECT - Auto-upgrades to HTTPS
 const response = await safeFetch('http://fantasysports.yahoo.com/api/leagues', {
-  headers: { 'Authorization': `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 // ❌ WRONG - Bypasses HTTPS enforcement
 const response = await fetch('http://fantasysports.yahoo.com/api/leagues', options);
 ```
+
+### Optional Guardrails
+
+**Cursor learns from these optional rules:**
+
+- **Enforce bracketed env access** (avoids TS exactOptionalPropertyTypes edge cases):
+  - Uncomment the `no-restricted-syntax` rule in `eslint.config.mjs`
+  - Include `ENV_ACCESS_RULES.md` as a reference breadcrumb for Cursor
+- **Raise strictness**: Add `tseslint.configs.strictTypeChecked` to tighten rules once green locally
+
+### Quick Verify
+
+**Local verification:**
+
+```bash
+npm ci
+npm run preflight
+```
+
+**CI gate** should include lint and typecheck; keep warnings at zero to avoid drift.
 
 ### Quick Quality Check
 
@@ -98,6 +159,7 @@ git push --no-verify
 ## Troubleshooting
 
 If you encounter import resolution warnings, ensure:
+
 1. All dependencies are installed: `npm install`
 2. TypeScript paths are configured correctly in `tsconfig.json`
 3. Components exist in the expected locations

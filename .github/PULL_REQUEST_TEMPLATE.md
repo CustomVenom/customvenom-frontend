@@ -20,24 +20,28 @@
 ### Quick Validation
 
 **Local dev server:**
+
 ```bash
 npm run dev
 # Verify: http://localhost:3000 loads without errors
 ```
 
 **Build check:**
+
 ```bash
 npm run build
 # Verify: Build completes without errors
 ```
 
 **Type check:**
+
 ```bash
 npm run type-check
 # Verify: No TypeScript errors
 ```
 
 **Lint check:**
+
 ```bash
 npm run lint
 # Verify: No ESLint errors

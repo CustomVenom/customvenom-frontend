@@ -28,7 +28,7 @@ What "good" looks like
 
 - NEXT_PUBLIC_API_BASE: Text (public) for any direct browser calls
 - API_BASE: Secret (server-only) for Route Handlers or Server Actions
-- NOTION_*: Secret (if used by any server-side tooling)
+- NOTION\_\*: Secret (if used by any server-side tooling)
 
 Rule of thumb
 
@@ -39,11 +39,11 @@ Rule of thumb
 
 - /health
   - cache-control: no-store
-  - headers: access-control-allow-origin: *
+  - headers: access-control-allow-origin: \*
   - JSON must include: { ok, schema_version, last_refresh }
 - /projections and /players/:id/projection
   - cache-control: public, max-age=60, stale-if-error=86400
-  - headers: access-control-allow-origin: *
+  - headers: access-control-allow-origin: \*
   - x-key: backing object key (e.g., R2 key)
 
 ## Quick smokes

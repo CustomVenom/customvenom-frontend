@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('CLS Performance', () => {
   const pages = ['/tools', '/projections'];
-  
+
   for (const path of pages) {
     test(`CLS should be below 0.1 on ${path} page`, async ({ page }) => {
       // Enable performance monitoring
       await page.goto(path);
-      
+
       // Measure CLS by checking for layout shifts
       const cls = await page.evaluate(() => {
         return new Promise((resolve) => {
@@ -20,9 +20,9 @@ test.describe('CLS Performance', () => {
             }
             resolve(clsValue);
           });
-          
+
           observer.observe({ type: 'layout-shift', buffered: true });
-          
+
           // Resolve after a short delay to capture shifts
           setTimeout(() => {
             observer.disconnect();
@@ -30,7 +30,7 @@ test.describe('CLS Performance', () => {
           }, 2000);
         });
       });
-      
+
       // CLS should be < 0.1 for good UX
       expect(Number(cls)).toBeLessThan(0.1);
     });

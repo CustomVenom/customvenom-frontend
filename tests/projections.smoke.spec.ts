@@ -21,4 +21,3 @@ test('Projections renders and has no console errors', async ({ page }) => {
   // No console errors
   expect(errors, errors.join('\n')).toHaveLength(0);
 });
-

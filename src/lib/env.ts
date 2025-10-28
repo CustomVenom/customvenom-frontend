@@ -11,4 +11,3 @@ export const IS_DEVELOPMENT = ENVIRONMENT === 'development';
 // Feature flags
 export const ENABLE_DEV_OVERLAY = IS_DEVELOPMENT;
 export const ENABLE_CACHE_WARMER = IS_PRODUCTION;
-

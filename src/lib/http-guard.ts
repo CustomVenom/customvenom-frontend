@@ -9,20 +9,18 @@ export function enforceYahooHttps(url: string): string {
   if (!url || !url.includes('://')) {
     return url;
   }
-  
+
   try {
     const u = new URL(url);
     const host = u.hostname.toLowerCase();
     const isYahoo =
-      host === 'yahoo.com' ||
-      host.endsWith('.yahoo.com') ||
-      host.includes('fantasysports.yahoo');
-    
+      host === 'yahoo.com' || host.endsWith('.yahoo.com') || host.includes('fantasysports.yahoo');
+
     // Only upgrade HTTP to HTTPS for Yahoo domains
     if (isYahoo && u.protocol === 'http:') {
       u.protocol = 'https:';
     }
-    
+
     return u.toString();
   } catch {
     // Non-URL strings or relative paths we couldn't parse: return as-is
@@ -49,10 +47,8 @@ export function validateYahooHttps(url: string): void {
     const u = new URL(url);
     const host = u.hostname.toLowerCase();
     const isYahoo =
-      host === 'yahoo.com' ||
-      host.endsWith('.yahoo.com') ||
-      host.includes('fantasysports.yahoo');
-    
+      host === 'yahoo.com' || host.endsWith('.yahoo.com') || host.includes('fantasysports.yahoo');
+
     if (isYahoo && u.protocol !== 'https:') {
       throw new Error(`Yahoo endpoints must use HTTPS. Found: ${url}`);
     }

@@ -24,11 +24,13 @@
 2. Copy these values:
 
 **Publishable Key:**
+
 ```
 pk_test_51XXXXXXXXXXXXXXX...
 ```
 
 **Secret Key:**
+
 ```
 sk_test_51XXXXXXXXXXXXXXX...
 ```
@@ -57,12 +59,12 @@ Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/envir
 
 **Add these 4 variables (Preview environment ONLY):**
 
-| Key | Value | Environment |
-|-----|-------|-------------|
-| `STRIPE_SECRET_KEY` | `sk_test_XXX` (from Step 1) | ✅ Preview |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_test_XXX` (from Step 1) | ✅ Preview |
-| `NEXT_PUBLIC_CHECKOUT_PRICE` | `price_XXX` (from Step 2) | ✅ Preview |
-| `NEXT_PUBLIC_ENTITLEMENT_PLAN` | `pro` | ✅ Preview |
+| Key                                  | Value                       | Environment |
+| ------------------------------------ | --------------------------- | ----------- |
+| `STRIPE_SECRET_KEY`                  | `sk_test_XXX` (from Step 1) | ✅ Preview  |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_test_XXX` (from Step 1) | ✅ Preview  |
+| `NEXT_PUBLIC_CHECKOUT_PRICE`         | `price_XXX` (from Step 2)   | ✅ Preview  |
+| `NEXT_PUBLIC_ENTITLEMENT_PLAN`       | `pro`                       | ✅ Preview  |
 
 **Leave STRIPE_WEBHOOK_SECRET empty for now** (we'll get it in Step 5)
 
@@ -71,6 +73,7 @@ Go to: https://vercel.com/incarcers-projects/customvenom-frontend/settings/envir
 ### **Step 4: Redeploy Preview**
 
 After adding env vars:
+
 1. Go to: https://vercel.com/incarcers-projects/customvenom-frontend/deployments
 2. Find latest Preview deployment
 3. Click "..." → **"Redeploy"**
@@ -81,10 +84,12 @@ After adding env vars:
 ### **Step 5: Setup Stripe CLI for Webhooks (Optional - Local Testing)**
 
 **Install Stripe CLI:**
+
 - Windows: https://github.com/stripe/stripe-cli/releases
 - Or via scoop: `scoop install stripe`
 
 **Login and Forward Webhooks:**
+
 ```bash
 # Login
 stripe login
@@ -97,6 +102,7 @@ stripe listen --events checkout.session.completed --forward-to http://localhost:
 ```
 
 **Add webhook secret to .env.local:**
+
 ```bash
 STRIPE_WEBHOOK_SECRET=whsec_XXXXXXXXXXXXXXX
 ```
@@ -106,6 +112,7 @@ STRIPE_WEBHOOK_SECRET=whsec_XXXXXXXXXXXXXXX
 ### **Step 6: Test the Happy Path (Preview)**
 
 **Visit Preview URL:**
+
 ```
 https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 ```
@@ -113,16 +120,19 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 **Click "Start Checkout"**
 
 **You'll be redirected to Stripe checkout page:**
+
 - Use test card: `4242 4242 4242 4242`
 - Expiry: Any future date (e.g., 12/34)
 - CVC: Any 3 digits (e.g., 123)
 - ZIP: Any 5 digits (e.g., 12345)
 
 **Complete Checkout:**
+
 - Click "Subscribe"
 - Should redirect to `/settings?pro=1`
 
 **Check Webhook Logs:**
+
 - In Stripe Dashboard → Developers → Webhooks
 - Or in Stripe CLI output (if running locally)
 - Should see: `entitlement_toggle_preview` log entry
@@ -132,6 +142,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 ## ✅ **Success Criteria:**
 
 **You're done when:**
+
 - ✅ `/go-pro` page loads without errors
 - ✅ "Start Checkout" button redirects to Stripe
 - ✅ Test checkout completes successfully
@@ -144,22 +155,26 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 ## 🔧 **Troubleshooting:**
 
 ### **"price_missing" error:**
+
 - Check `NEXT_PUBLIC_CHECKOUT_PRICE` is set in Vercel Preview
 - Verify it starts with `price_`
 - Redeploy after adding
 
 ### **"Failed to create checkout session":**
+
 - Check `STRIPE_SECRET_KEY` is valid (starts with `sk_test_`)
 - Check Stripe dashboard for API errors
 - Verify keys are for TEST mode, not LIVE
 
 ### **Webhook not receiving events:**
+
 - For Preview: Stripe can't reach Vercel webhooks directly (need Stripe CLI locally)
 - For local testing: Use `stripe listen --forward-to http://localhost:3000/api/stripe/webhook-preview`
 - Or skip webhook testing in Preview (test locally instead)
 
 ### **NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY error:**
-- Check env var name matches exactly (with NEXT_PUBLIC_ prefix)
+
+- Check env var name matches exactly (with NEXT*PUBLIC* prefix)
 - Verify it's set for Preview environment
 - Redeploy after adding
 
@@ -174,6 +189,7 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 ```
 
 **Existing files (keep for production):**
+
 - `src/app/api/stripe/webhook/route.ts` - Production webhook (with Prisma)
 - `src/app/api/stripe/checkout/route.ts` - Production checkout (if exists)
 
@@ -181,24 +197,26 @@ https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/go-pro
 
 ## 🎯 **Preview vs Production:**
 
-| Feature | Preview | Production |
-|---------|---------|------------|
-| **Keys** | sk_test_ / pk_test_ | sk_live_ / pk_live_ |
-| **Checkout** | /api/checkout/session | /api/stripe/checkout |
-| **Webhook** | /api/stripe/webhook-preview | /api/stripe/webhook |
-| **Database** | No writes | Full Prisma integration |
-| **Purpose** | Test flow only | Real subscriptions |
+| Feature      | Preview                     | Production              |
+| ------------ | --------------------------- | ----------------------- |
+| **Keys**     | sk*test* / pk*test*         | sk*live* / pk*live*     |
+| **Checkout** | /api/checkout/session       | /api/stripe/checkout    |
+| **Webhook**  | /api/stripe/webhook-preview | /api/stripe/webhook     |
+| **Database** | No writes                   | Full Prisma integration |
+| **Purpose**  | Test flow only              | Real subscriptions      |
 
 ---
 
 ## 📊 **Quick Test Commands:**
 
 **Test checkout session creation:**
+
 ```bash
 curl -X POST https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app/api/checkout/session
 ```
 
 **Expected response:**
+
 ```json
 {
   "id": "cs_test_XXXXXXX",
@@ -234,4 +252,3 @@ Once you've tested the happy path:
 **Database:** Safe (no writes in Preview)  
 **Risk:** Zero (test mode only)  
 **Ready to test:** After adding env vars and redeploying Preview
-

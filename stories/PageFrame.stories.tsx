@@ -38,4 +38,3 @@ export const Settings: Story = {
     children: <div className="p-8">Settings content</div>,
   },
 };
-

@@ -4,15 +4,15 @@ import { parseRawReasons } from './schema';
 export type ReasonType = 'positive' | 'warning' | 'neutral';
 
 export interface RawReason {
-  key: string;           // e.g., "market_delta:up"
-  label?: string;        // optional friendly label from API
-  effect?: number;       // decimal percent, e.g., 0.021 = +2.1%
+  key: string; // e.g., "market_delta:up"
+  label?: string; // optional friendly label from API
+  effect?: number; // decimal percent, e.g., 0.021 = +2.1%
 }
 
 export interface ReasonChip {
   label: string;
-  effectPct: number;     // clamped percent, e.g., 2.1
-  type: ReasonType;      // maps to your Badge intents
+  effectPct: number; // clamped percent, e.g., 2.1
+  type: ReasonType; // maps to your Badge intents
 }
 
 // Hard cap for visible effect
@@ -83,7 +83,7 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
   });
 
   // Filter out zero-effect chips (no value to user)
-  const nonZero = normalized.filter(n => Math.abs(n.effectPct) > 0.01);
+  const nonZero = normalized.filter((n) => Math.abs(n.effectPct) > 0.01);
 
   // If all effects are ~0, return empty
   if (!nonZero.length) return [];
@@ -97,7 +97,7 @@ export function toReasonChips(raw: unknown): ReasonChip[] {
     .slice(0, MAX_CHIPS);
 
   // Final map to chip type
-  return top.map(t => ({
+  return top.map((t) => ({
     label: t.label,
     effectPct: t.effectPct,
     type: inferType(t.effectPct),
@@ -108,7 +108,6 @@ function humanizeKey(key: string): string {
   // "market_delta:up" → "Market delta (up)"
   const [base, suffix] = key.split(':');
   if (!base) return key; // fallback if split fails
-  const basePretty = base.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const basePretty = base.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   return suffix ? `${basePretty} (${suffix})` : basePretty;
 }
-
