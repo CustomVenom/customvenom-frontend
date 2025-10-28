@@ -58,7 +58,7 @@ export default function YahooConnectButton() {
     setLoading(true);
     const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const currentPath = window.location.pathname + window.location.search;
-    window.location.href = `${API_BASE}/api/yahoo/signin?from=${encodeURIComponent(currentPath)}`;
+    window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(currentPath)}`;
   };
 
   const refresh = async () => {

@@ -1,112 +1,50 @@
-﻿// Leagues Tool Page
-// Provider-agnostic league management and connection
-//
-// Architecture:
-// - Fetches leagues from /app/me/leagues (proxy to Workers API)
-// - Workers API sources leagues via adapters (src/lib/leagues/adapters.ts)
-// - Entitlements and synced state come from Workers API for server-side enforcement
-//
-// Future: Can use fetchAllLeagues() directly for client-side league fetching
-// once Workers API endpoints are implemented.
+﻿'use client'
 
-import { cookies } from 'next/headers';
+import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo'
+import Link from 'next/link'
 
-import LeaguesTable from './components/LeaguesTable';
-import { RefreshLeaguesButton } from './components/RefreshLeaguesButton';
+export default function LeaguesPage() {
+  const { data: me, isLoading: isLoadingMe, isError: isErrorMe } = useYahooMe()
+  const { data: leagues, isLoading: isLoadingLeagues, isError: isErrorLeagues } = useYahooLeagues()
 
-import ToolsTabs from '@/components/ToolsTabs';
-import type { MeLeaguesResponse } from '@/types/leagues';
+  if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>
+  if (isErrorMe || isErrorLeagues) return <div>Could not load Yahoo data. Please connect Yahoo.</div>
 
-export const dynamic = 'force-dynamic';
-
-async function getMeLeagues(): Promise<MeLeaguesResponse | null> {
-  try {
-    const baseUrl = process.env['NEXT_PUBLIC_FRONTEND_BASE'] || 'https://www.customvenom.com';
-    const r = await fetch(`${baseUrl}/app/me/leagues`, {
-      cache: 'no-store',
-      headers: {
-        cookie: cookies().toString(),
-      },
-    });
-
-    if (!r.ok) {
-      console.error('[getMeLeagues]', r.status, await r.text());
-      return null;
-    }
-
-    return await r.json();
-  } catch (error) {
-    console.error('[getMeLeagues]', error);
-    return null;
+  if (!me?.guid) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-3">
+        <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
+        <p>Please connect Yahoo to view your leagues.</p>
+        <Link href="/tools" className="text-blue-500 hover:underline">
+          Go to Tools to Connect Yahoo
+        </Link>
+      </div>
+    )
   }
-}
-
-export default async function LeaguesPage() {
-  const cookieStore = await cookies();
-
-  // Check for provider tokens as fallback
-  const { auth } = await import('../../../lib/auth');
-  const session = await auth();
-  const yahooToken = session?.user?.sub;
-  const sleeperToken = cookieStore.get('sl_at')?.value;
-  const espnToken = cookieStore.get('espn_at')?.value;
-
-  const hasAnyConnection = yahooToken || sleeperToken || espnToken;
-
-  // Try to fetch from API
-  const meData = await getMeLeagues();
 
   return (
-    <>
-      <h1 className="h1">Fantasy Leagues</h1>
-      <ToolsTabs />
-
-      <div className="section">
-        {!hasAnyConnection && !meData ? (
-          // No providers connected - redirect to tools page
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
-            <h2 className="h2 mb-4">Connect Your Fantasy League</h2>
-            <p className="text-muted mb-6">
-              To connect your fantasy league, please go to the Tools page.
-            </p>
-            <a
-              href="/tools"
-              className="cv-btn-primary inline-block px-6 py-3 rounded-lg text-white bg-purple-600 hover:bg-purple-700 transition-colors"
-            >
-              Go to Tools
-            </a>
-          </div>
-        ) : meData ? (
-          // API data available - show entitlement-aware table
-          <div className="space-y-6">
-            {/* Provider Status Bar */}
-            {meData.connections.length > 0 && (
-              <div className="flex flex-wrap gap-2 items-center justify-between">
-                <div className="flex flex-wrap gap-2 items-center">
-                  {meData.connections.map((conn) => (
-                    <span
-                      key={conn.provider}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                    >
-                      ✓ {conn.provider.charAt(0).toUpperCase() + conn.provider.slice(1)} Connected
-                    </span>
-                  ))}
-                </div>
-                <RefreshLeaguesButton />
-              </div>
-            )}
-
-            {/* Leagues Table */}
-            <LeaguesTable initialData={meData} />
-          </div>
-        ) : (
-          // Fallback: has connections but no API data yet
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
-            <h3 className="h3 mb-2">Loading Leagues</h3>
-            <p className="text-muted">Fetching your leagues from connected providers...</p>
-          </div>
-        )}
+    <div className="mx-auto max-w-6xl px-4 py-3">
+      <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
+      
+      {/* Clear Connected PASS Indicator */}
+      <div role="status" className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1 mb-4">
+        Yahoo Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
       </div>
-    </>
-  );
+
+      {leagues?.league_keys && leagues.league_keys.length > 0 ? (
+        <>
+          <h2 className="text-md font-semibold mt-4 mb-2">Your Leagues:</h2>
+          <ul className="space-y-2">
+            {leagues.league_keys.map((key) => (
+              <li key={key} className="p-2 border rounded bg-gray-50">
+                {key}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p className="mt-4">No leagues found for this Yahoo account.</p>
+      )}
+    </div>
+  )
 }
