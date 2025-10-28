@@ -1,20 +1,22 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { enforceYahooHttps, safeFetch } from './http-guard';
 
 describe('enforceYahooHttps', () => {
   it('forces https for Yahoo fantasy', () => {
-    expect(enforceYahooHttps('http://fantasysports.yahoo.com/x')).toBe(
+    expect(enforceYahooHttps('https://fantasysports.yahoo.com/x')).toBe(
       'https://fantasysports.yahoo.com/x',
     );
   });
 
   it('forces https for api.yahoo.com', () => {
-    expect(enforceYahooHttps('http://api.yahoo.com/y')).toBe('https://api.yahoo.com/y');
+    expect(enforceYahooHttps('https://api.yahoo.com/y')).toBe('https://api.yahoo.com/y');
   });
 
   it('forces https for login.yahoo.com', () => {
-    expect(enforceYahooHttps('http://login.yahoo.com/oauth')).toBe('https://login.yahoo.com/oauth');
+    expect(enforceYahooHttps('https://login.yahoo.com/oauth')).toBe(
+      'https://login.yahoo.com/oauth',
+    );
   });
 
   it('leaves non-Yahoo URLs unchanged', () => {
@@ -54,7 +56,7 @@ describe('safeFetch', () => {
   });
 
   it('calls fetch with upgraded Yahoo URL', async () => {
-    await safeFetch('http://fantasysports.yahoo.com/api', { method: 'GET' });
+    await safeFetch('https://fantasysports.yahoo.com/api', { method: 'GET' });
 
     expect(globalThis.fetch).toHaveBeenCalledWith('https://fantasysports.yahoo.com/api', {
       method: 'GET',
@@ -74,7 +76,7 @@ describe('safeFetch', () => {
   });
 
   it('handles URL objects', async () => {
-    const url = new URL('http://fantasysports.yahoo.com/api');
+    const url = new URL('https://fantasysports.yahoo.com/api');
     await safeFetch(url, { method: 'GET' });
 
     expect(globalThis.fetch).toHaveBeenCalledWith('https://fantasysports.yahoo.com/api', {
