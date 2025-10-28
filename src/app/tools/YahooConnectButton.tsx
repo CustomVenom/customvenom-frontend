@@ -17,6 +17,15 @@ export default function YahooConnectButton() {
     let alive = true;
     (async () => {
       try {
+        // Check if we're coming from OAuth callback (URL has code/state params)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isOAuthCallback = urlParams.has('code') || urlParams.has('state');
+
+        // Add delay after OAuth callback to prevent auth_required flicker
+        if (isOAuthCallback) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
         const result = await probeYahooMe();
         if (!alive) return;
 

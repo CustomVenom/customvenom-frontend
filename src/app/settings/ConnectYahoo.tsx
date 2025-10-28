@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { SportChooserHidden } from '@/components/SportChooser';
 import { useSelectedTeam } from '@/lib/selection';
+import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
 
 interface League {
   id: string;
@@ -40,17 +41,12 @@ export function ConnectYahoo() {
 
     const checkConnection = async () => {
       try {
-        // Check if user is connected
-        const userRes = await fetch(`${API_BASE}/yahoo/me`, {
-          credentials: 'include',
-          cache: 'no-store',
-          headers: { accept: 'application/json' }
-        });
+        // Check if user is connected using unified API
+        const result = await probeYahooMe();
 
         if (!alive) return;
 
-        if (userRes.ok) {
-          await userRes.json();
+        if (result.ok) {
           setConnected(true);
 
           // Fetch leagues (clamp to NFL unless multi-sport enabled)

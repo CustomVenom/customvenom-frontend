@@ -111,9 +111,10 @@ export async function GET(req: NextRequest) {
     const to = new URL(returnTo, req.nextUrl.origin);
     const res = NextResponse.redirect(to, { status: 302 });
     // Cookie domain: .customvenom.com for cross-subdomain, Secure for HTTPS only
+    // Set cv_yahoo cookie that the Workers API expects
     res.headers.append(
       'Set-Cookie',
-      `y_at=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`
+      `cv_yahoo=${encodeURIComponent(tok.access_token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.customvenom.com; Max-Age=${maxAge}`
     );
 
     if (tok.xoauth_yahoo_guid) {

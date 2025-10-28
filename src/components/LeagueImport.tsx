@@ -4,6 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
 
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
@@ -23,16 +24,12 @@ export function LeagueImport() {
   useEffect(() => {
     const checkYahooConnection = async () => {
       try {
-        const response = await fetch('/api/yahoo/me', {
-          credentials: 'include',
-          headers: { accept: 'application/json' }
-        });
-        if (response.ok) {
-          const data = await response.json();
+        const result = await probeYahooMe();
+        if (result.ok && result.data) {
           setYahooConnected(true);
           // Extract GUID from Yahoo response
-          if (data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
-            setYahooGuid(data.fantasy_content.users[0].user[0].guid);
+          if (result.data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
+            setYahooGuid(result.data.fantasy_content.users[0].user[0].guid);
           }
         }
       } catch (err) {
