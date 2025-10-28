@@ -78,9 +78,6 @@ export function LeagueSwitcher() {
     return <span className="text-xs text-gray-500">No leagues</span>;
   }
 
-  const active = data.active_league ?? data.synced_leagues[0];
->>>>>>> Stashed changes
-
   const handleChange = async (newActive: string) => {
     if (updating) return;
 
