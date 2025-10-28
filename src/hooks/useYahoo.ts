@@ -2,6 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 
+type YahooMe = { user?: { guid?: string } };
+
 export function useYahooMe() {
   const api = process.env['NEXT_PUBLIC_API_BASE']!;
   return useQuery({
@@ -17,12 +19,15 @@ export function useYahooMe() {
         console.warn('[useYahooMe] /yahoo/me error', { status: r.status, request_id: reqId });
         throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
       }
-      return r.json() as { guid: string };
+      const data = (await r.json()) as YahooMe;
+      return { guid: data.user?.guid ?? '' };
     },
     retry: false,
     staleTime: 60_000,
   });
 }
+
+type YahooLeagues = { league_keys?: string[] };
 
 export function useYahooLeagues() {
   const api = process.env['NEXT_PUBLIC_API_BASE']!;
@@ -42,7 +47,7 @@ export function useYahooLeagues() {
         });
         throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
       }
-      return r.json() as { league_keys: string[] };
+      return (await r.json()) as YahooLeagues;
     },
     retry: false,
     staleTime: 60_000,
