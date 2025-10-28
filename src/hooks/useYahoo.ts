@@ -1,46 +1,50 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchJson } from '@/lib/api';
 
 export function useYahooMe() {
+  const api = process.env.NEXT_PUBLIC_API_BASE!;
   return useQuery({
     queryKey: ['yahoo', 'me'],
     queryFn: async () => {
-      const res = await fetchJson('/yahoo/me');
-      if (!res.ok) {
-        const reqId = res.requestId || 'unknown';
-        console.warn('Yahoo fetch error', {
-          path: '/yahoo/me',
-          status: 'error',
-          request_id: reqId,
-          error: res.error,
-        });
-        throw new Error(res.error);
+      const r = await fetch(`${api}/yahoo/me`, {
+        credentials: 'include',
+        headers: { accept: 'application/json' },
+        cache: 'no-store',
+      });
+      if (!r.ok) {
+        const reqId = r.headers.get('x-request-id') || 'unknown';
+        console.warn('[useYahooMe] /yahoo/me error', { status: r.status, request_id: reqId });
+        throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
       }
-      return res.data as { guid: string };
+      return r.json() as { guid: string };
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+    staleTime: 60_000,
   });
 }
 
 export function useYahooLeagues() {
+  const api = process.env.NEXT_PUBLIC_API_BASE!;
   return useQuery({
     queryKey: ['yahoo', 'leagues'],
     queryFn: async () => {
-      const res = await fetchJson('/yahoo/leagues?format=json');
-      if (!res.ok) {
-        const reqId = res.requestId || 'unknown';
-        console.warn('Yahoo fetch error', {
-          path: '/yahoo/leagues',
-          status: 'error',
+      const r = await fetch(`${api}/yahoo/leagues?format=json`, {
+        credentials: 'include',
+        headers: { accept: 'application/json' },
+        cache: 'no-store',
+      });
+      if (!r.ok) {
+        const reqId = r.headers.get('x-request-id') || 'unknown';
+        console.warn('[useYahooLeagues] /yahoo/leagues error', {
+          status: r.status,
           request_id: reqId,
-          error: res.error,
         });
-        throw new Error(res.error);
+        throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
       }
-      return res.data as { league_keys: string[] };
+      return r.json() as { league_keys: string[] };
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+    staleTime: 60_000,
   });
 }

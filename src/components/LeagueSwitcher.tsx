@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { fetchJson } from '@/lib/api';
 import { LeagueChooser } from './LeagueChooser';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
@@ -26,25 +25,33 @@ export function LeagueSwitcher() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      const res = await fetchJson('/api/leagues', {
+      const api = process.env.NEXT_PUBLIC_API_BASE!;
+      const r = await fetch(`${api}/yahoo/leagues?format=json`, {
+        credentials: 'include',
+        headers: { accept: 'application/json' },
+        cache: 'no-store',
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
-      requestId = res.requestId;
+      requestId = r.headers.get('x-request-id') || 'no-request-id';
 
-      if (!res.ok) {
-        setErrorDetails(JSON.stringify({ requestId, error: res.error }, null, 2));
-        if (res.error === 'not_found') {
-          throw new Error('leagues_endpoint_not_found');
-        }
-        if (res.error === 'auth_required') {
+      if (!r.ok) {
+        console.warn('[LeagueSwitcher] /yahoo/leagues error', {
+          status: r.status,
+          request_id: requestId,
+        });
+        setErrorDetails(JSON.stringify({ requestId, status: r.status }, null, 2));
+        if (r.status === 401) {
           throw new Error('auth_required');
         }
-        throw new Error(`HTTP ${res.error}`);
+        throw new Error(`HTTP ${r.status}`);
       }
 
-      const json = res.data as MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string };
+      const json = (await r.json()) as MeLeaguesResponse & {
+        defaultLeagueId?: string;
+        lastSync?: string;
+      };
 
       // Handle empty leagues array explicitly
       if (!json.leagues || json.leagues.length === 0) {
@@ -112,13 +119,19 @@ export function LeagueSwitcher() {
 
     (async () => {
       try {
-        const res = await fetchJson('/app/me/leagues');
+        const api = process.env.NEXT_PUBLIC_API_BASE!;
+        const r = await fetch(`${api}/yahoo/leagues?format=json`, {
+          credentials: 'include',
+          headers: { accept: 'application/json' },
+          cache: 'no-store',
+        });
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.error}`);
+        if (!r.ok) {
+          console.warn('[LeagueSwitcher] /yahoo/leagues error', { status: r.status });
+          throw new Error(r.status === 401 ? 'auth_required' : `HTTP ${r.status}`);
         }
 
-        const json = res.data as MeLeaguesResponse;
+        const json = (await r.json()) as MeLeaguesResponse;
 
         if (!cancelled) {
           if (json) {
@@ -166,11 +179,8 @@ export function LeagueSwitcher() {
 
     setUpdating(true);
     try {
-      await fetchJson('/app/me/active-league', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ league_key: newActive }),
-      });
+      // Note: This endpoint may not exist in Workers API yet
+      // For now, just store in localStorage as fallback
       localStorage.setItem('cv_last_league', newActive);
       setSelectedLeague(newActive);
       setData((prev) => (prev ? { ...prev, active_league: newActive } : null));
@@ -184,17 +194,11 @@ export function LeagueSwitcher() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const res = await fetchJson('/api/leagues/refresh', {
-        method: 'POST',
-        headers: { accept: 'application/json' },
-      });
-
-      if (res.ok) {
-        // Wait a moment for backend to process, then reload
-        setTimeout(() => {
-          fetchLeagues();
-        }, 1000);
-      }
+      // For now, just trigger a refetch of leagues
+      // TODO: Implement refresh endpoint in Workers API if needed
+      setTimeout(() => {
+        fetchLeagues();
+      }, 1000);
     } catch (err) {
       console.error('[LeagueSwitcher] Refresh failed', err);
     } finally {
