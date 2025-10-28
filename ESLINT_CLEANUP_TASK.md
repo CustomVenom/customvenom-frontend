@@ -2,7 +2,7 @@
 
 **Priority**: Low  
 **Estimated Time**: 15 minutes  
-**Status**: Pending  
+**Status**: Pending
 
 ## 🎯 **Objective**
 
@@ -11,8 +11,9 @@ Clean up remaining ESLint warnings to ensure pre-push hook stays green.
 ## 📋 **Current Issues**
 
 ### **ESLint Warnings (7 warnings)**
+
 - `src/app/api/yahoo/refresh/route.ts:3:7` - `TOKEN_URL` is assigned but never used
-- `src/app/settings/ConnectYahoo.tsx:71:16` - `_err` is defined but never used  
+- `src/app/settings/ConnectYahoo.tsx:71:16` - `_err` is defined but never used
 - `src/app/settings/ConnectYahoo.tsx:105:14` - `_err` is defined but never used
 - `src/app/tools/yahoo/[leagueId]/page.tsx:1:10` - `cookies` is defined but never used
 - `src/lib/auth.ts:8:8` - `GoogleProvider` is defined but never used
@@ -20,6 +21,7 @@ Clean up remaining ESLint warnings to ensure pre-push hook stays green.
 - `src/utils/safeFetchJson.ts:1:8` - Unable to resolve path to module 'server-only'
 
 ### **Test Issues (20 failed tests)**
+
 - Playwright tests failing due to configuration issues
 - Missing `@/lib/logger` import causing test failures
 - Test runner configuration needs fixing
@@ -27,11 +29,13 @@ Clean up remaining ESLint warnings to ensure pre-push hook stays green.
 ## 🔧 **Fix Strategy**
 
 ### **Unused Variables**
+
 1. **Prefix with underscore**: Change `TOKEN_URL` to `_TOKEN_URL`
 2. **Remove unused imports**: Remove `cookies` import if not needed
 3. **Remove unused providers**: Remove `GoogleProvider` if not used
 
 ### **Import Resolution**
+
 1. **Install missing package**: `npm install server-only`
 2. **Or remove imports**: If `server-only` not needed, remove the imports
 

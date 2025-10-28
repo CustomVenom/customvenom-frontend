@@ -3,9 +3,11 @@
 ## ✅ Automatic Deployment Options
 
 ### Option 1: GitHub Actions (Recommended)
+
 The repository now includes a GitHub Actions workflow that will automatically deploy to Vercel when you push to the main branch.
 
 **Prerequisites:**
+
 1. Set up Vercel secrets in GitHub:
    - Go to: https://github.com/CustomVenom/customvenom-frontend/settings/secrets/actions
    - Add these secrets:
@@ -14,11 +16,13 @@ The repository now includes a GitHub Actions workflow that will automatically de
      - `VERCEL_PROJECT_ID`: Your Vercel project ID
 
 **How it works:**
+
 - Push to `main` branch → GitHub Actions triggers
 - Builds with production environment variables
 - Deploys to Vercel production automatically
 
 ### Option 2: Vercel Dashboard Configuration
+
 1. Go to: https://vercel.com/dashboard
 2. Select your `customvenom-frontend` project
 3. Go to Settings → Environment Variables
@@ -28,15 +32,18 @@ The repository now includes a GitHub Actions workflow that will automatically de
 5. Redeploy from the dashboard
 
 ### Option 3: Local Deployment Scripts
+
 Run one of these scripts locally:
 
 **Bash (macOS/Linux):**
+
 ```bash
 chmod +x scripts/deploy-production.sh
 ./scripts/deploy-production.sh
 ```
 
 **PowerShell (Windows):**
+
 ```powershell
 ./scripts/deploy-production.ps1
 ```
@@ -80,11 +87,13 @@ NEXT_PUBLIC_ENABLE_YAHOO=true
 ## 📝 Troubleshooting
 
 ### Vercel Deployment Issues
+
 - Check Vercel dashboard for deployment status
 - Verify environment variables are set correctly
 - Check build logs for any errors
 
 ### OAuth Flow Issues
+
 - Verify Yahoo Developer Console redirect URI matches exactly
 - Check Workers API logs for OAuth errors
 - Ensure all environment variables are set correctly

@@ -10,6 +10,7 @@
 ### 1. Clear Browser Cookies ⏳
 
 **In browser DevTools**:
+
 1. Open **Application** → **Cookies**
 2. Select `https://www.customvenom.com`
 3. Delete these cookies:
@@ -36,6 +37,7 @@
 ### 3. Run Browser Smoke Test ⏳
 
 **Steps**:
+
 1. Navigate to: `https://www.customvenom.com/tools`
 2. Open **DevTools** → **Network** tab
 3. Click **"Connect Yahoo"** button
@@ -51,13 +53,13 @@
 ```javascript
 // Should return: { hasCookie: true }
 await fetch('https://api.customvenom.com/api/yahoo/session', {
-  credentials: 'include'
-}).then(r => r.json())
+  credentials: 'include',
+}).then((r) => r.json());
 
 // Should return: 200
 await fetch('https://api.customvenom.com/api/yahoo/session/me', {
-  credentials: 'include'
-}).then(r => r.status)
+  credentials: 'include',
+}).then((r) => r.status);
 ```
 
 ---
@@ -67,15 +69,19 @@ await fetch('https://api.customvenom.com/api/yahoo/session/me', {
 ### On `/api/yahoo/callback` response, verify:
 
 **Set-Cookie header**:
+
 ```http
 Set-Cookie: cv_yahoo=eyJ...; Secure; HttpOnly; SameSite=None; Path=/; Max-Age=86400; Domain=.customvenom.com
 ```
+
 ✅ Must include: `SameSite=None`, `Secure`, `HttpOnly`
 
 **Location header**:
+
 ```http
 Location: https://www.customvenom.com/tools?connected=yahoo
 ```
+
 ✅ Should return to original page
 
 ---
@@ -85,19 +91,22 @@ Location: https://www.customvenom.com/tools?connected=yahoo
 ### Frontend Fetch Verification
 
 **All `/yahoo/*` calls must include**:
+
 ```javascript
 await fetch('https://api.customvenom.com/api/yahoo/...', {
-  credentials: 'include'
-})
+  credentials: 'include',
+});
 ```
 
 **NO Authorization headers**:
+
 - ❌ Don't include `Authorization: Bearer ...`
 - ✅ Let Workers API read cookie from request
 
 ### API CORS Headers
 
 **All responses must include**:
+
 ```http
 Access-Control-Allow-Origin: https://www.customvenom.com
 Access-Control-Allow-Credentials: true
@@ -105,11 +114,13 @@ Vary: Origin
 ```
 
 **OPTIONS preflight**:
+
 - Must return 204 with same headers
 
 ### Cookie Attributes
 
 **`cv_yahoo` cookie must have**:
+
 - `SameSite=None` (not `Lax`)
 - `Secure`
 - `HttpOnly`
@@ -140,8 +151,8 @@ test('Yahoo OAuth flow', async ({ page }) => {
   // Verify session cookie is set
   const session = await page.evaluate(() =>
     fetch('https://api.customvenom.com/api/yahoo/session', {
-      credentials: 'include'
-    }).then(r => r.json())
+      credentials: 'include',
+    }).then((r) => r.json()),
   );
   expect(session.hasCookie).toBe(true);
 });
@@ -199,16 +210,19 @@ Add to `.github/workflows/`:
 ## Troubleshooting
 
 ### Cookie not set
+
 - Check: Network tab shows `Set-Cookie` header
 - Check: `SameSite=None` requires HTTPS
 - Check: Request includes `credentials: "include"`
 
 ### Session returns `{ hasCookie: false }`
+
 - Check: Cookie exists in Application → Cookies
 - Check: CORS allows credentials
 - Check: No NextAuth cookies interfering
 
 ### Redirect fails
+
 - Check: Yahoo Console redirect URI is exact match
 - Check: `cv_return_to` cookie was set
 - Check: Redirect URL construction
@@ -230,10 +244,12 @@ Add to `.github/workflows/`:
 ## Files Modified
 
 ### Workers API
+
 - `src/routes/yahoo.ts` - Complete OAuth implementation
 - Commit: `5524b56`
 
 ### Frontend
+
 - `src/components/ConnectYahoo.tsx`
 - `src/app/tools/leagues/page.tsx`
 - `src/app/settings/YahooPanel.tsx`

@@ -1,7 +1,7 @@
-"use client";
-import { useState } from "react";
-import { useSession } from "@/hooks/useSession";
-import { fetchJson } from "@/lib/api";
+'use client';
+import { useState } from 'react';
+import { useSession } from '@/hooks/useSession';
+import { fetchJson } from '@/lib/api';
 
 export default function ConnectLeagues() {
   const { sess } = useSession();
@@ -44,18 +44,16 @@ export default function ConnectLeagues() {
         disabled={busy}
         onClick={onClick}
         className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm
-          ${connected
-            ? "border-gray-300 text-gray-800 hover:bg-gray-50"
-            : "border-blue-300 text-blue-700 hover:bg-blue-50"
+          ${
+            connected
+              ? 'border-gray-300 text-gray-800 hover:bg-gray-50'
+              : 'border-blue-300 text-blue-700 hover:bg-blue-50'
           }
           disabled:opacity-60`}
-        title={connected
-          ? "Refresh or re-sync your leagues"
-          : "Connect your fantasy provider"
-        }
+        title={connected ? 'Refresh or re-sync your leagues' : 'Connect your fantasy provider'}
       >
-        <span aria-hidden="true">{connected ? "↻" : "🔗"}</span>
-        <span>{busy ? "Working…" : (connected ? "Refresh leagues" : "Connect leagues")}</span>
+        <span aria-hidden="true">{connected ? '↻' : '🔗'}</span>
+        <span>{busy ? 'Working…' : connected ? 'Refresh leagues' : 'Connect leagues'}</span>
       </button>
       {msg && (
         <span className="text-xs text-gray-600" role="status">

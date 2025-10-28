@@ -3,6 +3,7 @@
 ## Quick Setup (Free/Hobby Plan)
 
 ### 1. Project Settings
+
 - **Framework**: Next.js (auto-detected)
 - **Node.js Version**: 20.x (matches package.json engines)
 - **Install Command**: `npm ci`
@@ -10,33 +11,41 @@
 - **Output Directory**: `.vercel/output`
 
 ### 2. Environment Variables
+
 Add these per environment:
 
 **Production:**
+
 ```
 NEXT_PUBLIC_API_BASE=https://api.customvenom.com
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=false
 ```
 
 **Preview:**
+
 ```
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=true
 ```
 
 ### 3. Build Optimization
+
 The `vercel.json` file includes:
+
 - **Ignored Build Step**: Skips builds for docs-only changes to save minutes
 - **Git Ignore Command**: Only builds when source files change
 
 ### 4. CORS Configuration
+
 Ensure your Workers API allows the Vercel preview origin:
+
 - Add `https://customvenom-frontend-*.vercel.app` to CORS origins
 - Keep `Access-Control-Allow-Credentials: true` for cookies
 
 ## Files Created
 
 ### `vercel.json`
+
 ```json
 {
   "build": { "env": {} },
@@ -47,6 +56,7 @@ Ensure your Workers API allows the Vercel preview origin:
 ```
 
 ### `.vercel/project.json` (Template)
+
 ```json
 {
   "orgId": "your-org-id",

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function AuthErrorPage() {
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] as string;
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">

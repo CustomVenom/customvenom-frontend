@@ -4,7 +4,13 @@ interface ErrorWithDigest extends Error {
   digest?: string;
 }
 
-export default function SettingsError({ error, reset }: { error: ErrorWithDigest; reset: () => void }) {
+export default function SettingsError({
+  error,
+  reset,
+}: {
+  error: ErrorWithDigest;
+  reset: () => void;
+}) {
   // Minimal structured log; avoid leaking in UI
   console.error(
     JSON.stringify({
@@ -12,7 +18,7 @@ export default function SettingsError({ error, reset }: { error: ErrorWithDigest
       digest: error?.digest ?? null,
       message: String(error),
       stack: error && error.stack ? String(error.stack) : null,
-    })
+    }),
   );
 
   return (

@@ -66,7 +66,6 @@ export function AuthButtons({ session }: AuthButtonsProps) {
           Continue with X
         </button>
 
-
         <button
           onClick={() => signIn('facebook', { callbackUrl: '/settings' })}
           className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-[#1877f2] border border-[#1877f2] rounded-lg text-white font-medium cursor-pointer transition-all hover:bg-[#166fe5]"

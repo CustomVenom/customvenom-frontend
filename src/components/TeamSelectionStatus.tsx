@@ -12,7 +12,9 @@ export default function TeamSelectionStatus() {
         <div className="flex items-center justify-between">
           <div>
             <div className="font-medium">Choose Your Team</div>
-            <div className="text-sm opacity-80">Select a team to access personalized tools and recommendations.</div>
+            <div className="text-sm opacity-80">
+              Select a team to access personalized tools and recommendations.
+            </div>
           </div>
           <button
             onClick={() => {

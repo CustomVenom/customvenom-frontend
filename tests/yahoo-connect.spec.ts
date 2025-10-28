@@ -22,8 +22,9 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': 'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state'
-        }
+          Location:
+            'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state',
+        },
       });
     });
 
@@ -32,9 +33,10 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': 'https://www.customvenom.com/tools?connected=yahoo',
-          'Set-Cookie': 'cv_yahoo=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400'
-        }
+          Location: 'https://www.customvenom.com/tools?connected=yahoo',
+          'Set-Cookie':
+            'cv_yahoo=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400',
+        },
       });
     });
 
@@ -50,10 +52,10 @@ test.describe('Yahoo Connect Flow', () => {
             {
               key: 'test-league-key',
               name: 'Test Fantasy League',
-              season: '2025'
-            }
-          ]
-        })
+              season: '2025',
+            },
+          ],
+        }),
       });
     });
 
@@ -69,10 +71,10 @@ test.describe('Yahoo Connect Flow', () => {
             {
               key: 'test-team-key',
               name: 'Test Team',
-              manager: 'test-manager'
-            }
-          ]
-        })
+              manager: 'test-manager',
+            },
+          ],
+        }),
       });
     });
 
@@ -89,16 +91,16 @@ test.describe('Yahoo Connect Flow', () => {
               id: 'test-player-1',
               name: 'Test Player 1',
               pos: 'QB',
-              team: 'DAL'
+              team: 'DAL',
             },
             {
               id: 'test-player-2',
               name: 'Test Player 2',
               pos: 'RB',
-              team: 'SF'
-            }
-          ]
-        })
+              team: 'SF',
+            },
+          ],
+        }),
       });
     });
 
@@ -141,8 +143,8 @@ test.describe('Yahoo Connect Flow', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           ok: false,
-          error: 'Please connect Yahoo to continue.'
-        })
+          error: 'Please connect Yahoo to continue.',
+        }),
       });
     });
 
@@ -164,8 +166,9 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': 'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state'
-        }
+          Location:
+            'https://api.login.yahoo.com/oauth2/request_auth?client_id=test&redirect_uri=https://api.customvenom.com/api/yahoo/callback&response_type=code&scope=fspt-r&state=test-state',
+        },
       });
     });
 
@@ -174,9 +177,10 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          'Location': 'https://www.customvenom.com/tools?connected=yahoo',
-          'Set-Cookie': 'y_at=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400'
-        }
+          Location: 'https://www.customvenom.com/tools?connected=yahoo',
+          'Set-Cookie':
+            'y_at=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400',
+        },
       });
     });
 
@@ -186,8 +190,8 @@ test.describe('Yahoo Connect Flow', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          hasCookie: true
-        })
+          hasCookie: true,
+        }),
       });
     });
 
@@ -197,8 +201,8 @@ test.describe('Yahoo Connect Flow', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          user: { email: 'test@example.com' }
-        })
+          user: { email: 'test@example.com' },
+        }),
       });
     });
 
@@ -224,7 +228,7 @@ test.describe('Yahoo Connect Flow', () => {
     // Test session endpoints
     const sessionResponse = await page.evaluate(async () => {
       const response = await fetch('https://api.customvenom.com/api/yahoo/session', {
-        credentials: 'include'
+        credentials: 'include',
       });
       return response.json();
     });
@@ -232,7 +236,7 @@ test.describe('Yahoo Connect Flow', () => {
 
     const sessionMeResponse = await page.evaluate(async () => {
       const response = await fetch('https://api.customvenom.com/api/yahoo/session/me', {
-        credentials: 'include'
+        credentials: 'include',
       });
       return response.status;
     });

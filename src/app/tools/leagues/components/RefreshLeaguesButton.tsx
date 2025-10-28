@@ -16,7 +16,7 @@ export function RefreshLeaguesButton() {
           await fetch('/api/providers/yahoo/leagues', {
             cache: 'no-store',
             credentials: 'include',
-            headers: { accept: 'application/json' }
+            headers: { accept: 'application/json' },
           });
           // Refresh the page to show updated data
           location.reload();

@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
   try {
     const r = await fetch(`${apiBase}/session`, {
       headers: {
-        cookie: request.headers.get('cookie') || ''
+        cookie: request.headers.get('cookie') || '',
       },
-      credentials: 'include'
+      credentials: 'include',
     });
 
     const body = await r.text();

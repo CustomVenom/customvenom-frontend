@@ -67,8 +67,8 @@ In browser console on `www.customvenom.com`, run:
 ```javascript
 // Should return { hasCookie: true }
 await fetch('https://api.customvenom.com/api/yahoo/session', {
-  credentials: "include"
-}).then(r => r.json())
+  credentials: 'include',
+}).then((r) => r.json());
 ```
 
 **Expected**: `{ hasCookie: true }`
@@ -78,8 +78,8 @@ await fetch('https://api.customvenom.com/api/yahoo/session', {
 ```javascript
 // Should return HTTP 200
 await fetch('https://api.customvenom.com/api/yahoo/session/me', {
-  credentials: "include"
-}).then(r => r.status)
+  credentials: 'include',
+}).then((r) => r.status);
 ```
 
 **Expected**: `200`
@@ -123,16 +123,19 @@ await fetch('https://api.customvenom.com/api/yahoo/session/me', {
 ## Troubleshooting
 
 ### Issue: Cookie not set
+
 - **Check**: Network tab shows `Set-Cookie` header
 - **Check**: `SameSite=None` requires HTTPS
 - **Check**: Cross-site request includes `credentials: "include"`
 
 ### Issue: 401 on /session endpoints
+
 - **Check**: Cookie present in Application → Cookies → `api.customvenom.com`
 - **Check**: Cookie includes `cv_yahoo=` value
 - **Check**: Request includes `credentials: "include"`
 
 ### Issue: Redirect URI mismatch
+
 - **Check**: Yahoo Console has exact match (no trailing slash)
 - **Check**: Wait 2-5 minutes after saving
 

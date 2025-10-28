@@ -7,7 +7,7 @@ test.describe('OAuth Happy Path Tests', () => {
       'https://customvenom-workers-api-staging.jdewett81.workers.dev/oauth/yahoo/launch',
       {
         waitUntil: 'networkidle',
-      }
+      },
     );
 
     // Should redirect to Yahoo OAuth
@@ -28,7 +28,7 @@ test.describe('OAuth Happy Path Tests', () => {
       'https://customvenom-workers-api-staging.jdewett81.workers.dev/oauth/yahoo/callback?code=invalid&state=invalid',
       {
         waitUntil: 'networkidle',
-      }
+      },
     );
 
     // Should return 400 for invalid callback
@@ -49,7 +49,7 @@ test.describe('OAuth Happy Path Tests', () => {
       'https://customvenom-workers-api-staging.jdewett81.workers.dev/yahoo/me',
       {
         waitUntil: 'networkidle',
-      }
+      },
     );
 
     // Should return 401
@@ -81,7 +81,7 @@ test.describe('OAuth Happy Path Tests', () => {
       'https://customvenom-workers-api-staging.jdewett81.workers.dev/health',
       {
         waitUntil: 'networkidle',
-      }
+      },
     );
 
     // Should return 200

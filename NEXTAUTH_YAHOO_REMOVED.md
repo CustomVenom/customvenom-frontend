@@ -50,12 +50,14 @@ ripgrep -n "next-auth" src
 ### Remaining NextAuth Usage
 
 NextAuth is **still active** for:
+
 - ✅ Facebook authentication
 - ✅ Google authentication
 - ✅ Twitter authentication
 - ✅ General session management
 
 NextAuth is **NOT used** for:
+
 - ✅ Yahoo OAuth (Workers-only)
 - ✅ Any `/api/auth/signin/yahoo` routes
 
@@ -71,6 +73,7 @@ Users should delete these NextAuth cookies if they exist:
 2. `__Secure-next-auth.callback-url` on `www.customvenom.com`
 
 **How to delete**:
+
 1. Open browser DevTools
 2. Go to **Application** → **Cookies**
 3. Select `https://www.customvenom.com`

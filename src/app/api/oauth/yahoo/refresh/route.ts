@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
     const r = await fetch(`${apiBase}/oauth/yahoo/refresh`, {
       method: 'POST',
       headers: {
-        cookie: request.headers.get('cookie') || ''
+        cookie: request.headers.get('cookie') || '',
       },
-      credentials: 'include'
+      credentials: 'include',
     });
 
     const body = await r.text();

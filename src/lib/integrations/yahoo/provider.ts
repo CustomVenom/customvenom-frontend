@@ -11,11 +11,11 @@ export const YahooProvider = {
   type: 'oauth' as const,
   authorization: {
     url: 'https://api.login.yahoo.com/oauth2/request_auth',
-    params: { scope: 'fspt-r', response_type: 'code' }
+    params: { scope: 'fspt-r', response_type: 'code' },
   },
   token: { url: 'https://api.login.yahoo.com/oauth2/get_token' },
   userinfo: {
-    url: 'https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1?format=json'
+    url: 'https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1?format=json',
   },
   clientId: process.env['YAHOO_CLIENT_ID']!,
   clientSecret: process.env['YAHOO_CLIENT_SECRET']!,

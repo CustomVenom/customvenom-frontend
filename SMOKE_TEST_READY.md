@@ -8,6 +8,7 @@
 ## Pre-Deployment Checks ✅
 
 ### Workers API (`api.customvenom.com`)
+
 - ✅ `/api/yahoo/session` returns `{ hasCookie: false }` (expected without cookie)
 - ✅ `/api/yahoo/session/me` returns `404` (expected without auth)
 - ✅ `/api/yahoo/signin` endpoint deployed
@@ -15,6 +16,7 @@
 - ✅ Cookie handling configured (`SameSite=None`, `Secure`, `HttpOnly`)
 
 ### Frontend (`www.customvenom.com`)
+
 - ✅ Route handler type fixed (Next.js 15 compatible)
 - ✅ Connect buttons point to Workers API
 - ✅ Code pushed to GitHub (commit: `63d5426`)
@@ -40,6 +42,7 @@
 ### Step 2: End-to-End OAuth Flow (Browser)
 
 #### 2.1. Start Flow
+
 1. Open: `https://www.customvenom.com/tools`
 2. Click: **"Connect Yahoo"** button
 3. **Expected**: Redirect to Yahoo consent screen
@@ -56,6 +59,7 @@ Location: https://www.customvenom.com/tools?connected=yahoo
 ```
 
 ✅ **Checklist:**
+
 - [ ] `SameSite=None` present
 - [ ] `Secure` present
 - [ ] `HttpOnly` present
@@ -71,14 +75,14 @@ On `www.customvenom.com`, run:
 ```javascript
 // Test 1: Session cookie check
 await fetch('https://api.customvenom.com/api/yahoo/session', {
-  credentials: "include"
-}).then(r => r.json())
+  credentials: 'include',
+}).then((r) => r.json());
 // Expected: { hasCookie: true }
 
 // Test 2: User profile
 await fetch('https://api.customvenom.com/api/yahoo/session/me', {
-  credentials: "include"
-}).then(r => r.status)
+  credentials: 'include',
+}).then((r) => r.status);
 // Expected: 200
 ```
 
@@ -119,16 +123,19 @@ API returns session data
 ## Troubleshooting
 
 ### Cookie not set
+
 - ✅ Network tab shows `Set-Cookie` header
 - ✅ `SameSite=None` requires HTTPS (both domains)
 - ✅ Request includes `credentials: "include"`
 
 ### 401 on /session endpoints
+
 - Check: Cookie in DevTools → Application → Cookies → `api.customvenom.com`
 - Check: Request includes `credentials: "include"`
 - Check: Cookie name is `cv_yahoo`
 
 ### Redirect URI mismatch
+
 - ✅ Yahoo Console: `https://api.customvenom.com/api/yahoo/callback` (no trailing slash)
 - ✅ Wait 2-5 minutes after saving
 
@@ -155,8 +162,8 @@ try {
 ```javascript
 // After completing OAuth flow
 await fetch('https://api.customvenom.com/api/yahoo/session', {
-  credentials: "include"
-}).then(r => r.json())
+  credentials: 'include',
+}).then((r) => r.json());
 // Should return: { hasCookie: true, ... }
 ```
 

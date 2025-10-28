@@ -5,7 +5,7 @@
 export function extractRequestId(
   response: Response,
   body?: any,
-  fallback: string = 'unavailable'
+  fallback: string = 'unavailable',
 ): string {
   // Try body.request_id first (most reliable)
   if (body?.request_id && typeof body.request_id === 'string') {
@@ -28,7 +28,7 @@ export function extractRequestId(
  */
 export async function extractRequestIdFromResponse(
   response: Response,
-  fallback: string = 'unavailable'
+  fallback: string = 'unavailable',
 ): Promise<string> {
   let body: any = {};
 

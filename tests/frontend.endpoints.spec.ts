@@ -31,7 +31,7 @@ test.describe('Frontend endpoints', () => {
     const nonCanonical = FRONTEND_BASE.replace('www.', '');
     const res = await request.get(nonCanonical, {
       failOnStatusCode: false,
-      maxRedirects: 0
+      maxRedirects: 0,
     });
     expect(res.status()).toBeOneOf([301, 308]);
     const location = res.headers()['location'];

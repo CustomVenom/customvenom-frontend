@@ -26,6 +26,7 @@ curl -sSD - "https://customvenom-workers-api.jdewett81.workers.dev/health" -o /d
 Open: https://www.customvenom.com/settings
 
 **Expected States:**
+
 - ✅ **Not Configured**: Yellow card saying "Yahoo: not configured. Set NEXT_PUBLIC_API_BASE"
   - Fix: Set env var in Vercel, redeploy
 - ✅ **Not Connected**: Yellow card saying "Yahoo: not connected" with "Connect Yahoo" link
@@ -42,6 +43,7 @@ Open: https://www.customvenom.com/settings
 5. Expected: Yellow card changes to green "Yahoo Connected" card
 
 **If OAuth fails:**
+
 - Check browser console for errors
 - Verify `YAHOO_CLIENT_ID` and `YAHOO_CLIENT_SECRET` are set in Workers API
 - Verify redirect URI matches in Yahoo Developer Console

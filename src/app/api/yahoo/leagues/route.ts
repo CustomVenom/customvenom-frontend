@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
 
     const r = await fetch(`${apiBase}/yahoo/leagues${queryString}`, {
       headers: {
-        cookie: request.headers.get('cookie') || ''
+        cookie: request.headers.get('cookie') || '',
       },
-      credentials: 'include'
+      credentials: 'include',
     });
 
     const body = await r.text();

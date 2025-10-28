@@ -3,11 +3,13 @@
 ## Quick Setup for Any Computer
 
 ### 1. Prerequisites
+
 - Node.js 20.x (use `.nvmrc` file)
 - Git configured with your credentials
 - Access to the CustomVenom GitHub repository
 
 ### 2. Initial Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/CustomVenom/customvenom-frontend.git
@@ -25,6 +27,7 @@ npm run build
 ```
 
 ### 3. Development Workflow
+
 ```bash
 # Start development server
 npm run dev
@@ -42,6 +45,7 @@ npm run build
 ## Vercel Configuration
 
 ### Dashboard Settings (Recommended)
+
 Go to Project → Settings → Build & Development Settings:
 
 - **Node.js Version**: `20.x`
@@ -50,15 +54,18 @@ Go to Project → Settings → Build & Development Settings:
 - **Output Directory**: `.vercel/output`
 
 ### Environment Variables
+
 Set these in Vercel Dashboard → Settings → Environment Variables:
 
 **Production:**
+
 ```
 NEXT_PUBLIC_API_BASE=https://api.customvenom.com
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=false
 ```
 
 **Preview:**
+
 ```
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=true
@@ -67,12 +74,15 @@ NEXT_PUBLIC_ENABLE_MULTI_SPORT=true
 ## Files for Cross-Computer Compatibility
 
 ### `.nvmrc`
+
 ```
 20
 ```
+
 Use with `nvm use` to ensure consistent Node version.
 
 ### `package.json` engines
+
 ```json
 {
   "engines": {
@@ -82,6 +92,7 @@ Use with `nvm use` to ensure consistent Node version.
 ```
 
 ### `vercel.json`
+
 ```json
 {
   "build": { "env": {} },
@@ -94,6 +105,7 @@ Use with `nvm use` to ensure consistent Node version.
 ## Troubleshooting
 
 ### Node Version Issues
+
 ```bash
 # Check current version
 node --version
@@ -106,6 +118,7 @@ nvm use
 ```
 
 ### Build Issues
+
 ```bash
 # Clean install
 rm -rf node_modules package-lock.json
@@ -117,6 +130,7 @@ npm run build
 ```
 
 ### Git Issues
+
 ```bash
 # Check git config
 git config --list

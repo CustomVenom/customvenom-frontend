@@ -16,9 +16,9 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
     const r = await fetch(`${apiBase}/api/yahoo/leagues/${leagueKey}/teams`, {
       headers: {
         'x-request-id': reqId,
-        'accept': 'application/json',
+        accept: 'application/json',
         // Forward Yahoo cookie to API for auth
-        'cookie': cookie,
+        cookie: cookie,
       },
       // Do not cache auth-protected data at the edge
       cache: 'no-store',
@@ -27,7 +27,7 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
     if (!r.ok) {
       return NextResponse.json(
         { connected: false, teams: [], error: 'upstream_unavailable' },
-        { status: r.status }
+        { status: r.status },
       );
     }
 
@@ -43,7 +43,7 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
     console.error('[api/leagues/teams]', error);
     return NextResponse.json(
       { connected: false, teams: [], error: 'internal_error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

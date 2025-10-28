@@ -3,6 +3,7 @@
 ## 🚀 **Quick Start**
 
 ### **One-time Setup**
+
 1. **Connect repo to Vercel**: Dashboard → Import Project → GitHub repo
 2. **Set Production branch**: `main`
 3. **Add environment variables** in Vercel dashboard:
@@ -10,6 +11,7 @@
    - `NEXT_PUBLIC_ENABLE_YAHOO` = `true` (when ready)
 
 ### **Daily Development**
+
 ```bash
 # 1. Create feature branch
 git checkout -b feat/your-feature-name
@@ -39,6 +41,7 @@ git push origin feat/your-feature-name
 ## 📊 **Receipts Pattern (Copy-Ready)**
 
 ### **Standard Receipts (Always Run)**
+
 ```bash
 # Health headers (no-store + x-request-id)
 curl -sSD - "https://customvenom-workers-api.jdewett81.workers.dev/health" -o /dev/null | grep -Ei '^(cache-control: no-store|x-request-id:)'
@@ -51,19 +54,23 @@ curl -sSD - "https://customvenom-workers-api.jdewett81.workers.dev/projections?w
 ```
 
 ### **OAuth Receipts (If OAuth work in PR)**
+
 1. **Screenshot**: `/settings` showing "Yahoo Connected" with roster
 2. **OAuth flow**: Connect → Consent → Return to `/settings`
 3. **Session validation**: `/api/yahoo/me` returns 200
 
 ### **Release Entry Template**
+
 ```markdown
 ### Release Receipts - [Date]
 
 **Health Headers (no-store + x-request-id)**
 ```
+
 Cache-Control: no-store
 x-request-id: [uuid]
-```
+
+````
 
 **Projections 200 Body (schema_version + last_refresh)**
 ```json
@@ -72,17 +79,20 @@ x-request-id: [uuid]
   "last_refresh": "[timestamp]",
   "projections": [count]
 }
-```
+````
 
 **Schema Sentry (request_id + status)**
+
 ```
 Status: 200
 x-request-id: [uuid]
 ```
 
 **OAuth Screenshot** (if applicable)
+
 - Screenshot of `/settings` showing "Yahoo Connected" with roster
-```
+
+````
 
 ## 🛡️ **Guardrails (Never-Again Rules)**
 
@@ -160,4 +170,4 @@ $response = Invoke-WebRequest -Uri "https://customvenom-workers-api.jdewett81.wo
 # Deploy to production
 git push origin main
 # Vercel auto-deploys from main
-```
+````

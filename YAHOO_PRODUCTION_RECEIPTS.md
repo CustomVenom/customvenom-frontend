@@ -10,6 +10,7 @@ curl -sSD - "https://www.customvenom.com/api/yahoo/connect?returnTo=/settings" -
 ```
 
 **Expected:**
+
 - Status: `302 Found`
 - Location: Yahoo OAuth URL with `client_id` and `redirect_uri` parameters
 - Set-Cookie: `y_state` with HttpOnly, Secure flags
@@ -24,9 +25,11 @@ curl -sSD - "https://customvenom-workers-api.jdewett81.workers.dev/yahoo/me" \
 ```
 
 **Expected:**
+
 - Status: `200 OK`
 - Headers: `x-request-id`, `x-schema-version`, `cache-control: no-cache`
 - Body (redacted):
+
 ```json
 {
   "schema_version": "v1",
@@ -47,8 +50,10 @@ curl -s "https://customvenom-workers-api.jdewett81.workers.dev/yahoo/leagues" \
 ```
 
 **Expected:**
+
 - Status: `200 OK`
 - Body:
+
 ```json
 {
   "schema_version": "v1",
@@ -82,6 +87,7 @@ curl -s "$API_BASE/yahoo/leagues" | jq '.leagues | length'
 ```
 
 **Acceptance:**
+
 - /yahoo/me returns 200 with user JSON
 - /yahoo/leagues returns at least one league_key
 - Settings shows "Yahoo Connected" badge
