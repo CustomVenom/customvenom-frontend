@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const API = process.env['NEXT_PUBLIC_API_BASE']!
+const API = process.env['NEXT_PUBLIC_API_BASE']!;
 
-type Me = { user?: { guid?: string } }
-type Leagues = { league_keys?: string[] }
-type Teams = { teams?: Array<{ team_key: string; name?: string }> }
+type Me = { user?: { guid?: string } };
+type Leagues = { league_keys?: string[] };
+type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [loading, setLoading] = useState(true)
-  const [connected, setConnected] = useState(false)
-  const [guid, setGuid] = useState<string>('')
-  const [leagueKeys, setLeagueKeys] = useState<string[]>([])
-  const [selectedLeague, setSelectedLeague] = useState<string>('')
-  const [teams, setTeams] = useState<Teams['teams']>([])
-  const [selectedTeam, setSelectedTeam] = useState<string>('')
+  const [loading, setLoading] = useState(true);
+  const [connected, setConnected] = useState(false);
+  const [guid, setGuid] = useState<string>('');
+  const [leagueKeys, setLeagueKeys] = useState<string[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState<string>('');
+  const [teams, setTeams] = useState<Array<{ team_key: string; name?: string }>>([]);
+  const [selectedTeam, setSelectedTeam] = useState<string>('');
 
   // small helper
   async function get<T>(path: string): Promise<T> {
@@ -23,53 +23,58 @@ export default function ConnectLeague() {
       credentials: 'include',
       headers: { accept: 'application/json' },
       cache: 'no-store',
-    })
-    if (!r.ok) throw new Error(r.status === 401 ? 'auth_required' : 'http_error')
-    return r.json() as Promise<T>
+    });
+    if (!r.ok) throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
+    return r.json() as Promise<T>;
   }
 
-  async function probe() {
-    setLoading(true)
+  const probe = useCallback(async () => {
+    setLoading(true);
     try {
-      const me = await get<Me>('/yahoo/me')
-      setGuid(me.user?.guid ?? '')
-      const leagues = await get<Leagues>('/yahoo/leagues?format=json')
-      const keys = leagues.league_keys ?? []
-      setLeagueKeys(keys)
-      if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!)
-      setConnected(true)
+      const me = await get<Me>('/yahoo/me');
+      setGuid(me.user?.guid ?? '');
+      const leagues = await get<Leagues>('/yahoo/leagues?format=json');
+      const keys = leagues.league_keys ?? [];
+      setLeagueKeys(keys);
+      if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+      setConnected(true);
     } catch {
-      setConnected(false)
+      setConnected(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  }, [selectedLeague]);
 
-  async function loadTeams(leagueKey: string) {
-    if (!leagueKey) return
-    try {
-      const data = await get<Teams>(`/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`)
-      const list = data.teams ?? []
-      setTeams(list)
-      if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key)
-    } catch {
-      setTeams([])
-    }
-  }
+  const loadTeams = useCallback(
+    async (leagueKey: string) => {
+      if (!leagueKey) return;
+      try {
+        const data = await get<Teams>(
+          `/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
+        );
+        const list = data.teams ?? [];
+        setTeams(list);
+        if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key);
+      } catch {
+        setTeams([]);
+      }
+    },
+    [selectedTeam],
+  );
 
   const connectHref = useMemo(() => {
     // after consent, always come back to /tools
-    const from = encodeURIComponent('/tools')
-    return `${API}/api/connect/start?host=yahoo&from=${from}`
-  }, [])
+    const from = encodeURIComponent('/tools');
+    return `${API}/api/connect/start?host=yahoo&from=${from}`;
+  }, []);
 
   useEffect(() => {
-    void probe()
-  }, [])
+    void probe();
+  }, [probe]);
 
   useEffect(() => {
-    if (selectedLeague) void loadTeams(selectedLeague)
-  }, [selectedLeague])
+    if (selectedLeague) void loadTeams(selectedLeague);
+  }, [selectedLeague, loadTeams]);
 
   // UI
   if (loading) {
@@ -77,7 +82,7 @@ export default function ConnectLeague() {
       <div className="border rounded p-3">
         <div className="text-sm opacity-75">Checking league connection…</div>
       </div>
-    )
+    );
   }
 
   if (!connected) {
@@ -91,7 +96,7 @@ export default function ConnectLeague() {
           Connect league
         </a>
       </div>
-    )
+    );
   }
 
   return (
@@ -116,14 +121,16 @@ export default function ConnectLeague() {
             onChange={(e) => setSelectedLeague(e.target.value)}
           >
             {leagueKeys.map((k) => (
-              <option key={k} value={k}>{k}</option>
+              <option key={k} value={k}>
+                {k}
+              </option>
             ))}
           </select>
         </div>
       )}
 
       {/* Team select (hidden if only one) */}
-      {teams.length > 0 && (
+      {(teams ?? []).length > 0 && (
         <div className="flex items-center gap-2">
           <label className="text-sm opacity-80">Team</label>
           <select
@@ -131,7 +138,7 @@ export default function ConnectLeague() {
             value={selectedTeam}
             onChange={(e) => setSelectedTeam(e.target.value)}
           >
-            {teams.map((t) => (
+            {(teams ?? []).map((t) => (
               <option key={t.team_key} value={t.team_key}>
                 {t.name ?? t.team_key}
               </option>
@@ -140,5 +147,5 @@ export default function ConnectLeague() {
         </div>
       )}
     </div>
-  )
+  );
 }
