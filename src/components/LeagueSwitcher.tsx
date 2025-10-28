@@ -20,80 +20,6 @@ export function LeagueSwitcher() {
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await fetchJson('/app/me/leagues');
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.error}`);
-        }
-
-        const json = res.data as MeLeaguesResponse;
-
-        if (!cancelled) {
-          if (json) {
-            setData(json);
-            setError(null);
-          } else {
-            setError('Invalid response');
-          }
-        }
-      } catch (err: unknown) {
-        if (!cancelled) {
-          console.error('[LeagueSwitcher]', err);
-          setError(err instanceof Error ? err.message : 'Failed to load leagues');
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    fetchLeagues();
-  }, [retryCount]);
-
-  if (loading) {
-    return <span className="text-xs text-gray-500">Loading leagues…</span>;
-  }
-
-  if (error) {
-    return <span className="text-xs text-gray-500">Leagues unavailable</span>;
-  }
-
-  if (!data || data.synced_leagues.length === 0) {
-    return <span className="text-xs text-gray-500">No leagues</span>;
-  }
-
-  const handleChange = async (newActive: string) => {
-    if (updating) return;
-
-    setUpdating(true);
-    try {
-      await fetchJson('/app/me/active-league', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ league_key: newActive }),
-      });
-      localStorage.setItem('cv_last_league', newActive);
-      setSelectedLeague(newActive);
-      setData((prev) => (prev ? { ...prev, active_league: newActive } : null));
-    } catch (err) {
-      console.error('[LeagueSwitcher] Failed to update active league', err);
-    } finally {
-      setUpdating(false);
-    }
-  };
-
   const fetchLeagues = async () => {
     let requestId = 'no-request-id';
     try {
@@ -178,6 +104,80 @@ export function LeagueSwitcher() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetchJson('/app/me/leagues');
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.error}`);
+        }
+
+        const json = res.data as MeLeaguesResponse;
+
+        if (!cancelled) {
+          if (json) {
+            setData(json);
+            setError(null);
+          } else {
+            setError('Invalid response');
+          }
+        }
+      } catch (err: unknown) {
+        if (!cancelled) {
+          console.error('[LeagueSwitcher]', err);
+          setError(err instanceof Error ? err.message : 'Failed to load leagues');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchLeagues();
+  }, [retryCount]);
+
+  if (loading) {
+    return <span className="text-xs text-gray-500">Loading leagues…</span>;
+  }
+
+  if (error) {
+    return <span className="text-xs text-gray-500">Leagues unavailable</span>;
+  }
+
+  if (!data || data.synced_leagues.length === 0) {
+    return <span className="text-xs text-gray-500">No leagues</span>;
+  }
+
+  const handleChange = async (newActive: string) => {
+    if (updating) return;
+
+    setUpdating(true);
+    try {
+      await fetchJson('/app/me/active-league', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ league_key: newActive }),
+      });
+      localStorage.setItem('cv_last_league', newActive);
+      setSelectedLeague(newActive);
+      setData((prev) => (prev ? { ...prev, active_league: newActive } : null));
+    } catch (err) {
+      console.error('[LeagueSwitcher] Failed to update active league', err);
+    } finally {
+      setUpdating(false);
     }
   };
 
