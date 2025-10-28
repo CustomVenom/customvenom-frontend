@@ -56,7 +56,17 @@ export function LeagueSwitcher() {
       });
 
       clearTimeout(timeoutId);
-      requestId = res.headers.get('x-request-id') || 'no-request-id';
+      
+      // Try to get request ID from response body first, then headers
+      let bodyRequestId = 'no-request-id';
+      try {
+        const body = await res.json();
+        bodyRequestId = body.request_id || 'no-request-id';
+      } catch {
+        // If JSON parsing fails, we'll use header fallback
+      }
+      
+      requestId = bodyRequestId !== 'no-request-id' ? bodyRequestId : (res.headers.get('x-request-id') || 'no-request-id');
 
       if (res.status === 404) {
         setErrorDetails(
