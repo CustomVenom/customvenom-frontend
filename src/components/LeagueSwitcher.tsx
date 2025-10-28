@@ -15,13 +15,13 @@ export function LeagueSwitcher() {
     // Do not throw — render unauth state
     return (
       <div className="p-3 border rounded text-sm">
-        Please connect Yahoo to load your leagues.
+        Please connect to load your leagues.
         <div className="mt-2">
           <Link
-            href={`${process.env['NEXT_PUBLIC_API_BASE']}/api/connect/start?host=yahoo&from=${encodeURIComponent('/tools')}`}
+            href="/tools"
             className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
           >
-            Connect Yahoo
+            Go to Tools to Connect
           </Link>
         </div>
       </div>
@@ -33,7 +33,7 @@ export function LeagueSwitcher() {
 
   return (
     <div className="text-sm">
-      Yahoo Connected — GUID: {guid} · Leagues: {leagueKeys.length}
+      Connected — GUID: {guid} · Leagues: {leagueKeys.length}
     </div>
   );
 }
