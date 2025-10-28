@@ -1,14 +1,15 @@
-﻿'use client'
+﻿'use client';
 
-import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo'
-import Link from 'next/link'
+import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
+import Link from 'next/link';
 
 export default function LeaguesPage() {
-  const { data: me, isLoading: isLoadingMe, isError: isErrorMe } = useYahooMe()
-  const { data: leagues, isLoading: isLoadingLeagues, isError: isErrorLeagues } = useYahooLeagues()
+  const { data: me, isLoading: isLoadingMe, isError: isErrorMe } = useYahooMe();
+  const { data: leagues, isLoading: isLoadingLeagues, isError: isErrorLeagues } = useYahooLeagues();
 
-  if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>
-  if (isErrorMe || isErrorLeagues) return <div>Could not load Yahoo data. Please connect Yahoo.</div>
+  if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
+  if (isErrorMe || isErrorLeagues)
+    return <div>Could not load Yahoo data. Please connect Yahoo.</div>;
 
   if (!me?.guid) {
     return (
@@ -19,15 +20,18 @@ export default function LeaguesPage() {
           Go to Tools to Connect Yahoo
         </Link>
       </div>
-    )
+    );
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-3">
       <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
-      
+
       {/* Clear Connected PASS Indicator */}
-      <div role="status" className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1 mb-4">
+      <div
+        role="status"
+        className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1 mb-4"
+      >
         Yahoo Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
       </div>
 
@@ -46,5 +50,5 @@ export default function LeaguesPage() {
         <p className="mt-4">No leagues found for this Yahoo account.</p>
       )}
     </div>
-  )
+  );
 }
