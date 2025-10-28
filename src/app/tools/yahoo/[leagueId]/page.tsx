@@ -1,4 +1,3 @@
-import { cookies as _cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { getServerSession } from '@/lib/auth-helpers';
