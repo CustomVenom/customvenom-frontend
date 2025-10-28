@@ -64,7 +64,7 @@
     "@storybook/addon-essentials": "^8.3.0",
     "@storybook/addon-interactions": "^8.3.0",
     "@storybook/addon-links": "^8.3.0",
-    "@storybook/nextjs": "^8.3.0",
+    "@storybook/nextjs": "^9.1.15",
     "@storybook/react": "^8.3.0",
     "@storybook/test": "^8.3.0",
     "@tailwindcss/forms": "^0.5.10",
