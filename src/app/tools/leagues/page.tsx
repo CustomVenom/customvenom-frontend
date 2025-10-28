@@ -17,7 +17,7 @@ export default function LeaguesPage() {
         <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
         <p>Please connect Yahoo to view your leagues.</p>
         <Link href="/tools" className="text-blue-500 hover:underline">
-          Go to Tools to Connect Yahoo
+          Go to Tools to Connect
         </Link>
       </div>
     );

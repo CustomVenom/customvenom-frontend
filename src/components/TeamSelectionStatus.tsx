@@ -3,6 +3,8 @@
 import { useSelectedLeague, useSelectedTeam } from '@/lib/selection';
 
 export default function TeamSelectionStatus() {
+  // Hide this component when single connect mode is enabled
+  if (process.env['NEXT_PUBLIC_ENABLE_MULTI_CONNECT'] === 'false') return null;
   const { league_key } = useSelectedLeague();
   const { team_key } = useSelectedTeam();
 

@@ -25,6 +25,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:gate": "npm run build && start /B cmd /C \"npm run start:test\" && timeout /t 3 >NUL && npx playwright test tests/trust-snapshot.spec.ts tests/health.spec.ts && taskkill /IM node.exe /F >NUL 2>&1",
+    "guardrails-check": "bash scripts/guardrails-check.sh",
+    "test:guardrails": "npx playwright test tests/guardrails.spec.ts",
     "preflight": "npm run preflight:grep && eslint . --max-warnings=0 && npm run type && npm run test && npm run preflight:contracts",
     "preflight:contracts": "npx playwright test tests/contract-tests.spec.ts",
     "cors:test": "curl -sSD - \"$NEXT_PUBLIC_API_BASE/health\" -H \"Origin: https://www.customvenom.com\" -o /dev/null | sed -n '1,30p'",

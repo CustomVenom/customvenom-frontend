@@ -34,10 +34,14 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-semibold mb-8">Settings</h1>
       <div className="mb-10 pb-10 border-b border-gray-200">
         <h2 className="text-xl font-semibold mb-6 text-gray-700">League Integration</h2>
-        <ConnectYahoo />
-        <div className="mt-4">
-          <TeamSelectionStatus />
-        </div>
+        {process.env['NEXT_PUBLIC_ENABLE_MULTI_CONNECT'] === 'false' ? null : (
+          <>
+            <ConnectYahoo />
+            <div className="mt-4">
+              <TeamSelectionStatus />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
