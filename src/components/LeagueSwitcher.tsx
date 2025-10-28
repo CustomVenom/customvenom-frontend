@@ -1,7 +1,7 @@
 'use client';
 
-import { useYahooMe, useYahooLeagues } from '@/hooks/useYahoo';
-import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
 
 export function LeagueSwitcher() {
   const me = useYahooMe();
@@ -17,11 +17,12 @@ export function LeagueSwitcher() {
       <div className="p-3 border rounded text-sm">
         Please connect Yahoo to load your leagues.
         <div className="mt-2">
-          <Button asChild>
-            <a href={`${process.env['NEXT_PUBLIC_API_BASE']}/api/connect/start?host=yahoo&from=${encodeURIComponent('/tools')}`}>
-              Connect Yahoo
-            </a>
-          </Button>
+          <Link
+            href={`${process.env['NEXT_PUBLIC_API_BASE']}/api/connect/start?host=yahoo&from=${encodeURIComponent('/tools')}`}
+            className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
+          >
+            Connect Yahoo
+          </Link>
         </div>
       </div>
     );
@@ -29,7 +30,7 @@ export function LeagueSwitcher() {
 
   const guid = me.data?.guid ?? 'unknown';
   const leagueKeys = leagues.data?.league_keys ?? [];
-  
+
   return (
     <div className="text-sm">
       Yahoo Connected — GUID: {guid} · Leagues: {leagueKeys.length}

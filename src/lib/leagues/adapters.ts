@@ -46,7 +46,7 @@ export function getYahooAdapter(apiBase: string): ProviderAdapter {
   return {
     async listLeagues(): Promise<LeagueSummary[]> {
       // Call your Workers API; it should use the user context to read y_at
-      const data = await apiJson<YahooLeaguesResponse>(`${apiBase}/api/providers/yahoo/leagues`);
+      const data = await apiJson<YahooLeaguesResponse>(`${apiBase}/yahoo/leagues?format=json`);
       const out: LeagueSummary[] = [];
       for (const lg of data.leagues ?? []) {
         // One entry per team the user controls in that league

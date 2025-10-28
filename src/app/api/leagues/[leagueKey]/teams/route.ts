@@ -13,7 +13,7 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
       process.env['NEXT_PUBLIC_API_BASE'] ||
       'https://api.customvenom.com';
     const cookie = req.headers.get('cookie') || '';
-    const r = await fetch(`${apiBase}/api/yahoo/leagues/${leagueKey}/teams`, {
+    const r = await fetch(`${apiBase}/yahoo/leagues/${leagueKey}/teams?format=json`, {
       headers: {
         'x-request-id': reqId,
         accept: 'application/json',

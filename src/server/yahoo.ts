@@ -28,7 +28,7 @@ export async function listYahooLeagues(userId: string): Promise<YahooLeague[]> {
   // Fetch leagues from Workers API
   try {
     const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    const response = await fetch(`${apiBase}/api/yahoo/leagues`, {
+    const response = await fetch(`${apiBase}/yahoo/leagues?format=json`, {
       headers: {
         cookie: `cv_yahoo=${t.accessToken}`,
       },

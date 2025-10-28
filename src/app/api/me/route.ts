@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const cookie = req.headers.get('cookie') || '';
 
     // Check Yahoo connection status
-    const yahooRes = await fetch(`${apiBase}/api/yahoo/me`, {
+    const yahooRes = await fetch(`${apiBase}/yahoo/me`, {
       headers: {
         accept: 'application/json',
         cookie: cookie,
