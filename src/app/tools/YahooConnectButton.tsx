@@ -8,6 +8,7 @@ export default function YahooConnectButton() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState<boolean | null>(null);
+  const [authError, setAuthError] = useState<{ state: 'needsAuth'; reqId: string } | null>(null);
   const { team_key } = useSelectedTeam();
 
   // 1) Probe connection (reads your app's /yahoo/me or similar)
@@ -19,22 +20,44 @@ export default function YahooConnectButton() {
         const res = await fetch(`${API_BASE}/yahoo/me`, {
           credentials: 'include',
           cache: 'no-store',
-          headers: { accept: 'application/json' }
+          headers: { accept: 'application/json' },
         });
         if (!alive) return;
-        setConnected(res.ok);
+
+        if (res.ok) {
+          setConnected(true);
+          setAuthError(null);
+        } else if (res.status === 401) {
+          const body = await res.json().catch(() => ({}));
+          const reqId = body.request_id || res.headers.get('x-request-id') || 'unavailable';
+          if (body.error === 'auth_required' || body.error === 'NO_YAHOO_SESSION') {
+            setAuthError({ state: 'needsAuth', reqId });
+            setConnected(false);
+          } else {
+            setConnected(false);
+            setAuthError(null);
+          }
+        } else {
+          setConnected(false);
+          setAuthError(null);
+        }
       } catch {
-        if (alive) setConnected(false);
+        if (alive) {
+          setConnected(false);
+          setAuthError(null);
+        }
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, []);
 
   // 2) Actions
   const connect = () => {
     const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const currentPath = window.location.pathname + window.location.search;
-    window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(currentPath)}`;
+    window.location.href = `${API_BASE}/api/yahoo/signin?from=${encodeURIComponent(currentPath)}`;
   };
 
   const refresh = async () => {
@@ -46,7 +69,7 @@ export default function YahooConnectButton() {
         method: 'GET',
         credentials: 'include',
         cache: 'no-store',
-        headers: { accept: 'application/json' }
+        headers: { accept: 'application/json' },
       });
       router.refresh(); // revalidate page state
     } finally {
@@ -60,11 +83,38 @@ export default function YahooConnectButton() {
       <div className="p-4 border rounded-lg bg-yellow-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+            <div className="font-medium">
+              {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+            </div>
             <div className="text-sm opacity-80">Checking connection status...</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
             Checking…
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (authError?.state === 'needsAuth') {
+    return (
+      <div className="p-4 border rounded-lg bg-yellow-50">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="font-medium">Authentication required</div>
+            <div className="text-sm opacity-80">
+              Connect Yahoo
+              <br />
+              <span className="text-xs text-gray-500">Request ID: {authError.reqId}</span>
+            </div>
+          </div>
+          <button
+            onClick={connect}
+            data-testid="yahoo-connect-btn"
+            className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800"
+            aria-label="Connect Yahoo"
+          >
+            Connect Yahoo
           </button>
         </div>
       </div>
@@ -76,7 +126,9 @@ export default function YahooConnectButton() {
       <div className="p-4 border rounded-lg bg-green-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+            <div className="font-medium">
+              {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+            </div>
             <div className="text-sm opacity-80 flex items-center gap-2">
               <span className="inline-flex items-center rounded px-2 py-1 text-xs bg-green-100 text-green-800">
                 {team_key ? 'Connected ✓' : 'Yahoo connected ✓'}
@@ -100,7 +152,9 @@ export default function YahooConnectButton() {
     <div className="p-4 border rounded-lg bg-yellow-50">
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+          <div className="font-medium">
+            {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+          </div>
           <div className="text-sm opacity-80">Connect once, always return here.</div>
         </div>
         <button
