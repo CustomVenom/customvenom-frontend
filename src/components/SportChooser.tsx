@@ -1,5 +1,4 @@
 'use client';
-import { useEffect, useState } from 'react';
 
 const ALLOWED = ['nfl', 'nba', 'mlb', 'nhl'] as const;
 type Sport = (typeof ALLOWED)[number];
@@ -11,15 +10,13 @@ export function SportChooserHidden({
   value?: Sport;
   onChange: (v: Sport) => void;
 }) {
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
+  const [enabled] = useState(() => {
     // Reveal only when both conditions hold:
     // 1) env flag on, AND 2) local dev toggle set.
     const envOn = process.env['NEXT_PUBLIC_ENABLE_MULTI_SPORT'] === 'true';
     const localOn = typeof window !== 'undefined' && localStorage.getItem('cv:multiSport') === 'on';
-    setEnabled(envOn && localOn);
-  }, []);
+    return envOn && localOn;
+  });
 
   if (!enabled) return null;
 

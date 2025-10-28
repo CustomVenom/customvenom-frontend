@@ -1,5 +1,5 @@
 ﻿// Types
-export type ApiResult<T = any> = {
+export type ApiResult<T = unknown> = {
   ok: boolean;
   data?: T;
   error?: string;
@@ -20,10 +20,12 @@ export async function fetchJson<T>(path: string, init: RequestInit = {}): Promis
   });
 
   const hdrId = res.headers.get('x-request-id') || 'unavailable';
-  let body: any = null;
+  let body: unknown = null;
   try {
     body = await res.json();
-  } catch {}
+  } catch {
+    // Ignore JSON parse errors
+  }
 
   const requestId = body?.request_id || hdrId || 'unavailable';
 

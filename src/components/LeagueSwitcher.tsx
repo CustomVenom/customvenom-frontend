@@ -41,7 +41,7 @@ export function LeagueSwitcher() {
             setError('Invalid response');
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!cancelled) {
           console.error('[LeagueSwitcher]', err);
           setError(err?.message || 'Failed to load leagues');
@@ -57,6 +57,10 @@ export function LeagueSwitcher() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    fetchLeagues();
+  }, [retryCount]);
 
   if (loading) {
     return <span className="text-xs text-gray-500">Loading leagues…</span>;
@@ -197,10 +201,6 @@ export function LeagueSwitcher() {
       setRefreshing(false);
     }
   };
-
-  useEffect(() => {
-    fetchLeagues();
-  }, [retryCount]);
 
   if (loading) {
     return <span className="text-xs text-gray-500">Loading leagues…</span>;

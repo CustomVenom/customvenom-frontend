@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { SportChooserHidden } from '@/components/SportChooser';
 import { useSelectedTeam } from '@/lib/selection';
-import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
+import { probeYahooMe, fetchJson } from '@/lib/api';
 
 interface League {
   id: string;
@@ -69,7 +69,7 @@ export function ConnectYahoo() {
           const leaguesResult = await fetchJson(leaguesPath);
 
           if (leaguesResult.ok) {
-            setLeagues((leaguesResult.data as any)?.leagues || []);
+            setLeagues((leaguesResult.data as { leagues?: League[] })?.leagues || []);
           }
         } else {
           setConnected(false);
@@ -105,7 +105,7 @@ export function ConnectYahoo() {
       const result = await fetchJson(leaguesPath);
 
       if (result.ok) {
-        setLeagues((result.data as any)?.leagues || []);
+        setLeagues((result.data as { leagues?: League[] })?.leagues || []);
       } else {
         setError(result.error || 'Failed to refresh leagues');
       }

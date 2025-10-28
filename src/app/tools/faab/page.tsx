@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
@@ -29,6 +29,24 @@ function FaabContent() {
     trackToolUsage('FAAB', { action: 'viewed' });
   }, []);
 
+  const handleCalculate = useCallback(async () => {
+    // Track calculation
+    trackToolUsage('FAAB', {
+      action: 'calculate',
+      player: player || '',
+      budget: parseInt(budget) || 0,
+    });
+
+    // TODO: Wire to API endpoint
+    // For now, return mock data
+    setResult({
+      min: 15,
+      likely: 22,
+      max: 35,
+      reason: 'High usage upside with favorable schedule',
+    });
+  }, [player, budget]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -45,31 +63,7 @@ function FaabContent() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [player, budget]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleExample() {
-    trackFeatureInteraction('example', 'loaded', { tool: 'FAAB' });
-    setPlayer('Jahmyr Gibbs');
-    setBudget('100');
-  }
-
-  async function handleCalculate() {
-    // Track calculation
-    trackToolUsage('FAAB', {
-      action: 'calculate',
-      player: player || '',
-      budget: parseInt(budget) || 0,
-    });
-
-    // TODO: Wire to API endpoint
-    // For now, return mock data
-    setResult({
-      min: 15,
-      likely: 22,
-      max: 35,
-      reason: 'High usage upside with favorable schedule',
-    });
-  }
+  }, [player, budget, handleCalculate]);
 
   function copyBid(amount: number, label: 'Min' | 'Likely' | 'Max') {
     trackFeatureInteraction('copy_bid', label.toLowerCase(), { tool: 'FAAB', amount });

@@ -25,23 +25,25 @@ const COOKIE = 'cv_sel';
 const EMPTY: Selection = { league_key: null, team_key: null, pinned: false };
 
 export function SelectionProvider({ children }: { children: React.ReactNode }) {
-  const [selection, setSel] = useState<Selection>(EMPTY);
-
-  // Hydrate once from cookie, then reconcile with server
-  useEffect(() => {
+  const [selection, setSel] = useState<Selection>(() => {
     try {
       const raw = readCookie(COOKIE);
       if (raw) {
         const parsed = JSON.parse(raw);
-        setSel({
+        return {
           league_key: parsed.lk ?? null,
           team_key: parsed.tk ?? null,
           pinned: !!parsed.p,
-        });
+        };
       }
     } catch {
       // Ignore cookie parsing errors
     }
+    return EMPTY;
+  });
+
+  // Reconcile with server
+  useEffect(() => {
     (async () => {
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] as string;

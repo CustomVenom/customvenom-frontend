@@ -56,6 +56,25 @@ function StartSitContent() {
     };
   }, [risk]);
 
+  async function handleCompare() {
+    // Track comparison
+    trackToolUsage('Start/Sit', {
+      action: 'compare',
+      playerA: playerA || '',
+      playerB: playerB || '',
+      risk,
+    });
+
+    // TODO: Wire to API endpoint
+    // For now, return mock data
+    setResult({
+      recommendation: playerA || 'Player A',
+      confidence: 0.75,
+      reasoning: 'Higher projected points with better matchup',
+      risk_adjusted: risk === 'protect' ? 0.65 : risk === 'chase' ? 0.85 : 0.75,
+    });
+  }
+
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -100,49 +119,6 @@ function StartSitContent() {
     setRisk('neutral');
   }
 
-  async function handleCompare() {
-    // Track comparison
-    trackToolUsage('Start/Sit', {
-      action: 'compare',
-      playerA: playerA || '',
-      playerB: playerB || '',
-      risk_mode: risk,
-    });
-
-    // TODO: Wire to API endpoint
-    // For now, return mock data
-    const mockRowA: Row = {
-      player_id: playerA.toLowerCase().replace(/\s/g, '_'),
-      player_name: playerA,
-      team: 'KC',
-      position: 'QB',
-      range: { p10: 18.2, p50: 22.5, p90: 28.1 },
-      explanations: [
-        { component: 'Usage ↑', delta_points: 0.021, confidence: 0.72 },
-        { component: 'Matchup OK', delta_points: -0.008, confidence: 0.68 },
-      ],
-      schema_version: 'v1',
-      last_refresh: new Date().toISOString(),
-    };
-
-    const mockRowB: Row = {
-      player_id: playerB.toLowerCase().replace(/\s/g, '_'),
-      player_name: playerB,
-      team: 'PHI',
-      position: 'QB',
-      range: { p10: 19.5, p50: 24.2, p90: 29.8 },
-      explanations: [{ component: 'Rushing upside', delta_points: 0.032, confidence: 0.75 }],
-      schema_version: 'v1',
-      last_refresh: new Date().toISOString(),
-    };
-
-    setResult({
-      winner: 'B',
-      rowA: mockRowA,
-      rowB: mockRowB,
-      recommendation: `Start ${playerB} over ${playerA} — ${risk} mode favors the rushing upside.`,
-    });
-  }
 
   return (
     <main className="container section space-y-4">

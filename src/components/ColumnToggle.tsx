@@ -20,29 +20,22 @@ export default function ColumnToggle({
   className = '',
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState<Record<string, boolean>>({});
-
-  // Load saved state or defaults
-  useEffect(() => {
+  const [visible, setVisible] = useState<Record<string, boolean>>(() => {
     try {
+      if (typeof window === 'undefined') return {};
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        setVisible(JSON.parse(saved));
-      } else {
-        const init: Record<string, boolean> = {};
-        columns.forEach((c) => {
-          init[c.key] = c.defaultOn !== false;
-        });
-        setVisible(init);
+        return JSON.parse(saved);
       }
     } catch {
-      const init: Record<string, boolean> = {};
-      columns.forEach((c) => {
-        init[c.key] = c.defaultOn !== false;
-      });
-      setVisible(init);
+      // Fall through to defaults
     }
-  }, [storageKey, columns]);
+    const init: Record<string, boolean> = {};
+    columns.forEach((c) => {
+      init[c.key] = c.defaultOn !== false;
+    });
+    return init;
+  });
 
   // Persist and notify
   useEffect(() => {

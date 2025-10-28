@@ -4,7 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
+import { probeYahooMe, fetchJson } from '@/lib/api';
 
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
@@ -51,7 +51,7 @@ export function LeagueImport() {
 
       // Extract leagues from Yahoo response
       const leaguesData =
-        (result.data as any)?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]
+        (result.data as { fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } } })?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]
           ?.leagues || [];
       setLeagues(leaguesData);
     } catch (err) {

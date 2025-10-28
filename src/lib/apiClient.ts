@@ -8,7 +8,7 @@ export interface HealthResponse {
 }
 
 export interface ProjectionsResponse {
-  [key: string]: any; // Generic object for now
+  [key: string]: unknown; // Generic object for now
 }
 
 export interface YahooMeResponse {

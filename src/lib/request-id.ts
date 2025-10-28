@@ -4,7 +4,7 @@
  */
 export function extractRequestId(
   response: Response,
-  body?: any,
+  body?: unknown,
   fallback: string = 'unavailable',
 ): string {
   // Try body.request_id first (most reliable)
@@ -30,7 +30,7 @@ export async function extractRequestIdFromResponse(
   response: Response,
   fallback: string = 'unavailable',
 ): Promise<string> {
-  let body: any = {};
+  let body: unknown = {};
 
   try {
     const contentType = response.headers.get('content-type') || '';

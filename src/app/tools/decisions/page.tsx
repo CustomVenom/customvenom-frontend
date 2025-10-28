@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import ActionBar from '@/components/ActionBar';
 import EmptyState from '@/components/EmptyState';
@@ -13,14 +13,6 @@ import { type Row } from '@/lib/tools';
 
 function DecisionsContent() {
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
-  const [decisions, setDecisions] = useState<
-    Array<{
-      row: Row;
-      action: string;
-      why: string;
-      next_step: string;
-    }>
-  >([]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
@@ -73,7 +65,7 @@ function DecisionsContent() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  useEffect(() => {
+  const decisions = useMemo(() => {
     // TODO: Fetch from API based on risk profile
     // For now, show mock data
     const mockDecisions = [
@@ -124,8 +116,8 @@ function DecisionsContent() {
       },
     ];
 
-    setDecisions(mockDecisions);
-  }, [risk]);
+    return mockDecisions;
+  }, []);
 
   if (decisions.length === 0) {
     return (

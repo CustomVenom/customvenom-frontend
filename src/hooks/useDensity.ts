@@ -1,14 +1,15 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 export function useDensity() {
-  const [dense, setDense] = useState<boolean>(false);
+  const [dense, setDense] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('density') === 'compact';
+  });
 
-  useEffect(() => {
-    const s = localStorage.getItem('density') === 'compact';
-    setDense(s);
-    document.documentElement.dataset['density'] = s ? 'compact' : 'comfortable';
-  }, []);
+  useLayoutEffect(() => {
+    document.documentElement.dataset['density'] = dense ? 'compact' : 'comfortable';
+  }, [dense]);
 
   const toggle = () => {
     const next = !(localStorage.getItem('density') === 'compact');
