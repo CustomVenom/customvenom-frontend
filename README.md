@@ -2,6 +2,7 @@
 
 [![trust-gate](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/trust-gate.yml)
 [![pr-lite](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/pr-lite.yml)
+[![pr-smoke](https://github.com/CustomVenom/customvenom-workers-api/actions/workflows/pr-smoke.yml/badge.svg)](https://github.com/CustomVenom/customvenom-workers-api/actions/workflows/pr-smoke.yml)
 
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
