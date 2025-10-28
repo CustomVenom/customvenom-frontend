@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { fetchJson } from '@/lib/api';
 import { LeagueHeaderControls } from './LeagueHeaderControls';
 import { LeagueSwitcher } from './LeagueSwitcher';
 
@@ -22,10 +21,16 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    void fetchJson('/api/leagues')
-      .then((res) => {
-        if (res.ok) {
-          setData(res.data as LeagueData);
+    const api = process.env['NEXT_PUBLIC_API_BASE']!;
+    fetch(`${api}/yahoo/leagues?format=json`, {
+      credentials: 'include',
+      headers: { accept: 'application/json' },
+      cache: 'no-store',
+    })
+      .then(async (r) => {
+        if (r.ok) {
+          const data = await r.json();
+          setData(data as LeagueData);
         }
         setLoading(false);
       })
@@ -59,15 +64,7 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
     localStorage.setItem('cv_last_league', id);
 
     // Optionally POST to server (stub for now)
-    try {
-      await fetchJson('/api/leagues/set-active', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ leagueId: id }),
-      });
-    } catch (err: unknown) {
-      console.error('[LeaguePageHeader] Failed to persist active league', err);
-    }
+    // TODO: Implement set-active endpoint in Workers API if needed
 
     // Reload page data for the new active league
     window.location.reload();
