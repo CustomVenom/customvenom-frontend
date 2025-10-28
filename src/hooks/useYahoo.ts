@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 export function useYahooMe() {
-  const api = process.env.NEXT_PUBLIC_API_BASE!;
+  const api = process.env['NEXT_PUBLIC_API_BASE']!;
   return useQuery({
     queryKey: ['yahoo', 'me'],
     queryFn: async () => {
@@ -25,7 +25,7 @@ export function useYahooMe() {
 }
 
 export function useYahooLeagues() {
-  const api = process.env.NEXT_PUBLIC_API_BASE!;
+  const api = process.env['NEXT_PUBLIC_API_BASE']!;
   return useQuery({
     queryKey: ['yahoo', 'leagues'],
     queryFn: async () => {

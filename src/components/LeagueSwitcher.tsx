@@ -25,7 +25,7 @@ export function LeagueSwitcher() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      const api = process.env.NEXT_PUBLIC_API_BASE!;
+      const api = process.env['NEXT_PUBLIC_API_BASE']!;
       const r = await fetch(`${api}/yahoo/leagues?format=json`, {
         credentials: 'include',
         headers: { accept: 'application/json' },
@@ -119,7 +119,7 @@ export function LeagueSwitcher() {
 
     (async () => {
       try {
-        const api = process.env.NEXT_PUBLIC_API_BASE!;
+        const api = process.env['NEXT_PUBLIC_API_BASE']!;
         const r = await fetch(`${api}/yahoo/leagues?format=json`, {
           credentials: 'include',
           headers: { accept: 'application/json' },
