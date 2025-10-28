@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchJson } from '@/lib/api';
 import { useState } from 'react';
 
 export function RefreshLeaguesButton() {
@@ -13,11 +14,7 @@ export function RefreshLeaguesButton() {
         try {
           setLoading(true);
           // Trigger Yahoo fetch (which triggers upsert)
-          await fetch('/api/providers/yahoo/leagues', {
-            cache: 'no-store',
-            credentials: 'include',
-            headers: { accept: 'application/json' },
-          });
+          await fetchJson('/api/providers/yahoo/leagues');
           // Refresh the page to show updated data
           location.reload();
         } catch (err) {

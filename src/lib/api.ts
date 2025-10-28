@@ -1,64 +1,47 @@
-﻿// API client with stale header detection
+﻿// Types
+export type ApiResult<T = any> = {
+  ok: boolean;
+  data?: T;
+  error?: string;
+  requestId: string;
+};
 
-export interface Projection {
-  player_id: string;
-  name?: string;
-  team?: string;
-  position?: string;
-  stat_name: string;
-  projection: number;
-  method: string;
-  sources_used: number;
-  confidence?: number;
-  reasons?: string[];
-}
-
-export interface ProjectionsResponse {
-  data: {
-    schema_version: string;
-    last_refresh: string;
-    projections: Projection[];
-  };
-  headers: {
-    stale: boolean;
-    staleAge: string | null;
-    key: string | null;
-    schemaVersion: string | null;
-    lastRefresh: string | null;
-  };
-}
-
-export async function fetchProjections(week: string): Promise<ProjectionsResponse> {
-  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-  const res = await fetch(`${apiBase}/projections?week=${week}`, {
+// Unified API client with proper base URL and deduplication
+export async function fetchJson<T>(path: string, init: RequestInit = {}): Promise<ApiResult<T>> {
+  const base = process.env['NEXT_PUBLIC_API_BASE']!;
+  const res = await fetch(`${base}${path}`, {
+    ...init,
+    credentials: 'include',
     cache: 'no-store',
+    headers: {
+      accept: 'application/json',
+      ...(init.headers || {}),
+    },
   });
 
-  if (!res.ok) {
-    throw new Error(`API returned ${res.status}`);
-  }
+  const hdrId = res.headers.get('x-request-id') || 'unavailable';
+  let body: any = null;
+  try {
+    body = await res.json();
+  } catch {}
 
-  const data = await res.json();
+  const requestId = body?.request_id || hdrId || 'unavailable';
 
-  return {
-    data,
-    headers: {
-      stale: res.headers.get('x-stale') === 'true',
-      staleAge: res.headers.get('x-stale-age'),
-      key: res.headers.get('x-key'),
-      schemaVersion: res.headers.get('x-schema-version'),
-      lastRefresh: res.headers.get('x-last-refresh'),
-    },
-  };
+  return res.ok
+    ? { ok: true, data: body, requestId }
+    : { ok: false, error: body?.error || `http_${res.status}`, requestId };
 }
 
-export async function fetchHealth() {
-  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-  const res = await fetch(`${apiBase}/health`, { cache: 'no-store' });
+// Helper to extract request ID from response
+export function getReqId(result: ApiResult): string {
+  return result.requestId;
+}
 
-  if (!res.ok) {
-    throw new Error(`API returned ${res.status}`);
+// Dedup login probe to prevent multiple simultaneous requests
+let inFlight: Promise<ApiResult> | null = null;
+export function probeYahooMe(): Promise<ApiResult> {
+  if (!inFlight) {
+    inFlight = fetchJson('/yahoo/me').finally(() => (inFlight = null));
   }
-
-  return res.json();
+  return inFlight;
 }

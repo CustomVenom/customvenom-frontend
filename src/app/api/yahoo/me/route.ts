@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
       process.env['NEXT_PUBLIC_API_BASE'] ||
       'https://api.customvenom.com';
     const cookie = req.headers.get('cookie') || '';
-    const r = await fetch(`${apiBase}/api/yahoo/me`, {
+    const r = await fetch(`${apiBase}/yahoo/me`, {
       headers: {
         accept: 'application/json',
         // Forward Yahoo cookie to API for auth

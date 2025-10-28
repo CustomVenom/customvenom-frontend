@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info: { title: CustomVenom API, version: 1.0.0 }
+servers:
+  - url: ${API_BASE}  # we'll replace at generate time
+paths:
+  /health:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  ready: { type: boolean }
+                  schema_version: { type: string }
+                  last_refresh: { type: string }
+                  r2_key: { type: string }
+  /projections:
+    get:
+      parameters:
+        - name: week
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { type: object } } }
+  /yahoo/me:
+    get:
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object } } } }
+        '401': { description: Unauthorized }
+  /yahoo/leagues:
+    get:
+      parameters:
+        - name: format
+          in: query
+          schema: { type: string, enum: [json] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  league_keys:
+                    type: array
+                    items: { type: string }
+        '401': { description: Unauthorized }

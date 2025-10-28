@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { fetchJson } from '@/lib/api';
 import { LeagueChooser } from './LeagueChooser';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
@@ -24,22 +25,13 @@ export function LeagueSwitcher() {
 
     (async () => {
       try {
-        const res = await fetch('/app/me/leagues', {
-          cache: 'no-store',
-          headers: { 'accept': 'application/json' }
-        });
+        const res = await fetchJson('/app/me/leagues');
 
         if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
+          throw new Error(`HTTP ${res.error}`);
         }
 
-        const contentType = res.headers.get('content-type') || '';
-        if (!contentType.includes('application/json')) {
-          throw new Error('Non-JSON response');
-        }
-
-        const text = await res.text();
-        const json = safeJson<MeLeaguesResponse>(text, null);
+        const json = res.data as MeLeaguesResponse;
 
         if (!cancelled) {
           if (json) {
@@ -83,7 +75,7 @@ export function LeagueSwitcher() {
 
     setUpdating(true);
     try {
-      await fetch('/app/me/active-league', {
+      await fetchJson('/app/me/active-league', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ league_key: newActive }),
@@ -104,41 +96,25 @@ export function LeagueSwitcher() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-      const res = await fetch('/api/leagues', {
-        cache: 'no-store',
-        headers: { accept: 'application/json' },
+      const res = await fetchJson('/api/leagues', {
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
-      requestId = res.headers.get('x-request-id') || 'no-request-id';
+      requestId = res.requestId;
 
-      if (res.status === 404) {
-        setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
-        );
-        throw new Error('leagues_endpoint_not_found');
-      }
-      if (res.status === 401) {
-        setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
-        );
-        throw new Error('auth_required');
-      }
       if (!res.ok) {
-        setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2),
-        );
-        throw new Error(`HTTP ${res.status}`);
+        setErrorDetails(JSON.stringify({ requestId, error: res.error }, null, 2));
+        if (res.error === 'not_found') {
+          throw new Error('leagues_endpoint_not_found');
+        }
+        if (res.error === 'auth_required') {
+          throw new Error('auth_required');
+        }
+        throw new Error(`HTTP ${res.error}`);
       }
 
-      const contentType = res.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error('Non-JSON response');
-      }
-
-      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } =
-        await res.json();
+      const json = res.data as MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string };
 
       // Handle empty leagues array explicitly
       if (!json.leagues || json.leagues.length === 0) {
@@ -204,7 +180,7 @@ export function LeagueSwitcher() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const res = await fetch('/api/leagues/refresh', {
+      const res = await fetchJson('/api/leagues/refresh', {
         method: 'POST',
         headers: { accept: 'application/json' },
       });

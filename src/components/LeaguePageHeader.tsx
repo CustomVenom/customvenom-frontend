@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
+import { fetchJson } from '@/lib/api';
 import { LeagueHeaderControls } from './LeagueHeaderControls';
 import { LeagueSwitcher } from './LeagueSwitcher';
 
@@ -21,10 +22,11 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    void fetch('/api/leagues', { credentials: 'include' })
-      .then((r) => r.json())
-      .then((json: LeagueData) => {
-        setData(json);
+    void fetchJson('/api/leagues')
+      .then((res) => {
+        if (res.ok) {
+          setData(res.data as LeagueData);
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -58,10 +60,9 @@ export function LeaguePageHeader({ isPro = false }: LeaguePageHeaderProps): Reac
 
     // Optionally POST to server (stub for now)
     try {
-      await fetch('/api/leagues/set-active', {
+      await fetchJson('/api/leagues/set-active', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ leagueId: id }),
       });
     } catch (err: unknown) {

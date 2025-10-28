@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Merriweather_Sans } from 'next/font/google';
 
-import './globals.css';
 import ClientLayout from './ClientLayout';
+import './globals.css';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';

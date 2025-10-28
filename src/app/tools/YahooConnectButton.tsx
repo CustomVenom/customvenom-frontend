@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { fetchJson, getReqId, probeYahooMe } from '@/lib/api';
 import { useSelectedTeam } from '@/lib/selection';
-import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function YahooConnectButton() {
   const router = useRouter();
