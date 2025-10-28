@@ -14,12 +14,10 @@ export function LeagueSwitcher() {
   const [updating, setUpdating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-<<<<<<< Updated upstream
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-=======
 
   useEffect(() => {
     let cancelled = false;
