@@ -1,0 +1,61 @@
+name: oauth-e2e
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  oauth-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+          cache: npm
+
+      - name: Install (deterministic)
+        run: npx -y npm@10.7.0 ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Start app (test mode)
+        run: |
+          nohup npm run start:test > .next-serve.log 2>&1 &
+          # wait for port 3000 up to ~20s
+          for i in {1..40}; do
+            nc -z localhost 3000 && echo "app up" && break
+            sleep 0.5
+          done
+
+      - name: Run OAuth happy-path spec
+        env:
+          # Point to staging API for safe e2e
+          NEXT_PUBLIC_API_BASE: "https://customvenom-workers-api-staging.jdewett81.workers.dev"
+        run: |
+          npx playwright test tests/oauth-happy-path.spec.ts --reporter=line
+
+      - name: Upload Playwright report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+
+      - name: Stop app
+        if: always()
+        run: pkill -f "next start" || true
