@@ -8,8 +8,9 @@ export function extractRequestId(
   fallback: string = 'unavailable',
 ): string {
   // Try body.request_id first (most reliable)
-  if ((body as any)?.request_id && typeof (body as any).request_id === 'string') {
-    return (body as any).request_id;
+  const bodyWithRequestId = body as { request_id?: string };
+  if (bodyWithRequestId?.request_id && typeof bodyWithRequestId.request_id === 'string') {
+    return bodyWithRequestId.request_id;
   }
 
   // Fall back to x-request-id header

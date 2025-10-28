@@ -27,11 +27,11 @@ export async function fetchJson<T>(path: string, init: RequestInit = {}): Promis
     // Ignore JSON parse errors
   }
 
-  const requestId = (body as any)?.request_id || hdrId || 'unavailable';
+  const requestId = (body as { request_id?: string })?.request_id || hdrId || 'unavailable';
 
   return res.ok
     ? { ok: true, data: body as T, requestId }
-    : { ok: false, error: (body as any)?.error || `http_${res.status}`, requestId };
+    : { ok: false, error: (body as { error?: string })?.error || `http_${res.status}`, requestId };
 }
 
 // Helper to extract request ID from response

@@ -13,7 +13,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             gcTime: 1000 * 60 * 10, // 10 minutes
           },
         },
-      })
+      }),
   );
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
