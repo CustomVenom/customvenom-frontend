@@ -44,7 +44,7 @@ export function LeagueSwitcher() {
       } catch (err: unknown) {
         if (!cancelled) {
           console.error('[LeagueSwitcher]', err);
-          setError(err?.message || 'Failed to load leagues');
+          setError(err instanceof Error ? err.message : 'Failed to load leagues');
         }
       } finally {
         if (!cancelled) {

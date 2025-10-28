@@ -28,8 +28,9 @@ export function LeagueImport() {
         if (result.ok && result.data) {
           setYahooConnected(true);
           // Extract GUID from Yahoo response
-          if (result.data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
-            setYahooGuid(result.data.fantasy_content.users[0].user[0].guid);
+          const data = result.data as any;
+          if (data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
+            setYahooGuid(data.fantasy_content.users[0].user[0].guid);
           }
         }
       } catch (err) {
@@ -50,9 +51,8 @@ export function LeagueImport() {
       console.log('Leagues response:', result.data);
 
       // Extract leagues from Yahoo response
-      const leaguesData =
-        (result.data as { fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } } })
-          ?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || [];
+      const data = result.data as any;
+      const leaguesData = data?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || [];
       setLeagues(leaguesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch leagues');

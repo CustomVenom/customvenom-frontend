@@ -3,6 +3,7 @@ import { Inter, Merriweather_Sans } from 'next/font/google';
 
 import ClientLayout from './ClientLayout';
 import './globals.css';
+import Providers from './providers';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
@@ -78,14 +79,16 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <SelectionProvider>
-          <Header />
-          <ClientLayout>
-            <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">
-              {children}
-            </main>
-          </ClientLayout>
-        </SelectionProvider>
+        <Providers>
+          <SelectionProvider>
+            <Header />
+            <ClientLayout>
+              <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">
+                {children}
+              </main>
+            </ClientLayout>
+          </SelectionProvider>
+        </Providers>
         <Footer />
         <Analytics />
       </body>

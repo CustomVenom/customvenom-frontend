@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
@@ -11,9 +11,9 @@ import { useToast } from '@/components/Toast';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 import ToolsTabs from '@/components/ToolsTabs';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
-import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
+import { trackFeatureInteraction, trackRiskModeChange, trackToolUsage } from '@/lib/analytics';
 import { startSitSummary } from '@/lib/summary';
-import { type Row, fetchProjections } from '@/lib/tools';
+import { fetchProjections, type Row } from '@/lib/tools';
 
 function StartSitContent() {
   const [playerA, setPlayerA] = useState('');
@@ -24,6 +24,9 @@ function StartSitContent() {
     rowA: Row;
     rowB: Row;
     recommendation: string;
+    confidence?: number;
+    reasoning?: string;
+    risk_adjusted?: number;
   } | null>(null);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -67,7 +70,32 @@ function StartSitContent() {
 
     // TODO: Wire to API endpoint
     // For now, return mock data
+    const mockRowA: Row = {
+      player_id: 'mock-a-1',
+      player_name: playerA || 'Player A',
+      position: 'QB',
+      team: 'KC',
+      range: { p10: 15.2, p50: 22.1, p90: 28.7 },
+      explanations: [],
+      schema_version: '1.0.0',
+      last_refresh: new Date().toISOString(),
+    };
+
+    const mockRowB: Row = {
+      player_id: 'mock-b-1',
+      player_name: playerB || 'Player B',
+      position: 'QB',
+      team: 'PHI',
+      range: { p10: 12.8, p50: 19.4, p90: 25.1 },
+      explanations: [],
+      schema_version: '1.0.0',
+      last_refresh: new Date().toISOString(),
+    };
+
     setResult({
+      winner: 'A',
+      rowA: mockRowA,
+      rowB: mockRowB,
       recommendation: playerA || 'Player A',
       confidence: 0.75,
       reasoning: 'Higher projected points with better matchup',
