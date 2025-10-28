@@ -3,8 +3,65 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { probeYahooMe, fetchJson } from '@/lib/api';
+import { fetchJson, probeYahooMe } from '@/lib/api';
+import { useEffect, useState } from 'react';
+
+// Define a narrow helper to extract GUID safely
+function extractYahooGuid(data: unknown): string | null {
+  try {
+    // Very defensive: fantasy_content.users[0].user[0].guid
+    const fc = (data as Record<string, unknown>)?.['fantasy_content'] as
+      | Record<string, unknown>
+      | undefined;
+    const users = fc?.['users'];
+    if (!Array.isArray(users) || users.length === 0) return null;
+    const userNode = users[0]?.['user'];
+    if (!Array.isArray(userNode) || userNode.length === 0) return null;
+    const first = userNode[0];
+    return typeof first?.['guid'] === 'string' ? first['guid'] : null;
+  } catch {
+    return null;
+  }
+}
+
+// Define a narrow helper to extract leagues safely
+function extractYahooLeagues(data: unknown): Array<{
+  name?: string;
+  league_id?: string;
+  season?: string;
+}> {
+  try {
+    // Very defensive: fantasy_content.users[0].user[1].games[0].game[1].leagues
+    const fc = (data as Record<string, unknown>)?.['fantasy_content'] as
+      | Record<string, unknown>
+      | undefined;
+    const users = fc?.['users'];
+    if (!Array.isArray(users) || users.length === 0) return [];
+    const userNode = users[0]?.['user'];
+    if (!Array.isArray(userNode) || userNode.length < 2) return [];
+    const games = userNode[1]?.['games'];
+    if (!Array.isArray(games) || games.length === 0) return [];
+    const game = games[0]?.['game'];
+    if (!Array.isArray(game) || game.length < 2) return [];
+    const leagues = game[1]?.['leagues'];
+    if (!Array.isArray(leagues)) return [];
+
+    // Safely map the leagues to the expected type
+    return leagues.map((league: Record<string, unknown>) => {
+      const name = typeof league?.['name'] === 'string' ? league['name'] : undefined;
+      const league_id = typeof league?.['league_id'] === 'string' ? league['league_id'] : undefined;
+      const season = typeof league?.['season'] === 'string' ? league['season'] : undefined;
+
+      return {
+        ...(name !== undefined && { name }),
+        ...(league_id !== undefined && { league_id }),
+        ...(season !== undefined && { season }),
+      };
+    });
+  } catch {
+    return [];
+  }
+}
 
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
@@ -27,13 +84,14 @@ export function LeagueImport() {
         const result = await probeYahooMe();
         if (result.ok && result.data) {
           setYahooConnected(true);
-          // Extract GUID from Yahoo response
-          const data = result.data as {
-            fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } };
-          };
-          if (data?.fantasy_content?.users?.[0]?.user?.[0]?.guid) {
-            setYahooGuid((data.fantasy_content.users[0].user[0] as { guid?: string }).guid || '');
-          }
+          // Extract GUID from Yahoo response safely
+          const guid = extractYahooGuid(result.data);
+          setYahooGuid(guid ?? '');
+        } else {
+          console.warn('Yahoo /me failed', {
+            error: result.error,
+            requestId: result.requestId,
+          });
         }
       } catch (err) {
         console.log('Yahoo not connected:', err);
@@ -48,19 +106,16 @@ export function LeagueImport() {
     try {
       const result = await fetchJson('/yahoo/leagues');
       if (!result.ok) {
+        console.warn('Yahoo /leagues failed', {
+          error: result.error,
+          requestId: result.requestId,
+        });
         throw new Error(result.error || 'Failed to fetch leagues');
       }
       console.log('Leagues response:', result.data);
 
-      // Extract leagues from Yahoo response
-      const data = result.data as {
-        fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } };
-      };
-      const leaguesData =
-        ((data?.fantasy_content?.users?.[0]?.user?.[1] as { games?: unknown[] })?.games?.[0] as {
-          game?: unknown[];
-        }) || [];
-      const leagues = (leaguesData?.game?.[1] as { leagues?: unknown[] })?.leagues || [];
+      // Extract leagues from Yahoo response safely
+      const leagues = extractYahooLeagues(result.data);
       setLeagues(leagues);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch leagues');
