@@ -33,7 +33,7 @@ jobs:
           NODE_ENV: test
 
       - name: Upload test results (if any)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: test-results

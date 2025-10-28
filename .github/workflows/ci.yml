@@ -62,7 +62,7 @@ jobs:
 
       - name: Upload smoke receipts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: frontend-smoke-receipts-${{ github.sha }}
           path: receipts/**
