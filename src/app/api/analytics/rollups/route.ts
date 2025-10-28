@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     // Log error in production, but don't expose details to client
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env['NODE_ENV'] !== 'production') {
       console.error('Error retrieving rollups:', error);
     }
     return NextResponse.json({ error: 'Failed to retrieve rollups' }, { status: 500 });

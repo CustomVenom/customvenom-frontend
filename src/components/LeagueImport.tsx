@@ -51,8 +51,8 @@ export function LeagueImport() {
 
       // Extract leagues from Yahoo response
       const leaguesData =
-        (result.data as { fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } } })?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]
-          ?.leagues || [];
+        (result.data as { fantasy_content?: { users?: { [key: string]: { user?: unknown[] } } } })
+          ?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || [];
       setLeagues(leaguesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch leagues');

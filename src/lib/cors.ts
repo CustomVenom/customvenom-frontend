@@ -20,7 +20,7 @@ export function parseAllowedOrigins(envValue?: string): string[] {
     .map((origin) => origin.trim())
     .filter((origin) => {
       // Enforce HTTPS in production
-      if (process.env.NODE_ENV === 'production' && origin.startsWith('http://')) {
+      if (process.env['NODE_ENV'] === 'production' && origin.startsWith('http://')) {
         console.warn(`[CORS] Blocking HTTP origin in production: ${origin}`);
         return false;
       }

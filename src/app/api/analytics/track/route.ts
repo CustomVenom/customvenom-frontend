@@ -87,7 +87,7 @@ async function updateHourlyRollup(event: AnalyticsEvent): Promise<void> {
       },
     });
   } catch (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env['NODE_ENV'] !== 'production') {
       console.error('Failed to update hourly rollup:', error);
     }
     // Don't throw - rollup update failure shouldn't block event storage
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     // Update hourly rollup (async, non-blocking)
     updateHourlyRollup(event).catch((err) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env['NODE_ENV'] !== 'production') {
         console.error('Rollup update failed (non-critical):', err);
       }
     });
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
           },
         })
         .catch((err) => {
-          if (process.env.NODE_ENV !== 'production') {
+          if (process.env['NODE_ENV'] !== 'production') {
             console.error('Cleanup failed (non-critical):', err);
           }
         });
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
           },
         })
         .catch((err) => {
-          if (process.env.NODE_ENV !== 'production') {
+          if (process.env['NODE_ENV'] !== 'production') {
             console.error('Rollup cleanup failed (non-critical):', err);
           }
         });
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
       events: recentEvents,
     });
   } catch (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env['NODE_ENV'] !== 'production') {
       console.error('Error retrieving analytics events:', error);
     }
     return NextResponse.json({ error: 'Failed to retrieve events' }, { status: 500 });

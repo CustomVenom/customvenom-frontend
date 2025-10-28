@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, url: session.url }, { status: 200 });
   } catch (e) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env['NODE_ENV'] !== 'production') {
       console.error('[Checkout Error]', e);
     }
     return NextResponse.json({ ok: false, error: 'checkout_create_failed' }, { status: 500 });

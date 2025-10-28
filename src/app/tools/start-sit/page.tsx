@@ -119,7 +119,6 @@ function StartSitContent() {
     setRisk('neutral');
   }
 
-
   return (
     <main className="container section space-y-4">
       <h1 className="h1">

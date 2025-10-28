@@ -24,3 +24,12 @@
            cache: 'no-store',[m
            headers: { 'accept': 'application/json' }[m
          });[m
+[35msrc/app/api/analytics/rollups/route.ts[m[36m:[m[32m51[m[36m:[m    if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/analytics/track/route.ts[m[36m:[m[32m90[m[36m:[m    if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/analytics/track/route.ts[m[36m:[m[32m128[m[36m:[m      if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/analytics/track/route.ts[m[36m:[m[32m146[m[36m:[m          if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/analytics/track/route.ts[m[36m:[m[32m162[m[36m:[m          if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/analytics/track/route.ts[m[36m:[m[32m217[m[36m:[m    if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/app/api/checkout/session/route.ts[m[36m:[m[32m30[m[36m:[m    if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/lib/analytics.ts[m[36m:[m[32m15[m[36m:[m  if ([1;31mprocess.env.N[mODE_ENV !== 'production') {
+[35msrc/lib/cors.ts[m[36m:[m[32m23[m[36m:[m      if ([1;31mprocess.env.N[mODE_ENV === 'production' && origin.startsWith('http://')) {
