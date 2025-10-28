@@ -71,6 +71,12 @@ function FaabContent() {
     setMsg(`${label} bid copied`);
   }
 
+  function handleExample() {
+    trackFeatureInteraction('example', 'loaded', { tool: 'FAAB' });
+    setPlayer('Jahmyr Gibbs');
+    setBudget('100');
+  }
+
   return (
     <main className="container section space-y-4">
       <h1 className="h1">
