@@ -2,8 +2,8 @@
 
 import ProjectionsTable from '@/components/ProjectionsTable';
 import { makeApi } from '@/lib/apiClient';
-import { useQuery } from '@tanstack/react-query';
 import type { Row } from '@/lib/tools';
+import { useQuery } from '@tanstack/react-query';
 
 type ApiRow = {
   player: string;
@@ -44,7 +44,7 @@ export default function ProjectionsPage() {
   if (isLoading) return <div>Loading projections…</div>;
   if (isError) return <div>Could not load projections.</div>;
 
-  const apiRows = ((data as { rows?: ApiRow[] })?.rows) ?? [];
+  const apiRows = (data as { rows?: ApiRow[] })?.rows ?? [];
   const rows: Row[] = apiRows.map(toRow);
 
   return (
