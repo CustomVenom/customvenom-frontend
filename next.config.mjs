@@ -7,11 +7,8 @@ const nextConfig = {
   async rewrites() {
     // eslint-disable-next-line no-undef
     const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
-    return [
-      { source: '/api/yahoo/:path*', destination: `${apiBase}/api/yahoo/:path*` },
-    ];
+    return [{ source: '/api/yahoo/:path*', destination: `${apiBase}/api/yahoo/:path*` }];
   },
 };
 
 export default nextConfig;
-
