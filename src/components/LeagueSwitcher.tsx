@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { LeagueChooser } from './LeagueChooser';
+import { extractRequestIdFromResponse } from '@/lib/request-id';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
 
@@ -56,17 +57,9 @@ export function LeagueSwitcher() {
       });
 
       clearTimeout(timeoutId);
-      
-      // Try to get request ID from response body first, then headers
-      let bodyRequestId = 'no-request-id';
-      try {
-        const body = await res.json();
-        bodyRequestId = body.request_id || 'no-request-id';
-      } catch {
-        // If JSON parsing fails, we'll use header fallback
-      }
-      
-      requestId = bodyRequestId !== 'no-request-id' ? bodyRequestId : (res.headers.get('x-request-id') || 'no-request-id');
+
+      // Extract request ID using helper function
+      requestId = await extractRequestIdFromResponse(res, 'no-request-id');
 
       if (res.status === 404) {
         setErrorDetails(

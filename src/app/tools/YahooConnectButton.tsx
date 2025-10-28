@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelectedTeam } from '@/lib/selection';
+import { extractRequestId } from '@/lib/request-id';
 
 export default function YahooConnectButton() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function YahooConnectButton() {
           setAuthError(null);
         } else if (res.status === 401) {
           const body = await res.json().catch(() => ({}));
-          const reqId = body.request_id || res.headers.get('x-request-id') || 'unavailable';
+          const reqId = extractRequestId(res, body, 'unavailable');
           if (body.error === 'auth_required' || body.error === 'NO_YAHOO_SESSION') {
             setAuthError({ state: 'needsAuth', reqId });
             setConnected(false);
