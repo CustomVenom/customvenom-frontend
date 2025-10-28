@@ -45,7 +45,7 @@ export default function YahooConnectButton() {
   // 2) Actions
   const connect = () => {
     if (loading) return; // Prevent multiple launches
-    
+
     setLoading(true);
     const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const currentPath = window.location.pathname + window.location.search;
