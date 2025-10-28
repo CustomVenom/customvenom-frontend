@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { SportChooserHidden } from '@/components/SportChooser';
 import { useSelectedTeam } from '@/lib/selection';
-import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
+import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
 
 interface League {
   id: string;
@@ -15,9 +15,11 @@ interface League {
 type Sport = 'nfl' | 'nba' | 'mlb' | 'nhl';
 
 function multiSportEnabled() {
-  return process.env['NEXT_PUBLIC_ENABLE_MULTI_SPORT'] === 'true'
-    && typeof window !== 'undefined'
-    && localStorage.getItem('cv:multiSport') === 'on';
+  return (
+    process.env['NEXT_PUBLIC_ENABLE_MULTI_SPORT'] === 'true' &&
+    typeof window !== 'undefined' &&
+    localStorage.getItem('cv:multiSport') === 'on'
+  );
 }
 
 export function ConnectYahoo() {
@@ -41,6 +43,15 @@ export function ConnectYahoo() {
 
     const checkConnection = async () => {
       try {
+        // Check if we're coming from OAuth callback (URL has code/state params)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isOAuthCallback = urlParams.has('code') || urlParams.has('state');
+
+        // Add delay after OAuth callback to prevent auth_required flicker
+        if (isOAuthCallback) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
         // Check if user is connected using unified API
         const result = await probeYahooMe();
 
@@ -49,18 +60,16 @@ export function ConnectYahoo() {
         if (result.ok) {
           setConnected(true);
 
-          // Fetch leagues (clamp to NFL unless multi-sport enabled)
+          // Fetch leagues using unified API client
           const effective = multiSportEnabled() ? sport : 'nfl';
-          const leaguesUrl = `${API_BASE}/yahoo/leagues${effective === 'nfl' ? '' : `?game=${encodeURIComponent(effective)}`}`;
-          const leaguesRes = await fetch(leaguesUrl, {
-            credentials: 'include',
-            cache: 'no-store',
-            headers: { accept: 'application/json' }
-          });
+          const leaguesPath =
+            effective === 'nfl'
+              ? '/yahoo/leagues'
+              : `/yahoo/leagues?game=${encodeURIComponent(effective)}`;
+          const leaguesResult = await fetchJson(leaguesPath);
 
-          if (leaguesRes.ok) {
-            const leaguesData = await leaguesRes.json();
-            setLeagues(leaguesData.leagues || []);
+          if (leaguesResult.ok) {
+            setLeagues((leaguesResult.data as any)?.leagues || []);
           }
         } else {
           setConnected(false);
@@ -75,7 +84,9 @@ export function ConnectYahoo() {
     };
 
     checkConnection();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [API_BASE, sport]);
 
   const refresh = async () => {
@@ -85,20 +96,18 @@ export function ConnectYahoo() {
       setLoading(true);
       setError(null);
 
-      // Refresh leagues (clamp to NFL unless multi-sport enabled)
+      // Refresh leagues using unified API client
       const effective = multiSportEnabled() ? sport : 'nfl';
-      const refreshUrl = `${API_BASE}/yahoo/leagues${effective === 'nfl' ? '' : `?game=${encodeURIComponent(effective)}`}`;
-      const res = await fetch(refreshUrl, {
-        credentials: 'include',
-        cache: 'no-store',
-        headers: { accept: 'application/json' }
-      });
+      const leaguesPath =
+        effective === 'nfl'
+          ? '/yahoo/leagues'
+          : `/yahoo/leagues?game=${encodeURIComponent(effective)}`;
+      const result = await fetchJson(leaguesPath);
 
-      if (res.ok) {
-        const data = await res.json();
-        setLeagues(data.leagues || []);
+      if (result.ok) {
+        setLeagues((result.data as any)?.leagues || []);
       } else {
-        setError('Failed to refresh leagues');
+        setError(result.error || 'Failed to refresh leagues');
       }
     } catch {
       setError('Failed to refresh leagues');
@@ -113,7 +122,9 @@ export function ConnectYahoo() {
       <div className="p-4 border rounded-lg bg-gray-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+            <div className="font-medium">
+              {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+            </div>
             <div className="text-sm opacity-80">API not configured. Set NEXT_PUBLIC_API_BASE.</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
@@ -130,7 +141,9 @@ export function ConnectYahoo() {
       <div className="p-4 border rounded-lg bg-yellow-50">
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+            <div className="font-medium">
+              {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+            </div>
             <div className="text-sm opacity-80">Checking connection status...</div>
           </div>
           <button disabled className="px-3 py-2 rounded bg-gray-300 text-gray-600">
@@ -150,7 +163,9 @@ export function ConnectYahoo() {
         <div className="p-4 border rounded-lg bg-green-50">
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
+              <div className="font-medium">
+                {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+              </div>
               <div className="text-sm opacity-80 flex items-center gap-2">
                 <span className="inline-flex items-center rounded px-2 py-1 text-xs bg-green-100 text-green-800">
                   {team_key ? 'Connected ✓' : 'Yahoo connected ✓'}
@@ -201,12 +216,18 @@ export function ConnectYahoo() {
     <div className="p-4 border rounded-lg bg-gray-50">
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-medium">{team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}</div>
-          <div className="text-sm opacity-80">Not connected. <a href="/tools" className="text-blue-600 hover:underline">Go to Tools to connect</a>.</div>
+          <div className="font-medium">
+            {team_key ? 'League Integration' : 'Yahoo Fantasy (read‑only)'}
+          </div>
+          <div className="text-sm opacity-80">
+            Not connected.{' '}
+            <a href="/tools" className="text-blue-600 hover:underline">
+              Go to Tools to connect
+            </a>
+            .
+          </div>
         </div>
-        <span className="px-3 py-2 rounded bg-gray-100 text-gray-600 text-sm">
-          Not Connected
-        </span>
+        <span className="px-3 py-2 rounded bg-gray-100 text-gray-600 text-sm">Not Connected</span>
       </div>
     </div>
   );

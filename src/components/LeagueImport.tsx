@@ -4,7 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
+import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
 
 export function LeagueImport() {
   const [leagueId, setLeagueId] = useState('');
@@ -43,19 +43,16 @@ export function LeagueImport() {
     setFetchingLeagues(true);
     setError(null);
     try {
-      const response = await fetch('/api/yahoo/leagues', {
-        credentials: 'include',
-        headers: { accept: 'application/json' }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch leagues');
+      const result = await fetchJson('/yahoo/leagues');
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch leagues');
       }
-      const data = await response.json();
-      console.log('Leagues response:', data);
+      console.log('Leagues response:', result.data);
 
       // Extract leagues from Yahoo response
       const leaguesData =
-        data?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]?.leagues || [];
+        (result.data as any)?.fantasy_content?.users?.[0]?.user?.[1]?.games?.[0]?.game?.[1]
+          ?.leagues || [];
       setLeagues(leaguesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch leagues');
@@ -77,7 +74,7 @@ export function LeagueImport() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/league/import', {
+      const result = await fetchJson('/api/league/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -86,12 +83,11 @@ export function LeagueImport() {
         }),
       });
 
-      const data: { error?: string; message?: string; [key: string]: unknown } =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Import failed');
+      if (!result.ok) {
+        throw new Error(result.error || 'Import failed');
       }
+
+      const data = result.data as Record<string, unknown>;
 
       setResult(data);
       console.log('League import result:', data);

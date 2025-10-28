@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { LeagueChooser } from './LeagueChooser';
-import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
+import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
 
@@ -25,11 +25,9 @@ export function LeagueSwitcher() {
 
     setUpdating(true);
     try {
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] as string;
-      await fetch(`${API_BASE}/app/me/active-league`, {
+      await fetchJson('/api/me/active-league', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ league_key: newActive }),
       });
       localStorage.setItem('cv_last_league', newActive);
@@ -60,20 +58,24 @@ export function LeagueSwitcher() {
       const json = result.data;
 
       // Handle empty leagues array explicitly
-      if (!json.leagues || json.leagues.length === 0) {
+      if (!json?.leagues || json.leagues.length === 0) {
         console.warn('[LeagueSwitcher] Empty leagues array returned');
         setData({
-          ...json,
+          connections: json?.connections || [],
+          entitlements: json?.entitlements || { is_superuser: false, free_slots: 1, purchased_slots: 0, max_sync_slots: 1, used_slots: 0 },
           leagues: [],
           synced_leagues: [],
+          active_league: json?.active_league || null,
+          ...(json?.defaultLeagueId && { defaultLeagueId: json.defaultLeagueId }),
+          ...(json?.lastSync && { lastSync: json.lastSync }),
         });
         setError('No leagues found. Try refreshing your league data.');
         setErrorDetails(
           JSON.stringify(
             {
               requestId,
-              connections: json.connections?.length || 0,
-              leagueCount: json.leagues?.length || 0,
+              connections: json?.connections?.length || 0,
+              leagueCount: json?.leagues?.length || 0,
             },
             null,
             2
@@ -122,14 +124,12 @@ export function LeagueSwitcher() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] as string;
-      const res = await fetch(`${API_BASE}/api/leagues/refresh`, {
+      const result = await fetchJson('/api/leagues/refresh', {
         method: 'POST',
         headers: { accept: 'application/json' },
-        credentials: 'include',
       });
 
-      if (res.ok) {
+      if (result.ok) {
         // Wait a moment for backend to process, then reload
         setTimeout(() => {
           fetchLeagues();

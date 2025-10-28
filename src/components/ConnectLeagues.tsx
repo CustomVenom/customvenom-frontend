@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "@/hooks/useSession";
+import { fetchJson } from "@/lib/api";
 
 export default function ConnectLeagues() {
   const { sess } = useSession();
@@ -20,13 +21,12 @@ export default function ConnectLeagues() {
         return;
       }
 
-      const r = await fetch('/api/oauth/yahoo/refresh', {
+      const r = await fetchJson('/api/oauth/yahoo/refresh', {
         method: 'POST',
-        credentials: 'include'
       });
 
       // Warm the leagues endpoint after refresh
-      await fetch('/api/yahoo/leagues?details=true', { credentials: 'include' });
+      await fetchJson('/yahoo/leagues?details=true');
 
       setMsg(r.ok ? 'Synced leagues' : 'Sync failed');
     } catch (error) {

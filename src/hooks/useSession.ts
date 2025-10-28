@@ -1,11 +1,12 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
+import { fetchJson } from '@/lib/api';
 
 type Sess = {
   ok: true;
   uid: string;
   providers: string[];
-  yahoo?: { expires_at: number } | null
+  yahoo?: { expires_at: number } | null;
 };
 
 export function useSession() {
@@ -17,9 +18,8 @@ export function useSession() {
 
     (async () => {
       try {
-        const r = await fetch('/api/session', { credentials: 'include' });
-        const b = await r.json();
-        if (alive) setSess(b.ok ? b : null);
+        const result = await fetchJson('/api/session');
+        if (alive) setSess(result.ok ? (result.data as Sess) : null);
       } catch (error) {
         console.error('Session fetch error:', error);
         if (alive) setSess(null);
@@ -28,7 +28,9 @@ export function useSession() {
       }
     })();
 
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, []);
 
   return { sess, loading };

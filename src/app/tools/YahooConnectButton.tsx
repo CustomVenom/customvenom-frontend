@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelectedTeam } from '@/lib/selection';
-import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
+import { probeYahooMe, getReqId, fetchJson, type ApiResult } from '@/lib/api';
 
 export default function YahooConnectButton() {
   const router = useRouter();
@@ -64,13 +64,9 @@ export default function YahooConnectButton() {
   const refresh = async () => {
     try {
       setLoading(true);
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
       // hit your refresh endpoint or re-pull leagues
-      await fetch(`${API_BASE}/yahoo/leagues`, {
+      await fetchJson('/yahoo/leagues', {
         method: 'GET',
-        credentials: 'include',
-        cache: 'no-store',
-        headers: { accept: 'application/json' },
       });
       router.refresh(); // revalidate page state
     } finally {
