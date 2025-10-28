@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { LeagueChooser } from './LeagueChooser';
-import { extractRequestIdFromResponse } from '@/lib/request-id';
+import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
 
 import type { MeLeaguesResponse } from '@/types/leagues';
 
@@ -43,50 +43,21 @@ export function LeagueSwitcher() {
   };
 
   const fetchLeagues = async () => {
-    let requestId = 'no-request-id';
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] as string;
+      const result = await fetchJson<MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string }>('/api/leagues');
+      const requestId = getReqId(result);
 
-      const res = await fetch(`${API_BASE}/api/leagues`, {
-        cache: 'no-store',
-        headers: { accept: 'application/json' },
-        credentials: 'include',
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      // Extract request ID using helper function
-      requestId = await extractRequestIdFromResponse(res, 'no-request-id');
-
-      if (res.status === 404) {
+      if (!result.ok) {
+        if (result.error === 'auth_required') {
+          throw new Error('auth_required');
+        }
         setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2)
+          JSON.stringify({ requestId, error: result.error, status: result.status }, null, 2)
         );
-        throw new Error('leagues_endpoint_not_found');
-      }
-      if (res.status === 401) {
-        setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2)
-        );
-        throw new Error('auth_required');
-      }
-      if (!res.ok) {
-        setErrorDetails(
-          JSON.stringify({ requestId, status: res.status, statusText: res.statusText }, null, 2)
-        );
-        throw new Error(`HTTP ${res.status}`);
+        throw new Error(result.error || `HTTP ${result.status}`);
       }
 
-      const contentType = res.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error('Non-JSON response');
-      }
-
-      const json: MeLeaguesResponse & { defaultLeagueId?: string; lastSync?: string } =
-        await res.json();
+      const json = result.data;
 
       // Handle empty leagues array explicitly
       if (!json.leagues || json.leagues.length === 0) {
@@ -136,9 +107,8 @@ export function LeagueSwitcher() {
       setErrorDetails(
         JSON.stringify(
           {
-            requestId,
+            requestId: 'unavailable',
             error: err instanceof Error ? err.message : String(err),
-            stack: err instanceof Error ? err.stack : undefined,
           },
           null,
           2

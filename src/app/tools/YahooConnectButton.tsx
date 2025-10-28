@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelectedTeam } from '@/lib/selection';
-import { extractRequestId } from '@/lib/request-id';
+import { probeYahooMe, getReqId, type ApiResult } from '@/lib/api';
 
 export default function YahooConnectButton() {
   const router = useRouter();
@@ -12,32 +12,20 @@ export default function YahooConnectButton() {
   const [authError, setAuthError] = useState<{ state: 'needsAuth'; reqId: string } | null>(null);
   const { team_key } = useSelectedTeam();
 
-  // 1) Probe connection (reads your app's /yahoo/me or similar)
+  // 1) Probe connection using deduplicated API call
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        const res = await fetch(`${API_BASE}/yahoo/me`, {
-          credentials: 'include',
-          cache: 'no-store',
-          headers: { accept: 'application/json' },
-        });
+        const result = await probeYahooMe();
         if (!alive) return;
 
-        if (res.ok) {
+        if (result.ok) {
           setConnected(true);
           setAuthError(null);
-        } else if (res.status === 401) {
-          const body = await res.json().catch(() => ({}));
-          const reqId = extractRequestId(res, body, 'unavailable');
-          if (body.error === 'auth_required' || body.error === 'NO_YAHOO_SESSION') {
-            setAuthError({ state: 'needsAuth', reqId });
-            setConnected(false);
-          } else {
-            setConnected(false);
-            setAuthError(null);
-          }
+        } else if (result.error === 'auth_required' || result.error === 'NO_YAHOO_SESSION') {
+          setAuthError({ state: 'needsAuth', reqId: getReqId(result) });
+          setConnected(false);
         } else {
           setConnected(false);
           setAuthError(null);
@@ -56,6 +44,9 @@ export default function YahooConnectButton() {
 
   // 2) Actions
   const connect = () => {
+    if (loading) return; // Prevent multiple launches
+    
+    setLoading(true);
     const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
     const currentPath = window.location.pathname + window.location.search;
     window.location.href = `${API_BASE}/api/yahoo/signin?from=${encodeURIComponent(currentPath)}`;
@@ -111,11 +102,12 @@ export default function YahooConnectButton() {
           </div>
           <button
             onClick={connect}
+            disabled={loading}
             data-testid="yahoo-connect-btn"
-            className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800"
+            className="px-3 py-2 rounded bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
             aria-label="Connect Yahoo"
           >
-            Connect Yahoo
+            {loading ? 'Redirecting…' : 'Connect Yahoo'}
           </button>
         </div>
       </div>
