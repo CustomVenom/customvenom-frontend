@@ -11,3 +11,16 @@
            dateTime={lastRefresh || ''}[m
            className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}[m
          >[m
+[1mdiff --git a/src/components/LeagueSwitcher.tsx b/src/components/LeagueSwitcher.tsx[m
+[1mindex 909de25..16eb16a 100644[m
+[1m--- a/src/components/LeagueSwitcher.tsx[m
+[1m+++ b/src/components/LeagueSwitcher.tsx[m
+[36m@@ -15,7 +15,7 @@[m [mexport function LeagueSwitcher() {[m
+ [m
+     (async () => {[m
+       try {[m
+[31m-        const res = await fetch('/app/me/leagues', { [m
+[32m+[m[32m        const res = await fetch('/app/me/leagues', {[m
+           cache: 'no-store',[m
+           headers: { 'accept': 'application/json' }[m
+         });[m
