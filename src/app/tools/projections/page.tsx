@@ -37,12 +37,22 @@ function toRow(a: ApiRow): Row {
 }
 
 export default function ProjectionsPage() {
-  const API = useMemo(() => process.env['NEXT_PUBLIC_API_BASE']!, []);
+  const API = useMemo(() => process.env['NEXT_PUBLIC_API_BASE'] ?? '', []);
+
+  // Parameterize week via URL search params
+  const params = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams();
+  }, []);
+  const week = params.get('week') ?? WEEK;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['projections', WEEK],
+    queryKey: ['projections', week],
     queryFn: async (): Promise<ApiResponse> => {
-      const r = await fetch(`${API}/projections?week=${encodeURIComponent(WEEK)}`, {
+      if (!API) throw new Error('API base not configured');
+      const r = await fetch(`${API}/projections?week=${encodeURIComponent(week)}`, {
         headers: { accept: 'application/json' },
         cache: 'no-store',
       });
@@ -52,16 +62,19 @@ export default function ProjectionsPage() {
     staleTime: 60_000,
   });
 
-  if (isLoading) return <div>Loading projections…</div>;
+  if (!API) return <div>API base not configured.</div>;
+
+  if (isLoading) return <div className="animate-pulse h-6 w-48 bg-gray-200 rounded" />;
   if (isError || !data) return <div>Could not load projections.</div>;
 
-  const apiRows = data.rows ?? [];
-  const rows: Row[] = apiRows.map(toRow).map((r) => ({
-    ...r,
-    // carry page-level metadata if provided
-    schema_version: data.schema_version ?? r.schema_version,
-    last_refresh: data.last_refresh ?? r.last_refresh,
-  }));
+  const rows: Row[] = (data.rows ?? []).map((a) => {
+    const base = toRow(a);
+    return {
+      ...base,
+      schema_version: data.schema_version ?? base.schema_version,
+      last_refresh: data.last_refresh ?? base.last_refresh,
+    };
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-3">
