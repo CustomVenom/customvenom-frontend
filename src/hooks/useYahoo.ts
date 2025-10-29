@@ -9,18 +9,26 @@ export function useYahooMe() {
   return useQuery({
     queryKey: ['yahoo', 'me'],
     queryFn: async () => {
-      const r = await fetch(`${api}/yahoo/me`, {
-        credentials: 'include',
-        headers: { accept: 'application/json' },
-        cache: 'no-store',
-      });
-      if (!r.ok) {
-        const reqId = r.headers.get('x-request-id') || 'unknown';
-        console.warn('[useYahooMe] /yahoo/me error', { status: r.status, request_id: reqId });
-        throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
+      try {
+        const r = await fetch(`${api}/yahoo/me`, {
+          credentials: 'include',
+          headers: { accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (r.status === 401) {
+          return { auth_required: true as const, guid: '' };
+        }
+        if (!r.ok) {
+          const reqId = r.headers.get('x-request-id') || 'unknown';
+          console.warn('[useYahooMe] /yahoo/me error', { status: r.status, request_id: reqId });
+          return { auth_required: false as const, guid: '', error: 'http_error' as const };
+        }
+        const data = (await r.json()) as YahooMe;
+        return { auth_required: false as const, guid: data.user?.guid ?? '' };
+      } catch (error) {
+        console.error('[useYahooMe] fetch failed', error);
+        return { auth_required: false as const, guid: '', error: 'network' as const };
       }
-      const data = (await r.json()) as YahooMe;
-      return { guid: data.user?.guid ?? '' };
     },
     retry: false,
     staleTime: 60_000,
@@ -34,20 +42,29 @@ export function useYahooLeagues() {
   return useQuery({
     queryKey: ['yahoo', 'leagues'],
     queryFn: async () => {
-      const r = await fetch(`${api}/yahoo/leagues?format=json`, {
-        credentials: 'include',
-        headers: { accept: 'application/json' },
-        cache: 'no-store',
-      });
-      if (!r.ok) {
-        const reqId = r.headers.get('x-request-id') || 'unknown';
-        console.warn('[useYahooLeagues] /yahoo/leagues error', {
-          status: r.status,
-          request_id: reqId,
+      try {
+        const r = await fetch(`${api}/yahoo/leagues?format=json`, {
+          credentials: 'include',
+          headers: { accept: 'application/json' },
+          cache: 'no-store',
         });
-        throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
+        if (r.status === 401) {
+          return { auth_required: true as const, league_keys: [] };
+        }
+        if (!r.ok) {
+          const reqId = r.headers.get('x-request-id') || 'unknown';
+          console.warn('[useYahooLeagues] /yahoo/leagues error', {
+            status: r.status,
+            request_id: reqId,
+          });
+          return { auth_required: false as const, league_keys: [], error: 'http_error' as const };
+        }
+        const data = (await r.json()) as YahooLeagues;
+        return { auth_required: false as const, league_keys: data.league_keys ?? [] };
+      } catch (error) {
+        console.error('[useYahooLeagues] fetch failed', error);
+        return { auth_required: false as const, league_keys: [], error: 'network' as const };
       }
-      return (await r.json()) as YahooLeagues;
     },
     retry: false,
     staleTime: 60_000,
