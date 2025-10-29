@@ -43,7 +43,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
         <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
           <div className="flex items-start gap-3">
             <svg
-              className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -66,7 +66,7 @@ export class ToolErrorBoundary extends Component<Props, State> {
 
               {this.state.error?.message && (
                 <div className="bg-[rgb(var(--bg-input))] rounded p-3 mb-3 border border-[rgba(148,163,184,0.1)]">
-                  <p className="text-xs text-[rgb(var(--text-primary))] font-mono break-words">
+                  <p className="text-xs text-[rgb(var(--text-primary))] font-mono wrap-break-word">
                     {this.state.error.message}
                   </p>
                 </div>

@@ -25,8 +25,8 @@ export function ToolsTabs() {
               href={t.href}
               className={`py-2 text-sm transition-colors ${
                 p?.startsWith(t.href)
-                  ? 'border-b-2 border-[var(--cv-primary)] dark:border-[var(--cv-accent)] text-[var(--cv-primary)] dark:text-[var(--cv-accent)] font-medium'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-[var(--cv-primary)] dark:hover:text-[var(--cv-accent)]'
+                  ? 'border-b-2 border-(--cv-primary) dark:border-(--cv-accent) text-(--cv-primary) dark:text-(--cv-accent) font-medium'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-(--cv-primary) dark:hover:text-(--cv-accent)'
               }`}
             >
               {t.label}

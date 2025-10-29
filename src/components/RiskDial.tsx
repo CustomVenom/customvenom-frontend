@@ -100,7 +100,7 @@ export function RiskDial({ week = '2025-06' }: RiskDialProps) {
       </div>
 
       <div className="flex flex-col md:flex-row items-center gap-8">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <svg
             width="200"
             height="200"
