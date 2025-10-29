@@ -2,6 +2,7 @@
 
 import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
 import Link from 'next/link';
+import ToolsTabs from '@/components/ToolsTabs';
 
 export default function LeaguesPage() {
   const { data: me, isLoading: isLoadingMe, isError: isErrorMe } = useYahooMe();
@@ -9,13 +10,13 @@ export default function LeaguesPage() {
 
   if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
   if (isErrorMe || isErrorLeagues)
-    return <div>Could not load Yahoo data. Please connect Yahoo.</div>;
+    return <div>Could not load league data. Please connect to view your leagues.</div>;
 
   if (!me?.guid) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-3">
         <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
-        <p>Please connect Yahoo to view your leagues.</p>
+        <p>Please connect to view your leagues.</p>
         <Link href="/tools" className="text-blue-500 hover:underline">
           Go to Tools to Connect
         </Link>
@@ -25,6 +26,7 @@ export default function LeaguesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-3">
+      <ToolsTabs />
       <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
 
       {/* Clear Connected PASS Indicator */}
