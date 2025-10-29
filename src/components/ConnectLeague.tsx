@@ -4,11 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
 
+type ConnectState = 'unknown' | 'disconnected' | 'connected' | 'verifying';
+
 type Me = { user?: { guid?: string } };
 type Leagues = { league_keys?: string[] };
 type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
+  const [state, setState] = useState<ConnectState>('unknown');
+  const [connecting, setConnecting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
   const [guid, setGuid] = useState<string>('');
@@ -16,6 +20,7 @@ export default function ConnectLeague() {
   const [selectedLeague, setSelectedLeague] = useState<string>('');
   const [teams, setTeams] = useState<Array<{ team_key: string; name?: string }>>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>('');
+  const [isFreePlan] = useState(true); // TODO: wire to real plan
 
   // small helper
   async function get<T>(path: string): Promise<T> {
@@ -38,8 +43,10 @@ export default function ConnectLeague() {
       setLeagueKeys(keys);
       if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
       setConnected(true);
+      setState('connected');
     } catch {
       setConnected(false);
+      setState('disconnected');
     } finally {
       setLoading(false);
     }
@@ -68,6 +75,23 @@ export default function ConnectLeague() {
     return `${API}/api/connect/start?host=yahoo&from=${from}`;
   }, []);
 
+  function handleConnect() {
+    if (connecting) return;
+    setConnecting(true);
+    const ret = encodeURIComponent('/tools');
+    window.location.href = `${API}/api/connect/start?host=yahoo&from=${ret}`;
+  }
+
+  async function handleRefresh() {
+    setState('verifying');
+    try {
+      const me = await get<Me>('/yahoo/me');
+      setState(me.user?.guid ? 'connected' : 'disconnected');
+    } catch {
+      setState('disconnected');
+    }
+  }
+
   useEffect(() => {
     void probe();
   }, [probe]);
@@ -93,35 +117,66 @@ export default function ConnectLeague() {
     );
   }
 
-  if (!connected) {
-    return (
-      <div className="border rounded p-3 flex items-center justify-between">
-        <div className="text-sm opacity-80">Not connected.</div>
-        <a
-          href={connectHref}
-          className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
-        >
-          Connect league
-        </a>
-      </div>
-    );
-  }
+  const isBusy = connecting || state === 'verifying';
+  const label = state === 'connected' ? 'Refresh' : (connecting ? 'Redirecting…' : 'Connect League');
 
   return (
-    <div className="border rounded p-3 grid gap-3">
-      <div className="flex items-center justify-between">
-        <div className="text-sm opacity-80">Connected · {guid || 'unknown'}</div>
+    <div className="border rounded p-3">
+      <div className="flex items-center gap-2">
         <button
-          onClick={() => void probe()}
-          className="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50"
+          onClick={state === 'connected' ? handleRefresh : handleConnect}
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className={`cv-btn-primary ${isBusy ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
+          aria-label={label}
         >
-          Refresh league
+          {label}
         </button>
+
+        {/* Team chooser */}
+        {teams.length > 1 && (
+          <select
+            className="border rounded px-2 py-1 bg-transparent text-sm"
+            value={selectedTeam ?? ''}
+            onChange={(e) => {
+              const id = e.target.value;
+              if (isFreePlan && selectedTeam && id !== selectedTeam) {
+                alert('Team locked on free plan. Upgrade to switch teams.');
+                return;
+              }
+              if (isFreePlan && !selectedTeam) {
+                setSelectedTeam(id); // first selection locks
+                // TODO: persist selection (localStorage or API)
+              } else {
+                setSelectedTeam(id);
+              }
+            }}
+          >
+            <option value="" disabled>Select a team…</option>
+            {teams.map(t => (
+              <option key={t.team_key} value={t.team_key}>
+                {t.name ?? t.team_key}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {teams.length === 1 && selectedTeam && (
+          <span className="text-sm opacity-80">
+            Team: {teams.find(t => t.team_key === selectedTeam)?.name ?? selectedTeam}
+          </span>
+        )}
+
+        {isFreePlan && selectedTeam && teams.length > 1 && (
+          <button className="cv-btn-ghost text-xs" disabled title="Upgrade to switch teams">
+            Unlock more teams
+          </button>
+        )}
       </div>
 
       {/* League select (hidden if only one) */}
       {leagueKeys.length > 1 && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mt-2">
           <label className="text-sm opacity-80">League</label>
           <select
             className="border rounded px-2 py-1 text-sm"
@@ -137,21 +192,9 @@ export default function ConnectLeague() {
         </div>
       )}
 
-      {/* Team select (hidden if only one) */}
-      {(teams ?? []).length > 0 && (
-        <div className="flex items-center gap-2">
-          <label className="text-sm opacity-80">Team</label>
-          <select
-            className="border rounded px-2 py-1 text-sm"
-            value={selectedTeam}
-            onChange={(e) => setSelectedTeam(e.target.value)}
-          >
-            {(teams ?? []).map((t) => (
-              <option key={t.team_key} value={t.team_key}>
-                {t.name ?? t.team_key}
-              </option>
-            ))}
-          </select>
+      {state === 'connected' && guid && (
+        <div className="text-xs opacity-60 mt-2">
+          Connected as {guid}
         </div>
       )}
     </div>
