@@ -40,7 +40,7 @@
     "lint:fast": "eslint src/ --max-warnings=0 --cache --cache-location .eslintcache",
     "lint:check": "eslint src/ --max-warnings=0 --quiet",
     "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",
-    "prepare": "husky install",
+    "prepare": "node -e \"(process.env.CI||process.env.VERCEL)?process.exit(0):0\" && husky install || true",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
     "storybook": "storybook dev -p 6006",
