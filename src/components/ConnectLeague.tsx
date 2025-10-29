@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
 
@@ -64,13 +64,16 @@ export default function ConnectLeague() {
     async (leagueKey: string) => {
       if (!leagueKey) return;
       try {
-        const data = await fetch(`${API}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`, {
-          credentials: 'include',
-          cache: 'no-store',
-          headers: { 'Accept': 'application/json' }
-        });
+        const data = await fetch(
+          `${API}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
+          {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          },
+        );
         if (data.ok) {
-          const result = await data.json() as Teams;
+          const result = (await data.json()) as Teams;
           const list = result.teams ?? [];
           setTeams(list);
           if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key);
@@ -96,8 +99,8 @@ export default function ConnectLeague() {
     setBusy(false);
   }
 
-  useEffect(() => { 
-    probeSession(); 
+  useEffect(() => {
+    probeSession();
   }, []);
 
   useEffect(() => {
@@ -113,10 +116,7 @@ export default function ConnectLeague() {
     );
   }
 
-  const label =
-    status === 'connected' ? 'Refresh'
-    : busy ? 'Redirecting…'
-    : 'Connect League';
+  const label = status === 'connected' ? 'Refresh' : busy ? 'Redirecting…' : 'Connect League';
 
   const onClick = status === 'connected' ? refresh : connect;
 
