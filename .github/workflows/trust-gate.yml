@@ -44,9 +44,9 @@ jobs:
 
       # 1) Notion token sanity (proves this run has a valid integration token)
       - name: Notion whoami
-        if: ${{ github.event_name != 'pull_request' && secrets.NOTION_TOKEN }}
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        if: ${{ github.event_name != 'pull_request' && env.NOTION_TOKEN != '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -57,10 +57,10 @@ jobs:
 
       # 2) DB access probe (proves correct DB + sharing for THIS token)
       - name: Notion DB access probe
-        if: ${{ github.event_name != 'pull_request' && secrets.NOTION_TOKEN && secrets.NOTION_DATABASE_ID }}
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        if: ${{ github.event_name != 'pull_request' && env.NOTION_TOKEN != '' && env.NOTION_DATABASE_ID != '' }}
         shell: bash
         run: |
           set -euo pipefail
