@@ -20,7 +20,7 @@ export default function ConnectLeague() {
   const [selectedLeague, setSelectedLeague] = useState<string>('');
   const [teams, setTeams] = useState<Array<{ team_key: string; name?: string }>>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>('');
-  const [isFreePlan] = useState(true); // TODO: wire to real plan
+  const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
 
   // small helper
   async function get<T>(path: string): Promise<T> {

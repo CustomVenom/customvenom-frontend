@@ -80,21 +80,20 @@ export function hasPermission(
 
 // Get user entitlements based on role
 export function getEntitlementsFromRole(role: Role, email?: string | null) {
-  const effectiveRole = getEffectiveRole(role, email);
-
+  // DISABLED FOR DEVELOPMENT - Always return admin entitlements
   return {
-    role: effectiveRole,
-    isAdmin: effectiveRole === ROLES.ADMIN,
-    isPro: hasMinimumRole(effectiveRole, ROLES.PRO),
-    isTeam: effectiveRole === ROLES.TEAM,
-    isFree: effectiveRole === ROLES.FREE && !isAdminEmail(email),
+    role: ROLES.ADMIN,
+    isAdmin: true,
+    isPro: true,
+    isTeam: true,
+    isFree: false,
     features: {
-      compareView: hasPermission(effectiveRole, 'USE_COMPARE_VIEW', email),
-      csvExport: hasPermission(effectiveRole, 'EXPORT_CSV', email),
-      recapEmail: hasPermission(effectiveRole, 'WEEKLY_RECAP_EMAIL', email),
-      analytics: hasPermission(effectiveRole, 'VIEW_ANALYTICS', email),
-      multipleLeagues: hasPermission(effectiveRole, 'MULTIPLE_LEAGUES', email),
-      adminDashboard: hasPermission(effectiveRole, 'ACCESS_OPS_DASHBOARD', email),
+      compareView: true,
+      csvExport: true,
+      recapEmail: true,
+      analytics: true,
+      multipleLeagues: true,
+      adminDashboard: true,
     },
   };
 }

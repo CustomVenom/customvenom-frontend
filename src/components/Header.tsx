@@ -46,9 +46,10 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <DensityToggle />
-          <Link href="/go-pro" className="cv-btn-primary hidden sm:inline-block">
+          {/* Go Pro button disabled for development */}
+          {/* <Link href="/go-pro" className="cv-btn-primary hidden sm:inline-block">
             Go Pro
-          </Link>
+          </Link> */}
           <Link
             href="/design-preview"
             className="cv-btn-ghost hidden lg:inline-block text-xs px-2 py-1"

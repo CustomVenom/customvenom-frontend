@@ -24,45 +24,11 @@ const stripeKey = process.env['STRIPE_SECRET_KEY'];
 /**
  * Get entitlements from current session
  * Uses RBAC system with admin email override
+ * DISABLED FOR DEVELOPMENT - Always returns admin entitlements
  */
 export async function getEntitlements(): Promise<Entitlements> {
-  try {
-    const session = await getServerSession();
-
-    if (!session?.user) {
-      // Not logged in - free tier
-      return getEntitlementsFromRole(ROLES.FREE);
-    }
-
-    // Get user from database to check subscription status
-    const { prisma } = await import('./db');
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        email: true,
-        role: true,
-        subscriptionStatus: true,
-        tier: true,
-        paidUntil: true,
-      },
-    });
-
-    if (!user) {
-      return getEntitlementsFromRole(ROLES.FREE);
-    }
-
-    // Determine role from subscription status
-    const subscriptionRole = getRoleFromSubscription(user.subscriptionStatus, user.tier);
-
-    // Use the higher of database role or subscription role
-    const userRole = (user.role as Role) || subscriptionRole;
-
-    // Get entitlements (admin email check happens inside)
-    return getEntitlementsFromRole(userRole, user.email);
-  } catch (err) {
-    console.error('Failed to get entitlements:', err);
-    return getEntitlementsFromRole(ROLES.FREE);
-  }
+  // DISABLED FOR DEVELOPMENT - Always return admin entitlements
+  return getEntitlementsFromRole(ROLES.ADMIN);
 }
 
 /**
