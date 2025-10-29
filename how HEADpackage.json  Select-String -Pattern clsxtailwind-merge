@@ -1,0 +1,13 @@
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 63842e6..6e7d0f5 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -40,7 +40,7 @@[m
+     "lint:fast": "eslint src/ --max-warnings=0 --cache --cache-location .eslintcache",[m
+     "lint:check": "eslint src/ --max-warnings=0 --quiet",[m
+     "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",[m
+[31m-    "prepare": "husky install",[m
+[32m+[m[32m    "prepare": "node -e \"(process.env.CI||process.env.VERCEL)?process.exit(0):0\" && husky install || true",[m
+     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",[m
+     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",[m
+     "storybook": "storybook dev -p 6006",[m
