@@ -265,10 +265,7 @@ function ProjectionsPageInner() {
       if (!acc[playerId]) {
         acc[playerId] = [];
       }
-      const playerList = acc[playerId];
-      if (playerList) {
-        playerList.push(projection);
-      }
+      acc[playerId]!.push(projection);
       return acc;
     },
     {} as Record<string, ProjectionData[]>,

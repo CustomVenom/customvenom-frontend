@@ -98,8 +98,8 @@ if ($errors.Count -eq 0) {
     Write-Host "✅ Yahoo OAuth Drift Watch $(Get-Date -Format 'yyyy-MM-dd'): All URLs aligned to https://www.customvenom.com" -ForegroundColor White
 } else {
     Write-Host "❌ $($errors.Count) ISSUES FOUND:" -ForegroundColor Red
-    foreach ($error in $errors) {
-        Write-Host "  $error" -ForegroundColor Red
+    foreach ($err in $errors) {
+        Write-Host "  $err" -ForegroundColor Red
     }
     Write-Host "`nCopy this to Weekly Readout:" -ForegroundColor Cyan
     Write-Host "❌ Yahoo OAuth Drift Watch $(Get-Date -Format 'yyyy-MM-dd'): $($errors.Count) issues found - see drift-watch.log" -ForegroundColor White
