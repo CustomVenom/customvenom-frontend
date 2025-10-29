@@ -11,6 +11,7 @@ patterns=(
   "League Integration"
   "Choose Your Team"
   "Refresh league"
+  "settings.route.enter"
 )
 
 for p in "${patterns[@]}"; do
