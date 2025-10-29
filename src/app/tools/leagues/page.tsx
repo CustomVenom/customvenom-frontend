@@ -53,10 +53,10 @@ export default function LeaguesPage() {
         role="status"
         className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1 mb-4"
       >
-        Yahoo Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
+        Yahoo Connected — GUID: {me?.guid ?? 'unknown'} · Leagues: {leagues?.league_keys?.length ?? 0}
       </div>
 
-      {leagues?.league_keys && leagues.league_keys.length > 0 ? (
+      {leagues?.league_keys && Array.isArray(leagues.league_keys) && leagues.league_keys.length > 0 ? (
         <>
           <h2 className="text-md font-semibold mt-4 mb-2">Your Leagues:</h2>
           <ul className="space-y-2">
