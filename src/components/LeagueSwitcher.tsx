@@ -30,7 +30,11 @@ export function LeagueSwitcher() {
 
   // Guard: Handle error states
   if (me.isError || leagues.isError || me.data?.error || leagues.data?.error) {
-    return <div className="p-3 border rounded text-sm">Could not load league data. Please try again.</div>;
+    return (
+      <div className="p-3 border rounded text-sm">
+        Could not load league data. Please try again.
+      </div>
+    );
   }
 
   // Guard: Only access data if we have a guid (meaning successful auth)

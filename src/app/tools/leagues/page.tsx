@@ -9,7 +9,7 @@ export default function LeaguesPage() {
   const { data: leagues, isLoading: isLoadingLeagues } = useYahooLeagues();
 
   if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
-  
+
   // Guard: Handle auth_required state first
   if (me?.auth_required || leagues?.auth_required) {
     return (
@@ -25,7 +25,9 @@ export default function LeaguesPage() {
 
   // Guard: Handle error states
   if (me?.error || leagues?.error) {
-    return <div>Could not load league data. Please try again or connect if you haven't already.</div>;
+    return (
+      <div>Could not load league data. Please try again or connect if you haven't already.</div>
+    );
   }
 
   // Guard: Ensure me has guid before accessing
