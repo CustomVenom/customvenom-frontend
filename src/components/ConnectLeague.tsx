@@ -4,17 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
 
-type ConnectState = 'unknown' | 'disconnected' | 'connected' | 'verifying';
+type Status = 'unknown' | 'verifying' | 'connected' | 'disconnected';
 
 type Me = { user?: { guid?: string } };
 type Leagues = { league_keys?: string[] };
 type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [state, setState] = useState<ConnectState>('unknown');
-  const [connecting, setConnecting] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [connected, setConnected] = useState(false);
+  const [status, setStatus] = useState<Status>('unknown');
+  const [busy, setBusy] = useState(false);
   const [guid, setGuid] = useState<string>('');
   const [leagueKeys, setLeagueKeys] = useState<string[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<string>('');
@@ -22,46 +20,61 @@ export default function ConnectLeague() {
   const [selectedTeam, setSelectedTeam] = useState<string>('');
   const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
 
-  // small helper
-  async function get<T>(path: string): Promise<T> {
-    const r = await fetch(`${API}${path}`, {
-      credentials: 'include',
-      headers: { accept: 'application/json' },
-      cache: 'no-store',
-    });
-    if (!r.ok) throw new Error(r.status === 401 ? 'auth_required' : 'http_error');
-    return r.json() as Promise<T>;
-  }
-
-  const probe = useCallback(async () => {
-    setLoading(true);
+  // Bulletproof session probe - single source of truth
+  async function probeSession() {
+    setStatus('verifying');
     try {
-      const me = await get<Me>('/yahoo/me');
-      setGuid(me.user?.guid ?? '');
-      const leagues = await get<Leagues>('/yahoo/leagues?format=json');
-      const keys = leagues.league_keys ?? [];
-      setLeagueKeys(keys);
-      if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
-      setConnected(true);
-      setState('connected');
+      const r = await fetch(`${API}/yahoo/me`, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store', // avoid stale "connected" caches
+        headers: { Accept: 'application/json' },
+      });
+
+      if (r.ok) {
+        const me = (await r.json()) as Me;
+        setGuid(me.user?.guid ?? '');
+        setStatus('connected');
+
+        // Load leagues only after confirmed connection
+        try {
+          const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          });
+          if (leagues.ok) {
+            const data = (await leagues.json()) as Leagues;
+            const keys = data.league_keys ?? [];
+            setLeagueKeys(keys);
+            if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+          }
+        } catch {
+          // League loading failure doesn't affect connection status
+        }
+      } else {
+        setStatus('disconnected');
+      }
     } catch {
-      setConnected(false);
-      setState('disconnected');
-    } finally {
-      setLoading(false);
+      setStatus('disconnected');
     }
-  }, [selectedLeague]);
+  }
 
   const loadTeams = useCallback(
     async (leagueKey: string) => {
       if (!leagueKey) return;
       try {
-        const data = await get<Teams>(
-          `/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
-        );
-        const list = data.teams ?? [];
-        setTeams(list);
-        if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key);
+        const data = await fetch(`${API}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (data.ok) {
+          const result = await data.json() as Teams;
+          const list = result.teams ?? [];
+          setTeams(list);
+          if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key);
+        }
       } catch {
         setTeams([]);
       }
@@ -69,32 +82,23 @@ export default function ConnectLeague() {
     [selectedTeam],
   );
 
-  const connectHref = useMemo(() => {
-    // after consent, always come back to /tools
-    const from = encodeURIComponent('/tools');
-    return `${API}/api/connect/start?host=yahoo&from=${from}`;
-  }, []);
-
-  function handleConnect() {
-    if (connecting) return;
-    setConnecting(true);
+  function connect() {
+    if (busy) return;
+    setBusy(true);
     const ret = encodeURIComponent('/tools');
     window.location.href = `${API}/api/connect/start?host=yahoo&from=${ret}`;
   }
 
-  async function handleRefresh() {
-    setState('verifying');
-    try {
-      const me = await get<Me>('/yahoo/me');
-      setState(me.user?.guid ? 'connected' : 'disconnected');
-    } catch {
-      setState('disconnected');
-    }
+  async function refresh() {
+    if (busy) return;
+    setBusy(true);
+    await probeSession();
+    setBusy(false);
   }
 
-  useEffect(() => {
-    void probe();
-  }, [probe]);
+  useEffect(() => { 
+    probeSession(); 
+  }, []);
 
   useEffect(() => {
     if (selectedLeague) void loadTeams(selectedLeague);
@@ -109,25 +113,21 @@ export default function ConnectLeague() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="border rounded p-3">
-        <div className="text-sm opacity-75">Checking league connection…</div>
-      </div>
-    );
-  }
+  const label =
+    status === 'connected' ? 'Refresh'
+    : busy ? 'Redirecting…'
+    : 'Connect League';
 
-  const isBusy = connecting || state === 'verifying';
-  const label = state === 'connected' ? 'Refresh' : (connecting ? 'Redirecting…' : 'Connect League');
+  const onClick = status === 'connected' ? refresh : connect;
 
   return (
     <div className="border rounded p-3">
       <div className="flex items-center gap-2">
         <button
-          onClick={state === 'connected' ? handleRefresh : handleConnect}
-          disabled={isBusy}
-          aria-busy={isBusy}
-          className={`cv-btn-primary ${isBusy ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
+          onClick={onClick}
+          disabled={busy || status === 'unknown' || status === 'verifying'}
+          aria-busy={busy || status === 'verifying'}
+          className={`cv-btn-primary ${busy || status === 'verifying' ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
           aria-label={label}
         >
           {label}
@@ -152,8 +152,10 @@ export default function ConnectLeague() {
               }
             }}
           >
-            <option value="" disabled>Select a team…</option>
-            {teams.map(t => (
+            <option value="" disabled>
+              Select a team…
+            </option>
+            {teams.map((t) => (
               <option key={t.team_key} value={t.team_key}>
                 {t.name ?? t.team_key}
               </option>
@@ -163,7 +165,7 @@ export default function ConnectLeague() {
 
         {teams.length === 1 && selectedTeam && (
           <span className="text-sm opacity-80">
-            Team: {teams.find(t => t.team_key === selectedTeam)?.name ?? selectedTeam}
+            Team: {teams.find((t) => t.team_key === selectedTeam)?.name ?? selectedTeam}
           </span>
         )}
 
@@ -192,10 +194,8 @@ export default function ConnectLeague() {
         </div>
       )}
 
-      {state === 'connected' && guid && (
-        <div className="text-xs opacity-60 mt-2">
-          Connected as {guid}
-        </div>
+      {status === 'connected' && guid && (
+        <div className="text-xs opacity-60 mt-2">Connected as {guid}</div>
       )}
     </div>
   );
