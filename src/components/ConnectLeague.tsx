@@ -21,7 +21,6 @@ export default function ConnectLeague() {
   const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
 
   // Bulletproof session probe - single source of truth (stable via useCallback)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const probeSession = useCallback(async () => {
     setStatus('verifying');
     try {
@@ -68,7 +67,6 @@ export default function ConnectLeague() {
     }
   }, [selectedLeague]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadTeams = useCallback(
     async (leagueKey: string) => {
       if (!leagueKey) return;

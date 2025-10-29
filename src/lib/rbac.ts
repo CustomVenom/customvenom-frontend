@@ -79,7 +79,7 @@ export function hasPermission(
 }
 
 // Get user entitlements based on role
-export function getEntitlementsFromRole(role: Role, email?: string | null) {
+export function getEntitlementsFromRole(_role: Role, _email?: string | null) {
   // DISABLED FOR DEVELOPMENT - Always return admin entitlements
   return {
     role: ROLES.ADMIN,

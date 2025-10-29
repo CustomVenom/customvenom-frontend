@@ -56,4 +56,12 @@ export default [
       ...reactHooks.configs.recommended.rules,
     },
   },
+
+  // Override for next-env.d.ts to disable triple-slash-reference warning
+  {
+    files: ['next-env.d.ts'],
+    rules: {
+      '@typescript-eslint/triple-slash-reference': 'off',
+    },
+  },
 ];

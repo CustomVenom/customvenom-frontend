@@ -58,7 +58,7 @@ function ProFeature({ isPro, children }: ProFeatureProps) {
     <div className="relative">
       <div className="blur-sm opacity-60 pointer-events-none">{children}</div>
       <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-lg z-10">
-        <div className="flex flex-col items-center gap-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white px-6 py-4 rounded-xl shadow-lg">
+        <div className="flex flex-col items-center gap-2 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white px-6 py-4 rounded-xl shadow-lg">
           <span className="text-2xl">🔒</span>
           <span className="font-semibold text-sm">Pro Feature</span>
         </div>
@@ -295,7 +295,7 @@ function ProjectionsPageInner() {
             staleAge={staleAge}
           />
           {!isPro && (
-            <div className="bg-gradient-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
+            <div className="bg-linear-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
               <GoProButton
                 priceId={process.env['NEXT_PUBLIC_STRIPE_PRICE_ID'] || 'price_pro_season'}
               />

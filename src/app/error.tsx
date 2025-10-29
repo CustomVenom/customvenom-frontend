@@ -50,7 +50,7 @@ export default function Error({
 
         {error.message && (
           <div className="bg-[rgb(var(--bg-input))] rounded p-4 mb-6 border border-[rgba(148,163,184,0.1)]">
-            <p className="text-sm text-[rgb(var(--text-primary))] font-mono break-words">
+            <p className="text-sm text-[rgb(var(--text-primary))] font-mono wrap-break-word">
               {error.message}
             </p>
           </div>

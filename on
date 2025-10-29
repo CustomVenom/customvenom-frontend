@@ -1,5 +1,0 @@
-[35msrc/lib/http-guard.test.ts[m[36m:[m[32m7[m[36m:[m    expect(enforceYahooHttps('[1;31mhttp://fantasysports.yahoo.com[m/x')).toBe(
-[35msrc/lib/http-guard.test.ts[m[36m:[m[32m13[m[36m:[m    expect(enforceYahooHttps('[1;31mhttp://api.yahoo.com/y')).toBe('https://api.yahoo.com[m/y');
-[35msrc/lib/http-guard.test.ts[m[36m:[m[32m17[m[36m:[m    expect(enforceYahooHttps('[1;31mhttp://login.yahoo.com/oauth')).toBe('https://login.yahoo.com[m/oauth');
-[35msrc/lib/http-guard.test.ts[m[36m:[m[32m57[m[36m:[m    await safeFetch('[1;31mhttp://fantasysports.yahoo.com[m/api', { method: 'GET' });
-[35msrc/lib/http-guard.test.ts[m[36m:[m[32m77[m[36m:[m    const url = new URL('[1;31mhttp://fantasysports.yahoo.com[m/api');
