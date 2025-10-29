@@ -9,7 +9,11 @@ interface ProLockProps {
   message?: string;
 }
 
-export function ProLock({ children, isPro: _isPro, message: _message = 'Unlock Pro features' }: ProLockProps) {
+export function ProLock({
+  children,
+  isPro: _isPro,
+  message: _message = 'Unlock Pro features',
+}: ProLockProps) {
   // DISABLED FOR DEVELOPMENT - Always show content
   return <>{children}</>;
 }

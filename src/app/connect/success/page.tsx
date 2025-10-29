@@ -20,10 +20,10 @@ export default function ConnectSuccess() {
       <h1 className="text-2xl font-semibold">You’re connected</h1>
       <p className="mt-2 text-sm opacity-80">Your {provider} login worked. Redirecting…</p>
       <div className="mt-6">
-        <a className="cv-btn-primary" href={ret}>Continue</a>
+        <a className="cv-btn-primary" href={ret}>
+          Continue
+        </a>
       </div>
     </main>
   );
 }
-
-

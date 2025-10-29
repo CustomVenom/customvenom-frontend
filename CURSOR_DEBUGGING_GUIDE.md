@@ -19,14 +19,14 @@ Equip Cursor to be an excellent debugger for CustomVenom. Concrete tasks, guardr
 
 - Install and pin Node 20.x in the environment (Dev Container or local)
 - Recommend extensions
-    - TypeScript ESLint, Tailwind CSS IntelliSense, Thunder Client or REST Client
+  - TypeScript ESLint, Tailwind CSS IntelliSense, Thunder Client or REST Client
 - Project tasks
-    - Workers API
-        - "Test" → `npm -w customvenom-workers-api test`
-        - "Build" → `npm -w customvenom-workers-api run build`
-        - "Dev (Wrangler)" → `npx -w customvenom-workers-api wrangler dev --local`
-    - Frontend
-        - "Playwright E2E" → `NEXT_PUBLIC_API_BASE="$API_BASE" npx -w customvenom-frontend playwright test`
+  - Workers API
+    - "Test" → `npm -w customvenom-workers-api test`
+    - "Build" → `npm -w customvenom-workers-api run build`
+    - "Dev (Wrangler)" → `npx -w customvenom-workers-api wrangler dev --local`
+  - Frontend
+    - "Playwright E2E" → `NEXT_PUBLIC_API_BASE="$API_BASE" npx -w customvenom-frontend playwright test`
 
 ---
 
@@ -90,20 +90,20 @@ curl -sSD - -X OPTIONS "$API_BASE/yahoo/leagues" \
 ### 5) Trust bundle — central enforcement
 
 - Post‑response middleware (Workers/Hono) sets:
-    - /health: cache-control=no-store
-    - JSON routes: cache-control=SWR+SIE, x-request-id, ACAO=FRONTEND_ORIGIN, ACAC=true, Vary: Origin
-- OPTIONS responder for /yahoo/* returns 204 with the same CORS headers and no-store
+  - /health: cache-control=no-store
+  - JSON routes: cache-control=SWR+SIE, x-request-id, ACAO=FRONTEND_ORIGIN, ACAC=true, Vary: Origin
+- OPTIONS responder for /yahoo/\* returns 204 with the same CORS headers and no-store
 
 ---
 
 ### 6) Resilience gates — helpers
 
 - Expose in `src/lib/upstream.ts`:
-    - `resilientFetch(url, init, retries, timeoutMs)`
-    - `breakerOpen()`
-    - `__resetResilienceForTests()`
+  - `resilientFetch(url, init, retries, timeoutMs)`
+  - `breakerOpen()`
+  - `__resetResilienceForTests()`
 - Debug loop
-    - Reset → force 5×5xx → assert breakerOpen=true → run 25 parallel 200s → ensure no 503s
+  - Reset → force 5×5xx → assert breakerOpen=true → run 25 parallel 200s → ensure no 503s
 
 ---
 
@@ -112,18 +112,20 @@ curl -sSD - -X OPTIONS "$API_BASE/yahoo/leagues" \
 - Missing cookie on 302 callback → merge headers and append `set-cookie` on the redirect Response
 
 ```tsx
-return c.redirect(`${FRONTEND_ORIGIN}${ret||'/tools'}`, 302, {
-  'cache-control':'no-store', 'x-request-id':reqId, 'set-cookie': cookieStr,
+return c.redirect(`${FRONTEND_ORIGIN}${ret || '/tools'}`, 302, {
+  'cache-control': 'no-store',
+  'x-request-id': reqId,
+  'set-cookie': cookieStr,
 });
 ```
 
 - Hono overload: passing `Headers` into `c.json` → pass a record
 
 ```tsx
-return c.json(body, 200, { 'cache-control':'no-store', 'x-request-id': reqId })
+return c.json(body, 200, { 'cache-control': 'no-store', 'x-request-id': reqId });
 ```
 
-- ACAO is `*` on cookieed endpoints → set explicit origin in middleware for /yahoo/*
+- ACAO is `*` on cookieed endpoints → set explicit origin in middleware for /yahoo/\*
 - Vitest env fails with undici "reading node" → use `environment:'node'` and add `import 'undici/polyfill'` + preserve `process.versions.node`
 - Tailwind v4 canonical classes → `border-(--cv-primary)`, `text-(--cv-primary)`, `shrink-0`, `wrap-break-word`
 
@@ -133,11 +135,12 @@ return c.json(body, 200, { 'cache-control':'no-store', 'x-request-id': reqId })
 
 ```markdown
 # Cursor Debugging Directives — CustomVenom
+
 - Always run receipts first: callback 302, health headers, projections headers, OPTIONS preflight
 - Propose ONE minimal diff tied to the FIRST failing line, then stop and re-run receipts
 - Prefer middleware for headers; avoid per-route header duplication
 - For OAuth: assert redirect_uri, scope=fspt-r, and state; never add openid
-- For CORS with cookies: ACAO must equal FRONTEND_ORIGIN and ACAC=true; never "*"
+- For CORS with cookies: ACAO must equal FRONTEND_ORIGIN and ACAC=true; never "\*"
 - For tests: use Vitest node env with undici polyfill; cast unknown JSON bodies; avoid generic Request types
 ```
 
@@ -145,20 +148,20 @@ return c.json(body, 200, { 'cache-control':'no-store', 'x-request-id': reqId })
 
 ### 9) Run order (one pass every time)
 
-1) Receipts: callback 302 → health → projections → OPTIONS
+1. Receipts: callback 302 → health → projections → OPTIONS
 
-2) If any red: apply exactly one minimal patch (headers/cookie/ACAO/redirect)
+2. If any red: apply exactly one minimal patch (headers/cookie/ACAO/redirect)
 
-3) Re-run receipts; capture request_id and Location/Set-Cookie lines
+3. Re-run receipts; capture request_id and Location/Set-Cookie lines
 
-4) Only then run Workers tests and Playwright trust snapshot
+4. Only then run Workers tests and Playwright trust snapshot
 
 ---
 
 ### 10) Acceptance
 
 - OAuth happy path: cookie on 302 + correct Location back to frontend
-- CORS consistent on /yahoo/* and OPTIONS returns 204 with expected headers
+- CORS consistent on /yahoo/\* and OPTIONS returns 204 with expected headers
 - Health no-store + x-request-id; projections include schema_version and last_refresh
 - Resilience helpers exported; breaker opens after 5×5xx; high concurrency returns without 503s
 

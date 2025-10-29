@@ -98,7 +98,7 @@ test.describe('OAuth Happy Path Tests', () => {
     expect(body).toHaveProperty('environment');
 
     // Verify trust headers
-    expect((headers['x-schema-version'] ?? '')).toBe('v1');
+    expect(headers['x-schema-version'] ?? '').toBe('v1');
     expect(headers['x-last-refresh']).toBeDefined();
     expect((headers['cache-control'] ?? '').toLowerCase()).toMatch(/no-store/);
   });

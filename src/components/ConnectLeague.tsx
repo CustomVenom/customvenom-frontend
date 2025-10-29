@@ -129,7 +129,8 @@ export default function ConnectLeague() {
 
   const isVerifying = status === 'unknown' || status === 'verifying';
   const isBusy = busy || isVerifying;
-  const label = status === 'connected' ? 'Refresh League' : busy ? 'Redirecting…' : 'Connect League';
+  const label =
+    status === 'connected' ? 'Refresh League' : busy ? 'Redirecting…' : 'Connect League';
 
   const onClick = status === 'connected' ? refresh : connect;
 
