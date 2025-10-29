@@ -33,6 +33,7 @@ export function useYahooMe() {
     retry: false,
     staleTime: 60_000,
     placeholderData: { auth_required: true as const, guid: '' },
+    refetchOnMount: 'always',
   });
 }
 
@@ -70,5 +71,6 @@ export function useYahooLeagues() {
     retry: false,
     staleTime: 60_000,
     placeholderData: { auth_required: true as const, league_keys: [] },
+    refetchOnMount: 'always',
   });
 }
