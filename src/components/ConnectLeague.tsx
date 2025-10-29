@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const API = process.env['NEXT_PUBLIC_API_BASE']!;
+const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
 
 type Me = { user?: { guid?: string } };
 type Leagues = { league_keys?: string[] };
@@ -77,6 +77,14 @@ export default function ConnectLeague() {
   }, [selectedLeague, loadTeams]);
 
   // UI
+  if (!API) {
+    return (
+      <div className="border rounded p-3">
+        <div className="text-sm opacity-75">API base not configured.</div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="border rounded p-3">

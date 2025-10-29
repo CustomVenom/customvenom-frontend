@@ -5,7 +5,7 @@ const BASE = process.env.BASE_URL ?? 'https://www.customvenom.com';
 test('tools: single connect button (signed-out)', async ({ page, context }) => {
   // Clear cookies to ensure signed-out state
   await context.clearCookies();
-  
+
   await page.goto(`${BASE}/tools`, { waitUntil: 'domcontentloaded' });
 
   const btns = page
