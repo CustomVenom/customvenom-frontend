@@ -5,14 +5,31 @@ import Link from 'next/link';
 import ToolsTabs from '@/components/ToolsTabs';
 
 export default function LeaguesPage() {
-  const { data: me, isLoading: isLoadingMe, isError: isErrorMe } = useYahooMe();
-  const { data: leagues, isLoading: isLoadingLeagues, isError: isErrorLeagues } = useYahooLeagues();
+  const { data: me, isLoading: isLoadingMe } = useYahooMe();
+  const { data: leagues, isLoading: isLoadingLeagues } = useYahooLeagues();
 
   if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
-  if (isErrorMe || isErrorLeagues)
-    return <div>Could not load league data. Please connect to view your leagues.</div>;
+  
+  // Guard: Handle auth_required state first
+  if (me?.auth_required || leagues?.auth_required) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-3">
+        <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
+        <p>Please connect to view your leagues.</p>
+        <Link href="/tools" className="text-blue-500 hover:underline">
+          Go to Tools to Connect
+        </Link>
+      </div>
+    );
+  }
 
-  if (!me?.guid) {
+  // Guard: Handle error states
+  if (me?.error || leagues?.error) {
+    return <div>Could not load league data. Please try again or connect if you haven't already.</div>;
+  }
+
+  // Guard: Ensure me has guid before accessing
+  if (!me || !me.guid) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-3">
         <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>

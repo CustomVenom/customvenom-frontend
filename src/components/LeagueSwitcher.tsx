@@ -11,8 +11,8 @@ export function LeagueSwitcher() {
     return <span className="text-xs text-gray-500">Loading leagues…</span>;
   }
 
-  if (me.isError || leagues.isError) {
-    // Do not throw — render unauth state
+  // Guard: Handle auth_required state first
+  if (me.data?.auth_required || leagues.data?.auth_required) {
     return (
       <div className="p-3 border rounded text-sm">
         Please connect to load your leagues.
@@ -28,7 +28,29 @@ export function LeagueSwitcher() {
     );
   }
 
-  const guid = me.data?.guid ?? 'unknown';
+  // Guard: Handle error states
+  if (me.isError || leagues.isError || me.data?.error || leagues.data?.error) {
+    return <div className="p-3 border rounded text-sm">Could not load league data. Please try again.</div>;
+  }
+
+  // Guard: Only access data if we have a guid (meaning successful auth)
+  if (!me.data || !me.data.guid) {
+    return (
+      <div className="p-3 border rounded text-sm">
+        Please connect to load your leagues.
+        <div className="mt-2">
+          <Link
+            href="/tools"
+            className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
+          >
+            Go to Tools to Connect
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const guid = me.data.guid;
   const leagueKeys = leagues.data?.league_keys ?? [];
 
   return (
