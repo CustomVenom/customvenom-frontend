@@ -33,7 +33,7 @@ test.describe('Frontend endpoints', () => {
       failOnStatusCode: false,
       maxRedirects: 0,
     });
-    expect(res.status()).toBeOneOf([301, 308]);
+    expect([301, 308]).toContain(res.status());
     const location = res.headers()['location'];
     expect(location).toMatch(/^https:\/\/www\.customvenom\.com/);
   });

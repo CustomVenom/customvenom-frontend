@@ -5,6 +5,7 @@ This folder contains archived documentation that was moved during a cleanup effo
 ## Archive Criteria
 
 Files were moved here based on:
+
 - **Age**: Files older than 30 days with no recent updates
 - **Size**: Large files (>10KB) that appeared to be dumps or generated content
 - **Relevance**: Implementation summaries, handoff documents, and phase completion reports that are no longer actively referenced
@@ -13,6 +14,7 @@ Files were moved here based on:
 ## What Was Kept
 
 The following high-signal documentation remains in the main repository:
+
 - `README.md` - Main project documentation
 - `CONTRIBUTING.md` - Contribution guidelines
 - `CHANGELOG.md` - Version history
@@ -25,6 +27,7 @@ The following high-signal documentation remains in the main repository:
 ## Archive Contents
 
 This archive contains:
+
 - Implementation summaries and handoff documents
 - Phase completion reports
 - Troubleshooting guides for resolved issues

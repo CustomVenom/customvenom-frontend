@@ -14,7 +14,7 @@ test.describe('Navigation Components', () => {
 
     // Check skip link exists
     const skipLink = page.locator('a[href="#main-content"]');
-    await expect(skipLink).toBeVisible({ state: 'hidden' }); // sr-only initially
+    await expect(skipLink).toBeHidden(); // sr-only initially
 
     // Check it becomes visible on focus
     await skipLink.focus();

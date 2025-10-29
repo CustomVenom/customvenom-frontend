@@ -70,7 +70,7 @@ function ProFeature({ isPro, children }: ProFeatureProps) {
 function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { isPro: boolean }) {
   if (decisions.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
+      <div className="bg-linear-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
         <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-200">
           <h2 className="text-2xl font-bold text-gray-800 m-0">Important Decisions</h2>
         </div>
@@ -83,7 +83,7 @@ function ImportantDecisions({ decisions, isPro }: ImportantDecisionsProps & { is
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
+    <div className="bg-linear-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-xl p-5 mb-8 shadow-sm">
       <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-gray-200">
         <h2 className="text-2xl font-bold text-gray-800 m-0">Important Decisions</h2>
         <span className="bg-[#667eea] text-white px-3 py-1 rounded-full text-sm font-medium">

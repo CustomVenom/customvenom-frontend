@@ -20,8 +20,9 @@ export default function ConnectLeague() {
   const [selectedTeam, setSelectedTeam] = useState<string>('');
   const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
 
-  // Bulletproof session probe - single source of truth
-  async function probeSession() {
+  // Bulletproof session probe - single source of truth (stable via useCallback)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const probeSession = useCallback(async () => {
     setStatus('verifying');
     try {
       const r = await fetch(`${API}/yahoo/me`, {
@@ -65,8 +66,9 @@ export default function ConnectLeague() {
     } catch {
       setStatus('disconnected');
     }
-  }
+  }, [selectedLeague]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadTeams = useCallback(
     async (leagueKey: string) => {
       if (!leagueKey) return;
@@ -106,12 +108,16 @@ export default function ConnectLeague() {
     setBusy(false);
   }
 
+  // Schedule effects to avoid setState synchronously within an effect
   useEffect(() => {
-    probeSession();
-  }, []);
+    const t = setTimeout(() => void probeSession(), 0);
+    return () => clearTimeout(t);
+  }, [probeSession]);
 
   useEffect(() => {
-    if (selectedLeague) void loadTeams(selectedLeague);
+    if (!selectedLeague) return;
+    const t = setTimeout(() => void loadTeams(selectedLeague), 0);
+    return () => clearTimeout(t);
   }, [selectedLeague, loadTeams]);
 
   // UI
@@ -123,6 +129,8 @@ export default function ConnectLeague() {
     );
   }
 
+  const isVerifying = status === 'unknown' || status === 'verifying';
+  const isBusy = busy || isVerifying;
   const label = status === 'connected' ? 'Refresh League' : busy ? 'Redirecting…' : 'Connect League';
 
   const onClick = status === 'connected' ? refresh : connect;
@@ -132,9 +140,9 @@ export default function ConnectLeague() {
       <div className="flex items-center gap-2">
         <button
           onClick={onClick}
-          disabled={busy || status === 'unknown' || status === 'verifying'}
-          aria-busy={busy || status === 'verifying'}
-          className={`cv-btn-primary ${busy || status === 'verifying' ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className={`cv-btn-primary ${isBusy ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
           aria-label={label}
         >
           {label}

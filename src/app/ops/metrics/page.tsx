@@ -139,7 +139,7 @@ export default function MetricsPage() {
         <div className="space-y-6">
           {/* Cache Performance Tile */}
           {metrics.cacheStats && (
-            <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-6 bg-gradient-to-br from-brand-primary/5 to-brand-accent/5">
+            <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-6 bg-linear-to-br from-brand-primary/5 to-brand-accent/5">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <span>⚡</span>
                 Cache Performance

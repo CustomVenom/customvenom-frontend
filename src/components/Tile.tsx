@@ -10,7 +10,7 @@ interface TileProps {
 export function Tile({ title, value, unit, label, status, loading = false }: TileProps) {
   return (
     <div
-      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
+      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-linear-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
     >
       <div className="flex justify-between items-center mb-4">
         <span className="text-lg font-semibold text-gray-800">{title}</span>
@@ -54,7 +54,7 @@ interface DualTileProps {
 export function DualTile({ title, values, label, status, loading = false }: DualTileProps) {
   return (
     <div
-      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-gradient-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
+      className={`bg-white border-2 rounded-xl p-6 shadow-sm transition-all ${status === 'live' ? 'border-green-500 bg-linear-to-br from-blue-50 to-cyan-50' : 'border-gray-300 opacity-70'}`}
     >
       <div className="flex justify-between items-center mb-4">
         <span className="text-lg font-semibold text-gray-800">{title}</span>

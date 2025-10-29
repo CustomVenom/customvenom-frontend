@@ -43,7 +43,7 @@ export default function GoProPage() {
   return (
     <div className="max-w-6xl mx-auto py-16 px-4">
       <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-4 bg-linear-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
           Upgrade to Pro
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -103,7 +103,7 @@ export default function GoProPage() {
           <button
             onClick={handleCheckout}
             disabled={loading}
-            className="w-full py-4 px-8 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white border-none rounded-lg text-lg font-semibold cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-4 px-8 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white border-none rounded-lg text-lg font-semibold cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? 'Loading...' : 'Start Checkout'}
           </button>

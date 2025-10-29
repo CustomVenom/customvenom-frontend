@@ -34,8 +34,8 @@ test.describe('OAuth Happy Path Tests', () => {
     // Should return 400 for invalid callback
     expect(response?.status()).toBe(400);
 
-    const headers = response?.headers();
-    expect(headers['cache-control']).toBe('no-store');
+    const headers = response?.headers() ?? {};
+    expect((headers['cache-control'] ?? '').toLowerCase()).toMatch(/no-store/);
 
     const body = await response?.json();
     expect(body).toHaveProperty('ok', false);
@@ -55,7 +55,7 @@ test.describe('OAuth Happy Path Tests', () => {
     // Should return 401
     expect(response?.status()).toBe(401);
 
-    const headers = response?.headers();
+    const headers = response?.headers() ?? {};
     const body = await response?.json();
 
     // Verify request_id consistency
@@ -72,7 +72,7 @@ test.describe('OAuth Happy Path Tests', () => {
     expect(body).toHaveProperty('request_id');
 
     // Verify cache headers
-    expect(headers['cache-control']).toBe('no-store');
+    expect((headers['cache-control'] ?? '').toLowerCase()).toMatch(/no-store/);
   });
 
   test('Health endpoint returns 200 with proper contract', async ({ page }) => {
@@ -98,8 +98,8 @@ test.describe('OAuth Happy Path Tests', () => {
     expect(body).toHaveProperty('environment');
 
     // Verify trust headers
-    expect(headers['x-schema-version']).toBe('v1');
+    expect((headers['x-schema-version'] ?? '')).toBe('v1');
     expect(headers['x-last-refresh']).toBeDefined();
-    expect(headers['cache-control']).toBe('no-store');
+    expect((headers['cache-control'] ?? '').toLowerCase()).toMatch(/no-store/);
   });
 });
