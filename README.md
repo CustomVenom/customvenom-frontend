@@ -1,6 +1,7 @@
 # CustomVenom Frontend
 
 [![e2e](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/e2e.yml)
+[![docs-lint](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/docs-lint.yml/badge.svg)](https://github.com/CustomVenom/customvenom-frontend/actions/workflows/docs-lint.yml)
 
 React 19 + Next.js 15 frontend for fantasy football projections and decision tools.
 
