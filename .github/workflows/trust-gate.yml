@@ -16,6 +16,10 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.fork == false || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
 
     steps:
       - name: Boot
@@ -25,10 +29,6 @@ jobs:
 
       # 0) Secrets preflight (names the missing ones and stops)
       - name: Secrets preflight
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -44,8 +44,6 @@ jobs:
 
       # 1) Notion token sanity (proves this run has a valid integration token)
       - name: Notion whoami
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         if: ${{ github.event_name != 'pull_request' && env.NOTION_TOKEN != '' }}
         shell: bash
         run: |
@@ -57,9 +55,6 @@ jobs:
 
       # 2) DB access probe (proves correct DB + sharing for THIS token)
       - name: Notion DB access probe
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         if: ${{ github.event_name != 'pull_request' && env.NOTION_TOKEN != '' && env.NOTION_DATABASE_ID != '' }}
         shell: bash
         run: |
