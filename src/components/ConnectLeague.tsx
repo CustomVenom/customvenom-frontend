@@ -31,26 +31,33 @@ export default function ConnectLeague() {
         headers: { Accept: 'application/json' },
       });
 
+      // Only consider connected if we get a 200 OK AND the response has a valid user
       if (r.ok) {
         const me = (await r.json()) as Me;
-        setGuid(me.user?.guid ?? '');
-        setStatus('connected');
+        // Double-check: must have a valid user GUID to be considered connected
+        if (me.user?.guid) {
+          setGuid(me.user.guid);
+          setStatus('connected');
 
-        // Load leagues only after confirmed connection
-        try {
-          const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
-            credentials: 'include',
-            cache: 'no-store',
-            headers: { Accept: 'application/json' },
-          });
-          if (leagues.ok) {
-            const data = (await leagues.json()) as Leagues;
-            const keys = data.league_keys ?? [];
-            setLeagueKeys(keys);
-            if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+          // Load leagues only after confirmed connection
+          try {
+            const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
+              credentials: 'include',
+              cache: 'no-store',
+              headers: { Accept: 'application/json' },
+            });
+            if (leagues.ok) {
+              const data = (await leagues.json()) as Leagues;
+              const keys = data.league_keys ?? [];
+              setLeagueKeys(keys);
+              if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+            }
+          } catch {
+            // League loading failure doesn't affect connection status
           }
-        } catch {
-          // League loading failure doesn't affect connection status
+        } else {
+          // No valid user GUID = not connected
+          setStatus('disconnected');
         }
       } else {
         setStatus('disconnected');
@@ -116,7 +123,7 @@ export default function ConnectLeague() {
     );
   }
 
-  const label = status === 'connected' ? 'Refresh' : busy ? 'Redirecting…' : 'Connect League';
+  const label = status === 'connected' ? 'Refresh League' : busy ? 'Redirecting…' : 'Connect League';
 
   const onClick = status === 'connected' ? refresh : connect;
 
