@@ -14,8 +14,9 @@ type Leagues = { league_keys?: string[] };
 type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [mounted, setMounted] = useState(false);
-  const hasMounted = useRef(false);
+  const [isClient, setIsClient] = useState(false);
+  const mounted = useRef(false);
+  const inFlight = useRef(false);
   const [status, setStatus] = useState<Status>('unknown');
   const [busy, setBusy] = useState(false);
   const [guid, setGuid] = useState<string>('');
@@ -27,73 +28,72 @@ export default function ConnectLeague() {
 
   // Hydration guard - only render on client
   useEffect(() => {
-    setMounted(true);
+    setIsClient(true);
   }, []);
 
-  // Bulletproof session probe - single source of truth (stable via useCallback)
-  const probeSession = useCallback(async () => {
+  // Probe session exactly once - prevent re-entry and StrictMode double-call
+  async function probeSession() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+
     console.log('[ConnectLeague] probeSession: starting...');
     setStatus('verifying');
+    
     try {
       const url = `${API}/yahoo/me`;
       console.log('[ConnectLeague] probeSession: fetching', url);
-
+      
       const r = await fetch(url, {
         method: 'GET',
         credentials: 'include',
-        cache: 'no-store', // avoid stale "connected" caches
+        cache: 'no-store',
         headers: { Accept: 'application/json' },
       });
 
       console.log('[ConnectLeague] probeSession: response status', r.status);
 
-      // Only consider connected if we get a 200 OK AND the response has a valid user
-      if (r.ok) {
-        const data = (await r.json()) as YahooMeResponse;
-        console.log('[ConnectLeague] probeSession: user data', data);
+      const data = (await r.json().catch(() => ({} as YahooMeResponse))) as YahooMeResponse;
+      console.log('[ConnectLeague] probeSession: user data', data);
 
-        // Extract GUID with Yahoo shape fallback
-        const guid =
-          data?.profile?.user?.guid ?? data?.fantasy_content?.users?.[0]?.user?.[0]?.guid ?? null;
+      // Extract GUID with Yahoo shape fallback
+      const guid =
+        data?.profile?.user?.guid ?? data?.fantasy_content?.users?.[0]?.user?.[0]?.guid ?? null;
 
-        // If 200 but no GUID, treat as signed out (don't retry)
-        if (!guid) {
-          console.log('[ConnectLeague] probeSession: 200 OK but no GUID, signed out');
-          setStatus('disconnected');
-          return;
-        }
-
-        // Valid GUID found
-        setGuid(guid);
-        setStatus('connected');
-        console.log('[ConnectLeague] probeSession: connected as', guid);
-
-        // Load leagues only after confirmed connection
-        try {
-          const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
-            credentials: 'include',
-            cache: 'no-store',
-            headers: { Accept: 'application/json' },
-          });
-          if (leagues.ok) {
-            const data = (await leagues.json()) as Leagues;
-            const keys = data.league_keys ?? [];
-            setLeagueKeys(keys);
-            if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
-          }
-        } catch (err) {
-          console.warn('[ConnectLeague] probeSession: league fetch failed', err);
-          // League loading failure doesn't affect connection status
-        }
-      } else {
-        console.log('[ConnectLeague] probeSession: non-OK status, disconnected');
+      // If not OK or no GUID, treat as disconnected
+      if (!r.ok || !guid) {
+        console.log('[ConnectLeague] probeSession: not connected');
         setStatus('disconnected');
+        return;
+      }
+
+      // Valid GUID found
+      setGuid(guid);
+      setStatus('connected');
+      console.log('[ConnectLeague] probeSession: connected as', guid);
+
+      // Load leagues only after confirmed connection
+      try {
+        const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (leagues.ok) {
+          const leagueData = (await leagues.json()) as Leagues;
+          const keys = leagueData.league_keys ?? [];
+          setLeagueKeys(keys);
+          if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+        }
+      } catch (err) {
+        console.warn('[ConnectLeague] probeSession: league fetch failed', err);
       }
     } catch (err) {
       console.error('[ConnectLeague] probeSession: error', err);
       setStatus('disconnected');
+    } finally {
+      inFlight.current = false;
     }
-  }, [selectedLeague]);
+  }
 
   const loadTeams = useCallback(
     async (leagueKey: string) => {
@@ -137,16 +137,12 @@ export default function ConnectLeague() {
     setBusy(false);
   }
 
-  // Run probeSession once on mount
+  // Run probe exactly once on mount - prevent StrictMode double-call
   useEffect(() => {
-    if (hasMounted.current) return;
-    hasMounted.current = true;
-
+    if (mounted.current) return;
+    mounted.current = true;
     console.log('[ConnectLeague] Probing session...');
-    probeSession().catch((err) => {
-      console.error('[ConnectLeague] probeSession failed:', err);
-      setStatus('disconnected');
-    });
+    void probeSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -157,7 +153,7 @@ export default function ConnectLeague() {
   }, [selectedLeague, loadTeams]);
 
   // UI - prevent hydration mismatch
-  if (!mounted) return null;
+  if (!isClient) return null;
 
   if (!API) {
     return (
