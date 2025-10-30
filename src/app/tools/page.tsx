@@ -1,11 +1,16 @@
-'use client';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
-const LeaguesPanel = dynamic(() => import('@/components/LeaguesPanel'), { ssr: false });
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
+const ConnectLeague = nextDynamic(() => import('@/components/ConnectLeague'), { ssr: false });
+const LeaguesPanel = nextDynamic(() => import('@/components/LeaguesPanel'), { ssr: false });
 
 export default function ToolsPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-4 grid gap-4">
+    <div suppressHydrationWarning className="p-4 space-y-6">
+      {/* Placement changes allowed; no code changes inside ConnectLeague */}
+      <ConnectLeague />
       <LeaguesPanel />
     </div>
   );
