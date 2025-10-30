@@ -1,10 +1,10 @@
 'use client';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const ConnectLeague = dynamic(() => import('@/components/ConnectLeague'), { ssr: false });
+const ConnectLeague = dynamicImport(() => import('@/components/ConnectLeague'), { ssr: false });
 
 export default function ToolsPage() {
   return (
