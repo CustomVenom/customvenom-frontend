@@ -1,9 +1,9 @@
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-const ToolsInner = dynamic(() => import('./tools-inner'), { ssr: false });
+const ToolsInner = nextDynamic(() => import('./tools-inner'), { ssr: false });
 
 export default function ToolsLayout({ children }: { children: React.ReactNode }) {
   return (
