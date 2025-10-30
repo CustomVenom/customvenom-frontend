@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
 
@@ -11,7 +11,7 @@ type Leagues = { league_keys?: string[] };
 type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [mounted, setMounted] = useState(false);
+  const hasMounted = useRef(false);
   const [status, setStatus] = useState<Status>('unknown');
   const [busy, setBusy] = useState(false);
   const [guid, setGuid] = useState<string>('');
@@ -20,11 +20,6 @@ export default function ConnectLeague() {
   const [teams, setTeams] = useState<Array<{ team_key: string; name?: string }>>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>('');
   const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
-
-  // Client-only mount guard to prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Bulletproof session probe - single source of truth (stable via useCallback)
   const probeSession = useCallback(async () => {
@@ -102,7 +97,10 @@ export default function ConnectLeague() {
     if (busy) return;
     setBusy(true);
     const ret = encodeURIComponent('/tools');
-    window.location.href = `${API}/api/connect/start?host=yahoo&from=${ret}`;
+    const redirectUrl = `${API}/api/connect/start?host=yahoo&from=${ret}`;
+    console.log('[ConnectLeague] Redirecting to:', redirectUrl);
+    console.log('[ConnectLeague] API base:', API);
+    window.location.href = redirectUrl;
   }
 
   async function refresh() {
@@ -114,30 +112,21 @@ export default function ConnectLeague() {
 
   // Schedule effects to avoid setState synchronously within an effect
   useEffect(() => {
-    // Only run on client side to avoid hydration mismatch
-    if (typeof window === 'undefined') return;
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
     const t = setTimeout(() => void probeSession(), 0);
     return () => clearTimeout(t);
   }, [probeSession]);
 
   useEffect(() => {
-    // Only run on client side to avoid hydration mismatch
-    if (typeof window === 'undefined') return;
-    if (!selectedLeague) return;
+    if (!hasMounted.current || !selectedLeague) return;
     const t = setTimeout(() => void loadTeams(selectedLeague), 0);
     return () => clearTimeout(t);
   }, [selectedLeague, loadTeams]);
 
   // UI
-  // Prevent hydration mismatch - don't render interactive state during SSR
-  if (!mounted) {
-    return (
-      <div className="border rounded p-3">
-        <div className="text-sm opacity-75">Loading...</div>
-      </div>
-    );
-  }
-
   if (!API) {
     return (
       <div className="border rounded p-3">
