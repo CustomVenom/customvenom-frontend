@@ -159,8 +159,8 @@ export default function ConnectLeague() {
     return () => clearTimeout(t);
   }, [selectedLeague, loadTeams]);
 
-  // UI - prevent hydration mismatch - render nothing until mounted
-  if (!mounted) return null;
+  // UI - prevent hydration mismatch - stable placeholder until mounted
+  if (!mounted) return <div style={{ height: 40 }} />;
 
   if (!API) {
     return (
