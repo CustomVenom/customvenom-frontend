@@ -23,22 +23,31 @@ export default function ConnectLeague() {
 
   // Bulletproof session probe - single source of truth (stable via useCallback)
   const probeSession = useCallback(async () => {
+    console.log('[ConnectLeague] probeSession: starting...');
     setStatus('verifying');
     try {
-      const r = await fetch(`${API}/yahoo/me`, {
+      const url = `${API}/yahoo/me`;
+      console.log('[ConnectLeague] probeSession: fetching', url);
+      
+      const r = await fetch(url, {
         method: 'GET',
         credentials: 'include',
         cache: 'no-store', // avoid stale "connected" caches
         headers: { Accept: 'application/json' },
       });
 
+      console.log('[ConnectLeague] probeSession: response status', r.status);
+
       // Only consider connected if we get a 200 OK AND the response has a valid user
       if (r.ok) {
         const me = (await r.json()) as Me;
+        console.log('[ConnectLeague] probeSession: user data', me);
+        
         // Double-check: must have a valid user GUID to be considered connected
         if (me.user?.guid) {
           setGuid(me.user.guid);
           setStatus('connected');
+          console.log('[ConnectLeague] probeSession: connected as', me.user.guid);
 
           // Load leagues only after confirmed connection
           try {
@@ -53,17 +62,21 @@ export default function ConnectLeague() {
               setLeagueKeys(keys);
               if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
             }
-          } catch {
+          } catch (err) {
+            console.warn('[ConnectLeague] probeSession: league fetch failed', err);
             // League loading failure doesn't affect connection status
           }
         } else {
           // No valid user GUID = not connected
+          console.log('[ConnectLeague] probeSession: no GUID, disconnected');
           setStatus('disconnected');
         }
       } else {
+        console.log('[ConnectLeague] probeSession: non-OK status, disconnected');
         setStatus('disconnected');
       }
-    } catch {
+    } catch (err) {
+      console.error('[ConnectLeague] probeSession: error', err);
       setStatus('disconnected');
     }
   }, [selectedLeague]);
@@ -110,18 +123,21 @@ export default function ConnectLeague() {
     setBusy(false);
   }
 
-  // Schedule effects to avoid setState synchronously within an effect
+  // Run probeSession once on mount
   useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
-    const t = setTimeout(() => void probeSession(), 0);
-    return () => clearTimeout(t);
-  }, [probeSession]);
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    
+    console.log('[ConnectLeague] Probing session...');
+    probeSession().catch((err) => {
+      console.error('[ConnectLeague] probeSession failed:', err);
+      setStatus('disconnected');
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!hasMounted.current || !selectedLeague) return;
+    if (!selectedLeague) return;
     const t = setTimeout(() => void loadTeams(selectedLeague), 0);
     return () => clearTimeout(t);
   }, [selectedLeague, loadTeams]);
