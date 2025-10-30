@@ -1,5 +1,7 @@
 'use client';
-import ConnectLeague from '@/components/ConnectLeague';
+import dynamic from 'next/dynamic';
+
+const ConnectLeague = dynamic(() => import('@/components/ConnectLeague'), { ssr: false });
 
 export default function ToolsPage() {
   return (
