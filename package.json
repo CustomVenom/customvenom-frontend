@@ -43,6 +43,7 @@
     "prepare": "node -e \"(process.env.CI||process.env.VERCEL)?process.exit(0):0\" && husky install || true",
     "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
+    "check-routes": "npx tsx scripts/check-routes.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lhci": "lhci autorun --config=./lighthouse/lighthouserc.json"
