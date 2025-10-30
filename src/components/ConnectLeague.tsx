@@ -38,11 +38,11 @@ export default function ConnectLeague() {
 
     console.log('[ConnectLeague] probeSession: starting...');
     setStatus('verifying');
-    
+
     try {
       const url = `${API}/yahoo/me`;
       console.log('[ConnectLeague] probeSession: fetching', url);
-      
+
       const r = await fetch(url, {
         method: 'GET',
         credentials: 'include',
@@ -52,7 +52,7 @@ export default function ConnectLeague() {
 
       console.log('[ConnectLeague] probeSession: response status', r.status);
 
-      const data = (await r.json().catch(() => ({} as YahooMeResponse))) as YahooMeResponse;
+      const data = (await r.json().catch(() => ({}) as YahooMeResponse)) as YahooMeResponse;
       console.log('[ConnectLeague] probeSession: user data', data);
 
       // Extract GUID with Yahoo shape fallback
