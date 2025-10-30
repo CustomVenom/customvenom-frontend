@@ -14,8 +14,8 @@ type Leagues = { league_keys?: string[] };
 type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [isClient, setIsClient] = useState(false);
-  const mounted = useRef(false);
+  const [mounted, setMounted] = useState(false);
+  const probeOnce = useRef(false);
   const inFlight = useRef(false);
   const [status, setStatus] = useState<Status>('unknown');
   const [busy, setBusy] = useState(false);
@@ -28,7 +28,7 @@ export default function ConnectLeague() {
 
   // Hydration guard - only render on client
   useEffect(() => {
-    setIsClient(true);
+    setMounted(true);
   }, []);
 
   // Probe session exactly once - prevent re-entry and StrictMode double-call
@@ -52,6 +52,13 @@ export default function ConnectLeague() {
 
       console.log('[ConnectLeague] probeSession: response status', r.status);
 
+      // Treat 401 as normal "signed out" state
+      if (!r.ok) {
+        console.log('[ConnectLeague] probeSession: not connected (status', r.status, ')');
+        setStatus('disconnected');
+        return;
+      }
+
       const data = (await r.json().catch(() => ({}) as YahooMeResponse)) as YahooMeResponse;
       console.log('[ConnectLeague] probeSession: user data', data);
 
@@ -59,9 +66,9 @@ export default function ConnectLeague() {
       const guid =
         data?.profile?.user?.guid ?? data?.fantasy_content?.users?.[0]?.user?.[0]?.guid ?? null;
 
-      // If not OK or no GUID, treat as disconnected
-      if (!r.ok || !guid) {
-        console.log('[ConnectLeague] probeSession: not connected');
+      // If no GUID, treat as disconnected
+      if (!guid) {
+        console.log('[ConnectLeague] probeSession: no GUID found');
         setStatus('disconnected');
         return;
       }
@@ -139,8 +146,8 @@ export default function ConnectLeague() {
 
   // Run probe exactly once on mount - prevent StrictMode double-call
   useEffect(() => {
-    if (mounted.current) return;
-    mounted.current = true;
+    if (probeOnce.current) return;
+    probeOnce.current = true;
     console.log('[ConnectLeague] Probing session...');
     void probeSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,8 +159,8 @@ export default function ConnectLeague() {
     return () => clearTimeout(t);
   }, [selectedLeague, loadTeams]);
 
-  // UI - prevent hydration mismatch
-  if (!isClient) return null;
+  // UI - prevent hydration mismatch with stable placeholder
+  if (!mounted) return <div style={{ height: 40 }} />;
 
   if (!API) {
     return (
