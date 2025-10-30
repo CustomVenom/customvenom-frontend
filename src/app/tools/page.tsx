@@ -1,16 +1,12 @@
 'use client';
-import dynamicImport from 'next/dynamic';
+import dynamic from 'next/dynamic';
 
-export const dynamic = 'force-dynamic';
-
-const ConnectLeague = dynamicImport(() => import('@/components/ConnectLeague'), { ssr: false });
+const ConnectLeague = dynamic(() => import('@/components/ConnectLeague'), { ssr: false });
 
 export default function ToolsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-4 grid gap-4">
-      <div suppressHydrationWarning>
-        <ConnectLeague />
-      </div>
+      <ConnectLeague />
     </div>
   );
 }
