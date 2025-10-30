@@ -20,7 +20,10 @@ export function useYahooMe() {
         }
         if (r.status >= 500) {
           const reqId = r.headers.get('x-request-id') || 'unknown';
-          console.warn('[useYahooMe] /yahoo/me server error', { status: r.status, request_id: reqId });
+          console.warn('[useYahooMe] /yahoo/me server error', {
+            status: r.status,
+            request_id: reqId,
+          });
           return { auth_required: false as const, guid: '', error: 'server' as const };
         }
         if (!r.ok) {
