@@ -27,7 +27,7 @@ interface Player {
 export function RosterViewer() {
   const { loading, error, fetchLeagues, fetchTeams, fetchRoster } = useYahooApi();
   const [leagues, setLeagues] = useState<YahooLeague[]>([]);
-  const [_selectedLeague, setSelectedLeague] = useState<string | null>(null);
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [teams, setTeams] = useState<YahooTeam[]>([]);
   const [_selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
@@ -55,6 +55,23 @@ export function RosterViewer() {
     try {
       const rosterData = await fetchRoster(teamKey);
       setRoster(rosterData);
+      
+      // Auto-save team selection to session
+      try {
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+        await fetch(`${API_BASE}/api/session/selection`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            teamKey,
+            leagueKey: selectedLeague || '',
+          }),
+        });
+        console.log('Team selection saved:', teamKey);
+      } catch (e) {
+        console.error('Failed to save team selection:', e);
+      }
     } catch (e) {
       console.error('Failed to load roster:', e);
     }
@@ -205,4 +222,3 @@ export function RosterViewer() {
     </div>
   );
 }
-
