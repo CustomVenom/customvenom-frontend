@@ -50,7 +50,7 @@ export default function LeaguesPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="min-h-screen bg-gray-50 p-6 pt-20">
         <p className="text-gray-500">Loading...</p>
       </div>
     );
