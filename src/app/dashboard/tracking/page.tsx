@@ -1,11 +1,32 @@
 'use client';
 
 import { WeeklyTrackingTable } from '@/components/tracking/WeeklyTrackingTable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function TrackingPage() {
-  // TEMP: Hardcode team 461.t.11 for testing
-  const [teamKey] = useState<string | undefined>('461.t.11');
+  const [teamKey, setTeamKey] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeamKey = async () => {
+      try {
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+        const res = await fetch(`${API_BASE}/api/session/selection`, {
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setTeamKey(data.selection?.teamKey || undefined);
+        }
+      } catch (e) {
+        console.error('Failed to get team selection:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeamKey();
+  }, []);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -16,7 +37,15 @@ export default function TrackingPage() {
         </p>
       </div>
 
-      <WeeklyTrackingTable teamKey={teamKey} />
+      {loading ? (
+        <div className="text-center py-8 text-gray-500">Loading...</div>
+      ) : !teamKey ? (
+        <div className="text-center py-8 text-gray-500">
+          Please select a team from your dashboard to view tracking data.
+        </div>
+      ) : (
+        <WeeklyTrackingTable teamKey={teamKey} />
+      )}
     </div>
   );
 }
