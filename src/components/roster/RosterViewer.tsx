@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useYahooApi } from '@/hooks/useYahooApi';
 import { PlayerMappingStatus } from './PlayerMappingStatus';
+import { FEATURES } from '@/config/features';
 import type { Entitlements } from '@/lib/entitlements';
 
 interface YahooLeague {
@@ -74,10 +75,10 @@ export function RosterViewer() {
       const rosterData = await fetchRoster(teamKey);
       setRoster(rosterData);
 
-      // Auto-save team selection to session (only for free users or first selection)
-      // Paid users can browse without auto-saving
+      // Paywall-aware auto-save: when paywall+restriction enabled, only first selection for free users
+      const paywallOn = FEATURES.PAYWALL_ENABLED && FEATURES.TEAM_SWITCHING_RESTRICTED;
       const isFree = entitlements?.isFree ?? false;
-      
+
       // Fetch current selection to check if this is their first
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
@@ -87,8 +88,10 @@ export function RosterViewer() {
         const currentData = await currentRes.json();
         const hasExistingSelection = currentData.selection?.teamKey !== undefined;
 
-        // Only save if free tier OR no existing selection (first time)
-        if (isFree || !hasExistingSelection) {
+        // Decide whether to auto-save based on feature flags
+        const shouldAutoSave = paywallOn ? (!hasExistingSelection && isFree) : true;
+
+        if (shouldAutoSave) {
           await fetch(`${API_BASE}/api/session/selection`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -100,7 +103,7 @@ export function RosterViewer() {
           });
           console.log('Team selection saved:', teamKey);
         } else {
-          console.log('Pro user browsing - selection not saved');
+          console.log('Selection not auto-saved due to paywall restrictions');
         }
       } catch (e) {
         console.error('Failed to save team selection:', e);
