@@ -1,102 +1,258 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+const API = process.env['NEXT_PUBLIC_API_BASE'] ?? '';
+
+type Status = 'unknown' | 'verifying' | 'connected' | 'disconnected';
+
+type YahooMeResponse = {
+  profile?: { user?: { guid?: string } };
+  fantasy_content?: { users?: Array<{ user?: Array<{ guid?: string }> }> };
+};
+type Leagues = { league_keys?: string[] };
+type Teams = { teams?: Array<{ team_key: string; name?: string }> };
 
 export default function ConnectLeague() {
-  const [connected, setConnected] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const probeOnce = useRef(false);
+  const inFlight = useRef(false);
+  const [status, setStatus] = useState<Status>('unknown');
+  const [busy, setBusy] = useState(false);
+  const [guid, setGuid] = useState<string>('');
+  const [leagueKeys, setLeagueKeys] = useState<string[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState<string>('');
+  const [teams, setTeams] = useState<Array<{ team_key: string; name?: string }>>([]);
+  const [selectedTeam, setSelectedTeam] = useState<string>('');
+  const [isFreePlan] = useState(false); // DISABLED FOR DEVELOPMENT
 
+  // Hydration guard - only render on client
   useEffect(() => {
-    const checkConnection = async () => {
-      // Only auto-check if user has connected before
-      const hasConnectedBefore = localStorage.getItem('cv_has_connected');
+    setMounted(true);
+  }, []);
 
-      if (!hasConnectedBefore) {
-        setLoading(false);
+  // Probe session exactly once - prevent re-entry and StrictMode double-call
+  async function probeSession() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+
+    console.log('[ConnectLeague] probeSession: starting...');
+    setStatus('verifying');
+
+    try {
+      const url = `${API}/yahoo/me`;
+      console.log('[ConnectLeague] probeSession: fetching', url);
+
+      const r = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+      });
+
+      console.log('[ConnectLeague] probeSession: response status', r.status);
+
+      // Treat 401 as normal "signed out" state
+      if (!r.ok) {
+        console.log('[ConnectLeague] probeSession: not connected (status', r.status, ')');
+        setStatus('disconnected');
         return;
       }
 
-      try {
-        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        const res = await fetch(`${API_BASE}/yahoo/me`, {
-          credentials: 'include',
-        });
+      const data = (await r.json().catch(() => ({}) as YahooMeResponse)) as YahooMeResponse;
+      console.log('[ConnectLeague] probeSession: user data', data);
 
-        if (res.ok) {
-          const data = await res.json();
-          setConnected(true);
-          setUserName(data?.fantasy_content?.users?.[0]?.user?.[0]?.guid || 'User');
-        } else {
-          setConnected(false);
-          // Clear flag if no longer connected
-          localStorage.removeItem('cv_has_connected');
-        }
-      } catch {
-        setConnected(false);
-      } finally {
-        setLoading(false);
+      // Extract GUID with Yahoo shape fallback
+      const guid =
+        data?.profile?.user?.guid ?? data?.fantasy_content?.users?.[0]?.user?.[0]?.guid ?? null;
+
+      // If no GUID, treat as disconnected
+      if (!guid) {
+        console.log('[ConnectLeague] probeSession: no GUID found');
+        setStatus('disconnected');
+        return;
       }
-    };
 
-    checkConnection();
-  }, []);
+      // Valid GUID found
+      setGuid(guid);
+      setStatus('connected');
+      console.log('[ConnectLeague] probeSession: connected as', guid);
 
-  const handleConnect = () => {
-    // Mark that user has initiated connection
-    localStorage.setItem('cv_has_connected', 'true');
-
-    const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    window.location.href = `${API_BASE}/api/connect/start?from=/dashboard`;
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-      await fetch(`${API_BASE}/yahoo/signout`, {
-        credentials: 'include',
-      });
-
-      // Clear the flag so next visit doesn't auto-check
-      localStorage.removeItem('cv_has_connected');
-
-      setConnected(false);
-      setUserName(null);
-      window.location.reload();
-    } catch (e) {
-      console.error('Disconnect failed:', e);
+      // Load leagues only after confirmed connection
+      try {
+        const leagues = await fetch(`${API}/yahoo/leagues?format=json`, {
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (leagues.ok) {
+          const leagueData = (await leagues.json()) as Leagues;
+          const keys = leagueData.league_keys ?? [];
+          setLeagueKeys(keys);
+          if (keys.length && !selectedLeague) setSelectedLeague(keys[0]!);
+        }
+      } catch (err) {
+        console.warn('[ConnectLeague] probeSession: league fetch failed', err);
+      }
+    } catch (err) {
+      console.error('[ConnectLeague] probeSession: error', err);
+      setStatus('disconnected');
+    } finally {
+      inFlight.current = false;
     }
-  };
-
-  if (loading) {
-    return <div className="p-4">Checking connection...</div>;
   }
 
-  return (
-    <div className="p-4 border rounded-lg space-y-4">
-      <h2 className="text-xl font-bold">Yahoo Fantasy Connection</h2>
+  const loadTeams = useCallback(
+    async (leagueKey: string) => {
+      if (!leagueKey) return;
+      try {
+        const data = await fetch(
+          `${API}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
+          {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          },
+        );
+        if (data.ok) {
+          const result = (await data.json()) as Teams;
+          const list = result.teams ?? [];
+          setTeams(list);
+          if (list.length && !selectedTeam) setSelectedTeam(list[0]!.team_key);
+        }
+      } catch {
+        setTeams([]);
+      }
+    },
+    [selectedTeam],
+  );
 
-      {connected ? (
-        <div className="space-y-2">
-          <p className="text-green-600">✓ Connected as {userName}</p>
-          {/* Hide disconnect button if you don't want it visible */}
-          <button
-            onClick={handleDisconnect}
-            className="hidden px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+  function connect() {
+    if (busy) return;
+    setBusy(true);
+    const ret = encodeURIComponent('/dashboard');
+    const redirectUrl = `${API}/api/connect/start?host=yahoo&from=${ret}`;
+    console.log('[ConnectLeague] Redirecting to:', redirectUrl);
+    console.log('[ConnectLeague] API base:', API);
+    window.location.href = redirectUrl;
+  }
+
+  async function refresh() {
+    if (busy) return;
+    setBusy(true);
+    await probeSession();
+    setBusy(false);
+  }
+
+  // Run probe exactly once on mount - prevent StrictMode double-call
+  useEffect(() => {
+    if (probeOnce.current) return;
+    probeOnce.current = true;
+    console.log('[ConnectLeague] Probing session...');
+    void probeSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!selectedLeague) return;
+    const t = setTimeout(() => void loadTeams(selectedLeague), 0);
+    return () => clearTimeout(t);
+  }, [selectedLeague, loadTeams]);
+
+  // UI - prevent hydration mismatch - stable placeholder until mounted
+  if (!mounted) return <div style={{ height: 40 }} />;
+
+  if (!API) {
+    return (
+      <div className="border rounded p-3">
+        <div className="text-sm opacity-75">API base not configured.</div>
+      </div>
+    );
+  }
+
+  const isVerifying = status === 'unknown' || status === 'verifying';
+  const isBusy = busy || isVerifying;
+  const label =
+    status === 'connected' ? 'Refresh League' : busy ? 'Redirecting…' : 'Connect League';
+
+  const onClick = status === 'connected' ? refresh : connect;
+
+  return (
+    <div className="border rounded p-3">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onClick}
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className={`cv-btn-primary ${isBusy ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
+          aria-label={label}
+        >
+          {label}
+        </button>
+
+        {/* Team chooser */}
+        {teams.length > 1 && (
+          <select
+            className="border rounded px-2 py-1 bg-transparent text-sm"
+            value={selectedTeam ?? ''}
+            onChange={(e) => {
+              const id = e.target.value;
+              if (isFreePlan && selectedTeam && id !== selectedTeam) {
+                alert('Team locked on free plan. Upgrade to switch teams.');
+                return;
+              }
+              if (isFreePlan && !selectedTeam) {
+                setSelectedTeam(id); // first selection locks
+                // TODO: persist selection (localStorage or API)
+              } else {
+                setSelectedTeam(id);
+              }
+            }}
           >
-            Disconnect Yahoo
+            <option value="" disabled>
+              Select a team…
+            </option>
+            {teams.map((t) => (
+              <option key={t.team_key} value={t.team_key}>
+                {t.name ?? t.team_key}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {teams.length === 1 && selectedTeam && (
+          <span className="text-sm opacity-80">
+            Team: {teams.find((t) => t.team_key === selectedTeam)?.name ?? selectedTeam}
+          </span>
+        )}
+
+        {isFreePlan && selectedTeam && teams.length > 1 && (
+          <button className="cv-btn-ghost text-xs" disabled title="Upgrade to switch teams">
+            Unlock more teams
           </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <p className="text-gray-600">Connect your Yahoo Fantasy account to get started.</p>
-          <button
-            onClick={handleConnect}
-            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+        )}
+      </div>
+
+      {/* League select (hidden if only one) */}
+      {leagueKeys.length > 1 && (
+        <div className="flex items-center gap-2 mt-2">
+          <label className="text-sm opacity-80">League</label>
+          <select
+            className="border rounded px-2 py-1 text-sm"
+            value={selectedLeague}
+            onChange={(e) => setSelectedLeague(e.target.value)}
           >
-            Connect Yahoo
-          </button>
+            {leagueKeys.map((k) => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
         </div>
+      )}
+
+      {status === 'connected' && guid && (
+        <div className="text-xs opacity-60 mt-2">Connected as {guid}</div>
       )}
     </div>
   );
