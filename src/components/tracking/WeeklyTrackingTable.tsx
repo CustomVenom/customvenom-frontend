@@ -9,7 +9,7 @@ interface Props {
   week?: string;
 }
 
-export function WeeklyTrackingTable({ leagueKey, teamKey, week = '2025-08' }: Props) {
+export function WeeklyTrackingTable({ leagueKey, teamKey, week = '2025-06' }: Props) {
   const [players, setPlayers] = useState<PlayerTracking[]>([]);
   const [loading, setLoading] = useState(false);
   const [positionFilter, setPositionFilter] = useState<string>('ALL');

@@ -14,4 +14,3 @@ export interface MappingStats {
   unmapped: number;
   low_confidence: number;
 }
-

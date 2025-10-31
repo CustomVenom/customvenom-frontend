@@ -103,15 +103,11 @@ export function PlayerMappingStatus({ roster }: Props) {
                   </div>
                 </td>
                 <td className="px-3 py-2">
-                  {player.status === 'mapped' && (
-                    <span className="text-green-600">✓ Mapped</span>
-                  )}
+                  {player.status === 'mapped' && <span className="text-green-600">✓ Mapped</span>}
                   {player.status === 'low_confidence' && (
                     <span className="text-yellow-600">⚠ Low Conf</span>
                   )}
-                  {player.status === 'unmapped' && (
-                    <span className="text-red-600">✕ Unmapped</span>
-                  )}
+                  {player.status === 'unmapped' && <span className="text-red-600">✕ Unmapped</span>}
                 </td>
                 <td className="px-3 py-2 text-gray-600">
                   {player.nflverse_id ? `${Math.round(player.confidence * 100)}%` : '—'}
@@ -124,4 +120,3 @@ export function PlayerMappingStatus({ roster }: Props) {
     </div>
   );
 }
-

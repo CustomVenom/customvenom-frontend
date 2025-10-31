@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useYahooApi } from '@/hooks/useYahooApi';
 import { PlayerMappingStatus } from './PlayerMappingStatus';
-import { FEATURES } from '@/config/features';
-import type { Entitlements } from '@/lib/entitlements';
 
 interface YahooLeague {
   league_key: string;
@@ -29,33 +27,16 @@ interface Player {
 export function RosterViewer() {
   const { loading, error, fetchLeagues, fetchTeams, fetchRoster } = useYahooApi();
   const [leagues, setLeagues] = useState<YahooLeague[]>([]);
-  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
+  const [_selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [teams, setTeams] = useState<YahooTeam[]>([]);
   const [_selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [view, setView] = useState<'leagues' | 'teams' | 'roster'>('leagues');
-  const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
 
   // Load leagues on mount
   useEffect(() => {
     fetchLeagues().then(setLeagues).catch(console.error);
   }, [fetchLeagues]);
-
-  // Load entitlements on mount
-  useEffect(() => {
-    const fetchEntitlements = async () => {
-      try {
-        const res = await fetch('/api/entitlements');
-        if (res.ok) {
-          const data = await res.json();
-          setEntitlements(data);
-        }
-      } catch (e) {
-        console.error('Failed to fetch entitlements:', e);
-      }
-    };
-    fetchEntitlements();
-  }, []);
 
   const handleLeagueClick = async (leagueKey: string) => {
     setSelectedLeague(leagueKey);
@@ -74,40 +55,6 @@ export function RosterViewer() {
     try {
       const rosterData = await fetchRoster(teamKey);
       setRoster(rosterData);
-
-      // Paywall-aware auto-save: when paywall+restriction enabled, only first selection for free users
-      const paywallOn = FEATURES.PAYWALL_ENABLED && FEATURES.TEAM_SWITCHING_RESTRICTED;
-      const isFree = entitlements?.isFree ?? false;
-
-      // Fetch current selection to check if this is their first
-      try {
-        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        const currentRes = await fetch(`${API_BASE}/api/session/selection`, {
-          credentials: 'include',
-        });
-        const currentData = await currentRes.json();
-        const hasExistingSelection = currentData.selection?.teamKey !== undefined;
-
-        // Decide whether to auto-save based on feature flags
-        const shouldAutoSave = paywallOn ? (!hasExistingSelection && isFree) : true;
-
-        if (shouldAutoSave) {
-          await fetch(`${API_BASE}/api/session/selection`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              teamKey,
-              leagueKey: selectedLeague || '',
-            }),
-          });
-          console.log('Team selection saved:', teamKey);
-        } else {
-          console.log('Selection not auto-saved due to paywall restrictions');
-        }
-      } catch (e) {
-        console.error('Failed to save team selection:', e);
-      }
     } catch (e) {
       console.error('Failed to load roster:', e);
     }
