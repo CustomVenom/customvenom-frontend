@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
 
 interface Team {
   team_key: string;
@@ -13,6 +14,8 @@ export default function TeamPicker() {
   const [selectedTeam, setSelectedTeam] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState<boolean>(false);
+  const me = useYahooMe();
+  const _leagues = useYahooLeagues();
 
   useEffect(() => {
     // Load current selection
@@ -71,9 +74,11 @@ export default function TeamPicker() {
     }
   };
 
+  const isLoggedIn = Boolean(me.data?.guid) && !me.data?.auth_required;
+
   return (
     <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-900/20">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <div className="font-medium">{selectedTeam ? 'Team Selected' : 'Choose Your Team'}</div>
           <div className="text-sm opacity-80">
@@ -82,16 +87,37 @@ export default function TeamPicker() {
                 {selectedTeam}
               </span>
             ) : (
-              'Select a team to see your roster and get personalized tools.'
+              'Connect your Yahoo account, then select a team to view your roster.'
             )}
           </div>
         </div>
-        <button
-          onClick={() => setShowPicker(true)}
-          className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-        >
-          {selectedTeam ? 'Change Team' : 'Select Team'}
-        </button>
+
+        <div className="flex items-center gap-2">
+          {!isLoggedIn ? (
+            <a
+              href="/api/yahoo/connect"
+              className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Connect Yahoo
+            </a>
+          ) : (
+            <a
+              href="/api/yahoo/refresh"
+              className="px-3 py-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Refresh Connection
+            </a>
+          )}
+
+          {isLoggedIn && (
+            <button
+              onClick={() => setShowPicker(true)}
+              className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {selectedTeam ? 'Change Team' : 'Choose Team'}
+            </button>
+          )}
+        </div>
       </div>
 
       {showPicker && (
