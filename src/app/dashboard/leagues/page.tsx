@@ -57,47 +57,50 @@ export default function LeaguesPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header with buttons */}
-      <div className="flex items-center gap-4 flex-wrap">
+    <div className="min-h-screen bg-gray-50">
+      {/* Top-right button container */}
+      <div className="fixed top-4 right-6 z-50 flex items-center gap-3">
         <RefreshLeaguesButton />
         <TeamSelector />
       </div>
 
-      {/* Connection status */}
-      {me?.guid && (
-        <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2">
-          Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
-        </div>
-      )}
+      {/* Main content */}
+      <div className="p-6 pt-20">
+        {/* Connection status */}
+        {me?.guid && (
+          <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 inline-block">
+            Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
+          </div>
+        )}
 
-      {/* Leagues list */}
-      {leagues?.league_keys && leagues.league_keys.length > 0 ? (
-        <>
-          <h2 className="text-lg font-semibold">Your Leagues</h2>
-          <ul className="space-y-2">
-            {leagues.league_keys.map((key: string) => (
-              <li key={key}>
-                <button
-                  onClick={() => setSelection({ league_key: key })}
-                  className={`w-full p-4 border rounded-lg text-left transition-all ${
-                    league_key === key
-                      ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium">{key}</div>
-                  {league_key === key && (
-                    <div className="text-xs text-blue-600 mt-1">✓ Selected</div>
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <p className="text-gray-500">No leagues found for this account.</p>
-      )}
+        {/* Leagues list */}
+        {leagues?.league_keys && leagues.league_keys.length > 0 ? (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-4">Your Leagues</h2>
+            <ul className="space-y-2 max-w-2xl">
+              {leagues.league_keys.map((key: string) => (
+                <li key={key}>
+                  <button
+                    onClick={() => setSelection({ league_key: key })}
+                    className={`w-full p-4 border rounded-lg text-left transition-all ${
+                      league_key === key
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="font-medium">{key}</div>
+                    {league_key === key && (
+                      <div className="text-xs text-blue-600 mt-1">✓ Selected</div>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-gray-500 mt-6">No leagues found for this account.</p>
+        )}
+      </div>
     </div>
   );
 }
