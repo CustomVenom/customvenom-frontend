@@ -5,10 +5,11 @@ import type { PlayerTracking } from '@/types/player-tracking';
 
 interface Props {
   leagueKey?: string;
+  teamKey?: string;
   week?: string;
 }
 
-export function WeeklyTrackingTable({ leagueKey, week = '2025-08' }: Props) {
+export function WeeklyTrackingTable({ leagueKey, teamKey, week = '2025-08' }: Props) {
   const [players, setPlayers] = useState<PlayerTracking[]>([]);
   const [loading, setLoading] = useState(false);
   const [positionFilter, setPositionFilter] = useState<string>('ALL');
@@ -18,9 +19,13 @@ export function WeeklyTrackingTable({ leagueKey, week = '2025-08' }: Props) {
       setLoading(true);
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        const url = leagueKey
-          ? `${API_BASE}/api/tracking/week/${week}?league=${leagueKey}`
-          : `${API_BASE}/api/tracking/week/${week}`;
+
+        // Build URL with optional query params
+        const params = new URLSearchParams();
+        if (leagueKey) params.append('league', leagueKey);
+        if (teamKey) params.append('team', teamKey);
+
+        const url = `${API_BASE}/api/tracking/week/${week}?${params.toString()}`;
 
         const res = await fetch(url, { credentials: 'include' });
 
@@ -36,7 +41,7 @@ export function WeeklyTrackingTable({ leagueKey, week = '2025-08' }: Props) {
     };
 
     fetchTracking();
-  }, [leagueKey, week]);
+  }, [leagueKey, teamKey, week]);
 
   const filteredPlayers =
     positionFilter === 'ALL' ? players : players.filter((p) => p.position === positionFilter);
