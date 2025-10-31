@@ -8,7 +8,7 @@ interface Props {
   week?: string;
 }
 
-export function WeeklyTrackingTable({ leagueKey, week = '2025-09' }: Props) {
+export function WeeklyTrackingTable({ leagueKey, week = '2025-06' }: Props) {
   const [players, setPlayers] = useState<PlayerTracking[]>([]);
   const [loading, setLoading] = useState(false);
   const [positionFilter, setPositionFilter] = useState<string>('ALL');
@@ -38,9 +38,8 @@ export function WeeklyTrackingTable({ leagueKey, week = '2025-09' }: Props) {
     fetchTracking();
   }, [leagueKey, week]);
 
-  const filteredPlayers = positionFilter === 'ALL'
-    ? players
-    : players.filter(p => p.position === positionFilter);
+  const filteredPlayers =
+    positionFilter === 'ALL' ? players : players.filter((p) => p.position === positionFilter);
 
   const positions = ['ALL', 'QB', 'RB', 'WR', 'TE'];
 
@@ -97,7 +96,8 @@ export function WeeklyTrackingTable({ leagueKey, week = '2025-09' }: Props) {
                 <td className="px-4 py-3 text-right">
                   {player.variance !== null ? (
                     <span className={player.variance >= 0 ? 'text-green-600' : 'text-red-600'}>
-                      {player.variance >= 0 ? '+' : ''}{player.variance.toFixed(1)}
+                      {player.variance >= 0 ? '+' : ''}
+                      {player.variance.toFixed(1)}
                     </span>
                   ) : (
                     <span className="text-gray-400">—</span>
@@ -111,11 +111,8 @@ export function WeeklyTrackingTable({ leagueKey, week = '2025-09' }: Props) {
       {loading ? (
         <p className="text-xs text-gray-500">Loading tracking data...</p>
       ) : players.length > 0 ? (
-        <p className="text-xs text-gray-500">
-          Last updated: {new Date().toLocaleString()}
-        </p>
+        <p className="text-xs text-gray-500">Last updated: {new Date().toLocaleString()}</p>
       ) : null}
     </div>
   );
 }
-
