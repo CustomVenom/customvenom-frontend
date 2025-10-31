@@ -30,8 +30,8 @@ export async function GET(req: NextRequest) {
     );
 
     // Parse state cookie to extract returnTo
-    // Always redirect to /tools/leagues as the canonical landing page after OAuth
-    let returnTo = '/tools/leagues';
+    // Always redirect to /dashboard/leagues as the canonical landing page after OAuth
+    let returnTo = '/dashboard/leagues';
     try {
       const stateData = JSON.parse(decodeURIComponent(yStateCookie));
       if (stateData.state && stateData.returnTo) {
@@ -41,14 +41,16 @@ export async function GET(req: NextRequest) {
         // Guardrail: reject absolute URLs (only allow internal paths)
         if (parsedReturnTo.startsWith('http://') || parsedReturnTo.startsWith('https://')) {
           console.error('Rejected absolute URL in returnTo:', parsedReturnTo);
-          returnTo = '/tools/leagues'; // Safe fallback
+          returnTo = '/dashboard/leagues'; // Safe fallback
         }
-        // Only allow redirects to /tools/* pages, prefer /tools/leagues
-        else if (parsedReturnTo.startsWith('/tools/leagues')) {
+        // Only allow redirects to /dashboard/* pages, prefer /dashboard/leagues
+        else if (parsedReturnTo.startsWith('/dashboard/leagues')) {
+          returnTo = parsedReturnTo;
+        } else if (parsedReturnTo.startsWith('/dashboard/')) {
           returnTo = parsedReturnTo;
         } else if (parsedReturnTo.startsWith('/tools/')) {
-          // Legacy support: redirect old /tools/yahoo to /tools/leagues
-          returnTo = '/tools/leagues';
+          // Legacy support: redirect old /tools/* to /dashboard/leagues
+          returnTo = '/dashboard/leagues';
         }
         // Never redirect to /settings - settings is not a valid OAuth callback destination
       }

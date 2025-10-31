@@ -17,7 +17,7 @@ export default function LeaguesPage() {
         <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
         <p>Please connect to view your leagues.</p>
         <Link href="/dashboard" className="text-blue-500 hover:underline">
-          Go to Tools to Connect
+          Go to Dashboard to Connect
         </Link>
       </div>
     );
@@ -37,7 +37,7 @@ export default function LeaguesPage() {
         <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
         <p>Please connect to view your leagues.</p>
         <Link href="/dashboard" className="text-blue-500 hover:underline">
-          Go to Tools to Connect
+          Go to Dashboard to Connect
         </Link>
       </div>
     );

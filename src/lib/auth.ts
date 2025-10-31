@@ -58,7 +58,7 @@ export const authOptions = {
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.startsWith(baseUrl)) return url;
       if (url.startsWith('/')) return `${baseUrl}${url}`;
-      return `${baseUrl}/tools/yahoo`;
+      return `${baseUrl}/dashboard`;
     },
     async signIn({
       user,

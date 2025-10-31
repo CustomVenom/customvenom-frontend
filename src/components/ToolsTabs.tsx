@@ -6,10 +6,10 @@ import { usePathname } from 'next/navigation';
 import { LeagueSwitcher } from './LeagueSwitcher';
 
 const tabs = [
-  { href: '/tools/leagues', label: 'Leagues' },
-  { href: '/tools/start-sit', label: 'Start/Sit' },
-  { href: '/tools/faab', label: 'FAAB' },
-  { href: '/tools/decisions', label: 'Decisions' },
+  { href: '/dashboard/leagues', label: 'Leagues' },
+  { href: '/dashboard/start-sit', label: 'Start/Sit' },
+  { href: '/dashboard/faab', label: 'FAAB' },
+  { href: '/dashboard/decisions', label: 'Decisions' },
 ];
 
 export function ToolsTabs() {

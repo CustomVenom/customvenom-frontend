@@ -14,7 +14,7 @@ function yahooRedirectUri(): string {
 export async function GET(req: NextRequest) {
   const reqId = crypto.randomUUID();
   const url = new URL(req.url);
-  const returnTo = url.searchParams.get('returnTo') ?? '/tools/yahoo';
+  const returnTo = url.searchParams.get('returnTo') ?? '/dashboard';
   const state = crypto.randomUUID();
 
   console.log(
