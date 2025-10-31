@@ -87,7 +87,7 @@ export default function TeamPicker() {
                 {selectedTeam}
               </span>
             ) : (
-              'Connect your Yahoo account, then select a team to view your roster.'
+              'Connect your league to access your teams and roster.'
             )}
           </div>
         </div>
@@ -98,14 +98,14 @@ export default function TeamPicker() {
               href="/api/yahoo/connect"
               className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
             >
-              Connect Yahoo
+              Connect League
             </a>
           ) : (
             <a
               href="/api/yahoo/refresh"
               className="px-3 py-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              Refresh Connection
+              Refresh League Connection
             </a>
           )}
 
