@@ -29,7 +29,7 @@ interface YahooLeagues {
 }
 
 export default function DashboardPage() {
-  const { league_key, setSelection } = useSelectedLeague();
+  const { setSelection } = useSelectedLeague();
   const [me, setMe] = useState<YahooMe | null>(null);
   const [leagues, setLeagues] = useState<YahooLeagues | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -37,20 +37,28 @@ export default function DashboardPage() {
   const [roster, setRoster] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
-  // Load user + leagues on mount
+  // Check connection status and load data
   useEffect(() => {
     const load = async () => {
       try {
-        const [meRes, leaguesRes] = await Promise.all([
-          fetch(`${API_BASE}/yahoo/me`, { credentials: 'include' }),
-          fetch(`${API_BASE}/yahoo/leagues?format=json`, { credentials: 'include' }),
-        ]);
-        if (meRes.ok) setMe(await meRes.json());
-        if (leaguesRes.ok) setLeagues(await leaguesRes.json());
+        const meRes = await fetch(`${API_BASE}/yahoo/me`, { credentials: 'include' });
+
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          setMe(meData);
+
+          // If connected, load leagues
+          const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
+            credentials: 'include',
+          });
+          if (leaguesRes.ok) {
+            setLeagues(await leaguesRes.json());
+          }
+        }
       } catch (e) {
         console.error('Failed to load:', e);
       } finally {
@@ -59,6 +67,8 @@ export default function DashboardPage() {
     };
     load();
   }, [API_BASE]);
+
+  const isConnected = Boolean(me?.guid);
 
   // Load saved team selection on mount
   useEffect(() => {
@@ -77,35 +87,40 @@ export default function DashboardPage() {
         console.error('Failed to load selection:', e);
       }
     };
-    loadSelection();
-  }, [API_BASE]);
+    if (isConnected) {
+      loadSelection();
+    }
+  }, [isConnected, API_BASE]);
 
-  // Load teams when league selected
+  // Load ALL teams from ALL leagues when connected
   useEffect(() => {
-    if (!league_key) {
+    if (!isConnected || !leagues?.league_keys) {
       setTeams([]);
-      setSelectedTeam(null);
-      setRoster([]);
       return;
     }
 
-    const loadTeams = async () => {
+    const loadAllTeams = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/yahoo/leagues/${league_key}/teams?format=json`,
-          { credentials: 'include' },
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setTeams(data.teams || []);
+        const allTeams: Team[] = [];
+        for (const leagueKey of leagues.league_keys) {
+          const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/teams?format=json`, {
+            credentials: 'include',
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.teams) {
+              allTeams.push(...data.teams);
+            }
+          }
         }
+        setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
       }
     };
 
-    loadTeams();
-  }, [league_key, API_BASE]);
+    loadAllTeams();
+  }, [isConnected, leagues, API_BASE]);
 
   // Load roster when team selected
   useEffect(() => {
@@ -131,24 +146,46 @@ export default function DashboardPage() {
     loadRoster();
   }, [selectedTeam, API_BASE]);
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    window.location.reload();
+  const handleConnectOrRefresh = async () => {
+    if (connecting) return;
+    setConnecting(true);
+
+    try {
+      if (!isConnected) {
+        // Not connected - redirect to OAuth
+        const currentPath = window.location.pathname;
+        window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(currentPath)}`;
+        return;
+      }
+
+      // Connected - refresh
+      window.location.reload();
+    } catch (e) {
+      console.error('Connect/refresh error:', e);
+    } finally {
+      setConnecting(false);
+    }
   };
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
+      // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
+      const leagueKey = teamKey.split('.t.')[0];
+
       await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ teamKey, leagueKey: league_key }),
+        body: JSON.stringify({ teamKey, leagueKey }),
       });
+
       setSelectedTeam(teamKey);
+      setSelection({ league_key: leagueKey }); // Set league based on team selection
       setTeamsDropdownOpen(false);
+
       window.dispatchEvent(
         new CustomEvent('team-selected', {
-          detail: { teamKey, leagueKey: league_key },
+          detail: { teamKey, leagueKey },
         }),
       );
     } catch (e) {
@@ -179,19 +216,19 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* TOP-RIGHT BUTTONS */}
-      <div className="fixed top-4 right-6 z-50 flex items-center gap-3">
-        {/* Refresh button */}
+      {/* BUTTONS - Positioned below top menu bar */}
+      <div className="px-6 py-4 flex items-center gap-3">
+        {/* Button 1: Connect/Refresh League */}
         <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm font-medium shadow-sm"
+          onClick={handleConnectOrRefresh}
+          disabled={connecting}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm font-medium shadow-sm"
         >
-          {refreshing ? 'Refreshing...' : 'Refresh Leagues'}
+          {connecting ? 'Connecting...' : isConnected ? 'Refresh Leagues' : 'Connect League'}
         </button>
 
-        {/* Team selector dropdown */}
-        {league_key && (
+        {/* Button 2: Team selector dropdown (show when connected) */}
+        {isConnected && (
           <div className="relative" data-team-selector>
             <button
               onClick={(e) => {
@@ -199,11 +236,13 @@ export default function DashboardPage() {
                 setTeamsDropdownOpen(!teamsDropdownOpen);
               }}
               disabled={teams.length === 0}
-              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 min-w-[200px]"
             >
-              <span className="flex-1 text-left truncate">{selectedTeamName}</span>
+              <span className="flex-1 text-left truncate">
+                {teams.length === 0 ? 'Loading teams...' : selectedTeamName}
+              </span>
               <svg
-                className={`w-3.5 h-3.5 transition-transform flex-shrink-0 ${
+                className={`w-4 h-4 transition-transform flex-shrink-0 ${
                   teamsDropdownOpen ? 'rotate-180' : ''
                 }`}
                 fill="none"
@@ -220,7 +259,7 @@ export default function DashboardPage() {
             </button>
 
             {teamsDropdownOpen && teams.length > 0 && (
-              <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-[100]">
+              <div className="absolute left-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                 {teams.map((team) => (
                   <button
                     key={team.team_key}
@@ -265,40 +304,20 @@ export default function DashboardPage() {
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="p-6 pt-20 max-w-6xl mx-auto">
+      <div className="p-6 max-w-6xl mx-auto">
         {/* Connection status */}
-        {me?.guid && (
+        {isConnected && me?.guid && (
           <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 inline-block mb-6">
             Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
           </div>
         )}
 
-        {/* Leagues list */}
-        {leagues?.league_keys && leagues.league_keys.length > 0 ? (
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">Your Leagues</h2>
-            <ul className="space-y-2 max-w-2xl">
-              {leagues.league_keys.map((key: string) => (
-                <li key={key}>
-                  <button
-                    onClick={() => setSelection({ league_key: key })}
-                    className={`w-full p-4 border rounded-lg text-left transition-all ${
-                      league_key === key
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="font-medium">{key}</div>
-                    {league_key === key && (
-                      <div className="text-xs text-blue-600 mt-1">✓ Selected</div>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
+        {/* Not connected message */}
+        {!isConnected && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">Connect your fantasy league to get started</p>
+            <p className="text-sm text-gray-500">Click "Connect League" above</p>
           </div>
-        ) : (
-          <p className="text-gray-500">No leagues found for this account.</p>
         )}
 
         {/* Roster display */}
