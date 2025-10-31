@@ -5,7 +5,7 @@ import type { PlayerTracking } from '@/types/player-tracking';
 
 interface Props {
   leagueKey?: string;
-  teamKey?: string;
+  teamKey?: string | undefined;
   week?: string;
 }
 
