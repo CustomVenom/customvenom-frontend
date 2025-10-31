@@ -3,10 +3,14 @@
 import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
 import Link from 'next/link';
 import ToolsTabs from '@/components/ToolsTabs';
+import { TeamSelector } from '@/components/TeamSelector';
+import RefreshLeaguesButton from './components/RefreshLeaguesButton';
+import { useSelectedLeague } from '@/hooks/useSelectedLeague';
 
 export default function LeaguesPage() {
   const { data: me, isLoading: isLoadingMe } = useYahooMe();
   const { data: leagues, isLoading: isLoadingLeagues } = useYahooLeagues();
+  const { league, setLeague } = useSelectedLeague();
 
   if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
 
@@ -57,6 +61,12 @@ export default function LeaguesPage() {
         {leagues?.league_keys?.length ?? 0}
       </div>
 
+      {/* Team Selector and Refresh Button */}
+      <div className="flex items-center gap-3 mb-4">
+        <RefreshLeaguesButton />
+        <TeamSelector />
+      </div>
+
       {leagues?.league_keys &&
       Array.isArray(leagues.league_keys) &&
       leagues.league_keys.length > 0 ? (
@@ -64,8 +74,20 @@ export default function LeaguesPage() {
           <h2 className="text-md font-semibold mt-4 mb-2">Your Leagues:</h2>
           <ul className="space-y-2">
             {leagues.league_keys.map((key) => (
-              <li key={key} className="p-2 border rounded bg-gray-50">
-                {key}
+              <li key={key}>
+                <button
+                  onClick={() => setLeague(key)}
+                  className={`w-full text-left p-2 border rounded transition-colors ${
+                    league === key
+                      ? 'bg-blue-50 border-blue-300 font-medium'
+                      : 'bg-gray-50 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className="font-mono text-sm">{key}</span>
+                  {league === key && (
+                    <span className="ml-2 text-xs text-blue-600">✓ Selected</span>
+                  )}
+                </button>
               </li>
             ))}
           </ul>
