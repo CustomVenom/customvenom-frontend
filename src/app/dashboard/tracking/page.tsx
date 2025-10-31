@@ -4,7 +4,7 @@ import { WeeklyTrackingTable } from '@/components/tracking/WeeklyTrackingTable';
 import { useEffect, useState } from 'react';
 
 export default function TrackingPage() {
-  const [teamKey, setTeamKey] = useState<string | null>(null);
+  const [teamKey, setTeamKey] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     // Get team selection from session storage or API
@@ -16,7 +16,7 @@ export default function TrackingPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          setTeamKey(data.teamKey || data.active_team_key || null);
+          setTeamKey(data.teamKey || data.active_team_key || undefined);
         }
       } catch (e) {
         console.error('Failed to get team selection:', e);
@@ -35,7 +35,7 @@ export default function TrackingPage() {
         </p>
       </div>
 
-      <WeeklyTrackingTable teamKey={teamKey || undefined} />
+      <WeeklyTrackingTable teamKey={teamKey} />
     </div>
   );
 }
