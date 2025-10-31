@@ -94,7 +94,7 @@ export default function DashboardPage() {
 
   // Load ALL teams from ALL leagues when connected
   useEffect(() => {
-    if (!isConnected || !leagues?.league_keys) {
+    if (!isConnected || !leagues?.league_keys || !Array.isArray(leagues.league_keys)) {
       setTeams([]);
       return;
     }
