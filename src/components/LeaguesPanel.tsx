@@ -3,14 +3,15 @@
 import { useEffect, useState } from 'react';
 
 type LeagueRow = { key: string; name: string | null; teams?: number | null };
-type MatchupRow = { week: string | number | null; status: string | null; teamA: any; teamB: any };
+type TeamInfo = { name?: string | null; points?: number | null; key?: string };
+type MatchupRow = { week: string | number | null; status: string | null; teamA: TeamInfo; teamB: TeamInfo };
 
 export default function LeaguesPanel() {
   const [season, setSeason] = useState('2024');
   const [loading, setLoading] = useState(false);
   const [leagues, setLeagues] = useState<LeagueRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [teams, setTeams] = useState<any[]>([]);
+  const [teams, setTeams] = useState<Array<{ key: string; name?: string | null; managers?: string | null }>>([]);
   const [matchups, setMatchups] = useState<MatchupRow[]>([]);
   const [week, setWeek] = useState<string>(''); // optional week filter
 
@@ -34,7 +35,7 @@ export default function LeaguesPanel() {
       const items: LeagueRow[] = (body?.league_keys ?? []).map((k: string) => {
         // Try grab name from raw, fallback null
         const leagueObj = (body?.data?.fantasy_content?.leagues?.[0]?.league ?? []).find?.(
-          (x: any) => x?.league_key === k,
+          (x: { league_key?: string }) => x?.league_key === k,
         );
         return {
           key: k,
@@ -203,4 +204,3 @@ export default function LeaguesPanel() {
     </div>
   );
 }
-
