@@ -47,7 +47,7 @@ export default function ConnectLeague() {
       setConnected(false);
       setUserName(null);
       window.location.reload();
-    } catch {
+    } catch (e) {
       console.error('Disconnect failed:', e);
     }
   };
