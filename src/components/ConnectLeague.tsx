@@ -9,6 +9,14 @@ export default function ConnectLeague() {
 
   useEffect(() => {
     const checkConnection = async () => {
+      // Only auto-check if user has connected before
+      const hasConnectedBefore = localStorage.getItem('cv_has_connected');
+
+      if (!hasConnectedBefore) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const res = await fetch(`${API_BASE}/yahoo/me`, {
@@ -21,6 +29,8 @@ export default function ConnectLeague() {
           setUserName(data?.fantasy_content?.users?.[0]?.user?.[0]?.guid || 'User');
         } else {
           setConnected(false);
+          // Clear flag if no longer connected
+          localStorage.removeItem('cv_has_connected');
         }
       } catch {
         setConnected(false);
@@ -33,8 +43,10 @@ export default function ConnectLeague() {
   }, []);
 
   const handleConnect = () => {
+    // Mark that user has initiated connection
+    localStorage.setItem('cv_has_connected', 'true');
+
     const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-    // OAuth flow: connect/start → yahoo/signin → Yahoo auth → yahoo/callback → back to dashboard
     window.location.href = `${API_BASE}/api/connect/start?from=/dashboard`;
   };
 
@@ -44,6 +56,10 @@ export default function ConnectLeague() {
       await fetch(`${API_BASE}/yahoo/signout`, {
         credentials: 'include',
       });
+
+      // Clear the flag so next visit doesn't auto-check
+      localStorage.removeItem('cv_has_connected');
+
       setConnected(false);
       setUserName(null);
       window.location.reload();
@@ -53,7 +69,7 @@ export default function ConnectLeague() {
   };
 
   if (loading) {
-    return <div className="p-4">Loading connection status...</div>;
+    return <div className="p-4">Checking connection...</div>;
   }
 
   return (
@@ -63,9 +79,10 @@ export default function ConnectLeague() {
       {connected ? (
         <div className="space-y-2">
           <p className="text-green-600">✓ Connected as {userName}</p>
+          {/* Hide disconnect button if you don't want it visible */}
           <button
             onClick={handleDisconnect}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="hidden px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
             Disconnect Yahoo
           </button>
