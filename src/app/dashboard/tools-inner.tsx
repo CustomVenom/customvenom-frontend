@@ -10,4 +10,3 @@ export default function ToolsInner({ children }: { children: React.ReactNode }) 
     </div>
   );
 }
-

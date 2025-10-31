@@ -4,14 +4,21 @@ import { useEffect, useState } from 'react';
 
 type LeagueRow = { key: string; name: string | null; teams?: number | null };
 type TeamInfo = { name?: string | null; points?: number | null; key?: string };
-type MatchupRow = { week: string | number | null; status: string | null; teamA: TeamInfo; teamB: TeamInfo };
+type MatchupRow = {
+  week: string | number | null;
+  status: string | null;
+  teamA: TeamInfo;
+  teamB: TeamInfo;
+};
 
 export default function LeaguesPanel() {
   const [season, setSeason] = useState('2024');
   const [loading, setLoading] = useState(false);
   const [leagues, setLeagues] = useState<LeagueRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [teams, setTeams] = useState<Array<{ key: string; name?: string | null; managers?: string | null }>>([]);
+  const [teams, setTeams] = useState<
+    Array<{ key: string; name?: string | null; managers?: string | null }>
+  >([]);
   const [matchups, setMatchups] = useState<MatchupRow[]>([]);
   const [week, setWeek] = useState<string>(''); // optional week filter
 

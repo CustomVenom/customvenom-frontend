@@ -4,7 +4,13 @@ const FRONTEND_BASE = process.env.FRONTEND_BASE ?? 'https://www.customvenom.com'
 
 test.describe('Frontend endpoints', () => {
   test('root, tools, and subroutes respond 200', async ({ page }) => {
-    for (const path of ['/', '/dashboard', '/dashboard/start-sit', '/dashboard/faab', '/dashboard/decisions']) {
+    for (const path of [
+      '/',
+      '/dashboard',
+      '/dashboard/start-sit',
+      '/dashboard/faab',
+      '/dashboard/decisions',
+    ]) {
       const res = await page.goto(FRONTEND_BASE + path, { waitUntil: 'domcontentloaded' });
       expect(res?.status(), `GET ${path}`).toBe(200);
     }
