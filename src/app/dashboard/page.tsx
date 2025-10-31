@@ -102,7 +102,9 @@ export default function DashboardPage() {
     const loadAllTeams = async () => {
       try {
         const allTeams: Team[] = [];
-        for (const leagueKey of leagues.league_keys) {
+        const leagueKeys = leagues.league_keys; // Extract to local const for TypeScript narrowing
+
+        for (const leagueKey of leagueKeys) {
           const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/teams?format=json`, {
             credentials: 'include',
           });
