@@ -1,30 +1,11 @@
 'use client';
 
 import { WeeklyTrackingTable } from '@/components/tracking/WeeklyTrackingTable';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function TrackingPage() {
-  const [teamKey, setTeamKey] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    // Get team selection from session storage or API
-    const fetchTeamKey = async () => {
-      try {
-        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        const res = await fetch(`${API_BASE}/api/session/selection`, {
-          credentials: 'include',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setTeamKey(data.teamKey || data.active_team_key || undefined);
-        }
-      } catch (e) {
-        console.error('Failed to get team selection:', e);
-      }
-    };
-
-    fetchTeamKey();
-  }, []);
+  // TEMP: Hardcode team 461.t.11 for testing
+  const [teamKey] = useState<string | undefined>('461.t.11');
 
   return (
     <div className="container mx-auto p-6 space-y-6">
