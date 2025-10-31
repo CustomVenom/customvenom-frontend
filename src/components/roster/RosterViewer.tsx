@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useYahooApi } from '@/hooks/useYahooApi';
 import { PlayerMappingStatus } from './PlayerMappingStatus';
+import type { Entitlements } from '@/lib/entitlements';
 
 interface YahooLeague {
   league_key: string;
@@ -32,11 +33,28 @@ export function RosterViewer() {
   const [_selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [view, setView] = useState<'leagues' | 'teams' | 'roster'>('leagues');
+  const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
 
   // Load leagues on mount
   useEffect(() => {
     fetchLeagues().then(setLeagues).catch(console.error);
   }, [fetchLeagues]);
+
+  // Load entitlements on mount
+  useEffect(() => {
+    const fetchEntitlements = async () => {
+      try {
+        const res = await fetch('/api/entitlements');
+        if (res.ok) {
+          const data = await res.json();
+          setEntitlements(data);
+        }
+      } catch (e) {
+        console.error('Failed to fetch entitlements:', e);
+      }
+    };
+    fetchEntitlements();
+  }, []);
 
   const handleLeagueClick = async (leagueKey: string) => {
     setSelectedLeague(leagueKey);
@@ -55,20 +73,35 @@ export function RosterViewer() {
     try {
       const rosterData = await fetchRoster(teamKey);
       setRoster(rosterData);
+
+      // Auto-save team selection to session (only for free users or first selection)
+      // Paid users can browse without auto-saving
+      const isFree = entitlements?.isFree ?? false;
       
-      // Auto-save team selection to session
+      // Fetch current selection to check if this is their first
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        await fetch(`${API_BASE}/api/session/selection`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const currentRes = await fetch(`${API_BASE}/api/session/selection`, {
           credentials: 'include',
-          body: JSON.stringify({
-            teamKey,
-            leagueKey: selectedLeague || '',
-          }),
         });
-        console.log('Team selection saved:', teamKey);
+        const currentData = await currentRes.json();
+        const hasExistingSelection = currentData.selection?.teamKey !== undefined;
+
+        // Only save if free tier OR no existing selection (first time)
+        if (isFree || !hasExistingSelection) {
+          await fetch(`${API_BASE}/api/session/selection`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              teamKey,
+              leagueKey: selectedLeague || '',
+            }),
+          });
+          console.log('Team selection saved:', teamKey);
+        } else {
+          console.log('Pro user browsing - selection not saved');
+        }
       } catch (e) {
         console.error('Failed to save team selection:', e);
       }
