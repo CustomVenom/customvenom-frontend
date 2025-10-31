@@ -1,114 +1,149 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useYahooApi } from '@/hooks/useYahooApi';
-import { useSelectedLeague } from '@/hooks/useSelectedLeague';
+import { useSelectedLeague } from '@/lib/selection';
 
-interface YahooTeam {
+interface Team {
   team_key: string;
   name: string;
   team_logos?: Array<{ url: string }>;
 }
 
-export function TeamSelector() {
-  const { league } = useSelectedLeague();
-  const { loading, error, fetchTeams } = useYahooApi();
-  const [teams, setTeams] = useState<YahooTeam[]>([]);
+export default function TeamSelector() {
+  const { league_key } = useSelectedLeague();
+  const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load current selection on mount
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+
+  // Load saved team selection on mount
   useEffect(() => {
-    const loadCurrentSelection = async () => {
+    const loadSelection = async () => {
       try {
-        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
         const res = await fetch(`${API_BASE}/api/session/selection`, {
           credentials: 'include',
         });
         if (res.ok) {
           const data = await res.json();
-          setSelectedTeam(data.selection?.teamKey || null);
+          if (data.active_team_key) {
+            setSelectedTeam(data.active_team_key);
+          }
         }
       } catch (e) {
-        console.error('Failed to load current selection:', e);
+        console.error('Failed to load selection:', e);
       }
     };
-    loadCurrentSelection();
-  }, []);
+    loadSelection();
+  }, [API_BASE]);
 
-  // Fetch teams when league changes
+  // Load teams when league changes
   useEffect(() => {
-    if (!league) {
+    if (!league_key) {
       setTeams([]);
       return;
     }
 
     const loadTeams = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const teamsData = await fetchTeams(league);
-        setTeams(teamsData);
-      } catch (e) {
+        const res = await fetch(`${API_BASE}/yahoo/leagues/${league_key}/teams?format=json`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to load teams: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setTeams(data.teams || []);
+      } catch (e: unknown) {
         console.error('Failed to load teams:', e);
+        setError(e instanceof Error ? e.message : 'Unknown error');
+      } finally {
+        setLoading(false);
       }
     };
 
     loadTeams();
-  }, [league, fetchTeams]);
+  }, [league_key, API_BASE]);
 
-  const handleTeamSelect = async (teamKey: string, leagueKey: string) => {
-    setSelectedTeam(teamKey);
-    setIsOpen(false);
-
+  const handleSelectTeam = async (teamKey: string) => {
     try {
-      const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          teamKey,
-          leagueKey,
-        }),
+        body: JSON.stringify({ teamKey, leagueKey: league_key }),
       });
 
-      if (!res.ok) {
-        throw new Error(`Failed to save selection: ${res.status}`);
+      if (res.ok) {
+        setSelectedTeam(teamKey);
+        setIsOpen(false);
+        // Dispatch event for other components
+        window.dispatchEvent(
+          new CustomEvent('team-selected', {
+            detail: { teamKey, leagueKey: league_key },
+          }),
+        );
+      } else {
+        throw new Error('Failed to save selection');
       }
-
-      console.log('Team selection saved:', teamKey);
-    } catch (e) {
+    } catch (e: unknown) {
       console.error('Failed to save team selection:', e);
-      // Revert selection on error
-      const current = await fetch(
-        `${process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com'}/api/session/selection`,
-        { credentials: 'include' },
-      );
-      if (current.ok) {
-        const data = await current.json();
-        setSelectedTeam(data.selection?.teamKey || null);
-      }
+      setError(e instanceof Error ? e.message : 'Unknown error');
     }
   };
 
-  if (!league) {
+  const handleClickOutside = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('[data-team-selector]')) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isOpen]);
+
+  if (!league_key) {
     return (
-      <div className="text-sm text-gray-500">
-        Select a league to choose a team
+      <div className="text-sm text-gray-500 px-4 py-2 border border-gray-200 rounded-lg bg-gray-50">
+        Select a league first
       </div>
     );
   }
 
-  const selectedTeamData = teams.find((t) => t.team_key === selectedTeam);
-  const displayName = selectedTeamData?.name || 'Select Team';
+  if (error) {
+    return (
+      <div className="text-sm text-red-600 px-4 py-2 border border-red-200 rounded-lg bg-red-50">
+        Error: {error}
+      </div>
+    );
+  }
+
+  const selectedTeamName =
+    teams.find((t) => t.team_key === selectedTeam)?.name || 'Select Your Team';
 
   return (
-    <div className="relative">
+    <div className="relative inline-block" data-team-selector>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
+        className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={loading || teams.length === 0}
-        className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
       >
-        <span>{loading ? 'Loading teams...' : displayName}</span>
+        <span className="flex-1 text-left truncate text-sm">
+          {loading ? 'Loading teams...' : selectedTeamName}
+        </span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -119,58 +154,38 @@ export function TeamSelector() {
         </svg>
       </button>
 
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-
-          {/* Dropdown */}
-          <div className="absolute z-20 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto">
-            {error ? (
-              <div className="p-3 text-sm text-red-600">
-                Error loading teams: {error}
+      {isOpen && teams.length > 0 && (
+        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+          {teams.map((team) => (
+            <button
+              key={team.team_key}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectTeam(team.team_key);
+              }}
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0 ${
+                selectedTeam === team.team_key ? 'bg-blue-50 font-medium' : ''
+              }`}
+            >
+              {team.team_logos?.[0]?.url && (
+                <img src={team.team_logos[0].url} alt="" className="w-10 h-10 rounded" />
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate">{team.name}</div>
+                <div className="text-xs text-gray-500 truncate">{team.team_key}</div>
               </div>
-            ) : teams.length === 0 ? (
-              <div className="p-3 text-sm text-gray-500">
-                No teams available
-              </div>
-            ) : (
-              <ul className="py-1">
-                {teams.map((team) => (
-                  <li key={team.team_key}>
-                    <button
-                      onClick={() => handleTeamSelect(team.team_key, league)}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 ${
-                        selectedTeam === team.team_key ? 'bg-blue-50 font-medium' : ''
-                      }`}
-                    >
-                      {team.team_logos?.[0]?.url && (
-                        <img
-                          src={team.team_logos[0].url}
-                          alt={team.name}
-                          className="w-8 h-8 rounded"
-                        />
-                      )}
-                      <span className="flex-1">{team.name}</span>
-                      {selectedTeam === team.team_key && (
-                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </>
+              {selectedTeam === team.team_key && (
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );

@@ -1,91 +1,94 @@
 ﻿'use client';
 
-import { useYahooLeagues, useYahooMe } from '@/hooks/useYahoo';
-import Link from 'next/link';
-import ToolsTabs from '@/components/ToolsTabs';
-import { TeamSelector } from '@/components/TeamSelector';
-import RefreshLeaguesButton from './components/RefreshLeaguesButton';
-import { useSelectedLeague } from '@/hooks/useSelectedLeague';
+import { useState, useEffect } from 'react';
+import TeamSelector from '@/components/TeamSelector';
+import RefreshLeaguesButton from '@/components/RefreshLeaguesButton';
+import { useSelectedLeague } from '@/lib/selection';
+
+interface YahooMe {
+  guid?: string;
+  auth_required?: boolean;
+  error?: string;
+}
+
+interface YahooLeagues {
+  league_keys?: string[];
+  auth_required?: boolean;
+  error?: string;
+}
 
 export default function LeaguesPage() {
-  const { data: me, isLoading: isLoadingMe } = useYahooMe();
-  const { data: leagues, isLoading: isLoadingLeagues } = useYahooLeagues();
-  const { league, setLeague } = useSelectedLeague();
+  const [me, setMe] = useState<YahooMe | null>(null);
+  const [leagues, setLeagues] = useState<YahooLeagues | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { league_key, setSelection } = useSelectedLeague();
 
-  if (isLoadingMe || isLoadingLeagues) return <div>Loading Yahoo data…</div>;
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
 
-  // Guard: Handle auth_required state first
-  if (me?.auth_required || leagues?.auth_required) {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [meRes, leaguesRes] = await Promise.all([
+          fetch(`${API_BASE}/yahoo/me`, { credentials: 'include' }),
+          fetch(`${API_BASE}/yahoo/leagues?format=json`, { credentials: 'include' }),
+        ]);
+
+        if (meRes.ok) {
+          setMe(await meRes.json());
+        }
+        if (leaguesRes.ok) {
+          setLeagues(await leaguesRes.json());
+        }
+      } catch (e) {
+        console.error('Failed to load:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [API_BASE]);
+
+  if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-3">
-        <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
-        <p>Please connect to view your leagues.</p>
-        <Link href="/dashboard" className="text-blue-500 hover:underline">
-          Go to Dashboard to Connect
-        </Link>
-      </div>
-    );
-  }
-
-  // Guard: Handle error states
-  if (me?.error || leagues?.error) {
-    return (
-      <div>Could not load league data. Please try again or connect if you haven't already.</div>
-    );
-  }
-
-  // Guard: Ensure me has guid before accessing
-  if (!me || !me.guid) {
-    return (
-      <div className="mx-auto max-w-6xl px-4 py-3">
-        <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
-        <p>Please connect to view your leagues.</p>
-        <Link href="/dashboard" className="text-blue-500 hover:underline">
-          Go to Dashboard to Connect
-        </Link>
+      <div className="p-6">
+        <p className="text-gray-500">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-3">
-      <ToolsTabs />
-      <h1 className="text-lg font-semibold mb-3">My Yahoo Leagues</h1>
-
-      {/* Clear Connected PASS Indicator */}
-      <div
-        role="status"
-        className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1 mb-4"
-      >
-        Yahoo Connected — GUID: {me?.guid ?? 'unknown'} · Leagues:{' '}
-        {leagues?.league_keys?.length ?? 0}
-      </div>
-
-      {/* Team Selector and Refresh Button */}
-      <div className="flex items-center gap-3 mb-4">
+    <div className="p-6 space-y-6">
+      {/* Header with buttons */}
+      <div className="flex items-center gap-4 flex-wrap">
         <RefreshLeaguesButton />
         <TeamSelector />
       </div>
 
-      {leagues?.league_keys &&
-      Array.isArray(leagues.league_keys) &&
-      leagues.league_keys.length > 0 ? (
+      {/* Connection status */}
+      {me?.guid && (
+        <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2">
+          Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
+        </div>
+      )}
+
+      {/* Leagues list */}
+      {leagues?.league_keys && leagues.league_keys.length > 0 ? (
         <>
-          <h2 className="text-md font-semibold mt-4 mb-2">Your Leagues:</h2>
+          <h2 className="text-lg font-semibold">Your Leagues</h2>
           <ul className="space-y-2">
-            {leagues.league_keys.map((key) => (
+            {leagues.league_keys.map((key: string) => (
               <li key={key}>
                 <button
-                  onClick={() => setLeague(key)}
-                  className={`w-full text-left p-2 border rounded transition-colors ${
-                    league === key
-                      ? 'bg-blue-50 border-blue-300 font-medium'
-                      : 'bg-gray-50 hover:bg-gray-100'
+                  onClick={() => setSelection({ league_key: key })}
+                  className={`w-full p-4 border rounded-lg text-left transition-all ${
+                    league_key === key
+                      ? 'border-blue-500 bg-blue-50 shadow-sm'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
                   }`}
                 >
-                  <span className="font-mono text-sm">{key}</span>
-                  {league === key && (
-                    <span className="ml-2 text-xs text-blue-600">✓ Selected</span>
+                  <div className="font-medium">{key}</div>
+                  {league_key === key && (
+                    <div className="text-xs text-blue-600 mt-1">✓ Selected</div>
                   )}
                 </button>
               </li>
@@ -93,7 +96,7 @@ export default function LeaguesPage() {
           </ul>
         </>
       ) : (
-        <p className="mt-4">No leagues found for this Yahoo account.</p>
+        <p className="text-gray-500">No leagues found for this account.</p>
       )}
     </div>
   );

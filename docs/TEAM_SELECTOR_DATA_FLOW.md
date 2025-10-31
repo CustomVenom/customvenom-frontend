@@ -5,6 +5,7 @@
 **Created:** Team selector dropdown component that appears next to Refresh League button on `/dashboard/leagues`
 
 **Files:**
+
 - `src/components/TeamSelector.tsx` - Main dropdown component
 - `src/app/dashboard/leagues/page.tsx` - Updated to include TeamSelector and make leagues clickable
 
@@ -75,6 +76,7 @@ Selection persists across reloads
 **Status:** ✅ Complete
 
 **Implementation Details:**
+
 - Dropdown shows team logos and names
 - Selected team highlighted with checkmark
 - Selection saved to `/api/session/selection` endpoint
@@ -143,6 +145,7 @@ Frontend displays in WeeklyTrackingTable:
 **Status:** ❌ Not yet wired
 
 **Current Limitations:**
+
 - ❌ Projection data not yet wired to roster display
 - ❌ Player mapping (Yahoo → NFLVerse) exists but not called in roster flow
 - ✅ WeeklyTrackingTable component exists (`src/components/tracking/WeeklyTrackingTable.tsx`)
@@ -166,6 +169,7 @@ Frontend displays in WeeklyTrackingTable:
 **Location:** `src/components/tracking/WeeklyTrackingTable.tsx`
 
 **Action:** Update the component to:
+
 1. Get selected team from `/api/session/selection`
 2. Fetch roster for that team
 3. Map roster players to NFLVerse IDs
@@ -178,6 +182,7 @@ Frontend displays in WeeklyTrackingTable:
 ### Step 3: Backend Implementation (if needed)
 
 **Check if these endpoints exist:**
+
 - `GET /api/tracking/week/:week?team={teamKey}` - Should return merged Yahoo roster + projections
 - Or enhance existing endpoint to support team filtering
 
@@ -186,6 +191,7 @@ Frontend displays in WeeklyTrackingTable:
 ## Component Locations
 
 ### Frontend Components
+
 - `src/components/TeamSelector.tsx` - Team dropdown selector
 - `src/components/roster/RosterViewer.tsx` - Roster display with league/team/roster flow
 - `src/components/roster/PlayerMappingStatus.tsx` - Shows player mapping status
@@ -193,6 +199,7 @@ Frontend displays in WeeklyTrackingTable:
 - `src/app/dashboard/leagues/page.tsx` - Leagues page with team selector
 
 ### Backend Endpoints (via frontend API routes)
+
 - `GET /api/session/selection` - Get current team/league selection
 - `POST /api/session/selection` - Save team/league selection
 - `GET /yahoo/leagues` - Get user's leagues
@@ -236,4 +243,3 @@ Frontend displays in WeeklyTrackingTable:
 3. **Team Selection Persistence** - Currently persists, but could add UI indicator showing current selection
 4. **Loading States** - Add skeleton loaders for better UX
 5. **Error Recovery** - Better error messages and retry logic
-
