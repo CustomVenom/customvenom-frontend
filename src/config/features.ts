@@ -32,7 +32,5 @@ export function requiresPro(feature: keyof typeof FEATURES): boolean {
     return false; // Always allow when paywall disabled
   }
 
-  return FEATURES[feature] === true;
+  return !!FEATURES[feature];
 }
-
-
