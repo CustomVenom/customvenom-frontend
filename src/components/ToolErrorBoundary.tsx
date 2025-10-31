@@ -81,10 +81,10 @@ export class ToolErrorBoundary extends Component<Props, State> {
                 </button>
 
                 <button
-                  onClick={() => (window.location.href = '/tools')}
+                  onClick={() => (window.location.href = '/dashboard')}
                   className="text-sm px-3 py-1.5 bg-[rgba(148,163,184,0.1)] text-[rgb(var(--text-primary))] rounded-lg hover:bg-[rgba(148,163,184,0.2)] transition-all border border-[rgba(148,163,184,0.2)] font-semibold"
                 >
-                  Back to tools
+                  Back to dashboard
                 </button>
               </div>
             </div>

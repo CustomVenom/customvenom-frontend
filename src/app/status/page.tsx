@@ -115,8 +115,8 @@ export default function StatusPage() {
         <a href="/projections" className="cv-btn-primary">
           Open Projections
         </a>
-        <a href="/tools" className="cv-btn-ghost">
-          Tools
+        <a href="/dashboard" className="cv-btn-ghost">
+          Dashboard
         </a>
       </div>
     </main>

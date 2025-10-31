@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Connect League button 302s to /api/yahoo/signin', async ({ page, context }) => {
-  await page.goto('https://www.customvenom.com/tools', { waitUntil: 'networkidle' });
+  await page.goto('https://www.customvenom.com/dashboard', { waitUntil: 'networkidle' });
 
   const [req] = await Promise.all([
     context.waitForEvent('request', (r) => r.url().includes('/api/connect/start?host=yahoo')),

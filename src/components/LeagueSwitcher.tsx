@@ -18,7 +18,7 @@ export function LeagueSwitcher() {
         Please connect to load your leagues.
         <div className="mt-2">
           <Link
-            href="/tools"
+            href="/dashboard"
             className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
           >
             Go to Tools to Connect
@@ -44,7 +44,7 @@ export function LeagueSwitcher() {
         Please connect to load your leagues.
         <div className="mt-2">
           <Link
-            href="/tools"
+            href="/dashboard"
             className="inline-flex items-center justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-medium hover:bg-black/90"
           >
             Go to Tools to Connect

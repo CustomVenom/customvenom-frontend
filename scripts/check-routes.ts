@@ -8,7 +8,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 
 const ROUTES = [
-  { path: '/tools', file: 'src/app/tools/page.tsx' },
+  { path: '/dashboard', file: 'src/app/dashboard/page.tsx' },
   { path: '/league', file: 'src/app/league/page.tsx' },
   { path: '/league/roster', file: 'src/app/league/roster/page.tsx' },
   { path: '/league/waivers', file: 'src/app/league/waivers/page.tsx' },

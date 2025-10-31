@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('League nav resolves to /league/roster', async ({ page }) => {
-  await page.goto('https://www.customvenom.com/tools', { waitUntil: 'networkidle' });
+  await page.goto('https://www.customvenom.com/dashboard', { waitUntil: 'networkidle' });
 
   // Click the League nav item
   await page

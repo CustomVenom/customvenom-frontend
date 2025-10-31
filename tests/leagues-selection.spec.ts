@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Leagues Selection', () => {
-  test('After OAuth, user lands on /tools/leagues', async ({ page }) => {
+  test('After OAuth, user lands on /dashboard/leagues', async ({ page }) => {
     await page.goto('/api/yahoo/callback?code=bad&state=bad');
-    // Should redirect to /tools/leagues via canonical redirect
-    await expect(page).toHaveURL(/\/tools\/leagues/);
+    // Should redirect to /dashboard/leagues via canonical redirect
+    await expect(page).toHaveURL(/\/dashboard\/leagues/);
   });
 
   test('Connect shows leagues table with entitlements', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Leagues Selection', () => {
       }),
     );
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Should show the leagues table
     await expect(page.getByText('League A')).toBeVisible();
@@ -98,7 +98,7 @@ test.describe('Leagues Selection', () => {
       }),
     );
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Should show slot meter with 1 of 1 used
     await expect(page.getByText('1 of 1 used')).toBeVisible();
@@ -152,7 +152,7 @@ test.describe('Leagues Selection', () => {
       }),
     );
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Should show unlimited slots for superuser
     await expect(page.getByText('0 of ∞ used')).toBeVisible();
@@ -205,7 +205,7 @@ test.describe('Leagues Selection', () => {
       }),
     );
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // LeagueSwitcher should be visible in the tabs area
     await expect(page.getByText('Active League:')).toBeVisible();

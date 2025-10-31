@@ -36,7 +36,7 @@ export default async function YahooLeaguePage({
     return (
       <div className="container mx-auto px-4 py-8">
         <p>You need to sign in to view this league.</p>
-        <Link href="/tools/yahoo" className="btn">
+        <Link href="/dashboard/yahoo" className="btn">
           Back to leagues
         </Link>
       </div>
@@ -50,7 +50,7 @@ export default async function YahooLeaguePage({
     return (
       <div className="container mx-auto px-4 py-8">
         <p>Unable to load league data.</p>
-        <Link href="/tools/yahoo" className="btn">
+        <Link href="/dashboard/yahoo" className="btn">
           Back to leagues
         </Link>
       </div>
@@ -59,7 +59,7 @@ export default async function YahooLeaguePage({
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-4">
-      <Link href="/tools/yahoo" className="text-sm underline">
+      <Link href="/dashboard/yahoo" className="text-sm underline">
         ← Back to leagues
       </Link>
       {!data ? (

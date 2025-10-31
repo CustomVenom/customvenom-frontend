@@ -351,8 +351,8 @@ export default function MetricsPage() {
         <Link href="/ops" className="cv-btn-ghost">
           Back to Ops
         </Link>
-        <Link href="/tools" className="cv-btn-ghost">
-          Go to Tools
+        <Link href="/dashboard" className="cv-btn-ghost">
+          Go to Dashboard
         </Link>
       </div>
     </main>

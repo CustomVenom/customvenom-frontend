@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('ProLock Component', () => {
   test('ProLock shows upgrade CTA for non-pro users', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     // Look for the ProLock component (may or may not be visible depending on auth state)
     const proLock = page.locator('text=/Upgrade to Pro/');
@@ -13,7 +13,7 @@ test.describe('ProLock Component', () => {
   });
 
   test('ProLock is keyboard accessible', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     // Focus management for blur overlay
     const body = page.locator('body');

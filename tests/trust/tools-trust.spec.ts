@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Trust Ribbon on Tools Page', () => {
   test('Trust Snapshot is visible with version and time', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     // Check for Trust Snapshot visibility
     const snapshot = page.locator('[aria-label="Trust Snapshot"]');
@@ -20,7 +20,7 @@ test.describe('Trust Ribbon on Tools Page', () => {
   });
 
   test('Stale badge only appears when x-stale=true', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     const snapshot = page.locator('[aria-label="Trust Snapshot"]');
     const staleBadge = snapshot.locator('text=/Stale/');

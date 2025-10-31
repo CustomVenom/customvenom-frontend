@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('CLS Performance', () => {
-  const pages = ['/tools', '/projections'];
+  const pages = ['/dashboard', '/projections'];
 
   for (const path of pages) {
     test(`CLS should be below 0.1 on ${path} page`, async ({ page }) => {

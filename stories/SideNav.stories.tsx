@@ -9,7 +9,7 @@ const meta: Meta<typeof SideNav> = {
   parameters: {
     nextjs: {
       router: {
-        pathname: '/tools',
+        pathname: '/dashboard',
       },
     },
   },

@@ -9,7 +9,7 @@ const meta: Meta<typeof MobileDock> = {
   parameters: {
     nextjs: {
       router: {
-        pathname: '/tools',
+        pathname: '/dashboard',
       },
     },
     viewport: {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Tools Header Visual Regression', () => {
   test('Tools page header matches baseline', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     // Wait for header to be stable
     await page.waitForLoadState('networkidle');

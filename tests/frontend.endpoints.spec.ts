@@ -4,7 +4,7 @@ const FRONTEND_BASE = process.env.FRONTEND_BASE ?? 'https://www.customvenom.com'
 
 test.describe('Frontend endpoints', () => {
   test('root, tools, and subroutes respond 200', async ({ page }) => {
-    for (const path of ['/', '/tools', '/tools/start-sit', '/tools/faab', '/tools/decisions']) {
+    for (const path of ['/', '/dashboard', '/dashboard/start-sit', '/dashboard/faab', '/dashboard/decisions']) {
       const res = await page.goto(FRONTEND_BASE + path, { waitUntil: 'domcontentloaded' });
       expect(res?.status(), `GET ${path}`).toBe(200);
     }
@@ -17,8 +17,8 @@ test.describe('Frontend endpoints', () => {
     expect(hsts, 'HSTS header present').toBeTruthy();
   });
 
-  test('Trust Snapshot visible on /tools', async ({ page }) => {
-    await page.goto(FRONTEND_BASE + '/tools');
+  test('Trust Snapshot visible on /dashboard', async ({ page }) => {
+    await page.goto(FRONTEND_BASE + '/dashboard');
     // Adjust selector to your component label
     const el = page.getByLabel('Trust Snapshot');
     await expect(el).toBeVisible();

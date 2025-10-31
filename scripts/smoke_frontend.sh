@@ -141,10 +141,10 @@ check_canonical_host
 
 say "Status codes"
 check_status "/" 200
-check_status "/tools" 200
-check_status "/tools/start-sit" 200
-check_status "/tools/faab" 200
-check_status "/tools/decisions" 200
+check_status "/dashboard" 200
+check_status "/dashboard/start-sit" 200
+check_status "/dashboard/faab" 200
+check_status "/dashboard/decisions" 200
 check_status "/design-preview" 200 || true  # optional route
 
 say "HTTPS-only front door"

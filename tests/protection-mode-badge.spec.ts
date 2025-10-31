@@ -17,7 +17,7 @@ test.describe('Protection Mode Badge', () => {
       });
     });
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Check that protection mode badge is visible
     const badge = page.locator('[data-testid="protection-mode-badge"]');
@@ -50,7 +50,7 @@ test.describe('Protection Mode Badge', () => {
       });
     });
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Check that protection mode badge is not visible
     const badge = page.locator('[data-testid="protection-mode-badge"]');
@@ -73,7 +73,7 @@ test.describe('Protection Mode Badge', () => {
       });
     });
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     const badge = page.locator('[data-testid="protection-mode-badge"]');
     await expect(badge).toBeVisible();
@@ -99,7 +99,7 @@ test.describe('Protection Mode Badge', () => {
       });
     });
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Check that badge appears in the leagues table header area
     const tableHeader = page.locator('[data-testid="leagues-table-header"]');

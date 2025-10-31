@@ -6,7 +6,7 @@ export default function ConnectSuccess() {
   const search = typeof window !== 'undefined' ? window.location.search : '';
   const params = new URLSearchParams(search);
   const provider = (params.get('provider') || 'your').toUpperCase();
-  const ret = params.get('ret') || '/tools';
+  const ret = params.get('ret') || '/dashboard';
 
   useEffect(() => {
     const t = setTimeout(() => {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('UI Contract Tests', () => {
   test('trust snapshot renders with schema_version and last_refresh', async ({ page }) => {
-    await page.goto('/tools');
+    await page.goto('/dashboard');
 
     // Wait for trust snapshot to load
     await expect(page.locator('[data-testid="trust-snapshot"]')).toBeVisible();
@@ -18,7 +18,7 @@ test.describe('UI Contract Tests', () => {
   });
 
   test('leagues flow does not spin forever on error', async ({ page }) => {
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Wait for leagues table to load
     await expect(page.locator('[data-testid="leagues-table"]')).toBeVisible();
@@ -51,7 +51,7 @@ test.describe('UI Contract Tests', () => {
       });
     });
 
-    await page.goto('/tools/leagues');
+    await page.goto('/dashboard/leagues');
 
     // Check that protection mode badge is visible
     await expect(page.locator('[data-testid="protection-mode-badge"]')).toBeVisible();

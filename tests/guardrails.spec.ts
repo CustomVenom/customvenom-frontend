@@ -6,7 +6,7 @@ test('tools: single connect button (signed-out)', async ({ page, context }) => {
   // Clear cookies to ensure signed-out state
   await context.clearCookies();
 
-  await page.goto(`${BASE}/tools`, { waitUntil: 'domcontentloaded' });
+  await page.goto(`${BASE}/dashboard`, { waitUntil: 'domcontentloaded' });
 
   // Look for either the connect button or the loading/error state
   const connectBtn = page

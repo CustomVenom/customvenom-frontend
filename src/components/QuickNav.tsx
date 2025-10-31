@@ -11,7 +11,7 @@ interface QuickNavShortcut {
 
 const shortcuts: QuickNavShortcut[] = [
   { key: 'p', path: '/projections', label: 'Projections' },
-  { key: 't', path: '/tools', label: 'Tools' },
+  { key: 't', path: '/dashboard', label: 'Dashboard' },
   { key: 'l', path: '/league', label: 'League' },
   { key: 's', path: '/settings', label: 'Settings' },
 ];

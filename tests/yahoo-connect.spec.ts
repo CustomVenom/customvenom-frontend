@@ -33,7 +33,7 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          Location: 'https://www.customvenom.com/tools?connected=yahoo',
+          Location: 'https://www.customvenom.com/dashboard?connected=yahoo',
           'Set-Cookie':
             'cv_yahoo=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400',
         },
@@ -160,7 +160,7 @@ test.describe('Yahoo Connect Flow', () => {
     await expect(connectButton).toBeVisible();
   });
 
-  test('should complete /tools connect flow and verify session', async ({ page }) => {
+  test('should complete /dashboard connect flow and verify session', async ({ page }) => {
     // Mock the Workers API connect start endpoint
     await page.route('**/api/connect/start*', async (route) => {
       await route.fulfill({
@@ -177,7 +177,7 @@ test.describe('Yahoo Connect Flow', () => {
       await route.fulfill({
         status: 302,
         headers: {
-          Location: 'https://www.customvenom.com/tools?connected=yahoo',
+          Location: 'https://www.customvenom.com/dashboard?connected=yahoo',
           'Set-Cookie':
             'y_at=test-token; Path=/; HttpOnly; Secure; SameSite=None; Domain=.customvenom.com; Max-Age=86400',
         },
@@ -206,8 +206,8 @@ test.describe('Yahoo Connect Flow', () => {
       });
     });
 
-    // Start from /tools page
-    await page.goto('/tools');
+    // Start from /dashboard page
+    await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
     // Find and click Connect Yahoo button
@@ -219,7 +219,7 @@ test.describe('Yahoo Connect Flow', () => {
     await page.waitForURL('**/oauth2/request_auth**');
 
     // Simulate successful OAuth callback
-    await page.goto('/tools?connected=yahoo');
+    await page.goto('/dashboard?connected=yahoo');
     await page.waitForLoadState('networkidle');
 
     // Verify we're back on the same page with connected parameter

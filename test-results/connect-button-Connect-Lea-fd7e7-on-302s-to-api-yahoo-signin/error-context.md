@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - generic [ref=e7]: Custom Venom
+          - generic [ref=e8]: Pick Your Poison
+      - navigation "Main navigation" [ref=e9]:
+        - link "Projections" [ref=e10] [cursor=pointer]:
+          - /url: /projections
+        - link "Tools" [ref=e11] [cursor=pointer]:
+          - /url: /tools
+        - link "Ops" [ref=e12] [cursor=pointer]:
+          - /url: /ops
+        - link "Settings" [ref=e13] [cursor=pointer]:
+          - /url: /settings
+      - generic [ref=e14]:
+        - button "Toggle theme" [ref=e15]: Light
+        - button "Toggle density" [ref=e17]:
+          - generic [ref=e18]: Comfortable
+        - link "Design" [ref=e19] [cursor=pointer]:
+          - /url: /design-preview
+  - link "Skip to main content" [ref=e20] [cursor=pointer]:
+    - /url: "#main-content"
+  - status "Trust information" [ref=e21]:
+    - generic [ref=e22]: vv1
+    - generic [ref=e23]: •
+    - time [ref=e24]: 9:38 PM
+  - button "Show keyboard shortcuts" [ref=e25]: "?"
+  - generic [ref=e26]:
+    - navigation "Side navigation" [ref=e27]:
+      - list [ref=e28]:
+        - listitem [ref=e29]:
+          - link "📊 Projections" [ref=e30] [cursor=pointer]:
+            - /url: /projections
+            - generic [ref=e31]: 📊
+            - generic [ref=e32]: Projections
+        - listitem [ref=e33]:
+          - link "🔧 Tools" [ref=e34] [cursor=pointer]:
+            - /url: /tools
+            - generic [ref=e35]: 🔧
+            - generic [ref=e36]: Tools
+        - listitem [ref=e37]:
+          - link "🏈 League" [ref=e38] [cursor=pointer]:
+            - /url: /league
+            - generic [ref=e39]: 🏈
+            - generic [ref=e40]: League
+        - listitem [ref=e41]:
+          - link "⚙️ Settings" [ref=e42] [cursor=pointer]:
+            - /url: /settings
+            - generic [ref=e43]: ⚙️
+            - generic [ref=e44]: Settings
+    - main [ref=e45]:
+      - main [ref=e46]:
+        - generic [ref=e47]:
+          - generic "Trust Snapshot" [ref=e48]:
+            - generic [ref=e49]:
+              - generic [ref=e50]: "Schema:"
+              - generic [ref=e51]: v1
+            - generic [ref=e52]:
+              - generic [ref=e53]: "Calibrated:"
+              - time [ref=e54]: —
+          - button "Connect League" [ref=e59] [cursor=pointer]
+  - contentinfo [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]: © 2025 Custom Venom · Pick Your Poison
+        - generic [ref=e66]: API OK · cache 70%
+      - navigation "Footer navigation" [ref=e67]:
+        - link "Ops" [ref=e68] [cursor=pointer]:
+          - /url: /ops
+        - link "Status" [ref=e69] [cursor=pointer]:
+          - /url: /status
+        - link "Design" [ref=e70] [cursor=pointer]:
+          - /url: /design-preview
+        - link "Privacy" [ref=e71] [cursor=pointer]:
+          - /url: /privacy
+        - link "Bluesky" [ref=e72] [cursor=pointer]:
+          - /url: https://bsky.app
+  - alert [ref=e73]
+```

@@ -11,7 +11,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/projections', label: 'Projections', icon: '📊' },
-  { href: '/tools', label: 'Tools', icon: '🔧' },
+  { href: '/dashboard', label: 'Dashboard', icon: '🔧' },
   { href: '/league', label: 'League', icon: '🏈' },
   { href: '/settings', label: 'Settings', icon: '⚙️' },
 ];

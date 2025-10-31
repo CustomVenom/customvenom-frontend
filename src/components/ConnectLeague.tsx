@@ -130,7 +130,7 @@ export default function ConnectLeague() {
   function connect() {
     if (busy) return;
     setBusy(true);
-    const ret = encodeURIComponent('/tools');
+    const ret = encodeURIComponent('/dashboard');
     const redirectUrl = `${API}/api/connect/start?host=yahoo&from=${ret}`;
     console.log('[ConnectLeague] Redirecting to:', redirectUrl);
     console.log('[ConnectLeague] API base:', API);

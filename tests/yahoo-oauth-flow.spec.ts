@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Yahoo OAuth Flow', () => {
   test('@yahoo-oauth Tools/Yahoo shows Connect when not connected', async ({ page }) => {
-    await page.goto('/tools/yahoo', { waitUntil: 'networkidle' });
+    await page.goto('/dashboard/yahoo', { waitUntil: 'networkidle' });
     await expect(page.getByRole('link', { name: /Connect Yahoo/i })).toBeVisible();
   });
 
   test('@yahoo-oauth Connect navigates to Yahoo auth', async ({ page }) => {
-    await page.goto('/tools/yahoo', { waitUntil: 'networkidle' });
+    await page.goto('/dashboard/yahoo', { waitUntil: 'networkidle' });
     const connectLink = page.getByRole('link', { name: /Connect Yahoo/i });
     await connectLink.click();
 
@@ -25,7 +25,7 @@ test.describe('Yahoo OAuth Flow', () => {
   });
 
   test('@yahoo-oauth Tools/Yahoo returns 200', async ({ page }) => {
-    const response = await page.goto('/tools/yahoo', { waitUntil: 'networkidle' });
+    const response = await page.goto('/dashboard/yahoo', { waitUntil: 'networkidle' });
     expect(response?.status()).toBe(200);
 
     // Should contain either Connect button or leagues list
@@ -42,7 +42,7 @@ test.describe('Yahoo OAuth Flow', () => {
   });
 
   test('@yahoo-oauth Connect redirect includes returnTo parameter', async ({ page }) => {
-    await page.goto('/tools/yahoo', { waitUntil: 'networkidle' });
+    await page.goto('/dashboard/yahoo', { waitUntil: 'networkidle' });
     const connectLink = page.getByRole('link', { name: /Connect Yahoo/i });
     const href = await connectLink.getAttribute('href');
 
@@ -50,7 +50,7 @@ test.describe('Yahoo OAuth Flow', () => {
     expect(href).toContain('returnTo=');
   });
 
-  test('@yahoo-oauth Successful callback redirects to /tools/leagues', async ({
+  test('@yahoo-oauth Successful callback redirects to /dashboard/leagues', async ({
     page,
     context,
   }) => {
@@ -60,14 +60,14 @@ test.describe('Yahoo OAuth Flow', () => {
       {
         name: 'y_state',
         value: encodeURIComponent(
-          JSON.stringify({ state: 'test-state', returnTo: '/tools/leagues' }),
+          JSON.stringify({ state: 'test-state', returnTo: '/dashboard/leagues' }),
         ),
         url: process.env['FRONTEND_BASE'] || 'http://localhost:3000',
       },
     ]);
 
     // Visit callback with valid state and code parameters
-    // The callback should redirect to /tools/leagues
+    // The callback should redirect to /dashboard/leagues
     const response = await page.goto('/api/yahoo/callback?code=test&state=test-state', {
       waitUntil: 'networkidle',
     });
@@ -77,8 +77,8 @@ test.describe('Yahoo OAuth Flow', () => {
     expect([302, 303, 400, 502]).toContain(response?.status() || 0);
   });
 
-  test('@yahoo-oauth /tools/yahoo redirects to /tools/leagues', async ({ page }) => {
-    await page.goto('/tools/yahoo', { waitUntil: 'networkidle' });
-    expect(page.url()).toContain('/tools/leagues');
+  test('@yahoo-oauth /dashboard/yahoo redirects to /dashboard/leagues', async ({ page }) => {
+    await page.goto('/dashboard/yahoo', { waitUntil: 'networkidle' });
+    expect(page.url()).toContain('/dashboard/leagues');
   });
 });

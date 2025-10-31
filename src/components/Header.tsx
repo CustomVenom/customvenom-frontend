@@ -9,7 +9,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const links = [
   { href: '/projections', label: 'Projections' },
-  { href: '/tools', label: 'Tools' },
+  { href: '/dashboard', label: 'Dashboard' },
   { href: '/ops', label: 'Ops' },
   { href: '/settings', label: 'Settings' },
 ];

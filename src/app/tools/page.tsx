@@ -1,11 +1,5 @@
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-import ToolsPageClient from '@/components/ToolsPageClient';
+import { redirect } from 'next/navigation';
 
-export default function ToolsPage() {
-  return (
-    <div suppressHydrationWarning>
-      <ToolsPageClient />
-    </div>
-  );
+export default function ToolsRedirect() {
+  redirect('/dashboard');
 }

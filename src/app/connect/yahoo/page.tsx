@@ -7,14 +7,14 @@ export default function YahooConnect() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to tools page where Yahoo connection is handled
-    router.push('/tools');
+    // Redirect to dashboard page where Yahoo connection is handled
+    router.push('/dashboard');
   }, [router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
-        <p className="text-lg">Redirecting to Tools…</p>
+        <p className="text-lg">Redirecting to Dashboard…</p>
       </div>
     </div>
   );
