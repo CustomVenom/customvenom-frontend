@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
 interface YahooLeague {
   league_key: string;
