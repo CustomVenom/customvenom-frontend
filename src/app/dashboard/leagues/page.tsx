@@ -23,7 +23,7 @@ export default function LeaguesPage() {
   const [loading, setLoading] = useState(true);
   const { league_key, setSelection } = useSelectedLeague();
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+  const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
   useEffect(() => {
     const load = async () => {
