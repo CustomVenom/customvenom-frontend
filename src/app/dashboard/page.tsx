@@ -120,9 +120,11 @@ export default function DashboardPage() {
             const parts = data.active_team_key.split('.t.');
             if (parts.length === 2) {
               const leagueKey = parts[0];
-              const leagueIdMatch = leagueKey.match(/\.l\.(\d+)$/);
-              if (leagueIdMatch) {
-                setSelectedLeagueId(leagueIdMatch[1]);
+              if (leagueKey) {
+                const leagueIdMatch = leagueKey.match(/\.l\.(\d+)$/);
+                if (leagueIdMatch && leagueIdMatch[1]) {
+                  setSelectedLeagueId(leagueIdMatch[1]);
+                }
               }
             }
           }
@@ -282,8 +284,6 @@ export default function DashboardPage() {
     const team = league.teams.find((t) => t.team_id === teamId);
     return team?.name || 'Select Your Team';
   })();
-
-  const isConnected = Boolean(me?.guid);
 
   // ===== RENDER =====
 
