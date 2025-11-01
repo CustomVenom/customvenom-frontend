@@ -134,25 +134,44 @@ export default function DashboardPage() {
         }
 
         // Load all leagues in parallel
+        console.log('[DEBUG] Loading teams for leagues:', leagueKeys);
         const teamPromises = leagueKeys.map(async (leagueKey) => {
-          if (typeof leagueKey !== 'string') return [];
+          if (typeof leagueKey !== 'string') {
+            console.warn('[DEBUG] Invalid leagueKey (not string):', leagueKey);
+            return [];
+          }
+
+          const url = `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`;
+          console.log(`[DEBUG] Fetching teams from: ${url}`);
 
           try {
-            const res = await fetch(
-              `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
-              {
-                credentials: 'include',
-              },
-            );
+            const res = await fetch(url, {
+              credentials: 'include',
+            });
 
-            if (res.ok) {
-              const data: YahooTeamsResponse = await res.json();
-              if (data?.teams && Array.isArray(data.teams)) {
-                return data.teams;
-              }
+            console.log(`[DEBUG] Response status for ${leagueKey}:`, res.status, res.statusText);
+
+            if (!res.ok) {
+              const errorText = await res.text();
+              console.error(`[DEBUG] Failed to load teams for league ${leagueKey}:`, {
+                status: res.status,
+                statusText: res.statusText,
+                error: errorText,
+              });
+              return [];
+            }
+
+            const data: YahooTeamsResponse = await res.json();
+            console.log(`[DEBUG] Teams data for ${leagueKey}:`, data);
+
+            if (data?.teams && Array.isArray(data.teams)) {
+              console.log(`[DEBUG] Found ${data.teams.length} teams for league ${leagueKey}`);
+              return data.teams;
+            } else {
+              console.warn(`[DEBUG] No teams array in response for ${leagueKey}:`, data);
             }
           } catch (e) {
-            console.error(`Failed to load teams for league ${leagueKey}:`, e);
+            console.error(`[DEBUG] Exception loading teams for league ${leagueKey}:`, e);
           }
           return [];
         });
@@ -160,7 +179,7 @@ export default function DashboardPage() {
         // Wait for all leagues to load
         const teamsArrays = await Promise.all(teamPromises);
         const allTeams = teamsArrays.flat();
-        
+
         // Debug logging for teams state
         console.log('=== TEAMS STATE DEBUG ===');
         console.log('Teams array length:', allTeams.length);
@@ -172,7 +191,7 @@ export default function DashboardPage() {
           console.log('First team name:', firstTeam.name);
           console.log('First team team_key:', firstTeam.team_key);
         }
-        
+
         setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
