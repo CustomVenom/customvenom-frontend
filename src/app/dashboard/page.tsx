@@ -405,6 +405,7 @@ export default function DashboardPage() {
                       />
                     )}
                     <div className="flex-1 min-w-0">
+                      {/* CRITICAL: Display team.name (not team_key) - line 408 */}
                       <div className="text-sm font-medium truncate">{team.name}</div>
                       <div className="text-xs text-gray-500 truncate">{team.team_key}</div>
                     </div>
