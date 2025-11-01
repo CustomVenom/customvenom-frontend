@@ -287,11 +287,17 @@ export default function DashboardPage() {
     try {
       // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
       const parts = teamKey.split('.t.');
-      if (parts.length !== 2) {
+      if (parts.length !== 2 || !parts[0] || !parts[1]) {
         console.error('Invalid team key format:', teamKey);
         return;
       }
-      const leagueKey = parts[0];
+      const leagueKey = parts[0].trim();
+
+      // Validate both keys are present
+      if (!teamKey || !leagueKey) {
+        console.error('Missing team or league key:', { teamKey, leagueKey });
+        return;
+      }
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -312,7 +318,13 @@ export default function DashboardPage() {
           }),
         );
       } else {
-        console.error('Failed to save team selection, status:', res.status);
+        const errorData = await res.json().catch(() => ({}));
+        console.error('Failed to save team selection:', {
+          status: res.status,
+          statusText: res.statusText,
+          error: errorData,
+          sent: { teamKey, leagueKey },
+        });
       }
     } catch (e) {
       console.error('Failed to save team:', e);
