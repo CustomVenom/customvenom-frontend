@@ -1,7 +1,7 @@
 'use client';
 
-import { useSelectedLeague } from '@/lib/selection';
 import { useEffect, useState } from 'react';
+import { useSelectedLeague } from '@/lib/selection';
 
 // ===== TYPE DEFINITIONS =====
 
@@ -289,13 +289,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* BUTTONS - Positioned below top menu bar */}
-      <div className="px-6 py-4 flex items-center gap-3">
+      {/* BUTTONS - Upper right, below menu bar, smaller */}
+      <div className="px-6 py-3 flex items-center justify-end gap-2">
         {/* Button 1: Connect/Refresh League */}
         <button
           onClick={handleConnectOrRefresh}
           disabled={connecting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm font-medium shadow-sm"
+          className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-xs font-medium shadow-sm"
         >
           {connecting ? 'Connecting...' : isConnected ? 'Refresh Leagues' : 'Connect League'}
         </button>
@@ -309,13 +309,13 @@ export default function DashboardPage() {
                 setTeamsDropdownOpen(!teamsDropdownOpen);
               }}
               disabled={teams.length === 0}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 min-w-[200px]"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
             >
               <span className="flex-1 text-left truncate">
                 {teams.length === 0 ? 'Loading teams...' : selectedTeamName}
               </span>
               <svg
-                className={`w-4 h-4 transition-transform shrink-0 ${
+                className={`w-3 h-3 transition-transform shrink-0 ${
                   teamsDropdownOpen ? 'rotate-180' : ''
                 }`}
                 fill="none"
@@ -332,7 +332,7 @@ export default function DashboardPage() {
             </button>
 
             {teamsDropdownOpen && teams.length > 0 && (
-              <div className="absolute left-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                 {teams.map((team) => (
                   <button
                     key={team.team_key}
