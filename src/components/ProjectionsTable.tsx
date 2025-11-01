@@ -78,7 +78,10 @@ export default function ProjectionsTable({ rows }: Props) {
         return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       }
 
-      return direction === 'asc' ? aVal - bVal : bVal - aVal;
+      // Ensure both values are numbers for arithmetic
+      const aNum = typeof aVal === 'number' ? aVal : 0;
+      const bNum = typeof bVal === 'number' ? bVal : 0;
+      return direction === 'asc' ? aNum - bNum : bNum - aNum;
     });
 
     return sorted;
