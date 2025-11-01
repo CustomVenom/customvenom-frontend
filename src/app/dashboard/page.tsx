@@ -291,15 +291,56 @@ export default function DashboardPage() {
   const handleSelectTeam = async (teamKey: string) => {
     try {
       console.log('[handleSelectTeam] Called with teamKey:', teamKey);
+      console.log('[handleSelectTeam] Current teams array length:', teams.length);
+      console.log('[handleSelectTeam] All teams:', teams.map((t) => ({ team_key: t.team_key, league_key: t.league_key, name: t.name })));
 
       // Find the team object to get its league_key (more reliable than parsing team_key string)
       const team = teams.find((t) => t.team_key === teamKey);
       if (!team) {
         console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
+        console.error('[handleSelectTeam] Available team_keys:', teams.map((t) => t.team_key));
         return;
       }
 
       const leagueKey = team.league_key;
+      
+      // Validate that league_key matches the team_key structure
+      const expectedLeagueKey = teamKey.split('.t.')[0];
+      if (leagueKey !== expectedLeagueKey) {
+        console.error('[handleSelectTeam] LEAGUE KEY MISMATCH DETECTED!', {
+          teamKey,
+          teamLeagueKey: leagueKey,
+          expectedLeagueKey,
+          teamObject: team,
+        });
+        // Use the extracted league_key from team_key as fallback
+        const correctedLeagueKey = expectedLeagueKey;
+        console.log('[handleSelectTeam] Using corrected leagueKey:', correctedLeagueKey);
+        
+        const res = await fetch(`${API_BASE}/api/session/selection`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ teamKey, leagueKey: correctedLeagueKey }),
+        });
+        
+        // ... rest of the code
+        if (res.ok) {
+          setSelectedTeam(teamKey);
+          setSelection({ league_key: correctedLeagueKey || null });
+          setTeamsDropdownOpen(false);
+          window.dispatchEvent(
+            new CustomEvent('team-selected', {
+              detail: { teamKey, leagueKey: correctedLeagueKey },
+            }),
+          );
+        } else {
+          const responseBody = await res.json();
+          console.error('[handleSelectTeam] Failed after correction:', responseBody);
+        }
+        return;
+      }
+
       console.log('[handleSelectTeam] Found team:', { teamKey, leagueKey, teamName: team.name });
       console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
 
