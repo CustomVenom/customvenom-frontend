@@ -384,7 +384,9 @@ export default function DashboardPage() {
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
             >
               <span className="flex-1 text-left truncate">
-                {teams.length === 0 ? 'Loading teams...' : selectedTeamName}
+                {!mounted || teams.length === 0
+                  ? 'Select Your Team'
+                  : selectedTeamName}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
