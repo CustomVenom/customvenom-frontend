@@ -284,34 +284,21 @@ export default function DashboardPage() {
   };
 
   const handleSelectTeam = async (teamKey: string) => {
-    // Defensive validation before any processing
-    if (!teamKey || typeof teamKey !== 'string' || teamKey.trim().length === 0) {
-      console.error('[handleSelectTeam] Invalid teamKey input:', { teamKey, type: typeof teamKey });
-      return;
-    }
-
     try {
+      console.log('[handleSelectTeam] Called with teamKey:', teamKey);
+
       // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
       const parts = teamKey.split('.t.');
-      if (parts.length !== 2 || !parts[0] || !parts[1]) {
-        console.error('[handleSelectTeam] Invalid team key format:', { teamKey, parts });
+      console.log('[handleSelectTeam] Split parts:', parts);
+
+      if (parts.length !== 2) {
+        console.error('[handleSelectTeam] Invalid team key format:', teamKey);
         return;
       }
 
-      const leagueKey = parts[0].trim();
-
-      // Validate both keys are present and non-empty after processing
-      if (!teamKey || teamKey.trim().length === 0 || !leagueKey || leagueKey.trim().length === 0) {
-        console.error('[handleSelectTeam] Missing team or league key after processing:', {
-          teamKey: teamKey?.trim(),
-          leagueKey: leagueKey?.trim(),
-          parts,
-        });
-        return;
-      }
-
-      // Log what we're sending for debugging
-      console.log('[handleSelectTeam] Sending selection request:', { teamKey, leagueKey });
+      const leagueKey = parts[0];
+      console.log('[handleSelectTeam] Extracted leagueKey:', leagueKey);
+      console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -319,6 +306,10 @@ export default function DashboardPage() {
         credentials: 'include',
         body: JSON.stringify({ teamKey, leagueKey }),
       });
+
+      console.log('[handleSelectTeam] POST response status:', res.status);
+      const responseBody = await res.json();
+      console.log('[handleSelectTeam] POST response body:', responseBody);
 
       if (res.ok) {
         setSelectedTeam(teamKey);
@@ -332,16 +323,10 @@ export default function DashboardPage() {
           }),
         );
       } else {
-        const errorData = await res.json().catch(() => ({}));
-        console.error('Failed to save team selection:', {
-          status: res.status,
-          statusText: res.statusText,
-          error: errorData,
-          sent: { teamKey, leagueKey },
-        });
+        console.error('[handleSelectTeam] Failed to save team selection, status:', res.status);
       }
     } catch (e) {
-      console.error('Failed to save team:', e);
+      console.error('[handleSelectTeam] Failed to save team:', e);
     }
   };
 
