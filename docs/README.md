@@ -41,6 +41,7 @@
 **Operations**: See `../../docs/operations/`
 **Notion Resources**: See [NOTION_RESOURCES.md](./NOTION_RESOURCES.md) - All project Notion pages
 **Working Memory Protocol**: See [CURSOR_WORKING_MEMORY_PROTOCOL.md](./CURSOR_WORKING_MEMORY_PROTOCOL.md) - **MANDATORY** for all AI agents
+**CI Status**: See [CI_STATUS.md](./CI_STATUS.md) - Current CI constraints and manual verification process 🚧
 
 ---
 
