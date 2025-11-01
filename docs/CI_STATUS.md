@@ -6,12 +6,14 @@
 ## Current Constraints
 
 ### ✅ What Works
+
 - Local development and testing
 - Manual test execution
 - Git commits and pushes
 - Code changes and feature development
 
 ### ❌ What's Unavailable
+
 - Automated CI workflows
 - Automated test gates on PRs
 - Automated deployments
@@ -22,6 +24,7 @@
 ### Running Tests Locally
 
 #### Frontend Tests
+
 ```powershell
 # Install dependencies (if needed)
 npm install
@@ -35,6 +38,7 @@ npm test
 ```
 
 #### Workers API Tests
+
 ```powershell
 # Run unit tests
 npm test
@@ -46,6 +50,7 @@ npm test -- src/__tests__/health.spec.ts
 ### Verification with curl
 
 #### Health Endpoint
+
 ```powershell
 # Staging
 curl.exe -fsS "https://customvenom-workers-api-staging.jdewett81.workers.dev/health" | jq '{ok, schema_version, last_refresh}'
@@ -74,8 +79,10 @@ When completing test tasks, **paste full terminal output** into task pages with:
 
 **Output**:
 ```
+
 [Full terminal output here]
-```
+
+````
 
 **API Verification**:
 ```json
@@ -84,7 +91,8 @@ When completing test tasks, **paste full terminal output** into task pages with:
   "schema_version": "v1",
   "last_refresh": "2025-11-01T12:00:00Z"
 }
-```
+````
+
 ```
 
 ## What This Means for Development
@@ -107,3 +115,4 @@ When CI workflows are restored:
 - **[Roadmap Alignment Handoff](https://www.notion.so/Cursor-Handoff-Roadmap-Alignment-Next-3-Sprint-2025-11-01-b75161e43bfa496f846afbc3e788d7f4)** - Full context and current sprint tasks
 - **[LOCAL_GATE_RUNBOOK.md](../LOCAL_GATE_RUNBOOK.md)** - Detailed local testing procedures
 
+```
