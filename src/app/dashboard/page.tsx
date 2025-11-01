@@ -9,6 +9,7 @@ interface Team {
   team_key: string;
   name: string;
   team_logos?: Array<{ url: string }>;
+  league_key: string; // League context - which league this team belongs to
 }
 
 interface Player {
@@ -287,17 +288,15 @@ export default function DashboardPage() {
     try {
       console.log('[handleSelectTeam] Called with teamKey:', teamKey);
 
-      // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
-      const parts = teamKey.split('.t.');
-      console.log('[handleSelectTeam] Split parts:', parts);
-
-      if (parts.length !== 2) {
-        console.error('[handleSelectTeam] Invalid team key format:', teamKey);
+      // Find the team object to get its league_key (more reliable than parsing team_key string)
+      const team = teams.find((t) => t.team_key === teamKey);
+      if (!team) {
+        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
         return;
       }
 
-      const leagueKey = parts[0];
-      console.log('[handleSelectTeam] Extracted leagueKey:', leagueKey);
+      const leagueKey = team.league_key;
+      console.log('[handleSelectTeam] Found team:', { teamKey, leagueKey, teamName: team.name });
       console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
