@@ -190,7 +190,7 @@ function ProjectionsPageInner() {
                   floor={row.range.p10}
                   median={row.range.p50}
                   ceiling={row.range.p90}
-                  confidence={row.confidence}
+                  confidence={row.confidence ?? 0.5}
                 />
               </div>
             ))}
