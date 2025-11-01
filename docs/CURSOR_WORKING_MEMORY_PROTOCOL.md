@@ -34,11 +34,13 @@ This protocol ensures that Cursor (and AI coding assistants) always maintain exp
 🎯 Current Task: [Task name or user request]
 
 Acceptance Criteria:
+
 - [ ] Item 1
 - [ ] Item 2
 - [ ] Item 3
 
 📁 Files to Modify:
+
 - src/app/dashboard/page.tsx
 - src/components/Button.tsx
 - src/lib/utils.ts
@@ -47,16 +49,20 @@ Acceptance Criteria:
 
 **src/app/dashboard/page.tsx** (lines 10-25)
 ```
+
 export default function DashboardPage() {
-  return <div>Current implementation</div>
+return <div>Current implementation</div>
 }
+
 ```
 
 **src/components/Button.tsx** (lines 5-15)
 ```
+
 export function Button({ children }: { children: React.ReactNode }) {
-  return <button>{children}</button>
+return <button>{children}</button>
 }
+
 ```
 
 🔧 Proposed Changes:
@@ -79,20 +85,24 @@ export function Button({ children }: { children: React.ReactNode }) {
 ✅ Changes Complete
 
 📝 Files Modified:
+
 - src/app/dashboard/page.tsx: Added team selector with loading/error states
 - src/components/Button.tsx: Added variant and loading props
 - src/lib/utils.ts: Added fetchTeams helper function
 
 📋 Acceptance Status:
+
 - [x] Team selector displays on dashboard
 - [x] Loading state shows spinner
 - [ ] Error handling needs testing
 
 🔗 Related:
+
 - API endpoint: /api/teams
 - Component docs: See Button.tsx JSDoc comments
 
 ⏭️ Next Steps:
+
 - Test error scenarios
 - Add unit tests for fetchTeams
 - Update Storybook examples
@@ -208,12 +218,14 @@ Before modifying any code:
 6. Report what changed and acceptance status
 
 Never:
+
 - Code without reading files first
 - Make assumptions about existing code
 - Modify multiple unrelated files without approval
 - Change button text or UI copy without explicit approval
 
 Always:
+
 - Quote existing code when discussing changes
 - Follow existing patterns in the codebase
 - Ask for clarification when scope is ambiguous
@@ -248,4 +260,3 @@ Always:
 - Notion Source: [Cursor Working Memory Protocol Handoff](https://www.notion.so/Cursor-Working-Memory-Protocol-Handoff-62ba04448a0141a7b158bdacb18d662a)
 - Parent instructions: [My Custom Venom AI Agent](https://www.notion.so/My-Custom-Venom-AI-Agent-2859f930952d8047bfeccbe61199d600?pvs=21)
 - Project home: [Custom Venom Home](https://www.notion.so/Custom-Venom-Home-2879f930952d816dbb53e0e810d1f8f8?pvs=21)
-

@@ -55,6 +55,7 @@ The Working Memory Protocol and Notion Resources references have been integrated
 ## Notion Resources (Mandatory Reference)
 
 All agents MUST reference `docs/NOTION_RESOURCES.md` for:
+
 - **MVP & Roadmap**: CustomVenom MVP - Next - Later Synopsis
 - **Sprint Planning**: Roadmap Alignment - Next 3 Sprint
 - **Build Manual**: CustomVenom Build Manual v1
@@ -64,21 +65,25 @@ All agents MUST reference `docs/NOTION_RESOURCES.md` for:
 ## Verification
 
 ✅ Protocol documents exist:
+
 - `docs/CURSOR_WORKING_MEMORY_PROTOCOL.md` (both repos)
 - `docs/NOTION_RESOURCES.md` (both repos)
 
 ✅ References added to:
+
 - `.cursorrules` (both repos)
 - `CURSOR_GUARDRAILS.md` (frontend)
 - `INSTRUCTIONS.md` (workers-api)
 
 ✅ Committed and pushed:
+
 - Frontend: commit `6b7b406`
 - Workers API: commit `acdba83`
 
 ## Next Steps for Agents
 
 When starting any task:
+
 1. Read `docs/CURSOR_WORKING_MEMORY_PROTOCOL.md` for complete protocol
 2. Read `docs/NOTION_RESOURCES.md` for roadmap alignment
 3. Follow the 6-step workflow before making changes
@@ -89,4 +94,3 @@ When starting any task:
 - **Protocol Source**: [Cursor Working Memory Protocol Handoff](https://www.notion.so/Cursor-Working-Memory-Protocol-Handoff-62ba04448a0141a7b158bdacb18d662a)
 - **Project Home**: [Custom Venom Home](https://www.notion.so/Custom-Venom-Home-2879f930952d816dbb53e0e810d1f8f8?pvs=21)
 - **Agent Instructions**: [My Custom Venom AI Agent](https://www.notion.so/My-Custom-Venom-AI-Agent-2859f930952d8047bfeccbe61199d600?pvs=21)
-

@@ -115,6 +115,7 @@
 **⚠️ ALL AI AGENTS MUST FOLLOW THIS PROTOCOL**
 
 Before making ANY code changes, agents MUST:
+
 1. **Anchor**: State the task and acceptance criteria
 2. **Load**: Read all files that will be modified
 3. **Baseline**: Quote relevant existing code sections
@@ -126,6 +127,7 @@ Before making ANY code changes, agents MUST:
 **Notion Source**: [Cursor Working Memory Protocol Handoff](https://www.notion.so/Cursor-Working-Memory-Protocol-Handoff-62ba04448a0141a7b158bdacb18d662a)
 
 **User Commands:**
+
 - `show context` — Display current task, loaded files, and plan
 - `context check` — Verify proper context before proceeding
 - `show context first` — Stop and load context if not already done
@@ -136,6 +138,7 @@ Before making ANY code changes, agents MUST:
 **⚠️ ALL AGENTS MUST REFERENCE NOTION RESOURCES FOR ROADMAP ALIGNMENT**
 
 See `docs/NOTION_RESOURCES.md` for complete list of Notion documentation:
+
 - **MVP & Roadmap**: CustomVenom MVP - Next - Later Synopsis
 - **Sprint Planning**: Roadmap Alignment - Next 3 Sprint
 - **Build Manual**: CustomVenom Build Manual v1

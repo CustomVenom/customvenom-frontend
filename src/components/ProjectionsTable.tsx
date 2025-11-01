@@ -9,18 +9,25 @@ import { clampChips, type Row } from '@/lib/tools';
 type Props = { rows: Row[] };
 
 const ALL_COLUMNS = [
-  { key: 'team', label: 'Team', defaultOn: true, mobileHide: true },
-  { key: 'pos', label: 'Pos', defaultOn: true, mobileHide: true },
-  { key: 'floor', label: 'Floor', defaultOn: true },
-  { key: 'median', label: 'Median', defaultOn: true },
-  { key: 'ceiling', label: 'Ceiling', defaultOn: true, mobileHide: true },
-  { key: 'reasons', label: 'Reasons', defaultOn: true },
+  { key: 'team', label: 'Team', defaultOn: true, mobileHide: true, sortable: true },
+  { key: 'pos', label: 'Pos', defaultOn: true, mobileHide: true, sortable: true },
+  { key: 'floor', label: 'Floor', defaultOn: true, sortable: true },
+  { key: 'median', label: 'Median', defaultOn: true, sortable: true },
+  { key: 'ceiling', label: 'Ceiling', defaultOn: true, mobileHide: true, sortable: true },
+  { key: 'confidence', label: 'Confidence', defaultOn: true, sortable: true },
+  { key: 'reasons', label: 'Reasons', defaultOn: true, sortable: false },
 ];
+
+type SortConfig = {
+  key: string;
+  direction: 'asc' | 'desc';
+};
 
 export default function ProjectionsTable({ rows }: Props) {
   const [visible, setVisible] = useState<Record<string, boolean>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'median', direction: 'desc' });
 
   const columns = ALL_COLUMNS;
 
@@ -28,6 +35,61 @@ export default function ProjectionsTable({ rows }: Props) {
     () => columns.filter((c) => visible[c.key] !== false),
     [columns, visible],
   );
+
+  // Sorting logic
+  const sortedRows = useMemo(() => {
+    const sorted = [...rows];
+    const { key, direction } = sortConfig;
+    
+    sorted.sort((a, b) => {
+      let aVal: string | number;
+      let bVal: string | number;
+      
+      switch (key) {
+        case 'team':
+          aVal = a.team || '';
+          bVal = b.team || '';
+          break;
+        case 'pos':
+          aVal = a.position || '';
+          bVal = b.position || '';
+          break;
+        case 'floor':
+          aVal = a.range.p10;
+          bVal = b.range.p10;
+          break;
+        case 'median':
+          aVal = a.range.p50;
+          bVal = b.range.p50;
+          break;
+        case 'ceiling':
+          aVal = a.range.p90;
+          bVal = b.range.p90;
+          break;
+        case 'confidence':
+          aVal = a.confidence ?? 0;
+          bVal = b.confidence ?? 0;
+          break;
+        default:
+          return 0;
+      }
+      
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+      
+      return direction === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+    
+    return sorted;
+  }, [rows, sortConfig]);
+
+  function handleSort(key: string) {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
+    }));
+  }
 
   function openDrawer(row: Row) {
     setDrawerRow(row);
@@ -58,15 +120,21 @@ export default function ProjectionsTable({ rows }: Props) {
                   key={c.key}
                   className={`text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300 ${
                     c.mobileHide ? 'hide-sm' : ''
-                  }`}
+                  } ${c.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700' : ''}`}
+                  onClick={() => c.sortable && handleSort(c.key)}
                 >
-                  {c.label}
+                  <div className="flex items-center gap-1">
+                    {c.label}
+                    {c.sortable && sortConfig.key === c.key && (
+                      <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((r, i) => {
+            {sortedRows.map((r, i) => {
               const chips = clampChips(r.explanations);
               return (
                 <tr
@@ -122,6 +190,14 @@ export default function ProjectionsTable({ rows }: Props) {
                       }`}
                     >
                       {r.range.p90.toFixed(1)}
+                    </td>
+                  )}
+
+                  {visible['confidence'] !== false && (
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                      <span className="text-xs font-medium">
+                        {((r.confidence ?? 0) * 100).toFixed(0)}%
+                      </span>
                     </td>
                   )}
 
