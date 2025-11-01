@@ -415,16 +415,16 @@ export default function DashboardPage() {
                     <th className="px-4 py-3 text-left font-medium text-gray-700">Team</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {roster.map((player) => (
                     <tr key={player.player_key} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium">{player.name.full}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{player.name.full}</td>
                       <td className="px-4 py-3">
                         <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded">
                           {player.display_position}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{player.editorial_team_abbr}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{player.editorial_team_abbr}</td>
                     </tr>
                   ))}
                 </tbody>
