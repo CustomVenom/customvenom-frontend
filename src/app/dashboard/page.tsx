@@ -10,6 +10,7 @@ interface Team {
   name: string;
   team_logos?: Array<{ url: string }>;
   league_key: string; // League context - which league this team belongs to
+  is_owner?: boolean;
 }
 
 interface Player {
@@ -31,10 +32,6 @@ interface YahooLeaguesResponse {
   error?: string;
 }
 
-interface YahooTeamsResponse {
-  teams?: Team[];
-  error?: string;
-}
 
 interface YahooRosterResponse {
   roster?: Player[];
@@ -60,6 +57,7 @@ export default function DashboardPage() {
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showAllTeams, setShowAllTeams] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
@@ -102,6 +100,12 @@ export default function DashboardPage() {
 
   const isConnected = Boolean(me?.guid);
 
+  // ===== FILTERING LOGIC =====
+  // Filter teams by ownership
+  const filteredTeams = showAllTeams ? teams : teams.filter((t) => t.is_owner);
+  const myTeamsCount = teams.filter((t) => t.is_owner).length;
+  const hasOtherTeams = myTeamsCount < teams.length;
+
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
     if (!isConnected) return;
@@ -124,93 +128,56 @@ export default function DashboardPage() {
     loadSelection();
   }, [isConnected, API_BASE]);
 
-  // ===== EFFECT: Load all teams from all leagues =====
+  // ===== EFFECT: Load all teams from all leagues (single bulk call) =====
   useEffect(() => {
-    if (!isConnected || !leagues?.league_keys || !Array.isArray(leagues.league_keys)) {
+    if (!isConnected) {
       setTeams([]);
       return;
     }
 
     const loadAllTeams = async () => {
       try {
-        const leagueKeys = leagues.league_keys;
+        // Single bulk call to get all leagues with teams
+        const res = await fetch(`${API_BASE}/providers/yahoo/leagues`, {
+          credentials: 'include',
+        });
 
-        // Type guard to ensure we have an array of strings
-        if (!Array.isArray(leagueKeys) || leagueKeys.length === 0) {
+        if (!res.ok) {
+          console.error('Failed to load leagues:', res.status);
           return;
         }
 
-        // Load all leagues in parallel
-        console.log('[DEBUG] Loading teams for leagues:', leagueKeys);
-        const teamPromises = leagueKeys.map(async (leagueKey) => {
-          if (typeof leagueKey !== 'string') {
-            console.warn('[DEBUG] Invalid leagueKey (not string):', leagueKey);
-            return [];
+        const data = await res.json();
+
+        if (data?.leagues && Array.isArray(data.leagues)) {
+          const allTeams: Team[] = [];
+
+          for (const league of data.leagues) {
+            if (league?.teams && Array.isArray(league.teams)) {
+              const leagueId = league.league_id;
+              const leagueKey = `461.l.${leagueId}`;
+
+              for (const team of league.teams) {
+                allTeams.push({
+                  team_key: `461.l.${leagueId}.t.${team.team_id}`,
+                  name: team.name,
+                  team_logos: team.team_logos,
+                  league_key: leagueKey,
+                  is_owner: team.is_owner ?? false,
+                });
+              }
+            }
           }
 
-          const url = `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`;
-          console.log(`[DEBUG] Fetching teams from: ${url}`);
-
-          try {
-            const res = await fetch(url, {
-              credentials: 'include',
-            });
-
-            console.log(`[DEBUG] Response status for ${leagueKey}:`, res.status, res.statusText);
-
-            if (!res.ok) {
-              const errorText = await res.text();
-              console.error(`[DEBUG] Failed to load teams for league ${leagueKey}:`, {
-                status: res.status,
-                statusText: res.statusText,
-                error: errorText,
-              });
-              return [];
-            }
-
-            const data: YahooTeamsResponse = await res.json();
-            console.log(`[DEBUG] Teams data for ${leagueKey}:`, data);
-
-            if (data?.teams && Array.isArray(data.teams)) {
-              console.log(`[DEBUG] Found ${data.teams.length} teams for league ${leagueKey}`);
-              // Tag each team with its league_key to avoid mixing leagues
-              return data.teams.map((team) => ({
-                ...team,
-                league_key: leagueKey,
-              }));
-            } else {
-              console.warn(`[DEBUG] No teams array in response for ${leagueKey}:`, data);
-            }
-          } catch (e) {
-            console.error(`[DEBUG] Exception loading teams for league ${leagueKey}:`, e);
-          }
-          return [];
-        });
-
-        // Wait for all leagues to load
-        const teamsArrays = await Promise.all(teamPromises);
-        const allTeams = teamsArrays.flat();
-
-        // Debug logging for teams state
-        console.log('=== TEAMS STATE DEBUG ===');
-        console.log('Teams array length:', allTeams.length);
-        console.log('Full teams array:', allTeams);
-        if (allTeams.length > 0 && allTeams[0]) {
-          const firstTeam = allTeams[0];
-          console.log('First team:', firstTeam);
-          console.log('Available keys:', Object.keys(firstTeam));
-          console.log('First team name:', firstTeam.name);
-          console.log('First team team_key:', firstTeam.team_key);
+          setTeams(allTeams);
         }
-
-        setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
       }
     };
 
     loadAllTeams();
-  }, [isConnected, leagues, API_BASE]);
+  }, [isConnected, API_BASE]);
 
   // ===== EFFECT: Load roster when team selected =====
   useEffect(() => {
@@ -429,11 +396,11 @@ export default function DashboardPage() {
                 e.stopPropagation();
                 setTeamsDropdownOpen(!teamsDropdownOpen);
               }}
-              disabled={teams.length === 0}
+              disabled={filteredTeams.length === 0}
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
             >
               <span className="flex-1 text-left truncate">
-                {!mounted || teams.length === 0 ? 'Select Your Team' : selectedTeamName}
+                {!mounted || filteredTeams.length === 0 ? 'Select Your Team' : selectedTeamName}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
@@ -452,16 +419,35 @@ export default function DashboardPage() {
               </svg>
             </button>
 
-            {teamsDropdownOpen && teams.length > 0 && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
-                {teams.map((team) => (
+            {teamsDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                {/* Toggle button at top if user has other teams */}
+                {hasOtherTeams && (
+                  <div className="p-2 border-b border-gray-200">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowAllTeams(!showAllTeams);
+                      }}
+                      className="w-full px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded"
+                    >
+                      {showAllTeams
+                        ? `My teams only (${myTeamsCount})`
+                        : `View all teams (${teams.length})`}
+                    </button>
+                  </div>
+                )}
+
+                {/* Teams list */}
+                {filteredTeams.map((team) => (
                   <button
                     key={team.team_key}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSelectTeam(team.team_key);
                     }}
-                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0 ${
+                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 text-left ${
                       selectedTeam === team.team_key ? 'bg-blue-50' : ''
                     }`}
                   >
@@ -472,11 +458,10 @@ export default function DashboardPage() {
                         className="w-8 h-8 rounded shrink-0"
                       />
                     )}
-                    <div className="flex-1 min-w-0">
-                      {/* CRITICAL: Display team.name (not team_key) - line 408 */}
-                      <div className="text-sm font-medium truncate">{team.name}</div>
-                      <div className="text-xs text-gray-500 truncate">{team.team_key}</div>
-                    </div>
+                    <span className="flex-1 text-sm truncate">
+                      {team.name}
+                      {team.is_owner && ' ⭐'}
+                    </span>
                     {selectedTeam === team.team_key && (
                       <svg
                         className="w-5 h-5 text-blue-600 shrink-0"
@@ -492,6 +477,10 @@ export default function DashboardPage() {
                     )}
                   </button>
                 ))}
+
+                {filteredTeams.length === 0 && (
+                  <div className="p-4 text-center text-sm text-gray-500">No teams available</div>
+                )}
               </div>
             )}
           </div>
