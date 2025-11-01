@@ -32,7 +32,6 @@ interface YahooLeaguesResponse {
   error?: string;
 }
 
-
 interface YahooRosterResponse {
   roster?: Player[];
   error?: string;
@@ -106,6 +105,17 @@ export default function DashboardPage() {
   const myTeamsCount = teams.filter((t) => t.is_owner).length;
   const hasOtherTeams = myTeamsCount < teams.length;
 
+  // Debug logging for filtering
+  useEffect(() => {
+    if (teams.length > 0) {
+      console.log('[FILTER DEBUG] Total teams:', teams.length);
+      console.log('[FILTER DEBUG] Teams with is_owner=true:', myTeamsCount);
+      console.log('[FILTER DEBUG] showAllTeams:', showAllTeams);
+      console.log('[FILTER DEBUG] filteredTeams.length:', filteredTeams.length);
+      console.log('[FILTER DEBUG] Button disabled:', filteredTeams.length === 0);
+    }
+  }, [teams, filteredTeams.length, showAllTeams, myTeamsCount]);
+
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
     if (!isConnected) return;
@@ -169,7 +179,15 @@ export default function DashboardPage() {
             }
           }
 
+          // Debug logging
+          console.log('[TEAMS DEBUG] Total teams loaded:', allTeams.length);
+          console.log('[TEAMS DEBUG] Teams with is_owner=true:', allTeams.filter((t) => t.is_owner).length);
+          console.log('[TEAMS DEBUG] Sample team:', allTeams[0]);
+          console.log('[TEAMS DEBUG] All teams:', allTeams.map((t) => ({ name: t.name, is_owner: t.is_owner })));
+
           setTeams(allTeams);
+        } else {
+          console.warn('[TEAMS DEBUG] No leagues data or invalid format:', data);
         }
       } catch (e) {
         console.error('Failed to load teams:', e);
