@@ -297,7 +297,7 @@ export default function DashboardPage() {
         console.error('[handleSelectTeam] Invalid team key format:', { teamKey, parts });
         return;
       }
-      
+
       const leagueKey = parts[0].trim();
 
       // Validate both keys are present and non-empty after processing
