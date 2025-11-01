@@ -9,6 +9,7 @@ interface Team {
   team_key: string;
   name: string;
   team_logos?: Array<{ url: string }>;
+  league_key: string; // League context - which league this team belongs to
 }
 
 interface Player {
@@ -58,8 +59,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+
+  // ===== EFFECT: Mark component as mounted (client-side only) =====
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ===== EFFECT: Load connection status and leagues =====
   useEffect(() => {
@@ -134,25 +141,48 @@ export default function DashboardPage() {
         }
 
         // Load all leagues in parallel
+        console.log('[DEBUG] Loading teams for leagues:', leagueKeys);
         const teamPromises = leagueKeys.map(async (leagueKey) => {
-          if (typeof leagueKey !== 'string') return [];
+          if (typeof leagueKey !== 'string') {
+            console.warn('[DEBUG] Invalid leagueKey (not string):', leagueKey);
+            return [];
+          }
+
+          const url = `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`;
+          console.log(`[DEBUG] Fetching teams from: ${url}`);
 
           try {
-            const res = await fetch(
-              `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
-              {
-                credentials: 'include',
-              },
-            );
+            const res = await fetch(url, {
+              credentials: 'include',
+            });
 
-            if (res.ok) {
-              const data: YahooTeamsResponse = await res.json();
-              if (data?.teams && Array.isArray(data.teams)) {
-                return data.teams;
-              }
+            console.log(`[DEBUG] Response status for ${leagueKey}:`, res.status, res.statusText);
+
+            if (!res.ok) {
+              const errorText = await res.text();
+              console.error(`[DEBUG] Failed to load teams for league ${leagueKey}:`, {
+                status: res.status,
+                statusText: res.statusText,
+                error: errorText,
+              });
+              return [];
+            }
+
+            const data: YahooTeamsResponse = await res.json();
+            console.log(`[DEBUG] Teams data for ${leagueKey}:`, data);
+
+            if (data?.teams && Array.isArray(data.teams)) {
+              console.log(`[DEBUG] Found ${data.teams.length} teams for league ${leagueKey}`);
+              // Tag each team with its league_key to avoid mixing leagues
+              return data.teams.map((team) => ({
+                ...team,
+                league_key: leagueKey,
+              }));
+            } else {
+              console.warn(`[DEBUG] No teams array in response for ${leagueKey}:`, data);
             }
           } catch (e) {
-            console.error(`Failed to load teams for league ${leagueKey}:`, e);
+            console.error(`[DEBUG] Exception loading teams for league ${leagueKey}:`, e);
           }
           return [];
         });
@@ -160,6 +190,19 @@ export default function DashboardPage() {
         // Wait for all leagues to load
         const teamsArrays = await Promise.all(teamPromises);
         const allTeams = teamsArrays.flat();
+
+        // Debug logging for teams state
+        console.log('=== TEAMS STATE DEBUG ===');
+        console.log('Teams array length:', allTeams.length);
+        console.log('Full teams array:', allTeams);
+        if (allTeams.length > 0 && allTeams[0]) {
+          const firstTeam = allTeams[0];
+          console.log('First team:', firstTeam);
+          console.log('Available keys:', Object.keys(firstTeam));
+          console.log('First team name:', firstTeam.name);
+          console.log('First team team_key:', firstTeam.team_key);
+        }
+
         setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
@@ -247,13 +290,18 @@ export default function DashboardPage() {
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
-      // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
-      const parts = teamKey.split('.t.');
-      if (parts.length !== 2) {
-        console.error('Invalid team key format:', teamKey);
+      console.log('[handleSelectTeam] Called with teamKey:', teamKey);
+
+      // Find the team object to get its league_key (more reliable than parsing team_key string)
+      const team = teams.find((t) => t.team_key === teamKey);
+      if (!team) {
+        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
         return;
       }
-      const leagueKey = parts[0];
+
+      const leagueKey = team.league_key;
+      console.log('[handleSelectTeam] Found team:', { teamKey, leagueKey, teamName: team.name });
+      console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -261,6 +309,10 @@ export default function DashboardPage() {
         credentials: 'include',
         body: JSON.stringify({ teamKey, leagueKey }),
       });
+
+      console.log('[handleSelectTeam] POST response status:', res.status);
+      const responseBody = await res.json();
+      console.log('[handleSelectTeam] POST response body:', responseBody);
 
       if (res.ok) {
         setSelectedTeam(teamKey);
@@ -274,21 +326,34 @@ export default function DashboardPage() {
           }),
         );
       } else {
-        console.error('Failed to save team selection, status:', res.status);
+        console.error('[handleSelectTeam] Failed to save team selection, status:', res.status);
       }
     } catch (e) {
-      console.error('Failed to save team:', e);
+      console.error('[handleSelectTeam] Failed to save team:', e);
     }
   };
 
   // ===== DERIVED STATE =====
 
-  const selectedTeamName =
-    teams.find((t) => t.team_key === selectedTeam)?.name || 'Select Your Team';
+  const selectedTeamObj = selectedTeam ? teams.find((t) => t.team_key === selectedTeam) : null;
+  const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
+
+  // Debug: Log what we're displaying
+  useEffect(() => {
+    if (selectedTeam) {
+      console.log('[DEBUG] Selected team lookup:', {
+        selectedTeam,
+        teamsCount: teams.length,
+        foundTeam: selectedTeamObj,
+        selectedTeamName,
+      });
+    }
+  }, [selectedTeam, teams, selectedTeamObj, selectedTeamName]);
 
   // ===== RENDER =====
 
-  if (loading) {
+  // Prevent hydration mismatch by showing loading state until client-side mounted
+  if (!mounted || loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen">
         <div className="text-gray-600">Loading...</div>
@@ -297,7 +362,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" suppressHydrationWarning>
       {/* BUTTONS - Upper right, below menu bar, smaller */}
       <div className="px-6 py-3 flex items-center justify-end gap-2">
         {/* Button 1: Connect/Refresh League */}
@@ -321,7 +386,7 @@ export default function DashboardPage() {
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
             >
               <span className="flex-1 text-left truncate">
-                {teams.length === 0 ? 'Loading teams...' : selectedTeamName}
+                {!mounted || teams.length === 0 ? 'Select Your Team' : selectedTeamName}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
@@ -361,6 +426,7 @@ export default function DashboardPage() {
                       />
                     )}
                     <div className="flex-1 min-w-0">
+                      {/* CRITICAL: Display team.name (not team_key) - line 408 */}
                       <div className="text-sm font-medium truncate">{team.name}</div>
                       <div className="text-xs text-gray-500 truncate">{team.team_key}</div>
                     </div>
@@ -415,16 +481,20 @@ export default function DashboardPage() {
                     <th className="px-4 py-3 text-left font-medium text-gray-700">Team</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {roster.map((player) => (
                     <tr key={player.player_key} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium">{player.name.full}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {player.name.full}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded">
                           {player.display_position}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{player.editorial_team_abbr}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {player.editorial_team_abbr}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
