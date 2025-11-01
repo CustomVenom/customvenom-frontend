@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSelectedLeague } from '@/lib/selection';
 
+// ===== TYPE DEFINITIONS =====
+
 interface Team {
   team_key: string;
   name: string;
@@ -16,22 +18,40 @@ interface Player {
   editorial_team_abbr: string;
 }
 
-interface YahooMe {
+interface YahooMeResponse {
   guid?: string;
   auth_required?: boolean;
   error?: string;
 }
 
-interface YahooLeagues {
+interface YahooLeaguesResponse {
   league_keys?: string[];
   auth_required?: boolean;
   error?: string;
 }
 
+interface YahooTeamsResponse {
+  teams?: Team[];
+  error?: string;
+}
+
+interface YahooRosterResponse {
+  roster?: Player[];
+  error?: string;
+}
+
+interface SessionSelectionResponse {
+  active_team_key?: string | null;
+  active_league_key?: string | null;
+  pinned?: boolean;
+}
+
+// ===== MAIN COMPONENT =====
+
 export default function DashboardPage() {
   const { setSelection } = useSelectedLeague();
-  const [me, setMe] = useState<YahooMe | null>(null);
-  const [leagues, setLeagues] = useState<YahooLeagues | null>(null);
+  const [me, setMe] = useState<YahooMeResponse | null>(null);
+  const [leagues, setLeagues] = useState<YahooLeaguesResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
@@ -41,26 +61,31 @@ export default function DashboardPage() {
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
-  // Check connection status and load data
+  // ===== EFFECT: Load connection status and leagues =====
   useEffect(() => {
     const load = async () => {
       try {
-        const meRes = await fetch(`${API_BASE}/yahoo/me`, { credentials: 'include' });
+        const meRes = await fetch(`${API_BASE}/yahoo/me`, {
+          credentials: 'include',
+        });
 
         if (meRes.ok) {
-          const meData = await meRes.json();
+          const meData: YahooMeResponse = await meRes.json();
           setMe(meData);
 
           // If connected, load leagues
-          const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
-            credentials: 'include',
-          });
-          if (leaguesRes.ok) {
-            setLeagues(await leaguesRes.json());
+          if (meData.guid) {
+            const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
+              credentials: 'include',
+            });
+            if (leaguesRes.ok) {
+              const leaguesData: YahooLeaguesResponse = await leaguesRes.json();
+              setLeagues(leaguesData);
+            }
           }
         }
       } catch (e) {
-        console.error('Failed to load:', e);
+        console.error('Failed to load connection status:', e);
       } finally {
         setLoading(false);
       }
@@ -70,15 +95,17 @@ export default function DashboardPage() {
 
   const isConnected = Boolean(me?.guid);
 
-  // Load saved team selection on mount
+  // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
+    if (!isConnected) return;
+
     const loadSelection = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/session/selection`, {
           credentials: 'include',
         });
         if (res.ok) {
-          const data = await res.json();
+          const data: SessionSelectionResponse = await res.json();
           if (data.active_team_key) {
             setSelectedTeam(data.active_team_key);
           }
@@ -87,12 +114,10 @@ export default function DashboardPage() {
         console.error('Failed to load selection:', e);
       }
     };
-    if (isConnected) {
-      loadSelection();
-    }
+    loadSelection();
   }, [isConnected, API_BASE]);
 
-  // Load ALL teams from ALL leagues when connected
+  // ===== EFFECT: Load all teams from all leagues =====
   useEffect(() => {
     if (!isConnected || !leagues?.league_keys || !Array.isArray(leagues.league_keys)) {
       setTeams([]);
@@ -102,15 +127,26 @@ export default function DashboardPage() {
     const loadAllTeams = async () => {
       try {
         const allTeams: Team[] = [];
-        const leagueKeys = leagues.league_keys; // Extract to local const for TypeScript narrowing
+        const leagueKeys = leagues.league_keys;
+
+        // Type guard to ensure we have an array of strings
+        if (!Array.isArray(leagueKeys) || leagueKeys.length === 0) {
+          return;
+        }
 
         for (const leagueKey of leagueKeys) {
-          const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/teams?format=json`, {
-            credentials: 'include',
-          });
+          if (typeof leagueKey !== 'string') continue;
+
+          const res = await fetch(
+            `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
+            {
+              credentials: 'include',
+            },
+          );
+
           if (res.ok) {
-            const data = await res.json();
-            if (data.teams) {
+            const data: YahooTeamsResponse = await res.json();
+            if (data?.teams && Array.isArray(data.teams)) {
               allTeams.push(...data.teams);
             }
           }
@@ -124,7 +160,7 @@ export default function DashboardPage() {
     loadAllTeams();
   }, [isConnected, leagues, API_BASE]);
 
-  // Load roster when team selected
+  // ===== EFFECT: Load roster when team selected =====
   useEffect(() => {
     if (!selectedTeam) {
       setRoster([]);
@@ -133,20 +169,49 @@ export default function DashboardPage() {
 
     const loadRoster = async () => {
       try {
-        const res = await fetch(`${API_BASE}/yahoo/team/${selectedTeam}/roster`, {
-          credentials: 'include',
-        });
+        const res = await fetch(
+          `${API_BASE}/yahoo/roster?team_key=${encodeURIComponent(selectedTeam)}`,
+          {
+            credentials: 'include',
+          },
+        );
+
         if (res.ok) {
-          const data = await res.json();
-          setRoster(data.roster || []);
+          const data: YahooRosterResponse = await res.json();
+          if (data?.roster && Array.isArray(data.roster)) {
+            setRoster(data.roster);
+          } else {
+            setRoster([]);
+          }
+        } else {
+          console.error('Failed to load roster, status:', res.status);
+          setRoster([]);
         }
       } catch (e) {
         console.error('Failed to load roster:', e);
+        setRoster([]);
       }
     };
 
     loadRoster();
   }, [selectedTeam, API_BASE]);
+
+  // ===== EFFECT: Click outside to close dropdown =====
+  useEffect(() => {
+    if (!teamsDropdownOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-team-selector]')) {
+        setTeamsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [teamsDropdownOpen]);
+
+  // ===== HANDLERS =====
 
   const handleConnectOrRefresh = async () => {
     if (connecting) return;
@@ -156,7 +221,9 @@ export default function DashboardPage() {
       if (!isConnected) {
         // Not connected - redirect to OAuth
         const currentPath = window.location.pathname;
-        window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(currentPath)}`;
+        window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(
+          currentPath,
+        )}`;
         return;
       }
 
@@ -172,48 +239,52 @@ export default function DashboardPage() {
   const handleSelectTeam = async (teamKey: string) => {
     try {
       // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
-      const leagueKey = teamKey.split('.t.')[0];
+      const parts = teamKey.split('.t.');
+      if (parts.length !== 2) {
+        console.error('Invalid team key format:', teamKey);
+        return;
+      }
+      const leagueKey = parts[0];
 
-      await fetch(`${API_BASE}/api/session/selection`, {
+      const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ teamKey, leagueKey }),
       });
 
-      setSelectedTeam(teamKey);
-      setSelection({ league_key: leagueKey }); // Set league based on team selection
-      setTeamsDropdownOpen(false);
+      if (res.ok) {
+        setSelectedTeam(teamKey);
+        setSelection({ league_key: leagueKey || null });
+        setTeamsDropdownOpen(false);
 
-      window.dispatchEvent(
-        new CustomEvent('team-selected', {
-          detail: { teamKey, leagueKey },
-        }),
-      );
+        // Dispatch event for other components that might listen
+        window.dispatchEvent(
+          new CustomEvent('team-selected', {
+            detail: { teamKey, leagueKey },
+          }),
+        );
+      } else {
+        console.error('Failed to save team selection, status:', res.status);
+      }
     } catch (e) {
       console.error('Failed to save team:', e);
     }
   };
 
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('[data-team-selector]')) {
-      setTeamsDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (teamsDropdownOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [teamsDropdownOpen]);
+  // ===== DERIVED STATE =====
 
   const selectedTeamName =
     teams.find((t) => t.team_key === selectedTeam)?.name || 'Select Your Team';
 
+  // ===== RENDER =====
+
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    );
   }
 
   return (
@@ -244,7 +315,7 @@ export default function DashboardPage() {
                 {teams.length === 0 ? 'Loading teams...' : selectedTeamName}
               </span>
               <svg
-                className={`w-4 h-4 transition-transform flex-shrink-0 ${
+                className={`w-4 h-4 transition-transform shrink-0 ${
                   teamsDropdownOpen ? 'rotate-180' : ''
                 }`}
                 fill="none"
@@ -277,7 +348,7 @@ export default function DashboardPage() {
                       <img
                         src={team.team_logos[0].url}
                         alt=""
-                        className="w-8 h-8 rounded flex-shrink-0"
+                        className="w-8 h-8 rounded shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
@@ -286,7 +357,7 @@ export default function DashboardPage() {
                     </div>
                     {selectedTeam === team.team_key && (
                       <svg
-                        className="w-5 h-5 text-blue-600 flex-shrink-0"
+                        className="w-5 h-5 text-blue-600 shrink-0"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -350,6 +421,14 @@ export default function DashboardPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* Empty roster state */}
+        {selectedTeam && roster.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-2">No roster data available</p>
+            <p className="text-sm text-gray-500">Try refreshing or selecting a different team</p>
           </div>
         )}
       </div>
