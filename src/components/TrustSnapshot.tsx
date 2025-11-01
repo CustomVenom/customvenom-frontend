@@ -1,20 +1,11 @@
+'use client';
 import React from 'react';
 
-interface TrustSnapshotProps {
-  lastRefresh?: string;
-  schemaVersion?: string;
-  stale?: boolean;
-  staleAge?: string | null;
-}
+type Props = { ts: string; ver: string; stale: boolean };
 
-export function TrustSnapshot({
-  lastRefresh,
-  schemaVersion = 'v1',
-  stale = false,
-  staleAge,
-}: TrustSnapshotProps) {
-  const formattedDate = lastRefresh
-    ? new Date(lastRefresh).toLocaleString('en-US', {
+export function TrustSnapshot({ ts, ver, stale }: Props) {
+  const formatted = ts
+    ? new Date(ts).toLocaleString('en-US', {
         month: 'short',
         day: 'numeric',
         hour: 'numeric',
@@ -23,32 +14,12 @@ export function TrustSnapshot({
       })
     : '—';
 
-  const staleSeconds = staleAge ? parseInt(staleAge, 10) : 0;
-  const staleMinutes = Math.floor(staleSeconds / 60);
-  const staleDisplay = staleMinutes > 0 ? `${staleMinutes}m ago` : `${staleSeconds}s ago`;
-
   return (
-    <div className="flex items-center gap-3 text-sm" aria-label="Trust Snapshot">
-      <div className="flex items-center gap-2">
-        <span className="text-gray-500">Schema:</span>
-        <span className="font-mono text-gray-700">{schemaVersion}</span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-gray-500">Calibrated:</span>
-        <time
-          dateTime={lastRefresh || ''}
-          className={stale ? 'opacity-60 text-gray-600' : 'text-gray-700'}
-        >
-          {formattedDate}
-        </time>
-      </div>
-
-      {stale && (
-        <span className="px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-800 text-xs font-medium">
-          Stale {staleAge && `· ${staleDisplay}`}
-        </span>
-      )}
+    <div aria-label="Trust Snapshot" className="flex items-center gap-2 text-xs opacity-80">
+      <span>v{ver}</span>
+      <span>•</span>
+      <time dateTime={ts}>{formatted}</time>
+      {stale && <span className="ml-2 px-2 py-0.5 rounded bg-amber-100 text-amber-800">stale</span>}
     </div>
   );
 }

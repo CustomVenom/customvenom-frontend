@@ -126,7 +126,6 @@ function ProjectionsPageInner() {
   const [schemaVersion, setSchemaVersion] = useState<string>('');
   const [lastRefresh, setLastRefresh] = useState<string>('');
   const [isStale, setIsStale] = useState<boolean>(false);
-  const [staleAge, setStaleAge] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
@@ -149,10 +148,8 @@ function ProjectionsPageInner() {
 
         // Check for stale headers
         const staleHeader = response.headers.get('x-stale');
-        const staleAgeHeader = response.headers.get('x-stale-age');
         const demoModeHeader = response.headers.get('x-demo-mode');
         setIsStale(staleHeader === 'true');
-        setStaleAge(staleAgeHeader);
         setIsDemoMode(demoModeHeader === 'true');
 
         setProjections(data.projections);
@@ -288,12 +285,7 @@ function ProjectionsPageInner() {
         </div>
         <div className="flex flex-col gap-4 items-end">
           <DemoBadge show={isDemoMode} />
-          <TrustSnapshot
-            lastRefresh={lastRefresh}
-            schemaVersion={schemaVersion}
-            stale={isStale}
-            staleAge={staleAge}
-          />
+          <TrustSnapshot ts={lastRefresh || ''} ver={schemaVersion} stale={isStale} />
           {!isPro && (
             <div className="bg-linear-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
               <GoProButton
