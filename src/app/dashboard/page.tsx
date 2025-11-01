@@ -173,7 +173,11 @@ export default function DashboardPage() {
 
             if (data?.teams && Array.isArray(data.teams)) {
               console.log(`[DEBUG] Found ${data.teams.length} teams for league ${leagueKey}`);
-              return data.teams;
+              // Tag each team with its league_key to avoid mixing leagues
+              return data.teams.map((team) => ({
+                ...team,
+                league_key: leagueKey,
+              }));
             } else {
               console.warn(`[DEBUG] No teams array in response for ${leagueKey}:`, data);
             }
