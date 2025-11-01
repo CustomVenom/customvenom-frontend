@@ -43,7 +43,9 @@ function StartSitContent() {
     fetchProjections()
       .then((response) => {
         if (response.ok) {
-          setSuggestions(response.body?.projections ?? []);
+          const body = response.body;
+          const projections = body?.projections ?? [];
+          setSuggestions(projections);
         }
       })
       .catch(() => {});
