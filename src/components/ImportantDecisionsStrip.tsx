@@ -22,28 +22,31 @@ type ImportantDecisionsStripProps = {
 };
 
 // Selection logic for Important Decisions
-export function selectImportantDecisions(rows: Row[], confidenceThreshold = 0.65): ImportantDecision[] {
+export function selectImportantDecisions(
+  rows: Row[],
+  confidenceThreshold = 0.65,
+): ImportantDecision[] {
   // Filter by confidence
   const candidates = rows.filter((r) => (r.confidence ?? 0) >= confidenceThreshold);
-  
+
   if (candidates.length === 0) {
     return [];
   }
-  
+
   // Prioritize: injury status, bye week, high volatility, waiver wire
   // For MVP: simple sort by confidence and volatility (ceiling - floor)
   const withVolatility = candidates.map((r) => ({
     ...r,
     volatility: r.range.p90 - r.range.p10,
   }));
-  
+
   // Sort by confidence * volatility (high confidence + high volatility = important)
   const sorted = withVolatility.sort((a, b) => {
     const scoreA = (a.confidence ?? 0) * a.volatility;
     const scoreB = (b.confidence ?? 0) * b.volatility;
     return scoreB - scoreA;
   });
-  
+
   // Determine action (simplified MVP logic)
   const decisions: ImportantDecision[] = sorted.slice(0, 5).map((r) => {
     // MVP: START if median > 15, SIT if median < 10, ADD if high ceiling, DROP if low floor
@@ -52,9 +55,9 @@ export function selectImportantDecisions(rows: Row[], confidenceThreshold = 0.65
     else if (r.range.p50 < 10) action = 'SIT';
     else if (r.range.p90 > 20) action = 'ADD';
     else if (r.range.p10 < 5) action = 'DROP';
-    
+
     const chips = clampChips(r.explanations, 2);
-    
+
     return {
       player_id: r.player_id,
       player_name: r.player_name,
@@ -68,7 +71,7 @@ export function selectImportantDecisions(rows: Row[], confidenceThreshold = 0.65
       explanations: chips,
     };
   });
-  
+
   return decisions;
 }
 
@@ -95,7 +98,7 @@ export default function ImportantDecisionsStrip({
           {decisions.length} decision{decisions.length !== 1 ? 's' : ''}
         </span>
       </div>
-      
+
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-4 min-w-max">
           {decisions.map((decision, idx) => (
@@ -105,10 +108,12 @@ export default function ImportantDecisionsStrip({
               className="flex-shrink-0 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-all hover:shadow-lg hover:-translate-y-1 text-left"
             >
               {/* Action badge */}
-              <div className={`inline-block px-2 py-1 rounded text-xs font-bold mb-3 ${actionColors[decision.action]}`}>
+              <div
+                className={`inline-block px-2 py-1 rounded text-xs font-bold mb-3 ${actionColors[decision.action]}`}
+              >
                 {decision.action}
               </div>
-              
+
               {/* Player info */}
               <div className="mb-2">
                 <div className="font-semibold text-lg text-gray-900 dark:text-gray-100">
@@ -118,7 +123,7 @@ export default function ImportantDecisionsStrip({
                   {decision.position} • {decision.team}
                 </div>
               </div>
-              
+
               {/* Projection range */}
               <div className="mb-3 text-sm">
                 <div className="flex justify-between text-gray-700 dark:text-gray-300">
@@ -127,7 +132,7 @@ export default function ImportantDecisionsStrip({
                   <span>Ceiling: {decision.ceiling.toFixed(1)}</span>
                 </div>
               </div>
-              
+
               {/* Explanation chips */}
               {decision.explanations.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-2">
@@ -141,7 +146,7 @@ export default function ImportantDecisionsStrip({
                   ))}
                 </div>
               )}
-              
+
               {/* Confidence */}
               <div className="text-xs text-gray-600 dark:text-gray-400">
                 Confidence: {(decision.confidence * 100).toFixed(0)}%
@@ -153,4 +158,3 @@ export default function ImportantDecisionsStrip({
     </div>
   );
 }
-

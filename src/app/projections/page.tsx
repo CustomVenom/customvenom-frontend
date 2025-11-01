@@ -4,7 +4,9 @@ import { useEffect, useState, useMemo } from 'react';
 import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
 import DemoBadge from '@/components/DemoBadge';
 import GoProButton from '@/components/GoProButton';
-import ImportantDecisionsStrip, { selectImportantDecisions } from '@/components/ImportantDecisionsStrip';
+import ImportantDecisionsStrip, {
+  selectImportantDecisions,
+} from '@/components/ImportantDecisionsStrip';
 import PositionFilter, { type Position } from '@/components/PositionFilter';
 import ProjectionsTable from '@/components/ProjectionsTable';
 import UncertaintyBand from '@/components/UncertaintyBand';
@@ -29,7 +31,7 @@ function ProjectionsPageInner() {
   const [entitlements, setEntitlements] = useState<Entitlements | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedWeek, setSelectedWeek] = useState<string>('2025-06');
+  const [selectedWeek, setSelectedWeek] = useState<string>('2025-09');
   const [selectedPosition, setSelectedPosition] = useState<Position>('ALL');
 
   useEffect(() => {

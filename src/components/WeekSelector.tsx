@@ -15,7 +15,11 @@ function generateWeeks(year: number = 2025): string[] {
   return weeks;
 }
 
-export default function WeekSelector({ currentWeek, onWeekChange, availableWeeks }: WeekSelectorProps) {
+export default function WeekSelector({
+  currentWeek,
+  onWeekChange,
+  availableWeeks,
+}: WeekSelectorProps) {
   const weeks = availableWeeks || generateWeeks();
 
   return (
@@ -38,4 +42,3 @@ export default function WeekSelector({ currentWeek, onWeekChange, availableWeeks
     </div>
   );
 }
-

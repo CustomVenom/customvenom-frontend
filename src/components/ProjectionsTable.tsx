@@ -40,11 +40,11 @@ export default function ProjectionsTable({ rows }: Props) {
   const sortedRows = useMemo(() => {
     const sorted = [...rows];
     const { key, direction } = sortConfig;
-    
+
     sorted.sort((a, b) => {
       let aVal: string | number;
       let bVal: string | number;
-      
+
       switch (key) {
         case 'team':
           aVal = a.team || '';
@@ -73,14 +73,14 @@ export default function ProjectionsTable({ rows }: Props) {
         default:
           return 0;
       }
-      
+
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       }
-      
+
       return direction === 'asc' ? aVal - bVal : bVal - aVal;
     });
-    
+
     return sorted;
   }, [rows, sortConfig]);
 

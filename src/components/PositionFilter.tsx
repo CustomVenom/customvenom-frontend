@@ -9,7 +9,10 @@ type PositionFilterProps = {
 
 const POSITIONS: Position[] = ['ALL', 'QB', 'RB', 'WR', 'TE'];
 
-export default function PositionFilter({ selectedPosition, onPositionChange }: PositionFilterProps) {
+export default function PositionFilter({
+  selectedPosition,
+  onPositionChange,
+}: PositionFilterProps) {
   return (
     <div className="flex items-center gap-2">
       <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Position:</label>
@@ -31,4 +34,3 @@ export default function PositionFilter({ selectedPosition, onPositionChange }: P
     </div>
   );
 }
-

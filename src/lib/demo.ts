@@ -16,7 +16,7 @@ export const isAnonymous = () => {
 /**
  * Pinned week for anonymous users (Golden Week)
  */
-export const pinnedWeekForAnon = '2025-06';
+export const pinnedWeekForAnon = '2025-09';
 
 /**
  * Check if response is in demo mode

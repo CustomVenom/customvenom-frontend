@@ -60,7 +60,7 @@ export default function StatusPage() {
         setRequestId(healthReqId);
 
         // Load /projections sample
-        const projRes = await fetch(`${api}/projections?week=2025-06`, { cache: 'no-store' });
+        const projRes = await fetch(`${api}/projections?week=2025-09`, { cache: 'no-store' });
         const projData: ProjectionsData = await projRes.json();
         const staleHeader = projRes.headers.get('x-stale');
         if (!alive) return;
@@ -124,7 +124,7 @@ export default function StatusPage() {
             </summary>
             <div className="mt-2 space-y-2 text-xs">
               <pre className="bg-gray-50 dark:bg-gray-900 p-2 rounded overflow-x-auto">
-                {`curl -sSD - "${api}/projections?week=2025-06" -o /tmp/body.json\njq '{schema_version, last_refresh}' /tmp/body.json`}
+                {`curl -sSD - "${api}/projections?week=2025-09" -o /tmp/body.json\njq '{schema_version, last_refresh}' /tmp/body.json`}
               </pre>
               <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded">
                 <div>
@@ -132,7 +132,7 @@ export default function StatusPage() {
                 </div>
                 {projections && (
                   <>
-                    <div>x-key: data/projections/nfl/2025/week=2025-06/baseline.json</div>
+                    <div>x-key: data/projections/nfl/2025/week=2025-09/baseline.json</div>
                     <div>x-stale: {isStale ? 'true' : 'false'}</div>
                     <div>x-request-id: &lt;uuid&gt;</div>
                   </>

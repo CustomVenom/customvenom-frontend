@@ -12,7 +12,7 @@ interface RiskDialProps {
   week?: string;
 }
 
-export function RiskDial({ week = '2025-06' }: RiskDialProps) {
+export function RiskDial({ week = '2025-09' }: RiskDialProps) {
   const [overallConfidence, setOverallConfidence] = useState<number>(0);
   const [riskLevel, setRiskLevel] = useState<'low' | 'moderate' | 'high'>('moderate');
   const [factors, setFactors] = useState<RiskFactor[]>([]);

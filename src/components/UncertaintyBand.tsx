@@ -42,25 +42,25 @@ export default function UncertaintyBand({
           style={{ width: `${ceilingPercent - floorPercent}%` }}
         />
       </div>
-      
+
       {/* Floor marker */}
       <div
         className="absolute top-0 w-0.5 h-3 bg-gray-600 dark:bg-gray-400"
         style={{ left: `${floorPercent}%` }}
       />
-      
+
       {/* Median marker */}
       <div
         className={`absolute top-0 w-1 h-3 ${getConfidenceColor(confidence)} rounded-full`}
         style={{ left: `calc(${medianPercent}% - 2px)` }}
       />
-      
+
       {/* Ceiling marker */}
       <div
         className="absolute top-0 w-0.5 h-3 bg-gray-600 dark:bg-gray-400"
         style={{ left: `${ceilingPercent}%` }}
       />
-      
+
       {/* Labels */}
       <div className="flex justify-between mt-1 text-xs text-gray-600 dark:text-gray-400">
         <span>{floor.toFixed(1)}</span>
@@ -70,4 +70,3 @@ export default function UncertaintyBand({
     </div>
   );
 }
-

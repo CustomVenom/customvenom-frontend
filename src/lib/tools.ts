@@ -39,7 +39,13 @@ export type ApiProjection = {
   explanations?: ApiExplanation[];
   position?: string;
   range?: { p10?: number; p50?: number; p90?: number };
-  [key: string]: string | number | boolean | undefined | ApiExplanation[] | { p10?: number; p50?: number; p90?: number };
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | undefined
+    | ApiExplanation[]
+    | { p10?: number; p50?: number; p90?: number };
 };
 
 // API Response type
@@ -54,7 +60,7 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
   // Extract delta from text if present (e.g., "+3.4%" or "-2.1%")
   const deltaMatch = explanation.text.match(/[+-]?(\d+\.?\d*)%/);
   const deltaPoints = deltaMatch ? parseFloat(deltaMatch[1]) / 100 : 0;
-  
+
   // Extract component/icon from type or text
   const componentMap: Record<string, string> = {
     method: '⚙️',
@@ -62,7 +68,7 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
     reason: '💡',
   };
   const component = componentMap[explanation.type] || '📈';
-  
+
   return {
     component,
     delta_points: Math.max(-0.04, Math.min(0.04, deltaPoints)), // Clamp to ±4%
@@ -71,18 +77,22 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
 }
 
 // Map API projection to Row
-export function mapApiProjectionToRow(apiProj: ApiProjection, schemaVersion: string, lastRefresh: string): Row {
+export function mapApiProjectionToRow(
+  apiProj: ApiProjection,
+  schemaVersion: string,
+  lastRefresh: string,
+): Row {
   // Extract player name from player_id (e.g., "espn:12345" -> extract if available)
   const playerName = apiProj.player_id.split(':').pop() || apiProj.player_id;
-  
+
   // Map floor/median/ceiling to range
   const floor = apiProj.floor ?? apiProj.range?.p10 ?? 0;
   const median = apiProj.median ?? apiProj.range?.p50 ?? 0;
   const ceiling = apiProj.ceiling ?? apiProj.range?.p90 ?? 0;
-  
+
   // Map explanations
   const explanations = (apiProj.explanations || []).map(mapExplanationToReason);
-  
+
   return {
     player_id: apiProj.player_id,
     player_name: playerName,

@@ -17,7 +17,7 @@ interface FaabBandsProps {
   week?: string;
 }
 
-export function FaabBands({ week = '2025-06' }: FaabBandsProps) {
+export function FaabBands({ week = '2025-09' }: FaabBandsProps) {
   const [items, setItems] = useState<FaabItem[]>([]);
   const [schemaVersion, setSchemaVersion] = useState<string>('');
   const [lastRefresh, setLastRefresh] = useState<string>('');

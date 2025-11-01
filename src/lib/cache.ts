@@ -14,11 +14,11 @@ const FRESH_TIME = 5 * 60 * 1000; // 5 minutes
 const STALE_TIME = 30 * 60 * 1000; // 30 minutes
 
 /**
- * Get current week string (e.g., "2025-06")
+ * Get current week string (e.g., "2025-09")
  */
 function getCurrentWeek(): string {
   // For now, use a default week - in production this would be dynamic
-  return '2025-06';
+  return '2025-09';
 }
 
 /**

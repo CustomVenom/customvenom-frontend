@@ -17,7 +17,7 @@ type ApiResponse = {
   last_refresh?: string;
 };
 
-const WEEK = '2025-06';
+const WEEK = '2025-09';
 
 function toRow(a: ApiRow): Row {
   const p10 = Array.isArray(a.range) ? (a.range[0] ?? 0) : 0;
