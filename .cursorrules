@@ -2,6 +2,7 @@
 
 # Working Memory Protocol (MANDATORY)
 # See docs/CURSOR_WORKING_MEMORY_PROTOCOL.md for complete protocol
+# Notion Source: https://www.notion.so/Cursor-Working-Memory-Protocol-Handoff-62ba04448a0141a7b158bdacb18d662a
 
 Before modifying any code:
 1. State the task and acceptance criteria
@@ -21,4 +22,13 @@ Always:
 - Quote existing code when discussing changes
 - Follow existing patterns in the codebase
 - Ask for clarification when scope is ambiguous
+- Reference docs/NOTION_RESOURCES.md for roadmap alignment before starting new features
+
+# Notion Resources (MANDATORY REFERENCE)
+# See docs/NOTION_RESOURCES.md for project roadmap, MVP scope, sprint planning
+# All agents MUST reference Notion resources for roadmap alignment:
+# - MVP & Roadmap: CustomVenom MVP - Next - Later Synopsis
+# - Sprint Planning: Roadmap Alignment - Next 3 Sprint
+# - Build Manual: CustomVenom Build Manual v1
+# - UI Design: Custom Venom UI Design Brief v1
 

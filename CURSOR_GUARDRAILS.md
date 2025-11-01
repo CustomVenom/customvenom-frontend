@@ -110,10 +110,46 @@
 3. **Test**: Session cookies working
 4. **Monitor**: OAuth success rate
 
+## 🧠 **MANDATORY: Working Memory Protocol**
+
+**⚠️ ALL AI AGENTS MUST FOLLOW THIS PROTOCOL**
+
+Before making ANY code changes, agents MUST:
+1. **Anchor**: State the task and acceptance criteria
+2. **Load**: Read all files that will be modified
+3. **Baseline**: Quote relevant existing code sections
+4. **Plan**: Show what will change (before → after)
+5. **Execute**: Make changes only after approval
+6. **Hand-back**: Report what changed and acceptance status
+
+**Reference**: See `docs/CURSOR_WORKING_MEMORY_PROTOCOL.md` for complete protocol
+**Notion Source**: [Cursor Working Memory Protocol Handoff](https://www.notion.so/Cursor-Working-Memory-Protocol-Handoff-62ba04448a0141a7b158bdacb18d662a)
+
+**User Commands:**
+- `show context` — Display current task, loaded files, and plan
+- `context check` — Verify proper context before proceeding
+- `show context first` — Stop and load context if not already done
+- `reset context` — Clear working memory (end of task)
+
+## 📋 **Project Roadmap & Resources**
+
+**⚠️ ALL AGENTS MUST REFERENCE NOTION RESOURCES FOR ROADMAP ALIGNMENT**
+
+See `docs/NOTION_RESOURCES.md` for complete list of Notion documentation:
+- **MVP & Roadmap**: CustomVenom MVP - Next - Later Synopsis
+- **Sprint Planning**: Roadmap Alignment - Next 3 Sprint
+- **Build Manual**: CustomVenom Build Manual v1
+- **UI Design**: Custom Venom UI Design Brief v1
+- **Development Resources**: Frontend Agent Resource Pack, Debugger Handoff
+
+**Notion Resources**: `docs/NOTION_RESOURCES.md`
+
 ## 📚 **Reference Documentation**
 
 - **Production Workflow**: `PRODUCTION_WORKFLOW.md`
 - **Release Receipts**: `RELEASE_RECEIPTS.md`
 - **OAuth Security**: `OAUTH_SECURITY.md`
 - **HTTPS Front Door**: `HTTPS_FRONT_DOOR.md`
+- **Notion Resources**: `docs/NOTION_RESOURCES.md` — **Project roadmap & documentation**
+- **Working Memory Protocol**: `docs/CURSOR_WORKING_MEMORY_PROTOCOL.md` — **MANDATORY for all agents**
 - **Vercel Documentation**: Linked from Custom Venom Home
