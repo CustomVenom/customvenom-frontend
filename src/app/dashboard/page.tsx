@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useSelectedLeague } from '@/lib/selection';
+import { useEffect, useState } from 'react';
 
 // ===== TYPE DEFINITIONS =====
 
@@ -126,7 +126,6 @@ export default function DashboardPage() {
 
     const loadAllTeams = async () => {
       try {
-        const allTeams: Team[] = [];
         const leagueKeys = leagues.league_keys;
 
         // Type guard to ensure we have an array of strings
@@ -134,23 +133,33 @@ export default function DashboardPage() {
           return;
         }
 
-        for (const leagueKey of leagueKeys) {
-          if (typeof leagueKey !== 'string') continue;
+        // Load all leagues in parallel
+        const teamPromises = leagueKeys.map(async (leagueKey) => {
+          if (typeof leagueKey !== 'string') return [];
 
-          const res = await fetch(
-            `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
-            {
-              credentials: 'include',
-            },
-          );
+          try {
+            const res = await fetch(
+              `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`,
+              {
+                credentials: 'include',
+              },
+            );
 
-          if (res.ok) {
-            const data: YahooTeamsResponse = await res.json();
-            if (data?.teams && Array.isArray(data.teams)) {
-              allTeams.push(...data.teams);
+            if (res.ok) {
+              const data: YahooTeamsResponse = await res.json();
+              if (data?.teams && Array.isArray(data.teams)) {
+                return data.teams;
+              }
             }
+          } catch (e) {
+            console.error(`Failed to load teams for league ${leagueKey}:`, e);
           }
-        }
+          return [];
+        });
+
+        // Wait for all leagues to load
+        const teamsArrays = await Promise.all(teamPromises);
+        const allTeams = teamsArrays.flat();
         setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
