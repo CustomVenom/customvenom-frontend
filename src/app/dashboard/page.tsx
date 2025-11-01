@@ -101,9 +101,11 @@ export default function DashboardPage() {
 
   // ===== FILTERING LOGIC =====
   // Filter teams by ownership
-  const filteredTeams = showAllTeams ? teams : teams.filter((t) => t.is_owner);
+  // If user has no owned teams, show all teams by default (fallback)
   const myTeamsCount = teams.filter((t) => t.is_owner).length;
-  const hasOtherTeams = myTeamsCount < teams.length;
+  const shouldShowAll = myTeamsCount === 0 ? true : showAllTeams;
+  const filteredTeams = shouldShowAll ? teams : teams.filter((t) => t.is_owner);
+  const hasOtherTeams = myTeamsCount > 0 && myTeamsCount < teams.length;
 
   // Debug logging for filtering
   useEffect(() => {
@@ -181,9 +183,15 @@ export default function DashboardPage() {
 
           // Debug logging
           console.log('[TEAMS DEBUG] Total teams loaded:', allTeams.length);
-          console.log('[TEAMS DEBUG] Teams with is_owner=true:', allTeams.filter((t) => t.is_owner).length);
+          console.log(
+            '[TEAMS DEBUG] Teams with is_owner=true:',
+            allTeams.filter((t) => t.is_owner).length,
+          );
           console.log('[TEAMS DEBUG] Sample team:', allTeams[0]);
-          console.log('[TEAMS DEBUG] All teams:', allTeams.map((t) => ({ name: t.name, is_owner: t.is_owner })));
+          console.log(
+            '[TEAMS DEBUG] All teams:',
+            allTeams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
+          );
 
           setTeams(allTeams);
         } else {
