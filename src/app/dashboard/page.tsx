@@ -315,8 +315,20 @@ export default function DashboardPage() {
 
   // ===== DERIVED STATE =====
 
-  const selectedTeamName =
-    teams.find((t) => t.team_key === selectedTeam)?.name || 'Select Your Team';
+  const selectedTeamObj = selectedTeam ? teams.find((t) => t.team_key === selectedTeam) : null;
+  const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
+
+  // Debug: Log what we're displaying
+  useEffect(() => {
+    if (selectedTeam) {
+      console.log('[DEBUG] Selected team lookup:', {
+        selectedTeam,
+        teamsCount: teams.length,
+        foundTeam: selectedTeamObj,
+        selectedTeamName,
+      });
+    }
+  }, [selectedTeam, teams, selectedTeamObj, selectedTeamName]);
 
   // ===== RENDER =====
 
