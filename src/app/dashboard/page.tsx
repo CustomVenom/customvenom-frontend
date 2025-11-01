@@ -5,11 +5,21 @@ import { useEffect, useState } from 'react';
 
 // ===== TYPE DEFINITIONS =====
 
-interface Team {
-  team_key: string;
+interface ProviderTeam {
+  team_id: string;
   name: string;
-  team_logos?: Array<{ url: string }>;
-  league_key: string; // League context - which league this team belongs to
+  is_owner?: boolean;
+}
+
+interface ProviderLeague {
+  league_id: string;
+  name: string;
+  season: string;
+  teams: ProviderTeam[];
+}
+
+interface ProviderLeaguesResponse {
+  leagues: ProviderLeague[];
 }
 
 interface Player {
@@ -22,17 +32,6 @@ interface Player {
 interface YahooMeResponse {
   guid?: string;
   auth_required?: boolean;
-  error?: string;
-}
-
-interface YahooLeaguesResponse {
-  league_keys?: string[];
-  auth_required?: boolean;
-  error?: string;
-}
-
-interface YahooTeamsResponse {
-  teams?: Team[];
   error?: string;
 }
 
@@ -52,13 +51,14 @@ interface SessionSelectionResponse {
 export default function DashboardPage() {
   const { setSelection } = useSelectedLeague();
   const [me, setMe] = useState<YahooMeResponse | null>(null);
-  const [leagues, setLeagues] = useState<YahooLeaguesResponse | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [leaguesData, setLeaguesData] = useState<ProviderLeaguesResponse | null>(null);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [showAllTeams, setShowAllTeams] = useState<Record<string, boolean>>({});
   const [mounted, setMounted] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
@@ -80,14 +80,15 @@ export default function DashboardPage() {
           const meData: YahooMeResponse = await meRes.json();
           setMe(meData);
 
-          // If connected, load leagues
+          // If connected, load all leagues with teams in one call
           if (meData.guid) {
-            const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
+            const leaguesRes = await fetch(`${API_BASE}/providers/yahoo/leagues`, {
               credentials: 'include',
+              headers: { Accept: 'application/json' },
             });
             if (leaguesRes.ok) {
-              const leaguesData: YahooLeaguesResponse = await leaguesRes.json();
-              setLeagues(leaguesData);
+              const data: ProviderLeaguesResponse = await leaguesRes.json();
+              setLeaguesData(data);
             }
           }
         }
@@ -115,6 +116,15 @@ export default function DashboardPage() {
           const data: SessionSelectionResponse = await res.json();
           if (data.active_team_key) {
             setSelectedTeam(data.active_team_key);
+            // Extract league_id from team_key (format: "461.l.{leagueId}.t.{teamId}")
+            const parts = data.active_team_key.split('.t.');
+            if (parts.length === 2) {
+              const leagueKey = parts[0];
+              const leagueIdMatch = leagueKey.match(/\.l\.(\d+)$/);
+              if (leagueIdMatch) {
+                setSelectedLeagueId(leagueIdMatch[1]);
+              }
+            }
           }
         }
       } catch (e) {
@@ -124,93 +134,18 @@ export default function DashboardPage() {
     loadSelection();
   }, [isConnected, API_BASE]);
 
-  // ===== EFFECT: Load all teams from all leagues =====
-  useEffect(() => {
-    if (!isConnected || !leagues?.league_keys || !Array.isArray(leagues.league_keys)) {
-      setTeams([]);
-      return;
+  // ===== HELPER: Get filtered teams for a league =====
+  const getTeamsForLeague = (leagueId: string): ProviderTeam[] => {
+    const league = leaguesData?.leagues?.find((l) => l.league_id === leagueId);
+    if (!league) return [];
+
+    // Filter to user's teams by default, show all if toggle is on
+    if (showAllTeams[leagueId]) {
+      return league.teams;
     }
 
-    const loadAllTeams = async () => {
-      try {
-        const leagueKeys = leagues.league_keys;
-
-        // Type guard to ensure we have an array of strings
-        if (!Array.isArray(leagueKeys) || leagueKeys.length === 0) {
-          return;
-        }
-
-        // Load all leagues in parallel
-        console.log('[DEBUG] Loading teams for leagues:', leagueKeys);
-        const teamPromises = leagueKeys.map(async (leagueKey) => {
-          if (typeof leagueKey !== 'string') {
-            console.warn('[DEBUG] Invalid leagueKey (not string):', leagueKey);
-            return [];
-          }
-
-          const url = `${API_BASE}/yahoo/leagues/${encodeURIComponent(leagueKey)}/teams?format=json`;
-          console.log(`[DEBUG] Fetching teams from: ${url}`);
-
-          try {
-            const res = await fetch(url, {
-              credentials: 'include',
-            });
-
-            console.log(`[DEBUG] Response status for ${leagueKey}:`, res.status, res.statusText);
-
-            if (!res.ok) {
-              const errorText = await res.text();
-              console.error(`[DEBUG] Failed to load teams for league ${leagueKey}:`, {
-                status: res.status,
-                statusText: res.statusText,
-                error: errorText,
-              });
-              return [];
-            }
-
-            const data: YahooTeamsResponse = await res.json();
-            console.log(`[DEBUG] Teams data for ${leagueKey}:`, data);
-
-            if (data?.teams && Array.isArray(data.teams)) {
-              console.log(`[DEBUG] Found ${data.teams.length} teams for league ${leagueKey}`);
-              // Tag each team with its league_key to avoid mixing leagues
-              return data.teams.map((team) => ({
-                ...team,
-                league_key: leagueKey,
-              }));
-            } else {
-              console.warn(`[DEBUG] No teams array in response for ${leagueKey}:`, data);
-            }
-          } catch (e) {
-            console.error(`[DEBUG] Exception loading teams for league ${leagueKey}:`, e);
-          }
-          return [];
-        });
-
-        // Wait for all leagues to load
-        const teamsArrays = await Promise.all(teamPromises);
-        const allTeams = teamsArrays.flat();
-
-        // Debug logging for teams state
-        console.log('=== TEAMS STATE DEBUG ===');
-        console.log('Teams array length:', allTeams.length);
-        console.log('Full teams array:', allTeams);
-        if (allTeams.length > 0 && allTeams[0]) {
-          const firstTeam = allTeams[0];
-          console.log('First team:', firstTeam);
-          console.log('Available keys:', Object.keys(firstTeam));
-          console.log('First team name:', firstTeam.name);
-          console.log('First team team_key:', firstTeam.team_key);
-        }
-
-        setTeams(allTeams);
-      } catch (e) {
-        console.error('Failed to load teams:', e);
-      }
-    };
-
-    loadAllTeams();
-  }, [isConnected, leagues, API_BASE]);
+    return league.teams.filter((t) => t.is_owner);
+  };
 
   // ===== EFFECT: Load roster when team selected =====
   useEffect(() => {
@@ -288,67 +223,15 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSelectTeam = async (teamKey: string) => {
+  const handleSelectTeam = async (leagueId: string, teamId: string) => {
+    if (!teamId || !leagueId) return;
+
     try {
-      console.log('[handleSelectTeam] Called with teamKey:', teamKey);
-      console.log('[handleSelectTeam] Current teams array length:', teams.length);
-      console.log(
-        '[handleSelectTeam] All teams:',
-        teams.map((t) => ({ team_key: t.team_key, league_key: t.league_key, name: t.name })),
-      );
+      // Build team_key in Yahoo format: 461.l.{leagueId}.t.{teamId}
+      const teamKey = `461.l.${leagueId}.t.${teamId}`;
+      const leagueKey = `461.l.${leagueId}`;
 
-      // Find the team object to get its league_key (more reliable than parsing team_key string)
-      const team = teams.find((t) => t.team_key === teamKey);
-      if (!team) {
-        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
-        console.error(
-          '[handleSelectTeam] Available team_keys:',
-          teams.map((t) => t.team_key),
-        );
-        return;
-      }
-
-      const leagueKey = team.league_key;
-
-      // Validate that league_key matches the team_key structure
-      const expectedLeagueKey = teamKey.split('.t.')[0];
-      if (leagueKey !== expectedLeagueKey) {
-        console.error('[handleSelectTeam] LEAGUE KEY MISMATCH DETECTED!', {
-          teamKey,
-          teamLeagueKey: leagueKey,
-          expectedLeagueKey,
-          teamObject: team,
-        });
-        // Use the extracted league_key from team_key as fallback
-        const correctedLeagueKey = expectedLeagueKey;
-        console.log('[handleSelectTeam] Using corrected leagueKey:', correctedLeagueKey);
-
-        const res = await fetch(`${API_BASE}/api/session/selection`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ teamKey, leagueKey: correctedLeagueKey }),
-        });
-
-        // ... rest of the code
-        if (res.ok) {
-          setSelectedTeam(teamKey);
-          setSelection({ league_key: correctedLeagueKey || null });
-          setTeamsDropdownOpen(false);
-          window.dispatchEvent(
-            new CustomEvent('team-selected', {
-              detail: { teamKey, leagueKey: correctedLeagueKey },
-            }),
-          );
-        } else {
-          const responseBody = await res.json();
-          console.error('[handleSelectTeam] Failed after correction:', responseBody);
-        }
-        return;
-      }
-
-      console.log('[handleSelectTeam] Found team:', { teamKey, leagueKey, teamName: team.name });
-      console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
+      console.log('[handleSelectTeam] Selecting team:', { leagueId, teamId, teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -357,24 +240,27 @@ export default function DashboardPage() {
         body: JSON.stringify({ teamKey, leagueKey }),
       });
 
-      console.log('[handleSelectTeam] POST response status:', res.status);
-      const responseBody = await res.json();
-      console.log('[handleSelectTeam] POST response body:', responseBody);
-
-      if (res.ok) {
-        setSelectedTeam(teamKey);
-        setSelection({ league_key: leagueKey || null });
-        setTeamsDropdownOpen(false);
-
-        // Dispatch event for other components that might listen
-        window.dispatchEvent(
-          new CustomEvent('team-selected', {
-            detail: { teamKey, leagueKey },
-          }),
-        );
-      } else {
-        console.error('[handleSelectTeam] Failed to save team selection, status:', res.status);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('Failed to save team selection:', {
+          status: res.status,
+          error: errorData,
+          sent: { teamKey, leagueKey },
+        });
+        return;
       }
+
+      setSelectedTeam(teamKey);
+      setSelectedLeagueId(leagueId);
+      setSelection({ league_key: leagueKey });
+      setTeamsDropdownOpen(false);
+
+      // Dispatch event for other components that might listen
+      window.dispatchEvent(
+        new CustomEvent('team-selected', {
+          detail: { teamKey, leagueKey },
+        }),
+      );
     } catch (e) {
       console.error('[handleSelectTeam] Failed to save team:', e);
     }
@@ -382,20 +268,22 @@ export default function DashboardPage() {
 
   // ===== DERIVED STATE =====
 
-  const selectedTeamObj = selectedTeam ? teams.find((t) => t.team_key === selectedTeam) : null;
-  const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
-
-  // Debug: Log what we're displaying
-  useEffect(() => {
-    if (selectedTeam) {
-      console.log('[DEBUG] Selected team lookup:', {
-        selectedTeam,
-        teamsCount: teams.length,
-        foundTeam: selectedTeamObj,
-        selectedTeamName,
-      });
+  // Find selected team name from leagues data
+  const selectedTeamName = (() => {
+    if (!selectedTeam || !selectedLeagueId || !leaguesData?.leagues) {
+      return 'Select Your Team';
     }
-  }, [selectedTeam, teams, selectedTeamObj, selectedTeamName]);
+    const league = leaguesData.leagues.find((l) => l.league_id === selectedLeagueId);
+    if (!league) return 'Select Your Team';
+    // Extract team_id from team_key (format: "461.l.{leagueId}.t.{teamId}")
+    const parts = selectedTeam.split('.t.');
+    if (parts.length !== 2) return 'Select Your Team';
+    const teamId = parts[1];
+    const team = league.teams.find((t) => t.team_id === teamId);
+    return team?.name || 'Select Your Team';
+  })();
+
+  const isConnected = Boolean(me?.guid);
 
   // ===== RENDER =====
 
@@ -422,19 +310,16 @@ export default function DashboardPage() {
         </button>
 
         {/* Button 2: Team selector dropdown (show when connected) */}
-        {isConnected && (
+        {isConnected && leaguesData?.leagues && leaguesData.leagues.length > 0 && (
           <div className="relative" data-team-selector>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setTeamsDropdownOpen(!teamsDropdownOpen);
               }}
-              disabled={teams.length === 0}
-              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm min-w-[180px]"
             >
-              <span className="flex-1 text-left truncate">
-                {!mounted || teams.length === 0 ? 'Select Your Team' : selectedTeamName}
-              </span>
+              <span className="flex-1 text-left truncate">{selectedTeamName}</span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
                   teamsDropdownOpen ? 'rotate-180' : ''
@@ -452,46 +337,66 @@ export default function DashboardPage() {
               </svg>
             </button>
 
-            {teamsDropdownOpen && teams.length > 0 && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
-                {teams.map((team) => (
-                  <button
-                    key={team.team_key}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectTeam(team.team_key);
-                    }}
-                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0 ${
-                      selectedTeam === team.team_key ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    {team.team_logos?.[0]?.url && (
-                      <img
-                        src={team.team_logos[0].url}
-                        alt=""
-                        className="w-8 h-8 rounded shrink-0"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      {/* CRITICAL: Display team.name (not team_key) - line 408 */}
-                      <div className="text-sm font-medium truncate">{team.name}</div>
-                      <div className="text-xs text-gray-500 truncate">{team.team_key}</div>
-                    </div>
-                    {selectedTeam === team.team_key && (
-                      <svg
-                        className="w-5 h-5 text-blue-600 shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+            {teamsDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-96 bg-white border border-gray-300 rounded-lg shadow-lg max-h-[600px] overflow-y-auto z-50">
+                {leaguesData.leagues.map((league) => {
+                  const teams = getTeamsForLeague(league.league_id);
+                  const myTeamsCount = league.teams.filter((t) => t.is_owner).length;
+                  const allTeamsCount = league.teams.length;
+                  const hasToggle = myTeamsCount < allTeamsCount;
+
+                  return (
+                    <div
+                      key={league.league_id}
+                      className="border-b border-gray-200 last:border-b-0 p-4"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-900">{league.name}</h3>
+                          <p className="text-xs text-gray-500">Season {league.season}</p>
+                        </div>
+                        {hasToggle && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowAllTeams((prev) => ({
+                                ...prev,
+                                [league.league_id]: !prev[league.league_id],
+                              }));
+                            }}
+                            className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                          >
+                            {showAllTeams[league.league_id]
+                              ? `My teams (${myTeamsCount})`
+                              : `View all (${allTeamsCount})`}
+                          </button>
+                        )}
+                      </div>
+
+                      <select
+                        className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                        value={
+                          selectedLeagueId === league.league_id && selectedTeam
+                            ? selectedTeam.split('.t.')[1] || ''
+                            : ''
+                        }
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleSelectTeam(league.league_id, e.target.value);
+                          }
+                        }}
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                        <option value="">Select your team...</option>
+                        {teams.map((team) => (
+                          <option key={team.team_id} value={team.team_id}>
+                            {team.name} {team.is_owner ? '⭐' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -503,7 +408,7 @@ export default function DashboardPage() {
         {/* Connection status */}
         {isConnected && me?.guid && (
           <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 inline-block mb-6">
-            Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
+            Connected — GUID: {me.guid} · Leagues: {leaguesData?.leagues?.length || 0}
           </div>
         )}
 
