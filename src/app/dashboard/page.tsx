@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useSelectedLeague } from '@/lib/selection';
+import { useEffect, useState } from 'react';
 
 // ===== TYPE DEFINITIONS =====
 
