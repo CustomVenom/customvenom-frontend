@@ -160,6 +160,19 @@ export default function DashboardPage() {
         // Wait for all leagues to load
         const teamsArrays = await Promise.all(teamPromises);
         const allTeams = teamsArrays.flat();
+        
+        // Debug logging for teams state
+        console.log('=== TEAMS STATE DEBUG ===');
+        console.log('Teams array length:', allTeams.length);
+        console.log('Full teams array:', allTeams);
+        if (allTeams.length > 0 && allTeams[0]) {
+          const firstTeam = allTeams[0];
+          console.log('First team:', firstTeam);
+          console.log('Available keys:', Object.keys(firstTeam));
+          console.log('First team name:', firstTeam.name);
+          console.log('First team team_key:', firstTeam.team_key);
+        }
+        
         setTeams(allTeams);
       } catch (e) {
         console.error('Failed to load teams:', e);
@@ -418,13 +431,17 @@ export default function DashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {roster.map((player) => (
                     <tr key={player.player_key} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{player.name.full}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {player.name.full}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded">
                           {player.display_position}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{player.editorial_team_abbr}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {player.editorial_team_abbr}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
