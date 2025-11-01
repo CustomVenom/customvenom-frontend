@@ -13,7 +13,7 @@ import ToolsTabs from '@/components/ToolsTabs';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { trackFeatureInteraction, trackRiskModeChange, trackToolUsage } from '@/lib/analytics';
 import { startSitSummary } from '@/lib/summary';
-import { fetchProjections, type Row } from '@/lib/tools';
+import { fetchProjections, mapApiProjectionToRow, type Row } from '@/lib/tools';
 
 function StartSitContent() {
   const [playerA, setPlayerA] = useState('');
@@ -42,10 +42,13 @@ function StartSitContent() {
 
     fetchProjections()
       .then((response) => {
-        if (response.ok) {
+        if (response.ok && response.body) {
           const body = response.body;
-          const projections = body?.projections ?? [];
-          setSuggestions(projections);
+          const apiProjections = body.projections ?? [];
+          const rows: Row[] = apiProjections.map((proj) =>
+            mapApiProjectionToRow(proj, body.schema_version, body.last_refresh),
+          );
+          setSuggestions(rows);
         }
       })
       .catch(() => {});
