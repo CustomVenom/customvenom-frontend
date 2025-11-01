@@ -1,5 +1,25 @@
 # League Connection Guardrails
 
+## 🚨 CRITICAL: Wrangler Deploy Guardrail
+
+### **NEVER Deploy Without `--keep-vars`**
+
+**Wrangler DOES NOT preserve secrets/environment variables by default. They will be DELETED if `--keep-vars` is not included.**
+
+**CORRECT:**
+```bash
+npx wrangler deploy --env production --keep-vars
+```
+
+**WRONG (WILL DELETE SECRETS):**
+```bash
+npx wrangler deploy --env production  # ❌ DELETES ALL SECRETS
+```
+
+**Impact**: Without `--keep-vars`, ALL secrets are removed and must be manually re-added in Cloudflare dashboard. OAuth flows break immediately.
+
+---
+
 ## Non-negotiable Rules (Enforced)
 
 ### Single Entry Point

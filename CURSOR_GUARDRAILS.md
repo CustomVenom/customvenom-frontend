@@ -20,6 +20,7 @@
 - ❌ **Never deploy without receipts** for API/UI trust paths
 - ❌ **Never skip HTTPS enforcement** checks
 - ❌ **Never ignore schema sentry** validation
+- ❌ **NEVER run `wrangler deploy` without `--keep-vars` flag** — Wrangler DELETES secrets if `--keep-vars` is not included
 
 ## ✅ **Cursor Must ALWAYS Do**
 
@@ -43,6 +44,7 @@
 - ✅ **Always test Vercel Preview** before merging
 - ✅ **Always check for RSC digest errors**
 - ✅ **Always monitor post-deploy** for 60 minutes
+- ✅ **ALWAYS use `wrangler deploy --env production --keep-vars`** — Wrangler does NOT preserve secrets by default, they will be DELETED without `--keep-vars`
 
 ## 🛡️ **HTTPS-Only Front-Door Policy**
 
