@@ -284,20 +284,34 @@ export default function DashboardPage() {
   };
 
   const handleSelectTeam = async (teamKey: string) => {
+    // Defensive validation before any processing
+    if (!teamKey || typeof teamKey !== 'string' || teamKey.trim().length === 0) {
+      console.error('[handleSelectTeam] Invalid teamKey input:', { teamKey, type: typeof teamKey });
+      return;
+    }
+
     try {
       // Extract league key from team key (format: "XXX.l.YYYYY.t.ZZZ")
       const parts = teamKey.split('.t.');
       if (parts.length !== 2 || !parts[0] || !parts[1]) {
-        console.error('Invalid team key format:', teamKey);
+        console.error('[handleSelectTeam] Invalid team key format:', { teamKey, parts });
         return;
       }
+      
       const leagueKey = parts[0].trim();
 
-      // Validate both keys are present
-      if (!teamKey || !leagueKey) {
-        console.error('Missing team or league key:', { teamKey, leagueKey });
+      // Validate both keys are present and non-empty after processing
+      if (!teamKey || teamKey.trim().length === 0 || !leagueKey || leagueKey.trim().length === 0) {
+        console.error('[handleSelectTeam] Missing team or league key after processing:', {
+          teamKey: teamKey?.trim(),
+          leagueKey: leagueKey?.trim(),
+          parts,
+        });
         return;
       }
+
+      // Log what we're sending for debugging
+      console.log('[handleSelectTeam] Sending selection request:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -384,9 +398,7 @@ export default function DashboardPage() {
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
             >
               <span className="flex-1 text-left truncate">
-                {!mounted || teams.length === 0
-                  ? 'Select Your Team'
-                  : selectedTeamName}
+                {!mounted || teams.length === 0 ? 'Select Your Team' : selectedTeamName}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
