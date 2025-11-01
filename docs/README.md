@@ -6,7 +6,7 @@
 
 ## 🚀 Quick Start
 
-👉 **[guides/QUICK_REFERENCE.md](./guides/QUICK_REFERENCE.md)** - Commands & patterns  
+👉 **[guides/QUICK_REFERENCE.md](./guides/QUICK_REFERENCE.md)** - Commands & patterns
 👉 **[guides/DEVELOPER_GUIDE.md](./guides/DEVELOPER_GUIDE.md)** - Development workflows
 
 ---
@@ -27,20 +27,22 @@
 
 ## 🎯 Find What You Need
 
-**I want to add a page** → guides/DEVELOPER_GUIDE.md  
-**I want to fix a bug** → guides/TROUBLESHOOTING.md  
-**I need a command** → guides/QUICK_REFERENCE.md  
+**I want to add a page** → guides/DEVELOPER_GUIDE.md
+**I want to fix a bug** → guides/TROUBLESHOOTING.md
+**I need a command** → guides/QUICK_REFERENCE.md
 **I want to add a component** → guides/DEVELOPER_GUIDE.md
 
 ---
 
 ## 🔗 Related Documentation
 
-**API Documentation**: See `../customvenom-workers-api/docs/`  
-**Business Strategy**: See `../../docs/business/`  
+**API Documentation**: See `../customvenom-workers-api/docs/`
+**Business Strategy**: See `../../docs/business/`
 **Operations**: See `../../docs/operations/`
+**Notion Resources**: See [NOTION_RESOURCES.md](./NOTION_RESOURCES.md) - All project Notion pages
+**Working Memory Protocol**: See [CURSOR_WORKING_MEMORY_PROTOCOL.md](./CURSOR_WORKING_MEMORY_PROTOCOL.md) - **MANDATORY** for all AI agents
 
 ---
 
-**Last Updated**: October 17, 2025  
+**Last Updated**: October 17, 2025
 **Status**: Production-ready ✅

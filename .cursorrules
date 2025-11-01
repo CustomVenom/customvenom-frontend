@@ -1,0 +1,24 @@
+# .cursorrules
+
+# Working Memory Protocol (MANDATORY)
+# See docs/CURSOR_WORKING_MEMORY_PROTOCOL.md for complete protocol
+
+Before modifying any code:
+1. State the task and acceptance criteria
+2. Read all files that will be modified
+3. Show relevant existing code
+4. Propose specific changes with before/after
+5. Wait for approval before executing
+6. Report what changed and acceptance status
+
+Never:
+- Code without reading files first
+- Make assumptions about existing code
+- Modify multiple unrelated files without approval
+- Change button text or UI copy without explicit approval
+
+Always:
+- Quote existing code when discussing changes
+- Follow existing patterns in the codebase
+- Ask for clarification when scope is ambiguous
+
