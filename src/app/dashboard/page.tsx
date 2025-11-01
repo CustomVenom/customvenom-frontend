@@ -58,8 +58,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+
+  // ===== EFFECT: Mark component as mounted (client-side only) =====
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ===== EFFECT: Load connection status and leagues =====
   useEffect(() => {
@@ -332,7 +338,8 @@ export default function DashboardPage() {
 
   // ===== RENDER =====
 
-  if (loading) {
+  // Prevent hydration mismatch by showing loading state until client-side mounted
+  if (!mounted || loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen">
         <div className="text-gray-600">Loading...</div>
@@ -341,7 +348,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" suppressHydrationWarning>
       {/* BUTTONS - Upper right, below menu bar, smaller */}
       <div className="px-6 py-3 flex items-center justify-end gap-2">
         {/* Button 1: Connect/Refresh League */}
