@@ -43,7 +43,8 @@ export default function DashboardPage() {
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [showAllTeams, setShowAllTeams] = useState(false);
+  // Default to showing all teams - if user has owned teams, they can toggle to "my teams only"
+  const [showAllTeams, setShowAllTeams] = useState(true);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
@@ -88,16 +89,10 @@ export default function DashboardPage() {
 
   // ===== FILTERING LOGIC =====
   // Filter teams by ownership
-  // If user has no owned teams, show all teams by default (fallback)
   const myTeamsCount = teams.filter((t) => t.is_owner).length;
-  // Always show all teams if none are marked as owned (fallback)
-  const shouldShowAll = myTeamsCount === 0 ? true : showAllTeams;
-  const filteredTeams = shouldShowAll ? teams : teams.filter((t) => t.is_owner);
+  // Show all teams by default, or filter to "my teams" if user toggles and has owned teams
+  const displayTeams = myTeamsCount > 0 && !showAllTeams ? teams.filter((t) => t.is_owner) : teams;
   const hasOtherTeams = myTeamsCount > 0 && myTeamsCount < teams.length;
-
-  // IMPORTANT: Ensure dropdown always has teams to show
-  // If filtering resulted in empty array, fallback to showing all teams
-  const displayTeams = filteredTeams.length > 0 ? filteredTeams : teams;
 
   // Debug: Log filtering details
   useEffect(() => {
@@ -105,10 +100,10 @@ export default function DashboardPage() {
       totalTeams: teams.length,
       myTeamsCount,
       isOwnerFlags: teams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
-      shouldShowAll,
-      filteredCount: filteredTeams.length,
+      showAllTeams,
+      displayTeamsCount: displayTeams.length,
     });
-  }, [teams, myTeamsCount, shouldShowAll, filteredTeams.length]);
+  }, [teams, myTeamsCount, showAllTeams, displayTeams.length]);
 
   // Debug logging for filtering
   useEffect(() => {
@@ -116,12 +111,12 @@ export default function DashboardPage() {
       teamsLength: teams.length,
       myTeamsCount,
       showAllTeams,
-      filteredTeamsLength: filteredTeams.length,
-      buttonDisabled: filteredTeams.length === 0,
+      displayTeamsLength: displayTeams.length,
+      buttonDisabled: displayTeams.length === 0,
       isConnected,
       mounted,
     });
-  }, [teams.length, filteredTeams.length, showAllTeams, myTeamsCount, isConnected, mounted]);
+  }, [teams.length, displayTeams.length, showAllTeams, myTeamsCount, isConnected, mounted]);
 
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
@@ -395,8 +390,9 @@ export default function DashboardPage() {
                 e.stopPropagation();
                 console.log('[BUTTON DEBUG] Button clicked!', {
                   displayTeamsLength: displayTeams.length,
-                  filteredTeamsLength: filteredTeams.length,
                   teamsLength: teams.length,
+                  myTeamsCount,
+                  showAllTeams,
                   teamsDropdownOpen,
                 });
                 setTeamsDropdownOpen((prev) => {
