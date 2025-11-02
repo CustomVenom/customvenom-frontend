@@ -21,6 +21,12 @@ interface EnrichedPlayer {
   confidence?: number;
 }
 
+interface YahooMeResponse {
+  guid?: string;
+  auth_required?: boolean;
+  error?: string;
+}
+
 interface RosterResponse {
   roster: EnrichedPlayer[];
   stats: {
@@ -38,15 +44,9 @@ function RosterPageClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('starters');
-  const [session, setSession] = useState<{ user?: { role?: string } } | null>(null);
+  const [yahooConnected, setYahooConnected] = useState(false);
 
-  // Load session
-  useEffect(() => {
-    fetch('/api/auth/session')
-      .then((r) => r.json())
-      .then((s) => setSession(s))
-      .catch(() => setSession(null));
-  }, []);
+  const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
   const loadRoster = useCallback(async () => {
     try {
@@ -73,13 +73,37 @@ function RosterPageClient() {
     }
   }, []);
 
+  // Check Yahoo connection
   useEffect(() => {
-    if (session?.user) {
-      loadRoster();
-    } else {
-      setLoading(false);
-    }
-  }, [session, loadRoster]);
+    const checkConnection = async () => {
+      try {
+        const meRes = await fetch(`${API_BASE}/yahoo/me`, {
+          credentials: 'include',
+        });
+
+        if (meRes.ok) {
+          const meData: YahooMeResponse = await meRes.json();
+          const connected = Boolean(meData.guid);
+          setYahooConnected(connected);
+
+          if (connected) {
+            loadRoster();
+          } else {
+            setLoading(false);
+          }
+        } else {
+          setYahooConnected(false);
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error('Failed to check Yahoo connection:', e);
+        setYahooConnected(false);
+        setLoading(false);
+      }
+    };
+
+    checkConnection();
+  }, [API_BASE, loadRoster]);
 
   // Filter players by tab
   const filteredPlayers = data
@@ -98,8 +122,8 @@ function RosterPageClient() {
       })
     : [];
 
-  const isPro = session?.user?.role === 'pro';
-  const connected = !!session?.user;
+  const isPro = false; // TODO: Get from subscription/entitlements API if needed
+  const connected = yahooConnected;
 
   // Early return if not connected - redirect to dashboard
   if (!loading && !connected) {
