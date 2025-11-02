@@ -129,46 +129,56 @@ export default function DashboardPage() {
     loadSelection();
   }, [isConnected, API_BASE]);
 
-  // ===== EFFECT: Load all teams from all leagues (single bulk call) =====
+  // ===== EFFECT: Load all teams from all leagues =====
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected || !leagues?.league_keys || !Array.isArray(leagues.league_keys)) {
       setTeams([]);
       return;
     }
 
     const loadAllTeams = async () => {
       try {
-        // Single bulk call to get all leagues with teams
-        const res = await fetch(`${API_BASE}/providers/yahoo/leagues`, {
-          credentials: 'include',
-        });
+        const allTeams: Team[] = [];
+        const leagueKeys = leagues.league_keys;
 
-        if (!res.ok) {
-          console.error('Failed to load leagues:', res.status);
-          return;
-        }
+        console.log('[DEBUG] Starting to load teams from', leagueKeys.length, 'leagues');
 
-        const data = await res.json();
+        // Fetch teams for each league individually (more reliable than bulk endpoint)
+        for (const leagueKey of leagueKeys) {
+          if (typeof leagueKey !== 'string') {
+            console.warn('[DEBUG] Skipping invalid league key:', leagueKey);
+            continue;
+          }
 
-        if (data?.leagues && Array.isArray(data.leagues)) {
-          const allTeams: Team[] = [];
+          try {
+            console.log('[DEBUG] Fetching teams for league:', leagueKey);
 
-          for (const league of data.leagues) {
-            if (league?.teams && Array.isArray(league.teams)) {
-              const leagueId = league.league_id;
-              const leagueKey = `461.l.${leagueId}`;
+            const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/teams?format=json`, {
+              credentials: 'include',
+            });
 
-              console.log('[DEBUG] Fetching teams for league:', leagueKey);
+            if (!res.ok) {
+              console.error(
+                '[DEBUG] Failed to fetch teams for',
+                leagueKey,
+                '- status:',
+                res.status,
+              );
+              continue;
+            }
 
+            const data = await res.json();
+
+            if (data?.teams && Array.isArray(data.teams)) {
               // Tag each team with its league_key
-              const taggedTeams = league.teams.map(
+              const taggedTeams = data.teams.map(
                 (team: {
-                  team_id: number;
+                  team_key: string;
                   name: string;
                   team_logos?: Array<{ url: string }>;
                   is_owner?: boolean;
                 }) => ({
-                  team_key: `461.l.${leagueId}.t.${team.team_id}`,
+                  team_key: team.team_key || `461.l.${leagueKey.split('.')[2]}.t.${team.team_id || ''}`,
                   name: team.name,
                   team_logos: team.team_logos,
                   league_key: leagueKey, // Tag the team with which league it came from
@@ -176,12 +186,19 @@ export default function DashboardPage() {
                 }),
               );
 
-              console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams);
+              console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams.length, 'teams');
               allTeams.push(...taggedTeams);
+            } else {
+              console.warn('[DEBUG] No teams array in response for', leagueKey, ':', data);
             }
+          } catch (leagueError) {
+            console.error('[DEBUG] Error fetching teams for', leagueKey, ':', leagueError);
+            // Continue with next league even if one fails
           }
+        }
 
-          console.log('[DEBUG] Total teams loaded:', allTeams.length);
+        console.log('[DEBUG] Total teams loaded:', allTeams.length);
+        if (allTeams.length > 0) {
           console.log(
             '[DEBUG] Teams by league:',
             allTeams.reduce(
@@ -192,19 +209,20 @@ export default function DashboardPage() {
               {} as Record<string, number>,
             ),
           );
-          console.log('[DEBUG] All teams:', allTeams);
-
-          setTeams(allTeams);
         } else {
-          console.warn('[TEAMS DEBUG] No leagues data or invalid format:', data);
+          console.warn('[DEBUG] WARNING: No teams loaded from any league!');
         }
+        console.log('[DEBUG] All teams:', allTeams);
+
+        setTeams(allTeams);
       } catch (e) {
-        console.error('Failed to load teams:', e);
+        console.error('[DEBUG] Failed to load teams:', e);
+        setTeams([]);
       }
     };
 
     loadAllTeams();
-  }, [isConnected, API_BASE]);
+  }, [isConnected, leagues?.league_keys, API_BASE]);
 
   // ===== EFFECT: Click outside to close dropdown =====
   useEffect(() => {
@@ -360,7 +378,11 @@ export default function DashboardPage() {
               type="button"
             >
               <span className="flex-1 text-left truncate">
-                {!mounted || filteredTeams.length === 0 ? 'Select Your Team' : selectedTeamName}
+                {!mounted
+                  ? 'Loading...'
+                  : filteredTeams.length === 0
+                    ? 'Select Your Team'
+                    : selectedTeamName}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
