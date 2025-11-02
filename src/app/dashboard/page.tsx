@@ -184,7 +184,7 @@ export default function DashboardPage() {
                   team_logos?: Array<{ url: string }>;
                   is_owner?: boolean;
                 }) => ({
-                  team_key: team.team_key, // Yahoo API already provides this in correct format
+                  team_key: team.team_key, // Yahoo API provides team_key directly
                   name: team.name,
                   team_logos: team.team_logos,
                   league_key: leagueKey, // Tag the team with which league it came from
