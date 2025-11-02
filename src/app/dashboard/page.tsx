@@ -2,6 +2,9 @@
 
 import { useSelectedLeague } from '@/lib/selection';
 import { useEffect, useState } from 'react';
+import { NavigationCards } from '@/components/dashboard/NavigationCards';
+import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
+import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 
 // ===== TYPE DEFINITIONS =====
 
@@ -41,7 +44,6 @@ export default function DashboardPage() {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
-  const [connecting, setConnecting] = useState(false);
   const [mounted, setMounted] = useState(false);
   // Removed showAllTeams toggle - we only show user-owned teams
 
@@ -192,10 +194,7 @@ export default function DashboardPage() {
       const target = e.target as HTMLElement;
       const selector = target.closest('[data-team-selector]');
       if (!selector) {
-        console.log('[CLICK OUTSIDE DEBUG] Closing dropdown');
         setTeamsDropdownOpen(false);
-      } else {
-        console.log('[CLICK OUTSIDE DEBUG] Click inside selector, keeping open');
       }
     };
 
@@ -205,29 +204,6 @@ export default function DashboardPage() {
   }, [teamsDropdownOpen]);
 
   // ===== HANDLERS =====
-
-  const handleConnectOrRefresh = async () => {
-    if (connecting) return;
-    setConnecting(true);
-
-    try {
-      if (!isConnected) {
-        // Not connected - redirect to OAuth
-        const currentPath = window.location.pathname;
-        window.location.href = `${API_BASE}/api/connect/start?host=yahoo&from=${encodeURIComponent(
-          currentPath,
-        )}`;
-        return;
-      }
-
-      // Connected - refresh
-      window.location.reload();
-    } catch (e) {
-      console.error('Connect/refresh error:', e);
-    } finally {
-      setConnecting(false);
-    }
-  };
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
@@ -242,8 +218,6 @@ export default function DashboardPage() {
       // Use the league_key we tagged when fetching teams
       // This is the correct league the team was fetched from
       const leagueKey = team.league_key;
-
-      console.log('[handleSelectTeam] Using tagged league:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -273,7 +247,8 @@ export default function DashboardPage() {
   // ===== DERIVED STATE =====
 
   // Only compute selectedTeamName when teams are loaded to prevent hydration mismatch
-  const selectedTeamObj = selectedTeam && teams.length > 0 ? teams.find((t) => t.team_key === selectedTeam) : null;
+  const selectedTeamObj =
+    selectedTeam && teams.length > 0 ? teams.find((t) => t.team_key === selectedTeam) : null;
   const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
 
   // ===== RENDER =====
@@ -282,48 +257,168 @@ export default function DashboardPage() {
   if (!mounted || loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50" suppressHydrationWarning>
-      {/* BUTTONS - Upper right, below menu bar, smaller */}
-      <div className="px-6 py-3 flex items-center justify-end gap-2">
-        {/* Button 1: Connect/Refresh League */}
-        <button
-          onClick={handleConnectOrRefresh}
-          disabled={connecting}
-          className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-xs font-medium shadow-sm"
-        >
-          {connecting ? 'Connecting...' : isConnected ? 'Refresh Leagues' : 'Connect League'}
-        </button>
+  // ===== STATE 1: NOT CONNECTED =====
+  if (!isConnected) {
+    return (
+      <div className="container max-w-4xl mx-auto py-12">
+        <div className="text-center space-y-6">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+            <p className="text-muted-foreground text-lg">
+              Connect your fantasy league to get started
+            </p>
+          </div>
 
-        {/* Button 2: Team selector dropdown (show when connected) */}
-        {isConnected && (
+          <div className="flex justify-center">
+            <ConnectLeagueButton />
+          </div>
+
+          <div className="pt-8 max-w-md mx-auto">
+            <div className="rounded-lg border bg-card p-6">
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                What you'll get:
+              </h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li>✓ AI-powered projections for your roster</li>
+                <li>✓ Start/Sit recommendations</li>
+                <li>✓ FAAB budget optimization</li>
+                <li>✓ Waiver wire analysis</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== STATE 2: CONNECTED BUT NO TEAM SELECTED =====
+  if (!selectedTeam) {
+    return (
+      <div className="container max-w-4xl mx-auto py-12">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+              <p className="text-muted-foreground mt-1">Select your team to continue</p>
+            </div>
+            {/* Team selector dropdown */}
+            <div className="relative" data-team-selector>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setTeamsDropdownOpen((prev) => !prev);
+                }}
+                disabled={displayTeams.length === 0}
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
+                aria-label="Select team"
+                type="button"
+              >
+                <span className="flex-1 text-left truncate text-gray-900 dark:text-gray-100">
+                  {displayTeams.length === 0
+                    ? 'Select Your Team'
+                    : selectedTeamName || 'Select Your Team'}
+                </span>
+                <svg
+                  className={`w-3 h-3 transition-transform shrink-0 ${
+                    teamsDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {teamsDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                  {displayTeams.map((team) => (
+                    <button
+                      key={team.team_key}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectTeam(team.team_key);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-left ${
+                        selectedTeam === team.team_key ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      }`}
+                    >
+                      {team.team_logos?.[0]?.url && (
+                        <img
+                          src={team.team_logos[0].url}
+                          alt=""
+                          className="w-8 h-8 rounded shrink-0"
+                        />
+                      )}
+                      <span className="flex-1 text-sm truncate text-gray-900 dark:text-gray-100">
+                        {team.name || `Team ${team.team_key}`}
+                        {team.is_owner && ' ⭐'}
+                      </span>
+                      {selectedTeam === team.team_key && (
+                        <svg
+                          className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+
+                  {displayTeams.length === 0 && teams.length === 0 && (
+                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                      No teams available
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== STATE 3: CONNECTED AND TEAM SELECTED - SHOW HUB =====
+  return (
+    <div className="container max-w-6xl mx-auto py-8">
+      <div className="space-y-8">
+        {/* Header with Team Selector */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Your fantasy football command center</p>
+          </div>
+          {/* Team selector dropdown */}
           <div className="relative" data-team-selector>
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('[BUTTON DEBUG] Button clicked!', {
-                  displayTeamsLength: displayTeams.length,
-                  teamsLength: teams.length,
-                  ownedTeamsCount: ownedTeams.length,
-                  teamsDropdownOpen,
-                });
-                setTeamsDropdownOpen((prev) => {
-                  console.log('[BUTTON DEBUG] Setting dropdown to:', !prev);
-                  return !prev;
-                });
+                setTeamsDropdownOpen((prev) => !prev);
               }}
               disabled={displayTeams.length === 0}
-              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
               aria-label="Select team"
               type="button"
             >
-              <span className="flex-1 text-left truncate text-gray-900">
+              <span className="flex-1 text-left truncate text-gray-900 dark:text-gray-100">
                 {displayTeams.length === 0
                   ? 'Select Your Team'
                   : selectedTeamName || 'Select Your Team'}
@@ -346,106 +441,60 @@ export default function DashboardPage() {
             </button>
 
             {teamsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                {/* Teams list - only shows user-owned teams */}
-                {displayTeams.map((team) => {
-                  console.log('[DROPDOWN DEBUG] Rendering team:', {
-                    team_key: team.team_key,
-                    name: team.name,
-                    hasName: !!team.name,
-                    nameLength: team.name?.length,
-                  });
-                  return (
-                    <button
-                      key={team.team_key}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log('[DROPDOWN DEBUG] Clicking team:', team);
-                        handleSelectTeam(team.team_key);
-                      }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 text-left ${
-                        selectedTeam === team.team_key ? 'bg-blue-50' : ''
-                      }`}
-                    >
-                      {team.team_logos?.[0]?.url && (
-                        <img
-                          src={team.team_logos[0].url}
-                          alt=""
-                          className="w-8 h-8 rounded shrink-0"
+              <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                {displayTeams.map((team) => (
+                  <button
+                    key={team.team_key}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectTeam(team.team_key);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-left ${
+                      selectedTeam === team.team_key ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                    }`}
+                  >
+                    {team.team_logos?.[0]?.url && (
+                      <img
+                        src={team.team_logos[0].url}
+                        alt=""
+                        className="w-8 h-8 rounded shrink-0"
+                      />
+                    )}
+                    <span className="flex-1 text-sm truncate text-gray-900 dark:text-gray-100">
+                      {team.name || `Team ${team.team_key}`}
+                      {team.is_owner && ' ⭐'}
+                    </span>
+                    {selectedTeam === team.team_key && (
+                      <svg
+                        className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
                         />
-                      )}
-                      <span className="flex-1 text-sm truncate text-gray-900">
-                        {team.name || `Team ${team.team_key}`}
-                        {team.is_owner && ' ⭐'}
-                      </span>
-                      {selectedTeam === team.team_key && (
-                        <svg
-                          className="w-5 h-5 text-blue-600 shrink-0"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  );
-                })}
+                      </svg>
+                    )}
+                  </button>
+                ))}
 
                 {displayTeams.length === 0 && teams.length === 0 && (
-                  <div className="p-4 text-center text-sm text-gray-500">No teams available</div>
+                  <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                    No teams available
+                  </div>
                 )}
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* MAIN CONTENT */}
-      <div className="p-6 max-w-6xl mx-auto">
-        {/* Connection status */}
-        {isConnected && me?.guid && (
-          <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 inline-block mb-6">
-            Connected — GUID: {me.guid} · Leagues: {leagues?.league_keys?.length || 0}
-          </div>
-        )}
+        {/* Quick Metrics (Optional) */}
+        <DashboardMetrics />
 
-        {/* Not connected message */}
-        {!isConnected && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">Connect your fantasy league to get started</p>
-            <p className="text-sm text-gray-500">Click "Connect League" above</p>
-          </div>
-        )}
-
-        {/* Call to action - View Roster */}
-        {selectedTeam && (
-          <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-900">
-              Ready to view your roster?
-            </h2>
-            <p className="text-gray-600 mb-6">
-              You've selected <strong>{selectedTeamName}</strong>. View your full roster with
-              projections.
-            </p>
-            <a
-              href="/league/roster"
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium shadow-sm transition-colors"
-            >
-              View Your Roster →
-            </a>
-          </div>
-        )}
-
-        {/* No team selected state */}
-        {!selectedTeam && isConnected && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600">Select a team above to get started</p>
-          </div>
-        )}
+        {/* Navigation Cards - Main Feature */}
+        <NavigationCards />
       </div>
     </div>
   );

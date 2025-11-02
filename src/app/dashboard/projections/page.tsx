@@ -1,6 +1,9 @@
 'use client';
 
 import ProjectionsTable from '@/components/ProjectionsTable';
+import { Breadcrumb } from '@/components/Breadcrumb';
+import { LeagueContextHeader } from '@/components/LeagueContextHeader';
+import { useLeagueContext } from '@/hooks/useLeagueContext';
 import type { Row } from '@/lib/tools';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -37,6 +40,7 @@ function toRow(a: ApiRow): Row {
 }
 
 export default function ProjectionsPage() {
+  const leagueContext = useLeagueContext();
   const API = useMemo(() => process.env['NEXT_PUBLIC_API_BASE'] ?? '', []);
 
   // Parameterize week via URL search params
@@ -78,6 +82,17 @@ export default function ProjectionsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-3">
+      <Breadcrumb items={[{ label: 'Projections', href: '/dashboard/projections' }]} />
+
+      {!leagueContext.isLoading && (
+        <LeagueContextHeader
+          leagueName={leagueContext.leagueName}
+          teamName={leagueContext.teamName}
+          week={leagueContext.week}
+          scoringType={leagueContext.scoringType}
+        />
+      )}
+
       <h1 className="text-lg font-semibold mb-3">Projections</h1>
       <ProjectionsTable rows={rows} />
     </div>

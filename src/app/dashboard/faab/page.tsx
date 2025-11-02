@@ -9,10 +9,14 @@ import { useToast } from '@/components/Toast';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 import ToolsTabs from '@/components/ToolsTabs';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { Breadcrumb } from '@/components/Breadcrumb';
+import { LeagueContextHeader } from '@/components/LeagueContextHeader';
+import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackToolUsage, trackFeatureInteraction } from '@/lib/analytics';
 import { faabSummary } from '@/lib/summary';
 
 function FaabContent() {
+  const leagueContext = useLeagueContext();
   const [player, setPlayer] = useState('');
   const [budget, setBudget] = useState('100');
   const [result, setResult] = useState<{
@@ -79,6 +83,17 @@ function FaabContent() {
 
   return (
     <main className="container section space-y-4">
+      <Breadcrumb items={[{ label: 'FAAB Helper', href: '/dashboard/faab' }]} />
+
+      {!leagueContext.isLoading && (
+        <LeagueContextHeader
+          leagueName={leagueContext.leagueName}
+          teamName={leagueContext.teamName}
+          week={leagueContext.week}
+          scoringType={leagueContext.scoringType}
+        />
+      )}
+
       <h1 className="h1">
         FAAB Bid Helper <GlossaryTip term="faab band" />
       </h1>

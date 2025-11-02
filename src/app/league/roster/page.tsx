@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { LeagueContextHeader } from '@/components/LeagueContextHeader';
 import { LeaguePageHeader } from '@/components/LeaguePageHeader';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
@@ -35,6 +36,10 @@ interface RosterResponse {
     unmapped: number;
   };
   week: string;
+  team_name?: string;
+  league_name?: string;
+  current_week?: number;
+  scoring_type?: string;
 }
 
 type Tab = 'starters' | 'bench' | 'ir';
@@ -73,7 +78,7 @@ function RosterPageClient() {
     }
   }, []);
 
-  // Check Yahoo connection
+  // Check league connection
   useEffect(() => {
     const checkConnection = async () => {
       try {
@@ -96,7 +101,7 @@ function RosterPageClient() {
           setLoading(false);
         }
       } catch (e) {
-        console.error('Failed to check Yahoo connection:', e);
+        console.error('Failed to check league connection:', e);
         setYahooConnected(false);
         setLoading(false);
       }
@@ -183,6 +188,9 @@ function RosterPageClient() {
     );
   }
 
+  // Extract week number from week string (format: "2025-01")
+  const weekNumber = data?.week ? parseInt(data.week.split('-')[1] || '1', 10) : 1;
+
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
       <Breadcrumb
@@ -192,15 +200,21 @@ function RosterPageClient() {
         ]}
       />
 
-      {/* Header with Change Team button */}
+      {/* League Context Header */}
+      {data && (
+        <LeagueContextHeader
+          leagueName={data.league_name || 'My League'}
+          teamName={data.team_name || 'My Team'}
+          week={data.current_week || weekNumber}
+          scoringType={data.scoring_type || 'Standard'}
+        />
+      )}
+
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Roster</h1>
-        <a
-          href="/dashboard"
-          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          ← Change Team
-        </a>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">My Roster</h1>
+          <p className="text-muted-foreground mt-1">View your lineup with AI-powered projections</p>
+        </div>
       </div>
 
       <div className="mb-6">

@@ -78,7 +78,7 @@ export function YahooRosterViewer() {
           <strong>Error:</strong> {error}
         </p>
         <p className="text-sm text-red-600 mt-2">
-          {error.includes('authenticated') && 'Please connect your Yahoo account first.'}
+          {error.includes('authenticated') && 'Please connect your league account first.'}
         </p>
       </div>
     );
@@ -99,12 +99,12 @@ export function YahooRosterViewer() {
       {/* Leagues View */}
       {view === 'leagues' && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Your Yahoo Leagues</h2>
+          <h2 className="text-2xl font-bold mb-4">Your Leagues</h2>
           {loading ? (
             <p className="text-gray-500">Loading leagues...</p>
           ) : leagues.length === 0 ? (
             <p className="text-gray-500">
-              No leagues found. Connect your Yahoo account to see your leagues.
+              No leagues found. Connect your league account to see your leagues.
             </p>
           ) : (
             <div className="grid gap-3">

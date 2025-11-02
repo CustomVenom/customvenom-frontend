@@ -11,11 +11,15 @@ import { useToast } from '@/components/Toast';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 import ToolsTabs from '@/components/ToolsTabs';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { Breadcrumb } from '@/components/Breadcrumb';
+import { LeagueContextHeader } from '@/components/LeagueContextHeader';
+import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackFeatureInteraction, trackRiskModeChange, trackToolUsage } from '@/lib/analytics';
 import { startSitSummary } from '@/lib/summary';
 import { fetchProjections, mapApiProjectionToRow, type Row } from '@/lib/tools';
 
 function StartSitContent() {
+  const leagueContext = useLeagueContext();
   const [playerA, setPlayerA] = useState('');
   const [playerB, setPlayerB] = useState('');
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
@@ -154,6 +158,17 @@ function StartSitContent() {
 
   return (
     <main className="container section space-y-4">
+      <Breadcrumb items={[{ label: 'Start/Sit', href: '/dashboard/start-sit' }]} />
+
+      {!leagueContext.isLoading && (
+        <LeagueContextHeader
+          leagueName={leagueContext.leagueName}
+          teamName={leagueContext.teamName}
+          week={leagueContext.week}
+          scoringType={leagueContext.scoringType}
+        />
+      )}
+
       <h1 className="h1">
         Start / Sit Tie‑Breaker <GlossaryTip term="risk modes" />
       </h1>

@@ -8,10 +8,14 @@ import PlayerDrawer from '@/components/PlayerDrawer';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 import ToolsTabs from '@/components/ToolsTabs';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
+import { Breadcrumb } from '@/components/Breadcrumb';
+import { LeagueContextHeader } from '@/components/LeagueContextHeader';
+import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackToolUsage, trackRiskModeChange, trackFeatureInteraction } from '@/lib/analytics';
 import { type Row } from '@/lib/tools';
 
 function DecisionsContent() {
+  const leagueContext = useLeagueContext();
   const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -122,6 +126,17 @@ function DecisionsContent() {
   if (decisions.length === 0) {
     return (
       <main className="container section space-y-4">
+        <Breadcrumb items={[{ label: 'Important Decisions', href: '/dashboard/decisions' }]} />
+
+        {!leagueContext.isLoading && (
+          <LeagueContextHeader
+            leagueName={leagueContext.leagueName}
+            teamName={leagueContext.teamName}
+            week={leagueContext.week}
+            scoringType={leagueContext.scoringType}
+          />
+        )}
+
         <h1 className="h1">Important Decisions</h1>
         <ToolsTabs />
 
@@ -136,6 +151,17 @@ function DecisionsContent() {
 
   return (
     <main className="container section space-y-4">
+      <Breadcrumb items={[{ label: 'Important Decisions', href: '/dashboard/decisions' }]} />
+
+      {!leagueContext.isLoading && (
+        <LeagueContextHeader
+          leagueName={leagueContext.leagueName}
+          teamName={leagueContext.teamName}
+          week={leagueContext.week}
+          scoringType={leagueContext.scoringType}
+        />
+      )}
+
       <h1 className="h1">Important Decisions</h1>
       <p className="text-sm text-muted">
         <GlossaryTip term="driver chip" /> · <GlossaryTip term="coverage" />
