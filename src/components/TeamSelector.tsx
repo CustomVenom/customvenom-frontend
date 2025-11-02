@@ -73,24 +73,20 @@ export default function TeamSelector() {
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
-      // Extract league key directly from team key to ensure they always match
-      // Team key format: "461.l.728197.t.11"
-      // League key format: "461.l.728197"
-      const parts = teamKey.split('.');
-      if (parts.length !== 5 || parts[1] !== 'l' || parts[3] !== 't') {
-        console.error('[TeamSelector] Invalid team key format:', teamKey);
-        setError('Invalid team key format');
+      // Use the league_key from context - teams are loaded for this specific league
+      if (!league_key) {
+        console.error('[TeamSelector] No league_key in context');
+        setError('No league selected');
         return;
       }
 
-      // Extract "461.l.728197" from "461.l.728197.t.11"
-      const extractedLeagueKey = parts.slice(0, 3).join('.');
+      console.log('[TeamSelector] Using league from context:', { teamKey, leagueKey: league_key });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ teamKey, leagueKey: extractedLeagueKey }),
+        body: JSON.stringify({ teamKey, leagueKey: league_key }),
       });
 
       if (res.ok) {
@@ -99,7 +95,7 @@ export default function TeamSelector() {
         // Dispatch event for other components
         window.dispatchEvent(
           new CustomEvent('team-selected', {
-            detail: { teamKey, leagueKey: extractedLeagueKey },
+            detail: { teamKey, leagueKey: league_key },
           }),
         );
       } else {

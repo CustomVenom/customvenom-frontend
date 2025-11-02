@@ -231,17 +231,19 @@ export default function DashboardPage() {
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
-      // Extract league key directly from team key to ensure they always match
-      // Team key format: "461.l.728197.t.11"
-      // League key format: "461.l.728197"
-      const parts = teamKey.split('.');
-      if (parts.length !== 5 || parts[1] !== 'l' || parts[3] !== 't') {
-        console.error('[handleSelectTeam] Invalid team key format:', teamKey);
+      // Find the team object to get its tagged league_key
+      const team = teams.find((t) => t.team_key === teamKey);
+
+      if (!team) {
+        console.error('[handleSelectTeam] Team not found:', teamKey);
         return;
       }
 
-      // Extract "461.l.728197" from "461.l.728197.t.11"
-      const leagueKey = parts.slice(0, 3).join('.');
+      // Use the league_key we tagged when fetching teams
+      // This is the correct league the team was fetched from
+      const leagueKey = team.league_key;
+
+      console.log('[handleSelectTeam] Using tagged league:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
