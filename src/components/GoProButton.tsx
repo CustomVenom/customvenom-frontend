@@ -1,6 +1,7 @@
 ﻿'use client';
-import { loadStripe } from '@stripe/stripe-js';
 import { useState } from 'react';
+
+import { getStripe } from '@/lib/stripe-loader';
 
 interface GoProButtonProps {
   priceId: string;
@@ -31,16 +32,11 @@ export default function GoProButton({ priceId, className = '' }: GoProButtonProp
 
       const { sessionId } = await response.json();
 
-      // Initialize Stripe (check if configured)
-      const stripeKey = process.env['NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'];
-      if (!stripeKey) {
-        throw new Error('Stripe not configured');
-      }
-
-      const stripe = await loadStripe(stripeKey);
+      // Lazy-load Stripe only when user clicks (deferred loading)
+      const stripe = await getStripe();
 
       if (!stripe) {
-        throw new Error('Stripe failed to load');
+        throw new Error('Stripe not configured or failed to load');
       }
 
       // Redirect to Stripe Checkout

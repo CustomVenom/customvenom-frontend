@@ -11,24 +11,24 @@ export default function Footer() {
           <OpsStatus />
         </div>
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-3">
-          <Link href="/ops" className="hover:text-[rgb(var(--cv-primary))] transition-colors">
+          <Link href="/ops" className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] transition-colors">
             Ops
           </Link>
           <Link
             href="/status"
-            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+            className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-brand-accent hover:underline"
           >
             Status
           </Link>
           <Link
             href="/design-preview"
-            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+            className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-brand-accent hover:underline"
           >
             Design
           </Link>
           <Link
             href="/privacy"
-            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+            className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-brand-accent hover:underline"
           >
             Privacy
           </Link>
@@ -36,7 +36,7 @@ export default function Footer() {
             href="https://bsky.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+            className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-brand-accent hover:underline"
           >
             Bluesky
           </a>

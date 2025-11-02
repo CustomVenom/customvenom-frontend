@@ -146,7 +146,7 @@ function FaabContent() {
               </div>
               <button
                 onClick={() => copyBid(result.min, 'Min')}
-                className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
+                className="text-xs text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent hover:underline"
               >
                 Copy
               </button>
@@ -156,12 +156,12 @@ function FaabContent() {
               <div className="text-xs text-[rgb(var(--text-dim))] mb-1 uppercase tracking-wide">
                 Likely
               </div>
-              <div className="text-2xl font-semibold text-brand-primary dark:text-brand-accent mb-2">
+              <div className="text-2xl font-semibold text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent mb-2">
                 ${result.likely}
               </div>
               <button
                 onClick={() => copyBid(result.likely, 'Likely')}
-                className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
+                className="text-xs text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent hover:underline"
               >
                 Copy
               </button>
@@ -176,7 +176,7 @@ function FaabContent() {
               </div>
               <button
                 onClick={() => copyBid(result.max, 'Max')}
-                className="text-xs text-brand-primary dark:text-brand-accent hover:underline"
+                className="text-xs text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent hover:underline"
               >
                 Copy
               </button>

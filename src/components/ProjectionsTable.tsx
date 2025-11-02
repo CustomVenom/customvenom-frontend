@@ -112,7 +112,11 @@ export default function ProjectionsTable({ rows }: Props) {
       </div>
 
       <div className="overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 projections-table-container">
-        <table role="table" aria-label="Player projections" className="w-full text-sm min-w-[640px]">
+        <table
+          role="table"
+          aria-label="Player projections"
+          className="w-full text-sm min-w-[640px]"
+        >
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th
@@ -164,7 +168,7 @@ export default function ProjectionsTable({ rows }: Props) {
                 >
                   <td className="sticky-first px-3 py-2">
                     <button
-                      className="text-brand-primary dark:text-brand-accent font-medium underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-1"
+                             className="text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent font-medium underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-1"
                       onClick={() => openDrawer(r)}
                       aria-label={`Open ${r.player_name} details`}
                     >
@@ -199,7 +203,7 @@ export default function ProjectionsTable({ rows }: Props) {
                   )}
 
                   {visible['median'] !== false && (
-                    <td className="px-3 py-2 font-semibold text-brand-primary dark:text-brand-accent">
+                    <td className="px-3 py-2 font-semibold text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent">
                       {r.range.p50.toFixed(1)}
                     </td>
                   )}

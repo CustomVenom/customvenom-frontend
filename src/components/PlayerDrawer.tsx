@@ -113,7 +113,7 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
             </div>
             <div className="border border-brand-primary dark:border-brand-accent rounded-lg p-3 bg-brand-primary/5 dark:bg-brand-accent/10">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Median</div>
-              <div className="text-xl font-semibold text-brand-primary dark:text-brand-accent">
+              <div className="text-xl font-semibold text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent">
                 {row.range.p50.toFixed(1)}
               </div>
             </div>

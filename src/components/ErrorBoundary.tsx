@@ -21,9 +21,7 @@ export class ErrorBoundary extends React.Component<Props, { hasError: boolean }>
       return (
         this.props.fallback ?? (
           <div className="p-6 text-center space-y-4" role="alert">
-            <h2 className="text-xl font-semibold text-danger mb-2">
-              Something went wrong
-            </h2>
+            <h2 className="text-xl font-semibold text-danger mb-2">Something went wrong</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               An unexpected error occurred. Please try again.
             </p>

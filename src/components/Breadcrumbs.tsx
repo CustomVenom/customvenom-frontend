@@ -11,7 +11,7 @@ export default function Breadcrumbs() {
     <nav className="text-xs text-gray-600 dark:text-gray-400 mb-4">
       <Link
         href="/"
-        className="hover:text-brand-primary dark:hover:text-brand-accent hover:underline"
+        className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-brand-accent hover:underline"
       >
         Home
       </Link>

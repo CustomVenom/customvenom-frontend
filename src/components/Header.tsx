@@ -34,8 +34,8 @@ export default function Header() {
               href={l.href}
               className={
                 pathname?.startsWith(l.href)
-                  ? 'text-[rgb(var(--cv-primary))] font-semibold'
-                  : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary))] transition-colors'
+                  ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-semibold'
+                  : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] transition-colors'
               }
             >
               {l.label}

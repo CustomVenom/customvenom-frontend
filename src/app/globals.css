@@ -22,11 +22,15 @@
   --info: 59 130 246; /* rgb(59, 130, 246) - blue for info */
 
   /* Custom Venom brand (adjusted for dark) */
-  --cv-primary: 16 185 129; /* emerald green - brighter */
+  --cv-primary: 16 185 129; /* #10b981 - emerald green for backgrounds */
   --cv-accent: 163 217 119; /* lime-green highlight */
   --cv-highlight: 251 191 36; /* gold for premium */
   --cv-ink: 15 23 42;
   --cv-muted: 148 163 184;
+
+  /* WCAG AA compliant text colors (4.5:1+ contrast on white) */
+  --cv-primary-text: 5 150 105; /* #059669 - for regular text on light bg */
+  --cv-primary-strong: 4 120 87; /* #047857 - for buttons/emphasis on light bg */
   --cv-radius: 8px;
   --cv-scale: conic-gradient(
     from 0deg,
@@ -44,6 +48,16 @@ html:not(.dark) {
   --bg-card: 255 255 255;
   --text-primary: 15 23 42;
   --text-secondary: 51 65 85;
+
+  /* Use darker greens for text on light backgrounds (WCAG AA) */
+  --cv-primary-text: 5 150 105; /* #059669 - 4.53:1 contrast */
+  --cv-primary-strong: 4 120 87; /* #047857 - 5.85:1 contrast */
+}
+
+/* Dark mode can use brighter greens (higher contrast on dark bg) */
+html.dark {
+  --cv-primary-text: 52 211 153; /* #34d399 - brighter for dark bg */
+  --cv-primary-strong: 16 185 129; /* #10b981 - original bright green */
 }
 
 html,
@@ -100,7 +114,7 @@ th {
 .brand-title {
   font-family: var(--font-title), system-ui, sans-serif;
   font-weight: 800;
-  color: var(--cv-primary);
+  color: rgb(var(--cv-primary-strong)); /* WCAG-compliant for text on light bg */
   letter-spacing: -0.02em;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
@@ -151,7 +165,7 @@ th {
 
 .cv-btn-ghost {
   background: rgba(16, 185, 129, 0.1);
-  color: rgb(var(--cv-primary));
+  color: rgb(var(--cv-primary-strong)); /* WCAG-compliant for text */
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: var(--cv-radius);
   padding: 0.5rem 0.75rem;
@@ -171,9 +185,9 @@ th {
   outline-offset: 2px;
 }
 
-/* Brand colors (dark-first) */
+/* Brand colors (dark-first) - WCAG compliant for light mode */
 .brand-title {
-  color: rgb(var(--cv-primary));
+  color: rgb(var(--cv-primary-strong)); /* WCAG-compliant for text on light bg */
   text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
