@@ -96,14 +96,16 @@ export default function DashboardPage() {
 
   // Debug logging for filtering
   useEffect(() => {
-    if (teams.length > 0) {
-      console.log('[FILTER DEBUG] Total teams:', teams.length);
-      console.log('[FILTER DEBUG] Teams with is_owner=true:', myTeamsCount);
-      console.log('[FILTER DEBUG] showAllTeams:', showAllTeams);
-      console.log('[FILTER DEBUG] filteredTeams.length:', filteredTeams.length);
-      console.log('[FILTER DEBUG] Button disabled:', filteredTeams.length === 0);
-    }
-  }, [teams, filteredTeams.length, showAllTeams, myTeamsCount]);
+    console.log('[BUTTON STATE DEBUG]', {
+      teamsLength: teams.length,
+      myTeamsCount,
+      showAllTeams,
+      filteredTeamsLength: filteredTeams.length,
+      buttonDisabled: filteredTeams.length === 0,
+      isConnected,
+      mounted,
+    });
+  }, [teams.length, filteredTeams.length, showAllTeams, myTeamsCount, isConnected, mounted]);
 
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
@@ -159,13 +161,20 @@ export default function DashboardPage() {
               console.log('[DEBUG] Fetching teams for league:', leagueKey);
 
               // Tag each team with its league_key
-              const taggedTeams = league.teams.map((team: { team_id: number; name: string; team_logos?: Array<{ url: string }>; is_owner?: boolean }) => ({
-                team_key: `461.l.${leagueId}.t.${team.team_id}`,
-                name: team.name,
-                team_logos: team.team_logos,
-                league_key: leagueKey, // Tag the team with which league it came from
-                is_owner: team.is_owner ?? false,
-              }));
+              const taggedTeams = league.teams.map(
+                (team: {
+                  team_id: number;
+                  name: string;
+                  team_logos?: Array<{ url: string }>;
+                  is_owner?: boolean;
+                }) => ({
+                  team_key: `461.l.${leagueId}.t.${team.team_id}`,
+                  name: team.name,
+                  team_logos: team.team_logos,
+                  league_key: leagueKey, // Tag the team with which league it came from
+                  is_owner: team.is_owner ?? false,
+                }),
+              );
 
               console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams);
               allTeams.push(...taggedTeams);
@@ -203,13 +212,18 @@ export default function DashboardPage() {
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('[data-team-selector]')) {
+      const selector = target.closest('[data-team-selector]');
+      if (!selector) {
+        console.log('[CLICK OUTSIDE DEBUG] Closing dropdown');
         setTeamsDropdownOpen(false);
+      } else {
+        console.log('[CLICK OUTSIDE DEBUG] Click inside selector, keeping open');
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    // Use capture phase to ensure we catch clicks before other handlers
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
   }, [teamsDropdownOpen]);
 
   // ===== HANDLERS =====
@@ -328,11 +342,22 @@ export default function DashboardPage() {
           <div className="relative" data-team-selector>
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                setTeamsDropdownOpen(!teamsDropdownOpen);
+                console.log('[BUTTON DEBUG] Button clicked!', {
+                  filteredTeamsLength: filteredTeams.length,
+                  teamsLength: teams.length,
+                  teamsDropdownOpen,
+                });
+                setTeamsDropdownOpen((prev) => {
+                  console.log('[BUTTON DEBUG] Setting dropdown to:', !prev);
+                  return !prev;
+                });
               }}
               disabled={filteredTeams.length === 0}
-              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 min-w-[180px]"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
+              aria-label="Select team"
+              type="button"
             >
               <span className="flex-1 text-left truncate">
                 {!mounted || filteredTeams.length === 0 ? 'Select Your Team' : selectedTeamName}
