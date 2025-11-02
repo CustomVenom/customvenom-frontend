@@ -7,8 +7,7 @@ export default function HomePage() {
       <section className="container mx-auto px-6 py-20 text-center max-w-6xl">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Pick Your Poison</h1>
         <p className="text-xl md:text-2xl text-[#9AB9A7] mb-16">
-          Lineup advice with receipts. Ranges, two clear reasons, and a trust badge on every
-          result.
+          Lineup advice with receipts. Ranges, two clear reasons, and a trust badge on every result.
         </p>
 
         {/* Value props */}
@@ -27,9 +26,7 @@ export default function HomePage() {
           </div>
           <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
             <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Trust-First Transparency</h3>
-            <p className="text-sm text-[#9AB9A7]">
-              schema_version + last_refresh on every result
-            </p>
+            <p className="text-sm text-[#9AB9A7]">schema_version + last_refresh on every result</p>
           </div>
         </div>
 

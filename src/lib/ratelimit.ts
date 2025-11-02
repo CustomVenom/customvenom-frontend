@@ -1,10 +1,7 @@
 // Simple in-memory rate limiting for MVP
 // Upgrade to Upstash Redis for production scale
 
-const rateLimitMap = new Map<
-  string,
-  { count: number; resetAt: number }
->();
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 export async function checkRateLimit(ip: string): Promise<{ success: boolean }> {
   const now = Date.now();
@@ -26,4 +23,3 @@ export async function checkRateLimit(ip: string): Promise<{ success: boolean }> 
   limit.count++;
   return { success: true };
 }
-

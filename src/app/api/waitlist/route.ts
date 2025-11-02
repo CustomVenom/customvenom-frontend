@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { checkRateLimit } from '@/lib/ratelimit';
+import { kv } from '@vercel/kv';
 
-// Simple in-memory store for MVP (replace with DB later)
-const waitlist = new Set<string>();
+import { checkRateLimit } from '@/lib/ratelimit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,23 +27,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
     }
 
+    const emailLower = email.toLowerCase();
+
     // Check for duplicate (silent success)
-    if (waitlist.has(email.toLowerCase())) {
+    const exists = await kv.sismember('waitlist:emails', emailLower);
+    if (exists) {
       return NextResponse.json({ success: true });
     }
 
-    // Add to waitlist
-    waitlist.add(email.toLowerCase());
+    // Store in KV
+    // 1. Add email to set (for quick duplicate checks)
+    await kv.sadd('waitlist:emails', emailLower);
 
-    // Log the signup (for now, just console)
-    console.log('[Waitlist]', {
+    // 2. Store full details in hash (for retrieval)
+    await kv.hset(`waitlist:${emailLower}`, {
       email,
-      name,
-      platform,
+      name: name || '',
+      platform: platform || '',
       timestamp: new Date().toISOString(),
     });
 
-    // TODO: Send to actual database or email service
+    console.log('[Waitlist] New signup:', { email, name, platform });
 
     return NextResponse.json({ success: true });
   } catch (error) {

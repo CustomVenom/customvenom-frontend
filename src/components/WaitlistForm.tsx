@@ -79,12 +79,9 @@ export function WaitlistForm() {
           >
             {status === 'loading' ? 'Joining...' : 'Join Waitlist'}
           </button>
-          {status === 'error' && (
-            <p className="text-sm text-[#EF4444] text-center">{message}</p>
-          )}
+          {status === 'error' && <p className="text-sm text-[#EF4444] text-center">{message}</p>}
         </form>
       )}
     </div>
   );
 }
-
