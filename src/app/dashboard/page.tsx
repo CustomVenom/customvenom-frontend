@@ -445,31 +445,31 @@ export default function DashboardPage() {
                         selectedTeam === team.team_key ? 'bg-blue-50' : ''
                       }`}
                     >
-                    {team.team_logos?.[0]?.url && (
-                      <img
-                        src={team.team_logos[0].url}
-                        alt=""
-                        className="w-8 h-8 rounded shrink-0"
-                      />
-                    )}
-                    <span className="flex-1 text-sm truncate text-gray-900">
-                      {team.name || `Team ${team.team_key}`}
-                      {team.is_owner && ' ⭐'}
-                    </span>
-                    {selectedTeam === team.team_key && (
-                      <svg
-                        className="w-5 h-5 text-blue-600 shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
+                      {team.team_logos?.[0]?.url && (
+                        <img
+                          src={team.team_logos[0].url}
+                          alt=""
+                          className="w-8 h-8 rounded shrink-0"
                         />
-                      </svg>
-                    )}
-                  </button>
+                      )}
+                      <span className="flex-1 text-sm truncate text-gray-900">
+                        {team.name || `Team ${team.team_key}`}
+                        {team.is_owner && ' ⭐'}
+                      </span>
+                      {selectedTeam === team.team_key && (
+                        <svg
+                          className="w-5 h-5 text-blue-600 shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
                   );
                 })}
 
