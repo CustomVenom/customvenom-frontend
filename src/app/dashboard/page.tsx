@@ -178,7 +178,8 @@ export default function DashboardPage() {
                   team_logos?: Array<{ url: string }>;
                   is_owner?: boolean;
                 }) => ({
-                  team_key: team.team_key || `461.l.${leagueKey.split('.')[2]}.t.${team.team_id || ''}`,
+                  team_key:
+                    team.team_key || `461.l.${leagueKey.split('.')[2]}.t.${team.team_id || ''}`,
                   name: team.name,
                   team_logos: team.team_logos,
                   league_key: leagueKey, // Tag the team with which league it came from
