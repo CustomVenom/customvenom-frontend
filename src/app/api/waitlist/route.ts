@@ -7,13 +7,13 @@ const waitlist = new Set<string>();
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? '127.0.0.1';
-    const ipAddress = typeof ip === 'string' ? ip.split(',')[0].trim() : '127.0.0.1';
+    // Rate limiting - get IP from headers
+    const forwarded = request.headers.get('x-forwarded-for');
+    const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
 
-    const rateLimitResult = await checkRateLimit(ipAddress);
+    const { success } = await checkRateLimit(ip);
 
-    if (!rateLimitResult.success) {
+    if (!success) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 },
@@ -32,19 +32,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for duplicate (silent success)
-    const emailLower = email.toLowerCase().trim();
-    if (waitlist.has(emailLower)) {
+    if (waitlist.has(email.toLowerCase())) {
       return NextResponse.json({ success: true });
     }
 
     // Add to waitlist
-    waitlist.add(emailLower);
+    waitlist.add(email.toLowerCase());
 
     // Log the signup (for now, just console)
     console.log('[Waitlist]', {
-      email: emailLower,
-      name: name || 'N/A',
-      platform: platform || 'N/A',
+      email,
+      name,
+      platform,
       timestamp: new Date().toISOString(),
     });
 
@@ -59,4 +58,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
