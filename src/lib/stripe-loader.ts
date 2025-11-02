@@ -25,4 +25,3 @@ export function getStripe(): Promise<Stripe | null> {
 
   return stripePromise;
 }
-

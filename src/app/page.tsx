@@ -1,77 +1,41 @@
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table';
-import { Tooltip } from '@/components/ui/Tooltip';
+import { WaitlistForm } from '@/components/WaitlistForm';
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button>Primary</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="subtle">Subtle</Button>
-        <Tooltip content="Confidence >= 0.65">
-          <Badge intent="positive">Reason: Market Delta</Badge>
-        </Tooltip>
-      </div>
+    <div className="min-h-screen bg-[#0A0F0B] text-[#E6F2EA]">
+      {/* Hero section */}
+      <section className="container mx-auto px-6 py-20 text-center max-w-6xl">
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Pick Your Poison</h1>
+        <p className="text-xl md:text-2xl text-[#9AB9A7] mb-16">
+          Lineup advice with receipts. Ranges, two clear reasons, and a trust badge on every
+          result.
+        </p>
 
-      <div className="card p-4">
-        <h2 className="mb-3 text-lg font-semibold">Projections (demo)</h2>
-        <Table>
-          <THead>
-            <tr>
-              <Th>Player</Th>
-              <Th>Baseline</Th>
-              <Th>Range</Th>
-              <Th>Chips</Th>
-            </tr>
-          </THead>
-          <TBody>
-            <Tr>
-              <Td>Player A</Td>
-              <Td>15.2</Td>
-              <Td>13.0–17.8</Td>
-              <Td>
-                <Badge intent="positive">Usage ↑</Badge>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>Player B</Td>
-              <Td>12.1</Td>
-              <Td>10.4–14.3</Td>
-              <Td>
-                <Badge intent="warning">Volatility</Badge>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>Player C</Td>
-              <Td>18.7</Td>
-              <Td>16.2–21.4</Td>
-              <Td>
-                <Badge intent="neutral">Matchup OK</Badge>
-              </Td>
-            </Tr>
-          </TBody>
-        </Table>
-      </div>
-
-      <div className="card p-4">
-        <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-          Component Demo
-        </h3>
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <Badge intent="positive">Positive</Badge>
-            <Badge intent="warning">Warning</Badge>
-            <Badge intent="danger">Danger</Badge>
-            <Badge intent="neutral">Neutral</Badge>
+        {/* Value props */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
+            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Floor/Median/Ceiling</h3>
+            <p className="text-sm text-[#9AB9A7]">
+              See the full range, not just a misleading single number
+            </p>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm">Small Button</Button>
-            <Button size="md">Medium Button</Button>
+          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
+            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Confidence-Gated Reasons</h3>
+            <p className="text-sm text-[#9AB9A7]">
+              Max 2 driver chips per player, only when confidence ≥ 0.65
+            </p>
+          </div>
+          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
+            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Trust-First Transparency</h3>
+            <p className="text-sm text-[#9AB9A7]">
+              schema_version + last_refresh on every result
+            </p>
           </div>
         </div>
-      </div>
+
+        {/* Waitlist form */}
+        <WaitlistForm />
+      </section>
     </div>
   );
 }

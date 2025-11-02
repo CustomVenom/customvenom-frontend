@@ -11,7 +11,10 @@ export default function Footer() {
           <OpsStatus />
         </div>
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-3">
-          <Link href="/ops" className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] transition-colors">
+          <Link
+            href="/ops"
+            className="hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] transition-colors"
+          >
             Ops
           </Link>
           <Link
