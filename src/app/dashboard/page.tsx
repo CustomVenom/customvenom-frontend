@@ -399,12 +399,12 @@ export default function DashboardPage() {
               aria-label="Select team"
               type="button"
             >
-              <span className="flex-1 text-left truncate">
+              <span className="flex-1 text-left truncate text-gray-900">
                 {!mounted
                   ? 'Loading...'
                   : displayTeams.length === 0
                     ? 'Select Your Team'
-                    : selectedTeamName}
+                    : selectedTeamName || 'Select Your Team'}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
@@ -426,17 +426,25 @@ export default function DashboardPage() {
             {teamsDropdownOpen && (
               <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                 {/* Teams list - only shows user-owned teams */}
-                {displayTeams.map((team) => (
-                  <button
-                    key={team.team_key}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectTeam(team.team_key);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 text-left ${
-                      selectedTeam === team.team_key ? 'bg-blue-50' : ''
-                    }`}
-                  >
+                {displayTeams.map((team) => {
+                  console.log('[DROPDOWN DEBUG] Rendering team:', {
+                    team_key: team.team_key,
+                    name: team.name,
+                    hasName: !!team.name,
+                    nameLength: team.name?.length,
+                  });
+                  return (
+                    <button
+                      key={team.team_key}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('[DROPDOWN DEBUG] Clicking team:', team);
+                        handleSelectTeam(team.team_key);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 text-left ${
+                        selectedTeam === team.team_key ? 'bg-blue-50' : ''
+                      }`}
+                    >
                     {team.team_logos?.[0]?.url && (
                       <img
                         src={team.team_logos[0].url}
@@ -444,8 +452,8 @@ export default function DashboardPage() {
                         className="w-8 h-8 rounded shrink-0"
                       />
                     )}
-                    <span className="flex-1 text-sm truncate">
-                      {team.name}
+                    <span className="flex-1 text-sm truncate text-gray-900">
+                      {team.name || `Team ${team.team_key}`}
                       {team.is_owner && ' ⭐'}
                     </span>
                     {selectedTeam === team.team_key && (
@@ -462,7 +470,8 @@ export default function DashboardPage() {
                       </svg>
                     )}
                   </button>
-                ))}
+                  );
+                })}
 
                 {displayTeams.length === 0 && teams.length === 0 && (
                   <div className="p-4 text-center text-sm text-gray-500">No teams available</div>
