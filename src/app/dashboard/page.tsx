@@ -90,9 +90,25 @@ export default function DashboardPage() {
   // Filter teams by ownership
   // If user has no owned teams, show all teams by default (fallback)
   const myTeamsCount = teams.filter((t) => t.is_owner).length;
+  // Always show all teams if none are marked as owned (fallback)
   const shouldShowAll = myTeamsCount === 0 ? true : showAllTeams;
   const filteredTeams = shouldShowAll ? teams : teams.filter((t) => t.is_owner);
   const hasOtherTeams = myTeamsCount > 0 && myTeamsCount < teams.length;
+
+  // IMPORTANT: Ensure dropdown always has teams to show
+  // If filtering resulted in empty array, fallback to showing all teams
+  const displayTeams = filteredTeams.length > 0 ? filteredTeams : teams;
+
+  // Debug: Log filtering details
+  useEffect(() => {
+    console.log('[FILTER DEBUG]', {
+      totalTeams: teams.length,
+      myTeamsCount,
+      isOwnerFlags: teams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
+      shouldShowAll,
+      filteredCount: filteredTeams.length,
+    });
+  }, [teams, myTeamsCount, shouldShowAll, filteredTeams.length]);
 
   // Debug logging for filtering
   useEffect(() => {
@@ -183,13 +199,22 @@ export default function DashboardPage() {
                   name: string;
                   team_logos?: Array<{ url: string }>;
                   is_owner?: boolean;
-                }) => ({
-                  team_key: team.team_key, // Yahoo API provides team_key directly
-                  name: team.name,
-                  team_logos: team.team_logos,
-                  league_key: leagueKey, // Tag the team with which league it came from
-                  is_owner: team.is_owner ?? false,
-                }),
+                }) => {
+                  // Debug: Log the raw team object to see what properties Yahoo returns
+                  console.log('[DEBUG] Raw team from API:', {
+                    team_key: team.team_key,
+                    name: team.name,
+                    is_owner: team.is_owner,
+                    full_team: team,
+                  });
+                  return {
+                    team_key: team.team_key, // Yahoo API provides team_key directly
+                    name: team.name,
+                    team_logos: team.team_logos,
+                    league_key: leagueKey, // Tag the team with which league it came from
+                    is_owner: team.is_owner ?? false,
+                  };
+                },
               );
 
               console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams.length, 'teams');
@@ -369,6 +394,7 @@ export default function DashboardPage() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('[BUTTON DEBUG] Button clicked!', {
+                  displayTeamsLength: displayTeams.length,
                   filteredTeamsLength: filteredTeams.length,
                   teamsLength: teams.length,
                   teamsDropdownOpen,
@@ -378,7 +404,7 @@ export default function DashboardPage() {
                   return !prev;
                 });
               }}
-              disabled={filteredTeams.length === 0}
+              disabled={displayTeams.length === 0}
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-xs font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
               aria-label="Select team"
               type="button"
@@ -386,7 +412,7 @@ export default function DashboardPage() {
               <span className="flex-1 text-left truncate">
                 {!mounted
                   ? 'Loading...'
-                  : filteredTeams.length === 0
+                  : displayTeams.length === 0
                     ? 'Select Your Team'
                     : selectedTeamName}
               </span>
@@ -428,7 +454,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Teams list */}
-                {filteredTeams.map((team) => (
+                {displayTeams.map((team) => (
                   <button
                     key={team.team_key}
                     onClick={(e) => {
