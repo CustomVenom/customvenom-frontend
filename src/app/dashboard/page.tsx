@@ -43,7 +43,7 @@ export default function DashboardPage() {
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [showAllTeams, setShowAllTeams] = useState(false);
+  // Removed showAllTeams toggle - we only show user-owned teams
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
@@ -87,35 +87,31 @@ export default function DashboardPage() {
   const isConnected = Boolean(me?.guid);
 
   // ===== FILTERING LOGIC =====
-  // Filter teams by ownership
-  const myTeamsCount = teams.filter((t) => t.is_owner).length;
-  // Show all teams by default, or filter to "my teams" if user toggles and has owned teams
-  const displayTeams = myTeamsCount > 0 && !showAllTeams ? teams.filter((t) => t.is_owner) : teams;
-  const hasOtherTeams = myTeamsCount > 0 && myTeamsCount < teams.length;
+  // Show only user-owned teams in the dropdown
+  const ownedTeams = teams.filter((t) => t.is_owner === true);
+  const displayTeams = ownedTeams.length > 0 ? ownedTeams : teams; // Fallback to all teams if ownership detection fails
 
   // Debug: Log filtering details
   useEffect(() => {
     console.log('[FILTER DEBUG]', {
       totalTeams: teams.length,
-      myTeamsCount,
+      ownedTeamsCount: ownedTeams.length,
       isOwnerFlags: teams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
-      showAllTeams,
       displayTeamsCount: displayTeams.length,
     });
-  }, [teams, myTeamsCount, showAllTeams, displayTeams.length]);
+  }, [teams, ownedTeams.length, displayTeams.length]);
 
-  // Debug logging for filtering
+  // Debug logging for button state
   useEffect(() => {
     console.log('[BUTTON STATE DEBUG]', {
       teamsLength: teams.length,
-      myTeamsCount,
-      showAllTeams,
+      ownedTeamsCount: ownedTeams.length,
       displayTeamsLength: displayTeams.length,
       buttonDisabled: displayTeams.length === 0,
       isConnected,
       mounted,
     });
-  }, [teams.length, displayTeams.length, showAllTeams, myTeamsCount, isConnected, mounted]);
+  }, [teams.length, ownedTeams.length, displayTeams.length, isConnected, mounted]);
 
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
@@ -390,8 +386,7 @@ export default function DashboardPage() {
                 console.log('[BUTTON DEBUG] Button clicked!', {
                   displayTeamsLength: displayTeams.length,
                   teamsLength: teams.length,
-                  myTeamsCount,
-                  showAllTeams,
+                  ownedTeamsCount: ownedTeams.length,
                   teamsDropdownOpen,
                 });
                 setTeamsDropdownOpen((prev) => {
@@ -430,25 +425,7 @@ export default function DashboardPage() {
 
             {teamsDropdownOpen && (
               <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                {/* Toggle button at top if user has other teams */}
-                {hasOtherTeams && (
-                  <div className="p-2 border-b border-gray-200">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowAllTeams(!showAllTeams);
-                      }}
-                      className="w-full px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded"
-                    >
-                      {showAllTeams
-                        ? `My teams only (${myTeamsCount})`
-                        : `View all teams (${teams.length})`}
-                    </button>
-                  </div>
-                )}
-
-                {/* Teams list */}
+                {/* Teams list - only shows user-owned teams */}
                 {displayTeams.map((team) => (
                   <button
                     key={team.team_key}
