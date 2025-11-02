@@ -7,7 +7,7 @@ import { LeagueContextHeader } from '@/components/LeagueContextHeader';
 import { LeaguePageHeader } from '@/components/LeaguePageHeader';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
-import { Badge } from '@/components/ui/badge';
+import Badge from '@/components/Badge';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
 
 interface EnrichedPlayer {

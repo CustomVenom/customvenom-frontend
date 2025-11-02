@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Badge } from '@/components/ui/badge';
+import Badge from '@/components/Badge';
 
 interface ProviderStatusProps {
   provider: 'yahoo' | 'sleeper' | 'espn';

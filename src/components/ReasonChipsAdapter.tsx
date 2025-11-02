@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge';
+import Badge from '@/components/Badge';
 import { toReasonChips } from '@/lib/reasons/adapter';
 
 export function ReasonChipsAdapter({ reasons }: { reasons: unknown }) {
