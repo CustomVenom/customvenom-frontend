@@ -272,7 +272,8 @@ export default function DashboardPage() {
 
   // ===== DERIVED STATE =====
 
-  const selectedTeamObj = selectedTeam ? teams.find((t) => t.team_key === selectedTeam) : null;
+  // Only compute selectedTeamName when teams are loaded to prevent hydration mismatch
+  const selectedTeamObj = selectedTeam && teams.length > 0 ? teams.find((t) => t.team_key === selectedTeam) : null;
   const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
 
   // ===== RENDER =====
@@ -323,11 +324,9 @@ export default function DashboardPage() {
               type="button"
             >
               <span className="flex-1 text-left truncate text-gray-900">
-                {!mounted
-                  ? 'Loading...'
-                  : displayTeams.length === 0
-                    ? 'Select Your Team'
-                    : selectedTeamName || 'Select Your Team'}
+                {displayTeams.length === 0
+                  ? 'Select Your Team'
+                  : selectedTeamName || 'Select Your Team'}
               </span>
               <svg
                 className={`w-3 h-3 transition-transform shrink-0 ${
