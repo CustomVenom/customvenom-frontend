@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import DensityToggle from '@/components/DensityToggle';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table';
 

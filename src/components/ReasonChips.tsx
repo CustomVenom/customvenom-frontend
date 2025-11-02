@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import { clampReasons, Reason } from '@/lib/reasonsClamp';
 
 // Re-export Reason type for convenience

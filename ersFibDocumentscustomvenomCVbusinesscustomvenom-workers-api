@@ -1,0 +1,5 @@
+[33mf1d5d5e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: remove duplicate isConnected declaration and fix TypeScript errors
+[33m8fdabb1[m feat: refactor team selector to use bulk /providers/yahoo/leagues endpoint - Replace per-league fetches with single bulk call - Add is_owner field support from backend - Add showAllTeams toggle per league - Filter teams to show user's teams by default - Update UI to group by league with select dropdowns - Update handleSelectTeam to use league_id and team_id - Fixes league mismatch issues
+[33m9522b46[m style: prettier formatting for team selection debug logs
+[33m9b209cd[m debug: add validation and fallback for league key mismatch - Log all teams with their league_key tags - Validate team.league_key matches team_key structure - Fallback to extracted league_key if mismatch detected - Helps diagnose why team 274391.t.11 sends league 728197
+[33m4147ea2[m fix: comment out TrustSnapshot until data available - TrustSnapshot requires ts, ver, stale props - Will wire up later when /health or other endpoint provides these values
