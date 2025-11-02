@@ -26,7 +26,7 @@ export default function DesignPreviewPage() {
             <div className="flex gap-2">
               <Button>Primary</Button>
               <Button variant="outline">Outline</Button>
-              <Button variant="subtle">Subtle</Button>
+              <Button variant="secondary">Subtle</Button>
             </div>
           </div>
 
