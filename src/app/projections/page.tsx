@@ -27,9 +27,7 @@ const ImportantDecisionsStrip = dynamic(
 
 const UncertaintyBand = dynamic(() => import('@/components/UncertaintyBand'), {
   ssr: false,
-  loading: () => (
-    <div className="h-12 bg-gray-100 dark:bg-gray-800 rounded animate-pulse" />
-  ),
+  loading: () => <div className="h-12 bg-gray-100 dark:bg-gray-800 rounded animate-pulse" />,
 });
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { type Entitlements } from '@/lib/entitlements';
@@ -216,9 +214,35 @@ function ProjectionsPageInner() {
       )}
 
       {/* Projections Table */}
-      <div className="mb-8">
-        <ProjectionsTable rows={filteredRows} />
-      </div>
+      {filteredRows.length > 0 ? (
+        <div className="mb-8">
+          <ProjectionsTable rows={filteredRows} />
+        </div>
+      ) : (
+        <div className="text-center py-12" role="status" aria-live="polite">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {rows.length === 0
+              ? 'No projections available for this week.'
+              : `No ${selectedPosition === 'ALL' ? '' : selectedPosition} players found.`}
+          </p>
+          {rows.length === 0 && (
+            <button
+              onClick={() => setSelectedWeek('2025-09')}
+              className="px-4 py-2 text-primary-600 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg min-h-[44px] border border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            >
+              View demo data
+            </button>
+          )}
+          {rows.length > 0 && selectedPosition !== 'ALL' && (
+            <button
+              onClick={() => setSelectedPosition('ALL')}
+              className="px-4 py-2 text-primary-600 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg min-h-[44px] border border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            >
+              Show all positions
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Sample Uncertainty Band (could be added to table rows on hover or expand) */}
       {filteredRows.length > 0 && (
