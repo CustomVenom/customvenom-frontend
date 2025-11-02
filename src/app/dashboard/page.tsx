@@ -231,41 +231,17 @@ export default function DashboardPage() {
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
-      // Find the team object to get its league_key
-      const team = teams.find((t) => t.team_key === teamKey);
-
-      if (!team) {
-        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
+      // Extract league key directly from team key to ensure they always match
+      // Team key format: "461.l.728197.t.11"
+      // League key format: "461.l.728197"
+      const parts = teamKey.split('.');
+      if (parts.length !== 5 || parts[1] !== 'l' || parts[3] !== 't') {
+        console.error('[handleSelectTeam] Invalid team key format:', teamKey);
         return;
       }
 
-      const leagueKey = team.league_key;
-
-      // Validate that league_key matches the team_key structure
-      const expectedLeagueKey = teamKey.split('.t.')[0];
-      if (leagueKey !== expectedLeagueKey) {
-        // Use the extracted league_key from team_key as fallback
-        const correctedLeagueKey = expectedLeagueKey;
-
-        const res = await fetch(`${API_BASE}/api/session/selection`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ teamKey, leagueKey: correctedLeagueKey }),
-        });
-
-        if (res.ok) {
-          setSelectedTeam(teamKey);
-          setSelection({ league_key: correctedLeagueKey || null });
-          setTeamsDropdownOpen(false);
-          window.dispatchEvent(
-            new CustomEvent('team-selected', {
-              detail: { teamKey, leagueKey: correctedLeagueKey },
-            }),
-          );
-        }
-        return;
-      }
+      // Extract "461.l.728197" from "461.l.728197.t.11"
+      const leagueKey = parts.slice(0, 3).join('.');
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
