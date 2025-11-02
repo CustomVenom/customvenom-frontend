@@ -84,10 +84,10 @@ export default function ImportantDecisionsStrip({
   }
 
   const actionColors: Record<string, string> = {
-    START: 'bg-green-100 text-green-800 border-green-300',
-    SIT: 'bg-red-100 text-red-800 border-red-300',
-    ADD: 'bg-blue-100 text-blue-800 border-blue-300',
-    DROP: 'bg-orange-100 text-orange-800 border-orange-300',
+    START: 'bg-success/10 text-success border-success/30',
+    SIT: 'bg-danger/10 text-danger border-danger/30',
+    ADD: 'bg-primary-100 text-primary-700 border-primary-300',
+    DROP: 'bg-warning/10 text-warning border-warning/30',
   };
 
   return (
@@ -99,13 +99,14 @@ export default function ImportantDecisionsStrip({
         </span>
       </div>
 
-      <div className="overflow-x-auto pb-4">
-        <div className="flex gap-4 min-w-max">
+      <div className="overflow-x-auto pb-4" role="region" aria-label="Important decisions">
+        <div className="flex flex-col md:flex-row gap-4 min-w-max md:min-w-0">
           {decisions.map((decision, idx) => (
             <button
               key={idx}
               onClick={() => onDecisionClick?.(decision)}
-              className="flex-shrink-0 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-all hover:shadow-lg hover:-translate-y-1 text-left"
+              aria-label={`${decision.action} ${decision.player_name} - ${decision.position} for ${decision.team}`}
+              className="flex-shrink-0 w-full md:w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-all hover:shadow-card hover:-translate-y-1 text-left focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px]"
             >
               {/* Action badge */}
               <div

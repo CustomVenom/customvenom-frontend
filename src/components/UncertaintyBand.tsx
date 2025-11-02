@@ -21,9 +21,9 @@ export default function UncertaintyBand({
 
   // Color based on confidence (yellow for low, green for high)
   const getConfidenceColor = (conf: number): string => {
-    if (conf >= 0.8) return 'bg-green-500';
-    if (conf >= 0.7) return 'bg-blue-500';
-    if (conf >= 0.65) return 'bg-yellow-500';
+    if (conf >= 0.8) return 'bg-success';
+    if (conf >= 0.7) return 'bg-primary-500';
+    if (conf >= 0.65) return 'bg-warning';
     return 'bg-gray-400';
   };
 

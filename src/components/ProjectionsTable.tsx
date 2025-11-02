@@ -112,20 +112,42 @@ export default function ProjectionsTable({ rows }: Props) {
       </div>
 
       <div className="overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="w-full text-sm">
+        <table
+          role="table"
+          aria-label="Player projections"
+          className="w-full text-sm"
+        >
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="sticky-first text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300">
+              <th
+                scope="col"
+                className="sticky-first text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300"
+              >
                 Player
               </th>
-              {colsToRender.map((c) => (
-                <th
-                  key={c.key}
-                  className={`text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300 ${
-                    c.mobileHide ? 'hide-sm' : ''
-                  } ${c.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700' : ''}`}
-                  onClick={() => c.sortable && handleSort(c.key)}
-                >
+                     {colsToRender.map((c) => (
+                       <th
+                         key={c.key}
+                         scope="col"
+                         aria-sort={
+                           sortConfig.key === c.key
+                             ? sortConfig.direction === 'asc'
+                               ? 'ascending'
+                               : 'descending'
+                             : 'none'
+                         }
+                         className={`text-left px-3 py-2 font-medium text-gray-700 dark:text-gray-300 ${
+                           c.mobileHide ? 'hide-sm' : ''
+                         } ${c.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500' : ''}`}
+                         onClick={() => c.sortable && handleSort(c.key)}
+                         onKeyDown={(e) => {
+                           if (c.sortable && (e.key === 'Enter' || e.key === ' ')) {
+                             e.preventDefault();
+                             handleSort(c.key);
+                           }
+                         }}
+                         tabIndex={c.sortable ? 0 : -1}
+                       >
                   <div className="flex items-center gap-1">
                     {c.label}
                     {c.sortable && sortConfig.key === c.key && (
@@ -144,15 +166,15 @@ export default function ProjectionsTable({ rows }: Props) {
                   key={i}
                   className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
-                  <td className="sticky-first px-3 py-2">
-                    <button
-                      className="text-brand-primary dark:text-brand-accent font-medium underline hover:no-underline"
-                      onClick={() => openDrawer(r)}
-                      aria-label={`Open ${r.player_name} details`}
-                    >
-                      {r.player_name ?? r.player_id}
-                    </button>
-                  </td>
+                         <td className="sticky-first px-3 py-2">
+                           <button
+                             className="text-brand-primary dark:text-brand-accent font-medium underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-1"
+                             onClick={() => openDrawer(r)}
+                             aria-label={`Open ${r.player_name} details`}
+                           >
+                             {r.player_name ?? r.player_id}
+                           </button>
+                         </td>
 
                   {visible['team'] !== false && (
                     <td

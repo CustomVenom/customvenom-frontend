@@ -440,6 +440,22 @@ table tr > td {
 }
 
 /* Sticky first column for tables - dark only */
+/* CLS fixes - reserve space for dynamic content */
+.trust-badge-container {
+  min-height: 2rem;
+}
+
+.projections-table-container {
+  min-height: 600px;
+}
+
+/* Image sizing to prevent CLS */
+img {
+  width: auto;
+  height: auto;
+}
+
+/* Sticky first column for mobile table scrolling */
 .sticky-first {
   position: sticky;
   left: 0;

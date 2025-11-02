@@ -171,7 +171,7 @@ const config = {
           900: '#064e3b',
         },
         success: '#16a34a',
-        warn: '#f59e0b',
+        warning: '#f59e0b',
         danger: '#ef4444',
       },
       borderRadius: {
