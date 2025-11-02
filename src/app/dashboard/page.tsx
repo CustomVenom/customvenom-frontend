@@ -141,6 +141,12 @@ export default function DashboardPage() {
         const allTeams: Team[] = [];
         const leagueKeys = leagues.league_keys;
 
+        // TypeScript null check
+        if (!leagueKeys || leagueKeys.length === 0) {
+          console.log('[DEBUG] No league keys found');
+          return;
+        }
+
         console.log('[DEBUG] Starting to load teams from', leagueKeys.length, 'leagues');
 
         // Fetch teams for each league individually (more reliable than bulk endpoint)
