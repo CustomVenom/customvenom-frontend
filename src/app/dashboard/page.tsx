@@ -156,29 +156,31 @@ export default function DashboardPage() {
               const leagueId = league.league_id;
               const leagueKey = `461.l.${leagueId}`;
 
-              for (const team of league.teams) {
-                allTeams.push({
-                  team_key: `461.l.${leagueId}.t.${team.team_id}`,
-                  name: team.name,
-                  team_logos: team.team_logos,
-                  league_key: leagueKey,
-                  is_owner: team.is_owner ?? false,
-                });
-              }
+              console.log('[DEBUG] Fetching teams for league:', leagueKey);
+
+              // Tag each team with its league_key
+              const taggedTeams = league.teams.map((team) => ({
+                team_key: `461.l.${leagueId}.t.${team.team_id}`,
+                name: team.name,
+                team_logos: team.team_logos,
+                league_key: leagueKey, // Tag the team with which league it came from
+                is_owner: team.is_owner ?? false,
+              }));
+
+              console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams);
+              allTeams.push(...taggedTeams);
             }
           }
 
-          // Debug logging
-          console.log('[TEAMS DEBUG] Total teams loaded:', allTeams.length);
+          console.log('[DEBUG] Total teams loaded:', allTeams.length);
           console.log(
-            '[TEAMS DEBUG] Teams with is_owner=true:',
-            allTeams.filter((t) => t.is_owner).length,
+            '[DEBUG] Teams by league:',
+            allTeams.reduce((acc, team) => {
+              acc[team.league_key] = (acc[team.league_key] || 0) + 1;
+              return acc;
+            }, {} as Record<string, number>),
           );
-          console.log('[TEAMS DEBUG] Sample team:', allTeams[0]);
-          console.log(
-            '[TEAMS DEBUG] All teams:',
-            allTeams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
-          );
+          console.log('[DEBUG] All teams:', allTeams);
 
           setTeams(allTeams);
         } else {
@@ -235,63 +237,17 @@ export default function DashboardPage() {
   const handleSelectTeam = async (teamKey: string) => {
     try {
       console.log('[handleSelectTeam] Called with teamKey:', teamKey);
-      console.log('[handleSelectTeam] Current teams array length:', teams.length);
-      console.log(
-        '[handleSelectTeam] All teams:',
-        teams.map((t) => ({ team_key: t.team_key, league_key: t.league_key, name: t.name })),
-      );
 
-      // Find the team object to get its league_key (more reliable than parsing team_key string)
+      // Find the team object to get its tagged league_key
       const team = teams.find((t) => t.team_key === teamKey);
+
       if (!team) {
-        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
-        console.error(
-          '[handleSelectTeam] Available team_keys:',
-          teams.map((t) => t.team_key),
-        );
+        console.error('[handleSelectTeam] Team not found:', teamKey);
         return;
       }
 
-      const leagueKey = team.league_key;
-
-      // Validate that league_key matches the team_key structure
-      const expectedLeagueKey = teamKey.split('.t.')[0];
-      if (leagueKey !== expectedLeagueKey) {
-        console.error('[handleSelectTeam] LEAGUE KEY MISMATCH DETECTED!', {
-          teamKey,
-          teamLeagueKey: leagueKey,
-          expectedLeagueKey,
-          teamObject: team,
-        });
-        // Use the extracted league_key from team_key as fallback
-        const correctedLeagueKey = expectedLeagueKey;
-        console.log('[handleSelectTeam] Using corrected leagueKey:', correctedLeagueKey);
-
-        const res = await fetch(`${API_BASE}/api/session/selection`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ teamKey, leagueKey: correctedLeagueKey }),
-        });
-
-        // ... rest of the code
-        if (res.ok) {
-          setSelectedTeam(teamKey);
-          setSelection({ league_key: correctedLeagueKey || null });
-          setTeamsDropdownOpen(false);
-          window.dispatchEvent(
-            new CustomEvent('team-selected', {
-              detail: { teamKey, leagueKey: correctedLeagueKey },
-            }),
-          );
-        } else {
-          const responseBody = await res.json();
-          console.error('[handleSelectTeam] Failed after correction:', responseBody);
-        }
-        return;
-      }
-
-      console.log('[handleSelectTeam] Found team:', { teamKey, leagueKey, teamName: team.name });
+      const leagueKey = team.league_key; // Use the tagged league_key
+      console.log('[handleSelectTeam] Using tagged leagueKey:', leagueKey);
       console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
@@ -310,17 +266,16 @@ export default function DashboardPage() {
         setSelection({ league_key: leagueKey || null });
         setTeamsDropdownOpen(false);
 
-        // Dispatch event for other components that might listen
         window.dispatchEvent(
           new CustomEvent('team-selected', {
             detail: { teamKey, leagueKey },
           }),
         );
       } else {
-        console.error('[handleSelectTeam] Failed to save team selection, status:', res.status);
+        console.error('Failed to save team selection, status:', res.status);
       }
     } catch (e) {
-      console.error('[handleSelectTeam] Failed to save team:', e);
+      console.error('Failed to save team:', e);
     }
   };
 
