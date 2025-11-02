@@ -36,12 +36,10 @@ export default function ConnectLeague() {
     if (inFlight.current) return;
     inFlight.current = true;
 
-    console.log('[ConnectLeague] probeSession: starting...');
     setStatus('verifying');
 
     try {
       const url = `${API}/yahoo/me`;
-      console.log('[ConnectLeague] probeSession: fetching', url);
 
       const r = await fetch(url, {
         method: 'GET',
@@ -50,17 +48,13 @@ export default function ConnectLeague() {
         headers: { Accept: 'application/json' },
       });
 
-      console.log('[ConnectLeague] probeSession: response status', r.status);
-
       // Treat 401 as normal "signed out" state
       if (!r.ok) {
-        console.log('[ConnectLeague] probeSession: not connected (status', r.status, ')');
         setStatus('disconnected');
         return;
       }
 
       const data = (await r.json().catch(() => ({}) as YahooMeResponse)) as YahooMeResponse;
-      console.log('[ConnectLeague] probeSession: user data', data);
 
       // Extract GUID with Yahoo shape fallback
       const guid =
@@ -68,7 +62,6 @@ export default function ConnectLeague() {
 
       // If no GUID, treat as disconnected
       if (!guid) {
-        console.log('[ConnectLeague] probeSession: no GUID found');
         setStatus('disconnected');
         return;
       }
@@ -76,7 +69,6 @@ export default function ConnectLeague() {
       // Valid GUID found
       setGuid(guid);
       setStatus('connected');
-      console.log('[ConnectLeague] probeSession: connected as', guid);
 
       // Load leagues only after confirmed connection
       try {
@@ -132,8 +124,6 @@ export default function ConnectLeague() {
     setBusy(true);
     const ret = encodeURIComponent('/dashboard');
     const redirectUrl = `${API}/api/connect/start?host=yahoo&from=${ret}`;
-    console.log('[ConnectLeague] Redirecting to:', redirectUrl);
-    console.log('[ConnectLeague] API base:', API);
     window.location.href = redirectUrl;
   }
 
@@ -148,7 +138,6 @@ export default function ConnectLeague() {
   useEffect(() => {
     if (probeOnce.current) return;
     probeOnce.current = true;
-    console.log('[ConnectLeague] Probing session...');
     void probeSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

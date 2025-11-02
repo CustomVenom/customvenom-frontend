@@ -91,28 +91,6 @@ export default function DashboardPage() {
   const ownedTeams = teams.filter((t) => t.is_owner === true);
   const displayTeams = ownedTeams.length > 0 ? ownedTeams : teams; // Fallback to all teams if ownership detection fails
 
-  // Debug: Log filtering details
-  useEffect(() => {
-    console.log('[FILTER DEBUG]', {
-      totalTeams: teams.length,
-      ownedTeamsCount: ownedTeams.length,
-      isOwnerFlags: teams.map((t) => ({ name: t.name, is_owner: t.is_owner })),
-      displayTeamsCount: displayTeams.length,
-    });
-  }, [teams, ownedTeams.length, displayTeams.length]);
-
-  // Debug logging for button state
-  useEffect(() => {
-    console.log('[BUTTON STATE DEBUG]', {
-      teamsLength: teams.length,
-      ownedTeamsCount: ownedTeams.length,
-      displayTeamsLength: displayTeams.length,
-      buttonDisabled: displayTeams.length === 0,
-      isConnected,
-      mounted,
-    });
-  }, [teams.length, ownedTeams.length, displayTeams.length, isConnected, mounted]);
-
   // ===== EFFECT: Load saved team selection =====
   useEffect(() => {
     if (!isConnected) return;
@@ -149,33 +127,21 @@ export default function DashboardPage() {
 
         // TypeScript null check
         if (!leagueKeys || leagueKeys.length === 0) {
-          console.log('[DEBUG] No league keys found');
           return;
         }
-
-        console.log('[DEBUG] Starting to load teams from', leagueKeys.length, 'leagues');
 
         // Fetch teams for each league individually (more reliable than bulk endpoint)
         for (const leagueKey of leagueKeys) {
           if (typeof leagueKey !== 'string') {
-            console.warn('[DEBUG] Skipping invalid league key:', leagueKey);
             continue;
           }
 
           try {
-            console.log('[DEBUG] Fetching teams for league:', leagueKey);
-
             const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/teams?format=json`, {
               credentials: 'include',
             });
 
             if (!res.ok) {
-              console.error(
-                '[DEBUG] Failed to fetch teams for',
-                leagueKey,
-                '- status:',
-                res.status,
-              );
               continue;
             }
 
@@ -190,13 +156,6 @@ export default function DashboardPage() {
                   team_logos?: Array<{ url: string }>;
                   is_owner?: boolean;
                 }) => {
-                  // Debug: Log the raw team object to see what properties Yahoo returns
-                  console.log('[DEBUG] Raw team from API:', {
-                    team_key: team.team_key,
-                    name: team.name,
-                    is_owner: team.is_owner,
-                    full_team: team,
-                  });
                   return {
                     team_key: team.team_key, // Yahoo API provides team_key directly
                     name: team.name,
@@ -207,37 +166,17 @@ export default function DashboardPage() {
                 },
               );
 
-              console.log('[DEBUG] Tagged teams from', leagueKey, ':', taggedTeams.length, 'teams');
               allTeams.push(...taggedTeams);
-            } else {
-              console.warn('[DEBUG] No teams array in response for', leagueKey, ':', data);
             }
           } catch (leagueError) {
-            console.error('[DEBUG] Error fetching teams for', leagueKey, ':', leagueError);
             // Continue with next league even if one fails
+            console.error('Error fetching teams for league:', leagueError);
           }
         }
 
-        console.log('[DEBUG] Total teams loaded:', allTeams.length);
-        if (allTeams.length > 0) {
-          console.log(
-            '[DEBUG] Teams by league:',
-            allTeams.reduce(
-              (acc, team) => {
-                acc[team.league_key] = (acc[team.league_key] || 0) + 1;
-                return acc;
-              },
-              {} as Record<string, number>,
-            ),
-          );
-        } else {
-          console.warn('[DEBUG] WARNING: No teams loaded from any league!');
-        }
-        console.log('[DEBUG] All teams:', allTeams);
-
         setTeams(allTeams);
       } catch (e) {
-        console.error('[DEBUG] Failed to load teams:', e);
+        console.error('Failed to load teams:', e);
         setTeams([]);
       }
     };
@@ -292,19 +231,42 @@ export default function DashboardPage() {
 
   const handleSelectTeam = async (teamKey: string) => {
     try {
-      console.log('[handleSelectTeam] Called with teamKey:', teamKey);
-
-      // Find the team object to get its tagged league_key
+      // Find the team object to get its league_key
       const team = teams.find((t) => t.team_key === teamKey);
 
       if (!team) {
-        console.error('[handleSelectTeam] Team not found:', teamKey);
+        console.error('[handleSelectTeam] Team not found in teams array:', teamKey);
         return;
       }
 
-      const leagueKey = team.league_key; // Use the tagged league_key
-      console.log('[handleSelectTeam] Using tagged leagueKey:', leagueKey);
-      console.log('[handleSelectTeam] About to POST:', { teamKey, leagueKey });
+      const leagueKey = team.league_key;
+
+      // Validate that league_key matches the team_key structure
+      const expectedLeagueKey = teamKey.split('.t.')[0];
+      if (leagueKey !== expectedLeagueKey) {
+        // Use the extracted league_key from team_key as fallback
+        const correctedLeagueKey = expectedLeagueKey;
+
+        const res = await fetch(`${API_BASE}/api/session/selection`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ teamKey, leagueKey: correctedLeagueKey }),
+        });
+
+        if (res.ok) {
+          setSelectedTeam(teamKey);
+          setSelection({ league_key: correctedLeagueKey || null });
+          setTeamsDropdownOpen(false);
+          window.dispatchEvent(
+            new CustomEvent('team-selected', {
+              detail: { teamKey, leagueKey: correctedLeagueKey },
+            }),
+          );
+        }
+        return;
+      }
+>>>>>>> e17321b (chore: remove debug console.log statements from team selector and Yahoo GUID code)
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -312,10 +274,6 @@ export default function DashboardPage() {
         credentials: 'include',
         body: JSON.stringify({ teamKey, leagueKey }),
       });
-
-      console.log('[handleSelectTeam] POST response status:', res.status);
-      const responseBody = await res.json();
-      console.log('[handleSelectTeam] POST response body:', responseBody);
 
       if (res.ok) {
         setSelectedTeam(teamKey);
@@ -339,18 +297,6 @@ export default function DashboardPage() {
 
   const selectedTeamObj = selectedTeam ? teams.find((t) => t.team_key === selectedTeam) : null;
   const selectedTeamName = selectedTeamObj?.name || 'Select Your Team';
-
-  // Debug: Log what we're displaying
-  useEffect(() => {
-    if (selectedTeam) {
-      console.log('[DEBUG] Selected team lookup:', {
-        selectedTeam,
-        teamsCount: teams.length,
-        foundTeam: selectedTeamObj,
-        selectedTeamName,
-      });
-    }
-  }, [selectedTeam, teams, selectedTeamObj, selectedTeamName]);
 
   // ===== RENDER =====
 
