@@ -99,7 +99,7 @@ export function mapApiProjectionToRow(
     team: apiProj.team || '',
     position: apiProj.position || '',
     range: { p10: floor, p50: median, p90: ceiling },
-    confidence: apiProj.confidence,
+    confidence: apiProj.confidence ?? 0.5,
     explanations,
     schema_version: schemaVersion,
     last_refresh: lastRefresh,
