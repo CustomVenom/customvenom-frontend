@@ -492,7 +492,7 @@ export default function DashboardPage() {
                   </button>
                 ))}
 
-                {filteredTeams.length === 0 && (
+                {displayTeams.length === 0 && teams.length === 0 && (
                   <div className="p-4 text-center text-sm text-gray-500">No teams available</div>
                 )}
               </div>
