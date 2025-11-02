@@ -13,13 +13,6 @@ interface Team {
   is_owner?: boolean;
 }
 
-interface Player {
-  player_key: string;
-  name: { full: string };
-  display_position: string;
-  editorial_team_abbr: string;
-}
-
 interface YahooMeResponse {
   guid?: string;
   auth_required?: boolean;
@@ -29,11 +22,6 @@ interface YahooMeResponse {
 interface YahooLeaguesResponse {
   league_keys?: string[];
   auth_required?: boolean;
-  error?: string;
-}
-
-interface YahooRosterResponse {
-  roster?: Player[];
   error?: string;
 }
 
@@ -51,7 +39,6 @@ export default function DashboardPage() {
   const [leagues, setLeagues] = useState<YahooLeaguesResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [roster, setRoster] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
@@ -204,42 +191,6 @@ export default function DashboardPage() {
 
     loadAllTeams();
   }, [isConnected, API_BASE]);
-
-  // ===== EFFECT: Load roster when team selected =====
-  useEffect(() => {
-    if (!selectedTeam) {
-      setRoster([]);
-      return;
-    }
-
-    const loadRoster = async () => {
-      try {
-        const res = await fetch(
-          `${API_BASE}/yahoo/roster?team_key=${encodeURIComponent(selectedTeam)}`,
-          {
-            credentials: 'include',
-          },
-        );
-
-        if (res.ok) {
-          const data: YahooRosterResponse = await res.json();
-          if (data?.roster && Array.isArray(data.roster)) {
-            setRoster(data.roster);
-          } else {
-            setRoster([]);
-          }
-        } else {
-          console.error('Failed to load roster, status:', res.status);
-          setRoster([]);
-        }
-      } catch (e) {
-        console.error('Failed to load roster:', e);
-        setRoster([]);
-      }
-    };
-
-    loadRoster();
-  }, [selectedTeam, API_BASE]);
 
   // ===== EFFECT: Click outside to close dropdown =====
   useEffect(() => {
@@ -530,46 +481,29 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Roster display */}
-        {selectedTeam && roster.length > 0 && (
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Your Roster</h2>
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700">Player</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700">Position</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700">Team</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {roster.map((player) => (
-                    <tr key={player.player_key} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                        {player.name.full}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded">
-                          {player.display_position}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {player.editorial_team_abbr}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        {/* Call to action - View Roster */}
+        {selectedTeam && (
+          <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900">
+              Ready to view your roster?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              You've selected <strong>{selectedTeamName}</strong>. View your full roster with
+              projections.
+            </p>
+            <a
+              href="/league/roster"
+              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium shadow-sm transition-colors"
+            >
+              View Your Roster →
+            </a>
           </div>
         )}
 
-        {/* Empty roster state */}
-        {selectedTeam && roster.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-2">No roster data available</p>
-            <p className="text-sm text-gray-500">Try refreshing or selecting a different team</p>
+        {/* No team selected state */}
+        {!selectedTeam && isConnected && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+            <p className="text-gray-600">Select a team above to get started</p>
           </div>
         )}
       </div>

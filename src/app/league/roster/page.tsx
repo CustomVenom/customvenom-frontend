@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { LeaguePageHeader } from '@/components/LeaguePageHeader';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
@@ -100,6 +101,28 @@ function RosterPageClient() {
   const isPro = session?.user?.role === 'pro';
   const connected = !!session?.user;
 
+  // Early return if not connected - redirect to dashboard
+  if (!loading && !connected) {
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-4">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+            No League Connected
+          </h2>
+          <p className="text-blue-700 dark:text-blue-300 mb-4">
+            Connect your fantasy league on the Dashboard to view your roster with projections.
+          </p>
+          <a
+            href="/dashboard"
+            className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Dashboard →
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4">
@@ -116,49 +139,45 @@ function RosterPageClient() {
     );
   }
 
-  if (error || !connected) {
+  if (error) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Roster</h1>
-        <div className="mb-6">
-          <ProviderStatus provider="yahoo" connected={connected} />
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
+            Failed to Load Roster
+          </h2>
+          <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+          <button
+            onClick={loadRoster}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
         </div>
-        {!connected ? (
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-              Connect Yahoo to View Roster
-            </h2>
-            <p className="text-yellow-700 dark:text-yellow-300">
-              Please connect your Yahoo Fantasy account to view your roster with projections.
-            </p>
-            <a
-              href="/settings"
-              className="mt-4 inline-block px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-            >
-              Connect Yahoo
-            </a>
-          </div>
-        ) : (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
-              Failed to Load Roster
-            </h2>
-            <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
-            <button
-              onClick={loadRoster}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        )}
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Roster</h1>
+      <Breadcrumb
+        items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Roster', href: '/league/roster' },
+        ]}
+      />
+
+      {/* Header with Change Team button */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Roster</h1>
+        <a
+          href="/dashboard"
+          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          ← Change Team
+        </a>
+      </div>
 
       <div className="mb-6">
         <ProviderStatus provider="yahoo" connected={connected} />

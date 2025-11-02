@@ -125,7 +125,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
     if (!teamKey) {
       return NextResponse.json(
-        { error: 'No team found. Please connect Yahoo and select a league.' },
+        { error: 'No team found. Please connect your league and select a team.' },
         { status: 404 },
       );
     }

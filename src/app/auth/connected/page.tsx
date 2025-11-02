@@ -9,9 +9,9 @@
             <span className="text-2xl">✓</span>
           </div>
           <div>
-            <h2 className="text-2xl font-bold">Yahoo Connected</h2>
+            <h2 className="text-2xl font-bold">League Connected</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              You can now access your Yahoo profile and leagues
+              You can now access your profile and leagues
             </p>
           </div>
         </div>
@@ -30,7 +30,7 @@
                   /yahoo/me
                 </a>
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
-                  — Your Yahoo profile
+                  — Your profile
                 </span>
               </li>
               <li>
@@ -43,7 +43,7 @@
                   /yahoo/leagues
                 </a>
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
-                  — Your fantasy leagues
+                  — Your leagues
                 </span>
               </li>
             </ul>
