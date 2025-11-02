@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting - get IP from headers
     const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
+    const ip = (forwarded?.split(',')[0] ?? '127.0.0.1').trim();
 
     const { success } = await checkRateLimit(ip);
 
@@ -25,10 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Validate email
     if (!email || !email.includes('@')) {
-      return NextResponse.json(
-        { error: 'Valid email is required' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
     }
 
     // Check for duplicate (silent success)
@@ -52,9 +49,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[Waitlist Error]', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
