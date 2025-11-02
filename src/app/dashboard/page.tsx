@@ -43,8 +43,7 @@ export default function DashboardPage() {
   const [teamsDropdownOpen, setTeamsDropdownOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  // Default to showing all teams - if user has owned teams, they can toggle to "my teams only"
-  const [showAllTeams, setShowAllTeams] = useState(true);
+  const [showAllTeams, setShowAllTeams] = useState(false);
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
