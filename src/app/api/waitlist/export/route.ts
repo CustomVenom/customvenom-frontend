@@ -1,31 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
 
 export async function GET(_request: NextRequest) {
   try {
-    // Get all emails from the set
-    const emails = (await kv.smembers('waitlist:emails')) as string[];
+    const redis = createClient({ url: process.env.REDIS_URL });
+    await redis.connect();
 
-    if (!emails || emails.length === 0) {
-      return NextResponse.json({ count: 0, signups: [] });
+    try {
+      const emails = await redis.sMembers('waitlist:emails');
+
+      if (!emails || emails.length === 0) {
+        await redis.quit();
+        return NextResponse.json({ count: 0, signups: [] });
+      }
+
+      const signups = await Promise.all(
+        emails.map(async (email) => await redis.hGetAll(`waitlist:${email}`)),
+      );
+
+      await redis.quit();
+
+      return NextResponse.json({
+        count: signups.length,
+        signups: signups.filter((s) => s && Object.keys(s).length > 0),
+      });
+    } catch (redisError) {
+      await redis.quit();
+      throw redisError;
     }
-
-    // Fetch details for each email
-    const signups = await Promise.all(
-      emails.map(async (email) => {
-        const details = await kv.hgetall(`waitlist:${email}`);
-        return details;
-      }),
-    );
-
-    return NextResponse.json({
-      count: signups.length,
-      signups: signups.filter(Boolean), // Remove any null entries
-    });
   } catch (error) {
     console.error('[Waitlist Export Error]', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
