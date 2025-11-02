@@ -266,7 +266,6 @@ export default function DashboardPage() {
         }
         return;
       }
->>>>>>> e17321b (chore: remove debug console.log statements from team selector and Yahoo GUID code)
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
