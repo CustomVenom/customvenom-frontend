@@ -27,12 +27,9 @@ export async function POST(request: NextRequest) {
     const emailLower = email.toLowerCase();
 
     // Connect to Redis
-    const redisUrl = process.env.REDIS_URL;
+    const redisUrl = process.env['REDIS_URL'];
     if (!redisUrl) {
-      return NextResponse.json(
-        { error: 'Redis configuration missing' },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: 'Redis configuration missing' }, { status: 500 });
     }
 
     const redis = createClient({ url: redisUrl });
