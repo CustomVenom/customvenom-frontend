@@ -265,30 +265,46 @@ export default function DashboardPage() {
   // ===== STATE 1: NOT CONNECTED =====
   if (!isConnected) {
     return (
-      <div className="container max-w-4xl mx-auto py-12">
-        <div className="text-center space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-            <p className="text-muted-foreground text-lg">
-              Connect your fantasy league to get started
-            </p>
-          </div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container max-w-2xl mx-auto py-12 px-4">
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100">
+                Connect Your Fantasy League
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+                Get personalized AI-powered projections, lineup recommendations, and waiver wire insights for your team.
+              </p>
+            </div>
 
-          <div className="flex justify-center">
-            <ConnectLeagueButton />
-          </div>
+            <div className="flex justify-center pt-4">
+              <ConnectLeagueButton />
+            </div>
 
-          <div className="pt-8 max-w-md mx-auto">
-            <div className="rounded-lg border bg-card p-6">
-              <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                What you'll get:
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li>✓ AI-powered projections for your roster</li>
-                <li>✓ Start/Sit recommendations</li>
-                <li>✓ FAAB budget optimization</li>
-                <li>✓ Waiver wire analysis</li>
-              </ul>
+            <div className="pt-8 max-w-md mx-auto">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+                <h3 className="font-semibold mb-4 text-lg text-gray-900 dark:text-gray-100">
+                  What you'll get:
+                </h3>
+                <ul className="space-y-3 text-left text-sm text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start">
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
+                    <span>AI-powered projections for your roster</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
+                    <span>Start/Sit recommendations</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
+                    <span>FAAB budget optimization</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
+                    <span>Waiver wire analysis</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -490,8 +506,13 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick Metrics (Optional) */}
-        <DashboardMetrics />
+        {/* Quick Metrics - Only show if team selected */}
+        {selectedTeam && (
+          <DashboardMetrics
+            teamKey={selectedTeam}
+            leagueKey={selectedTeamObj?.league_key || null}
+          />
+        )}
 
         {/* Navigation Cards - Main Feature */}
         <NavigationCards />
