@@ -59,7 +59,7 @@ export type ApiProjectionsResponse = {
 export function mapExplanationToReason(explanation: ApiExplanation): Reason {
   // Extract delta from text if present (e.g., "+3.4%" or "-2.1%")
   const deltaMatch = explanation.text.match(/[+-]?(\d+\.?\d*)%/);
-  const deltaPoints = deltaMatch ? parseFloat(deltaMatch[1]) / 100 : 0;
+  const deltaPoints = deltaMatch && deltaMatch[1] ? parseFloat(deltaMatch[1]) / 100 : 0;
 
   // Extract component/icon from type or text
   const componentMap: Record<string, string> = {
