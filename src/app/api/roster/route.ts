@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.customvenom.com';
+const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
 interface YahooPlayer {
   player_key: string;
@@ -48,7 +48,7 @@ function getCurrentNFLWeek(): string {
   const startOfSeason = new Date(year, 8, 1); // Sept 1
 
   const weeksSinceStart = Math.floor(
-    (now.getTime() - startOfSeason.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    (now.getTime() - startOfSeason.getTime()) / (7 * 24 * 60 * 60 * 1000),
   );
 
   const nflWeek = Math.max(1, Math.min(18, weeksSinceStart + 1));
