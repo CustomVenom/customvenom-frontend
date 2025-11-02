@@ -229,7 +229,7 @@ export async function GET(req: NextRequest): Promise<Response> {
     // Step 5: Enrich roster with mappings and projections
     const enrichedPlayers: EnrichedPlayer[] = players.map((player) => {
       const yahooIdParts = player.player_key.split('.');
-      const yahooId = yahooIdParts[yahooIdParts.length - 1];
+      const yahooId = yahooIdParts[yahooIdParts.length - 1] || '';
       const nflverseId = mappings[yahooId] || null;
       const mapped = !!nflverseId;
 
