@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Users, TrendingUp, Target, DollarSign, BarChart3, AlertCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const navigationItems = [
   {
