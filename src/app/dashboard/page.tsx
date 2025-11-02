@@ -159,7 +159,7 @@ export default function DashboardPage() {
               console.log('[DEBUG] Fetching teams for league:', leagueKey);
 
               // Tag each team with its league_key
-              const taggedTeams = league.teams.map((team) => ({
+              const taggedTeams = league.teams.map((team: { team_id: number; name: string; team_logos?: Array<{ url: string }>; is_owner?: boolean }) => ({
                 team_key: `461.l.${leagueId}.t.${team.team_id}`,
                 name: team.name,
                 team_logos: team.team_logos,
@@ -175,10 +175,13 @@ export default function DashboardPage() {
           console.log('[DEBUG] Total teams loaded:', allTeams.length);
           console.log(
             '[DEBUG] Teams by league:',
-            allTeams.reduce((acc, team) => {
-              acc[team.league_key] = (acc[team.league_key] || 0) + 1;
-              return acc;
-            }, {} as Record<string, number>),
+            allTeams.reduce(
+              (acc, team) => {
+                acc[team.league_key] = (acc[team.league_key] || 0) + 1;
+                return acc;
+              },
+              {} as Record<string, number>,
+            ),
           );
           console.log('[DEBUG] All teams:', allTeams);
 
