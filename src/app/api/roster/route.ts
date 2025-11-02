@@ -31,7 +31,7 @@ interface EnrichedPlayer {
   nflverse_id: string | null;
   projected_points: number | null;
   mapped: boolean;
-  confidence?: number;
+  confidence?: number | undefined;
 }
 
 /**
