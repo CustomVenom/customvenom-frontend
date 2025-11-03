@@ -3,7 +3,7 @@
 import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { RosterViewer } from '@/components/roster/RosterViewer';
-import { useSelectedLeague } from '@/lib/selection';
+// Removed useSelectedLeague import - we use direct POST instead of setSelection
 import { useEffect, useState } from 'react';
 
 // ===== TYPE DEFINITIONS =====
@@ -37,7 +37,7 @@ interface SessionSelectionResponse {
 // ===== MAIN COMPONENT =====
 
 export default function DashboardPage() {
-  const { setSelection } = useSelectedLeague();
+  // Removed setSelection - we use direct POST instead to avoid redundant calls
   const [me, setMe] = useState<YahooMeResponse | null>(null);
   const [leagues, setLeagues] = useState<YahooLeaguesResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
