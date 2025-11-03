@@ -1,6 +1,9 @@
 ﻿// NextAuth.js configuration
 // Supports Google, Yahoo, Twitter (X), Facebook social login, and email/password
 
+// CRITICAL: Import types FIRST to ensure AdapterUser extensions are loaded
+import '@/types/next-auth';
+
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
@@ -131,7 +134,7 @@ export const authOptions = {
       // Initial sign in
       if (user) {
         token.id = user.id;
-        
+
         // For adapter users (OAuth), fetch tier/role from database
         // For credentials provider, user already has tier/role
         if ('tier' in user && 'role' in user) {

@@ -2,7 +2,8 @@ import { DefaultUser } from 'next-auth';
 import type { UserTier, UserRole } from '@prisma/client';
 import 'next-auth/jwt';
 
-// Extend the adapter's AdapterUser type (@auth/core/adapters - used by PrismaAdapter)
+// CRITICAL: Extend @auth/core/adapters.AdapterUser (used by PrismaAdapter from @auth/prisma-adapter)
+// This must be declared BEFORE any imports that use the adapter
 declare module '@auth/core/adapters' {
   interface AdapterUser {
     tier: UserTier;
@@ -10,7 +11,7 @@ declare module '@auth/core/adapters' {
   }
 }
 
-// Extend next-auth's AdapterUser type (next-auth/adapters)
+// CRITICAL: Extend next-auth/adapters.AdapterUser (for NextAuth's adapter type)
 declare module 'next-auth/adapters' {
   interface AdapterUser {
     tier: UserTier;
