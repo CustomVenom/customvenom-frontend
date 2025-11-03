@@ -110,7 +110,7 @@ npx prisma migrate deploy
 If issues occur:
 
 1. **Revert via Vercel**: Previous deployment is available in Vercel dashboard
-2. **Revert via Git**: 
+2. **Revert via Git**:
    ```bash
    git revert <commit-hash>
    git push origin main
