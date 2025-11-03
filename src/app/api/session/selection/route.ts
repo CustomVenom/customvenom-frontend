@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
 
 export async function GET(request: NextRequest) {
-  const url = `${API_BASE}/session/selection`;
+  const url = `${API_BASE}/api/session/selection`;
   const init: RequestInit = {
     method: 'GET',
     headers: { 'content-type': 'application/json', cookie: request.headers.get('cookie') || '' },
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const url = `${API_BASE}/session/selection`;
+  const url = `${API_BASE}/api/session/selection`;
   const body = await request.text();
   const init: RequestInit = {
     method: 'POST',
