@@ -4,6 +4,7 @@ import { useSelectedLeague } from '@/lib/selection';
 import { useEffect, useState } from 'react';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
+import { RosterViewer } from '@/components/roster/RosterViewer';
 
 // ===== TYPE DEFINITIONS =====
 
@@ -425,97 +426,152 @@ export default function DashboardPage() {
             {/* Team selector dropdown */}
             <div className="relative" data-team-selector>
               <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setTeamsDropdownOpen((prev) => !prev);
-              }}
-              disabled={displayTeams.length === 0}
-              className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
-              aria-label="Select team"
-              type="button"
-            >
-              <span className="flex-1 text-left truncate text-gray-100">
-                {displayTeams.length === 0
-                  ? 'Select Your Team'
-                  : selectedTeamName || 'Select Your Team'}
-              </span>
-              <svg
-                className={`w-3 h-3 transition-transform shrink-0 ${
-                  teamsDropdownOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setTeamsDropdownOpen((prev) => !prev);
+                }}
+                disabled={displayTeams.length === 0}
+                className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+                aria-label="Select team"
+                type="button"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+                <span className="flex-1 text-left truncate text-gray-100">
+                  {displayTeams.length === 0
+                    ? 'Select Your Team'
+                    : selectedTeamName || 'Select Your Team'}
+                </span>
+                <svg
+                  className={`w-3 h-3 transition-transform shrink-0 ${
+                    teamsDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
 
               {teamsDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                {displayTeams.map((team) => (
-                  <button
-                    key={team.team_key}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectTeam(team.team_key);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
-                      selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
-                    }`}
-                  >
-                    {team.team_logos?.[0]?.url && (
-                      <img
-                        src={team.team_logos[0].url}
-                        alt=""
-                        className="w-8 h-8 rounded shrink-0"
-                      />
-                    )}
-                    <span className="flex-1 text-sm truncate text-gray-100">
-                      {team.name || `Team ${team.team_key}`}
-                      {team.is_owner && ' ⭐'}
-                    </span>
-                    {selectedTeam === team.team_key && (
-                      <svg
-                        className="w-5 h-5 text-venom-500 shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
+                  {displayTeams.map((team) => (
+                    <button
+                      key={team.team_key}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectTeam(team.team_key);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
+                        selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
+                      }`}
+                    >
+                      {team.team_logos?.[0]?.url && (
+                        <img
+                          src={team.team_logos[0].url}
+                          alt=""
+                          className="w-8 h-8 rounded shrink-0"
                         />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                      )}
+                      <span className="flex-1 text-sm truncate text-gray-100">
+                        {team.name || `Team ${team.team_key}`}
+                        {team.is_owner && ' ⭐'}
+                      </span>
+                      {selectedTeam === team.team_key && (
+                        <svg
+                          className="w-5 h-5 text-venom-500 shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
 
-                {displayTeams.length === 0 && teams.length === 0 && (
-                  <div className="p-4 text-center text-sm text-gray-400">
-                    No teams available
-                  </div>
-                )}
-              </div>
-            )}
+                  {displayTeams.length === 0 && teams.length === 0 && (
+                    <div className="p-4 text-center text-sm text-gray-400">
+                      No teams available
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Quick Metrics - Only show if team selected */}
-            {selectedTeam && (
-            <DashboardMetrics
-              teamKey={selectedTeam}
-              leagueKey={selectedTeamObj?.league_key || null}
-            />
-          )}
+          {/* Information-focused grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column (primary info) */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Roster Preview */}
+              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                <h2 className="text-lg font-semibold text-gray-100 mb-3">Roster</h2>
+                <div className="bg-field-900/40 rounded-lg p-2">
+                  <RosterViewer />
+                </div>
+              </div>
 
-          {/* Dashboard content will be added here */}
+              {/* League Standings (placeholder) */}
+              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                <h2 className="text-lg font-semibold text-gray-100 mb-3">League Standings</h2>
+                <p className="text-sm text-gray-400">Standings will appear here.</p>
+              </div>
+
+              {/* Player News (placeholder) */}
+              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                <h2 className="text-lg font-semibold text-gray-100 mb-3">Player News</h2>
+                <p className="text-sm text-gray-400">Latest news and injuries will appear here.</p>
+              </div>
+            </div>
+
+            {/* Right column (quick stats) */}
+            <div className="space-y-6">
+              {/* Quick Stats */}
+              {selectedTeam && (
+                <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                  <h2 className="text-lg font-semibold text-gray-100 mb-3">Team Stats</h2>
+                  <DashboardMetrics
+                    teamKey={selectedTeam}
+                    leagueKey={selectedTeamObj?.league_key || null}
+                  />
+                </div>
+              )}
+
+              {/* Matchup Preview (placeholder) */}
+              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                <h2 className="text-lg font-semibold text-gray-100 mb-3">This Week's Matchup</h2>
+                <p className="text-sm text-gray-400">Your matchup preview will appear here.</p>
+              </div>
+
+              {/* Quick Links */}
+              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                <h2 className="text-lg font-semibold text-gray-100 mb-3">Quick Links</h2>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/decisions">Decisions</a>
+                  </li>
+                  <li>
+                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/start-sit">Start/Sit</a>
+                  </li>
+                  <li>
+                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/faab">FAAB</a>
+                  </li>
+                  <li>
+                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/players">Players</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
