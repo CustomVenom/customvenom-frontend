@@ -43,6 +43,7 @@ interface RosterResponse {
 /**
  * Calculate current NFL week
  * Season starts Sept 1, weeks 1-18
+ * Returns the most recent week with data available (week 9 as of Nov 3, 2025)
  */
 function getCurrentNFLWeek(): string {
   const now = new Date();
@@ -53,7 +54,9 @@ function getCurrentNFLWeek(): string {
     (now.getTime() - startOfSeason.getTime()) / (7 * 24 * 60 * 60 * 1000),
   );
 
-  const nflWeek = Math.max(1, Math.min(18, weeksSinceStart + 1));
+  // Don't add 1 - weeksSinceStart already gives us the current week
+  // But cap at week 9 for now since that's the latest week we have projection data for
+  const nflWeek = Math.max(1, Math.min(9, weeksSinceStart));
 
   return `${year}-${String(nflWeek).padStart(2, '0')}`;
 }
