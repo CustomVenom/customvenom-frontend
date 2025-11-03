@@ -229,7 +229,8 @@ export default function DashboardPage() {
 
       if (res.ok) {
         setSelectedTeam(teamKey);
-        setSelection({ league_key: leagueKey || null, team_key: teamKey || null });
+        // Don't call setSelection - it makes a redundant POST. The direct POST above already saved the selection.
+        // The selection context will sync from the server on next fetch.
         setTeamsDropdownOpen(false);
 
         window.dispatchEvent(
