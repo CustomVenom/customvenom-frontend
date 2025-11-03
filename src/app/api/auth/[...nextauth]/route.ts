@@ -1,3 +1,6 @@
+// CRITICAL: Load type extensions before NextAuth initialization
+import '@/types/next-auth';
+
 import NextAuth from 'next-auth';
 
 import { authOptions } from '../../../../lib/auth';
