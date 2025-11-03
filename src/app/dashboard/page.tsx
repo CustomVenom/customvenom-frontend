@@ -218,6 +218,7 @@ export default function DashboardPage() {
       // Use the league_key we tagged when fetching teams
       // This is the correct league the team was fetched from
       const leagueKey = team.league_key;
+      console.log('[handleSelectTeam]', { teamKey, leagueKey, teamName: team.name });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -242,6 +243,16 @@ export default function DashboardPage() {
     } catch (e) {
       console.error('Failed to save team:', e);
     }
+  };
+
+  // ===== HELPER: Get league name from league_key =====
+  const getLeagueName = (leagueKey: string): string => {
+    // Simple mapping for now - could be enhanced to fetch from API
+    if (leagueKey === '461.l.274391') return 'Quest For Sacco';
+    if (leagueKey === '461.l.728197') return 'Beer Drinkers';
+    // Fallback: extract league ID from key
+    const match = leagueKey.match(/\.l\.(\d+)/);
+    return match ? `League ${match[1]}` : leagueKey;
   };
 
   // ===== DERIVED STATE =====
@@ -336,6 +347,13 @@ export default function DashboardPage() {
                 aria-label="Select team"
                 type="button"
               >
+                {selectedTeamObj?.team_logos?.[0]?.url && (
+                  <img
+                    src={selectedTeamObj.team_logos[0].url}
+                    alt=""
+                    className="w-6 h-6 rounded shrink-0"
+                  />
+                )}
                 <span className="flex-1 text-left truncate text-gray-100">
                   {displayTeams.length === 0
                     ? 'Select Your Team'
@@ -359,7 +377,7 @@ export default function DashboardPage() {
               </button>
 
               {teamsDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                <div className="absolute right-0 mt-2 w-80 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                   {displayTeams.map((team) => (
                     <button
                       key={team.team_key}
@@ -367,7 +385,7 @@ export default function DashboardPage() {
                         e.stopPropagation();
                         handleSelectTeam(team.team_key);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
+                      className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-field-700 text-left transition-colors ${
                         selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
                       }`}
                     >
@@ -378,10 +396,14 @@ export default function DashboardPage() {
                           className="w-8 h-8 rounded shrink-0"
                         />
                       )}
-                      <span className="flex-1 text-sm truncate text-gray-100">
-                        {team.name || `Team ${team.team_key}`}
-                        {team.is_owner && ' ⭐'}
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate text-gray-100">
+                          {team.name || `Team ${team.team_key}`}
+                        </div>
+                        <div className="text-xs text-gray-400 truncate">
+                          {team.league_key ? getLeagueName(team.league_key) : 'Unknown League'}
+                        </div>
+                      </div>
                       {selectedTeam === team.team_key && (
                         <svg
                           className="w-5 h-5 text-venom-500 shrink-0"
@@ -436,6 +458,13 @@ export default function DashboardPage() {
                 aria-label="Select team"
                 type="button"
               >
+                {selectedTeamObj?.team_logos?.[0]?.url && (
+                  <img
+                    src={selectedTeamObj.team_logos[0].url}
+                    alt=""
+                    className="w-6 h-6 rounded shrink-0"
+                  />
+                )}
                 <span className="flex-1 text-left truncate text-gray-100">
                   {displayTeams.length === 0
                     ? 'Select Your Team'
@@ -459,7 +488,7 @@ export default function DashboardPage() {
               </button>
 
               {teamsDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                <div className="absolute right-0 mt-2 w-80 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                   {displayTeams.map((team) => (
                     <button
                       key={team.team_key}
@@ -467,7 +496,7 @@ export default function DashboardPage() {
                         e.stopPropagation();
                         handleSelectTeam(team.team_key);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
+                      className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-field-700 text-left transition-colors ${
                         selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
                       }`}
                     >
@@ -478,10 +507,14 @@ export default function DashboardPage() {
                           className="w-8 h-8 rounded shrink-0"
                         />
                       )}
-                      <span className="flex-1 text-sm truncate text-gray-100">
-                        {team.name || `Team ${team.team_key}`}
-                        {team.is_owner && ' ⭐'}
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate text-gray-100">
+                          {team.name || `Team ${team.team_key}`}
+                        </div>
+                        <div className="text-xs text-gray-400 truncate">
+                          {team.league_key ? getLeagueName(team.league_key) : 'Unknown League'}
+                        </div>
+                      </div>
                       {selectedTeam === team.team_key && (
                         <svg
                           className="w-5 h-5 text-venom-500 shrink-0"
