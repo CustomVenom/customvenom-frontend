@@ -10,7 +10,7 @@ const tabs = [
   { href: '/dashboard/decisions', label: 'Decisions' },
   { href: '/dashboard/start-sit', label: 'Start/Sit' },
   { href: '/dashboard/faab', label: 'FAAB' },
-  { href: '/dashboard/waivers', label: 'Players' },
+  { href: '/dashboard/players', label: 'Players' },
 ];
 
 export function ToolsTabs() {

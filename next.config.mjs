@@ -13,7 +13,7 @@ const nextConfig = {
       },
       {
         source: '/league/waivers',
-        destination: '/dashboard/waivers',
+        destination: '/dashboard/players',
         permanent: true,
       },
       {
@@ -21,11 +21,11 @@ const nextConfig = {
         destination: '/dashboard/:path*',
         permanent: true,
       },
-      // Redirect old waivers route to new location
+      // Redirect old waivers route to consolidated players
       {
-        source: '/dashboard/players',
-        destination: '/dashboard/waivers',
-        permanent: false,
+        source: '/dashboard/waivers',
+        destination: '/dashboard/players',
+        permanent: true,
       },
     ];
   },
