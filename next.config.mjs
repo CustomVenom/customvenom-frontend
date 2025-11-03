@@ -21,6 +21,12 @@ const nextConfig = {
         destination: '/dashboard/:path*',
         permanent: true,
       },
+      // Redirect old waivers route to new location
+      {
+        source: '/dashboard/players',
+        destination: '/dashboard/waivers',
+        permanent: false,
+      },
     ];
   },
   webpack: (config) => {
