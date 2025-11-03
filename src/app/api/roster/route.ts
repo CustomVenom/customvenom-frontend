@@ -62,14 +62,14 @@ export async function GET(request: NextRequest) {
   try {
     // Forward cookies to backend
     const cookieHeader = request.headers.get('cookie') || '';
-    
+
     // Support teamKey query parameter (optional - falls back to cookie)
     const teamKey = request.nextUrl.searchParams.get('teamKey');
 
-    const rosterUrl = teamKey 
+    const rosterUrl = teamKey
       ? `${API_BASE}/yahoo/roster?team_key=${encodeURIComponent(teamKey)}`
       : `${API_BASE}/yahoo/roster`;
-    
+
     const response = await fetch(rosterUrl, {
       headers: {
         Cookie: cookieHeader,
