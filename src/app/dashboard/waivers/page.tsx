@@ -1,12 +1,12 @@
-'use client';
-
+import { getServerSession } from '@/lib/auth-helpers';
 import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
 import { ToolPageHeader } from '@/components/ToolPageHeader';
-import { useSession } from 'next-auth/react';
 
-export default function WaiversPage() {
-  const { data: session } = useSession();
+export const dynamic = 'force-dynamic';
+
+export default async function WaiversPage() {
+  const session = await getServerSession();
   const isPro = session?.user?.tier === 'VIPER' || session?.user?.tier === 'MAMBA';
 
   return (
