@@ -2,6 +2,22 @@ import { DefaultUser } from 'next-auth';
 import type { UserTier, UserRole } from '@prisma/client';
 import 'next-auth/jwt';
 
+// Extend the adapter's AdapterUser type (@auth/core/adapters - used by PrismaAdapter)
+declare module '@auth/core/adapters' {
+  interface AdapterUser {
+    tier: UserTier;
+    role: UserRole;
+  }
+}
+
+// Extend next-auth's AdapterUser type (next-auth/adapters)
+declare module 'next-auth/adapters' {
+  interface AdapterUser {
+    tier: UserTier;
+    role: UserRole;
+  }
+}
+
 declare module 'next-auth' {
   interface Session {
     user: NonNullable<Session['user']> & {
