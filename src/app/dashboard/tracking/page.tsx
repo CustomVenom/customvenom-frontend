@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { WeeklyTrackingTable } from '@/components/tracking/WeeklyTrackingTable';
 import { useEffect, useState } from 'react';
 
@@ -40,8 +41,16 @@ export default function TrackingPage() {
       {loading ? (
         <div className="text-center py-8 text-gray-500">Loading...</div>
       ) : !teamKey ? (
-        <div className="text-center py-8 text-gray-500">
-          Please select a team from your dashboard to view tracking data.
+        <div className="text-center py-12 space-y-4">
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            Please select a team from your dashboard to view tracking data.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-block text-primary-600 dark:text-primary-400 hover:underline"
+          >
+            Go to Dashboard →
+          </Link>
         </div>
       ) : (
         <WeeklyTrackingTable teamKey={teamKey} />
