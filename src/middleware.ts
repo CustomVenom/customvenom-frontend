@@ -32,6 +32,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Redirect legacy /league/* routes to /dashboard/*
+  if (pathname.startsWith('/league/')) {
+    const newPath = pathname.replace('/league/', '/dashboard/')
+    return NextResponse.redirect(new URL(newPath, request.url))
+  }
+
   // Yahoo OAuth routes - always allow (preserve existing functionality)
   if (pathname.startsWith('/api/yahoo') || pathname.startsWith('/api/oauth/yahoo')) {
     return NextResponse.next()

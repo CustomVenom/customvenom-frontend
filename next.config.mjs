@@ -4,6 +4,25 @@ const nextConfig = {
   // Temporarily bypass Next's built-in ESLint during build;
   // run ESLint via pre-commit or a separate CI step.
   eslint: { ignoreDuringBuilds: true },
+  async redirects() {
+    return [
+      {
+        source: '/league/roster',
+        destination: '/dashboard/roster',
+        permanent: true,
+      },
+      {
+        source: '/league/waivers',
+        destination: '/dashboard/waivers',
+        permanent: true,
+      },
+      {
+        source: '/league/:path*',
+        destination: '/dashboard/:path*',
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config) => {
     config.ignoreWarnings = [
       {

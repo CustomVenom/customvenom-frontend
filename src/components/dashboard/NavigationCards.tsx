@@ -24,7 +24,7 @@ const quickLinks = [
   {
     value: 'waivers',
     label: 'Waivers',
-    href: '/league/waivers',
+    href: '/dashboard/waivers',
   },
 ];
 

@@ -253,7 +253,7 @@ function LeaguesTab() {
     <Card variant="dashboard">
       <h3 className="text-lg font-semibold mb-4 text-white">Connected Leagues</h3>
       <p className="text-gray-400">
-        Connect your Yahoo leagues to get personalized projections and insights.
+        Connect your fantasy leagues to get personalized projections and insights.
       </p>
       <Button variant="primary" className="mt-4">
         <LinkIcon className="h-4 w-4 mr-2" />

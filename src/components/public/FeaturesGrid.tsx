@@ -20,7 +20,7 @@ const features = [
   {
     icon: Zap,
     title: 'Live Roster Integration',
-    description: 'Connect your Yahoo league and see projections tailored to your team. Start/sit decisions made easy.'
+    description: 'Connect your fantasy league and see projections tailored to your team. Start/sit decisions made easy.'
   }
 ]
 

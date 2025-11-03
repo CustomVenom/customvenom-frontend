@@ -11,7 +11,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const mainLinks = [
   { href: '/dashboard', label: 'Dashboard' },
-  { href: '/league/roster', label: 'Roster' },
+  { href: '/dashboard/roster', label: 'Roster' },
   { href: '/projections', label: 'Projections' },
 ];
 
@@ -19,7 +19,7 @@ const toolsLinks = [
   { href: '/dashboard/decisions', label: 'Important Decisions' },
   { href: '/dashboard/start-sit', label: 'Start/Sit' },
   { href: '/dashboard/faab', label: 'FAAB Helper' },
-  { href: '/league/waivers', label: 'Waivers' },
+  { href: '/dashboard/waivers', label: 'Waivers' },
 ];
 
 export default function Header() {
