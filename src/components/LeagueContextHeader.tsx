@@ -37,13 +37,7 @@ export function LeagueContextHeader({
           <span className="text-gray-600 dark:text-gray-400">{scoringType}</span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm">
-              Change Team
-            </Button>
-          </Link>
-        </div>
+        {/* Removed redundant Change Team button for cleaner UX */}
       </div>
     </div>
   );
