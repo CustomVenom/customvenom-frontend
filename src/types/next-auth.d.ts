@@ -6,7 +6,7 @@ declare module 'next-auth' {
   interface Session {
     user: NonNullable<Session['user']> & {
       id: string;
-      // Design System v2.0 - New enum system
+      // Design System v2.0 - New enum system (required in session after JWT callback)
       tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
       role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
       // Legacy role (backward compatibility - optional)
@@ -20,9 +20,9 @@ declare module 'next-auth' {
   }
 
   interface User extends DefaultUser {
-    // Design System v2.0 - New enum system
-    tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
-    role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
+    // Design System v2.0 - New enum system (optional for adapter compatibility)
+    tier?: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
+    role?: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
     sub?: string;
     yah?: string;
     stripeCustomerId?: string;

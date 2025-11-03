@@ -131,9 +131,21 @@ export const authOptions = {
       // Initial sign in
       if (user) {
         token.id = user.id;
-        // Use enum fields (UserTier, UserRole) if available, fallback to legacy
-        token.tier = ('tier' in user ? user.tier : (user as any).legacyTier || 'FREE') as UserTier;
-        token.role = ('role' in user ? user.role : (user as any).legacyRole || 'USER') as UserRole;
+        
+        // For adapter users (OAuth), fetch tier/role from database
+        // For credentials provider, user already has tier/role
+        if ('tier' in user && 'role' in user) {
+          // Credentials provider - already has enums
+          token.tier = user.tier as UserTier;
+          token.role = user.role as UserRole;
+        } else {
+          // OAuth provider - fetch from database
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id }
+          });
+          token.tier = (dbUser?.tier || 'FREE') as UserTier;
+          token.role = (dbUser?.role || 'USER') as UserRole;
+        }
 
         // Yahoo fields
         token.sub = 'sub' in user && user.sub ? (user.sub as string) : undefined;
@@ -167,8 +179,9 @@ export const authOptions = {
         session.user.id = token.id as string;
 
         // Design System v2.0 tier and role (from enum fields)
-        session.user.tier = token.tier;
-        session.user.role = token.role;
+        // These are always set in JWT callback, so safe to assert
+        session.user.tier = (token.tier || 'FREE') as UserTier;
+        session.user.role = (token.role || 'USER') as UserRole;
 
         // Legacy role mapping for backward compatibility
         session.user.legacyRole = ('legacyRole' in token ? token.legacyRole :
