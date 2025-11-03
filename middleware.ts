@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes - require authentication
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/account')) {
-    const secret = process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET
+    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
     const token = secret ? await getToken({
       req: request,
       secret
@@ -87,7 +87,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/dashboard')) {
       // Development mode: Allow all authenticated users
       // Production: Require VIPER or MAMBA
-      const isDevelopment = process.env.NODE_ENV === 'development'
+      const isDevelopment = process.env['NODE_ENV'] === 'development'
       if (!isDevelopment && userTier === 'FREE') {
         const redirectUrl = new URL('/', request.url)
         redirectUrl.searchParams.set('upgrade', 'viper')

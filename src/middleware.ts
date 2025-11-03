@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/account')) {
     const token = await getToken({
       req: request,
-      secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET
+      secret: process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
     })
 
     // Not authenticated - redirect to login
@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/dashboard')) {
       // Allow VIPER and MAMBA tiers to access dashboard
       // Development mode: Allow all authenticated users (comment out in production)
-      const isDevelopment = process.env.NODE_ENV === 'development'
+      const isDevelopment = process.env['NODE_ENV'] === 'development'
       if (!isDevelopment && userTier === 'FREE') {
         const redirectUrl = new URL('/', request.url)
         redirectUrl.searchParams.set('upgrade', 'viper')
