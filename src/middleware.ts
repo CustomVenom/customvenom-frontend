@@ -49,9 +49,17 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes - require authentication
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/account')) {
+    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
+    if (!secret) {
+      console.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET')
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('callbackUrl', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
     const token = await getToken({
       req: request,
-      secret: process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
+      secret
     })
 
     // Not authenticated - redirect to login
