@@ -16,18 +16,12 @@ export function CTASection() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex justify-center items-center">
             <Link href="/dashboard">
               <Button size="lg" variant="secondary" className="bg-white text-venom-600 hover:bg-gray-50">
                 <Zap className="w-5 h-5" />
-                Get Started Free
+                Get Started
                 <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
-
-            <Link href="#projections">
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10">
-                View Live Projections
               </Button>
             </Link>
           </div>
