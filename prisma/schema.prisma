@@ -10,6 +10,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// User tier enumeration (Design System v2.0)
+enum UserTier {
+  FREE      // Hatchling (free tier)
+  VIPER     // $9.99/month
+  MAMBA     // $19.99/month
+}
+
+// User role enumeration (Design System v2.0)
+enum UserRole {
+  USER       // Standard user
+  ADMIN      // Full access + user management
+  DEVELOPER  // API access + debug tools
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -17,17 +31,24 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  // Business fields
-  role          String    @default("free") // free | pro | team
+  // Email/password authentication
+  password      String?   // bcrypt hashed (nullable - OAuth users don't have password)
 
-  // Yahoo OAuth fields
+  // Business fields - Design System v2.0 enums (with backward compatibility)
+  tier          UserTier  @default(FREE) // New enum field
+  role          UserRole  @default(USER) // New enum field
+
+  // Legacy fields for backward compatibility (keep until migration complete)
+  legacyRole    String?   @default("free") // free | pro | team | admin (deprecated)
+  legacyTier    String?   // free | pro | team (deprecated)
+
+  // Yahoo OAuth fields (preserved - handled via separate /api/yahoo/* routes)
   sub           String?   @unique // Yahoo user ID (sub claim)
   yah           String?   // Yahoo-specific metadata (JSON)
 
-  // Stripe fields
+  // Stripe fields (preserved)
   stripeCustomerId String? @unique
   subscriptionStatus String? // trial | active | paused | canceled
-  tier          String?   // free | pro | team
   paidUntil     DateTime?
 
   // Relations
@@ -36,12 +57,15 @@ model User {
   preferences   UserPreferences?
   leagues       League[]
   events        AnalyticsEvent[]
+  subscription  Subscription? // New relation for subscription management
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([sub])
   @@index([stripeCustomerId])
+  @@index([tier])
+  @@index([role])
 }
 
 model Account {
@@ -78,6 +102,25 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Subscription model (Design System v2.0)
+model Subscription {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  tier              UserTier
+  status            String   // 'active', 'canceled', 'past_due', 'trialing'
+  currentPeriodEnd  DateTime
+  cancelAtPeriodEnd Boolean  @default(false)
+  stripeSubscriptionId String? @unique
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
 // User preferences (1:1 with User)

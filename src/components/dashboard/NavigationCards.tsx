@@ -36,19 +36,19 @@ export function NavigationCards() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Tools</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-100">Tools</h2>
       <Tabs value={activeTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-4 bg-field-800 border-field-600">
           {quickLinks.map((link) => (
             <TabsTrigger key={link.value} value={link.value} asChild>
-              <Link href={link.href} className="w-full">
+              <Link href={link.href} className="w-full data-[state=active]:bg-field-700 data-[state=active]:text-venom-400">
                 {link.label}
               </Link>
             </TabsTrigger>
           ))}
         </TabsList>
         <TabsContent value={activeTab} className="mt-6">
-          <div className="rounded-lg border bg-card p-6 text-center text-gray-600 dark:text-gray-400">
+          <div className="rounded-lg border border-field-600 bg-field-800 p-6 text-center text-gray-400">
             <p>Select a tool above to get started.</p>
             <p className="mt-2 text-sm">
               Click any tab to navigate to that tool, or use the top navigation menu.

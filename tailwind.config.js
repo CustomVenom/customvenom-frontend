@@ -170,6 +170,39 @@ const config = {
           800: '#065f46',
           900: '#064e3b',
         },
+        // Design System v2.0 - Venom Colors
+        venom: {
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          900: '#064e3b',
+        },
+        // Strike Gold (Accent)
+        strike: {
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+        },
+        // Field Dark (Backgrounds)
+        field: {
+          600: '#374151',
+          700: '#1f2937',
+          800: '#111827',
+          900: '#0a0f0b',
+        },
+        // Trust Blue (Data reliability)
+        trust: {
+          500: '#3b82f6',
+          600: '#2563eb',
+        },
+        // Alert Red (Warnings)
+        alert: {
+          500: '#ef4444',
+          600: '#dc2626',
+        },
         success: '#16a34a',
         warning: '#f59e0b',
         danger: '#ef4444',

@@ -13,8 +13,9 @@ export function ConnectLeagueButton() {
   return (
     <Button
       onClick={handleConnect}
+      variant="primary"
       size="lg"
-      className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+      className="px-8 py-6 text-lg font-semibold"
     >
       Connect Yahoo Fantasy
     </Button>

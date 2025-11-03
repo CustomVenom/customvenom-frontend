@@ -1,38 +1,35 @@
-import { WaitlistForm } from '@/components/WaitlistForm';
+import { HeroSection } from '@/components/public/HeroSection'
+import { ProjectionsShowcase } from '@/components/public/ProjectionsShowcase'
+import { TrustSection } from '@/components/public/TrustSection'
+import { FeaturesGrid } from '@/components/public/FeaturesGrid'
+import { CTASection } from '@/components/public/CTASection'
+import { PublicFooter } from '@/components/public/PublicFooter'
 
-export default function HomePage() {
+export const metadata = {
+  title: 'Custom Venom | Fantasy Football Analytics with Bite',
+  description: 'Probabilistic projections and explainable AI for fantasy football. See the floor, median, and ceiling for every player.'
+}
+
+export default function PublicHomePage() {
   return (
-    <div className="min-h-screen bg-[#0A0F0B] text-[#E6F2EA]">
-      {/* Hero section */}
-      <section className="container mx-auto px-6 py-20 text-center max-w-6xl">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Pick Your Poison</h1>
-        <p className="text-xl md:text-2xl text-[#9AB9A7] mb-16">
-          Lineup advice with receipts. Ranges, two clear reasons, and a trust badge on every result.
-        </p>
+    <div className="min-h-screen bg-white">
+      {/* Hero - Above the fold */}
+      <HeroSection />
 
-        {/* Value props */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
-            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Floor/Median/Ceiling</h3>
-            <p className="text-sm text-[#9AB9A7]">
-              See the full range, not just a misleading single number
-            </p>
-          </div>
-          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
-            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Confidence-Gated Reasons</h3>
-            <p className="text-sm text-[#9AB9A7]">
-              Max 2 driver chips per player, only when confidence ≥ 0.65
-            </p>
-          </div>
-          <div className="p-6 rounded-lg bg-[#0F1512] border border-[#1F2A24] shadow-[inset_0_0_0_1px_#1F2A24,0_0_24px_rgba(34,197,94,.06)]">
-            <h3 className="text-lg font-semibold mb-2 text-[#22C55E]">Trust-First Transparency</h3>
-            <p className="text-sm text-[#9AB9A7]">schema_version + last_refresh on every result</p>
-          </div>
-        </div>
+      {/* Live Projections Preview - Filterable by scoring format */}
+      <ProjectionsShowcase />
 
-        {/* Waitlist form */}
-        <WaitlistForm />
-      </section>
+      {/* Trust Section - Our analytical moat */}
+      <TrustSection />
+
+      {/* Features - What you get */}
+      <FeaturesGrid />
+
+      {/* CTA - Get started */}
+      <CTASection />
+
+      {/* Footer */}
+      <PublicFooter />
     </div>
-  );
+  )
 }

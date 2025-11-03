@@ -1,33 +1,52 @@
-import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-
-import { cn } from '@/lib/utils';
+import { HTMLAttributes, forwardRef } from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1.5 font-medium rounded-full border',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80',
-        secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive:
-          'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-        outline: 'text-foreground',
+        trust: 'bg-trust-500/10 text-trust-600 border-trust-500/20',
+        venom: 'bg-venom-500/10 text-venom-400 border-venom-500/20',
+        strike: 'bg-gradient-to-r from-strike-400 to-strike-600 text-gray-900 border-0 shadow-md',
+        alert: 'bg-alert-500/10 text-alert-600 border-alert-500/20',
+        neutral: 'bg-gray-100 text-gray-600 border-gray-200',
+        // Legacy variants for backward compatibility
+        default: 'bg-venom-500/10 text-venom-400 border-venom-500/20',
+        secondary: 'bg-gray-100 text-gray-600 border-gray-200',
+        destructive: 'bg-alert-500/10 text-alert-600 border-alert-500/20',
+        outline: 'border-2 border-venom-500 text-venom-500'
       },
+      size: {
+        sm: 'px-2 py-0.5 text-xs',
+        md: 'px-2.5 py-1 text-xs',
+        lg: 'px-3 py-1 text-sm'
+      }
     },
     defaultVariants: {
-      variant: 'default',
-    },
-  },
-);
+      variant: 'neutral',
+      size: 'md'
+    }
+  }
+)
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
-}
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant, size, ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn(badgeVariants({ variant, size, className }))}
+        {...props}
+      />
+    )
+  }
+)
+Badge.displayName = 'Badge'
 
-export { Badge, badgeVariants };
+export { badgeVariants }
+

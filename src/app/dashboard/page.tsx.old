@@ -256,8 +256,8 @@ export default function DashboardPage() {
   // Prevent hydration mismatch by showing loading state until client-side mounted
   if (!mounted || loading) {
     return (
-      <div className="p-6 flex items-center justify-center min-h-screen bg-field-900 dashboard-hub scale-pattern">
-        <div className="text-gray-400">Loading...</div>
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
       </div>
     );
   }
@@ -265,14 +265,14 @@ export default function DashboardPage() {
   // ===== STATE 1: NOT CONNECTED =====
   if (!isConnected) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-field-900 dashboard-hub scale-pattern">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container max-w-2xl mx-auto py-12 px-4">
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-100">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100">
                 Connect Your Fantasy League
               </h1>
-              <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
                 Get personalized AI-powered projections, lineup recommendations, and waiver wire insights for your team.
               </p>
             </div>
@@ -282,25 +282,25 @@ export default function DashboardPage() {
             </div>
 
             <div className="pt-8 max-w-md mx-auto">
-              <div className="rounded-lg border border-field-600 bg-field-800 p-6 shadow-sm">
-                <h3 className="font-semibold mb-4 text-lg text-gray-100">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+                <h3 className="font-semibold mb-4 text-lg text-gray-900 dark:text-gray-100">
                   What you'll get:
                 </h3>
-                <ul className="space-y-3 text-left text-sm text-gray-400">
+                <ul className="space-y-3 text-left text-sm text-gray-600 dark:text-gray-400">
                   <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
                     <span>AI-powered projections for your roster</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
                     <span>Start/Sit recommendations</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
                     <span>FAAB budget optimization</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                    <span className="text-green-600 dark:text-green-400 mr-2 mt-0.5">✓</span>
                     <span>Waiver wire analysis</span>
                   </li>
                 </ul>
@@ -315,16 +315,15 @@ export default function DashboardPage() {
   // ===== STATE 2: CONNECTED BUT NO TEAM SELECTED =====
   if (!selectedTeam) {
     return (
-      <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
-        <div className="container max-w-4xl mx-auto py-12 px-4">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold text-gray-100">War Room</h1>
-                <p className="text-gray-400 mt-1">Select your team to continue</p>
-              </div>
-              {/* Team selector dropdown */}
-              <div className="relative" data-team-selector>
+      <div className="container max-w-4xl mx-auto py-12">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+              <p className="text-muted-foreground mt-1">Select your team to continue</p>
+            </div>
+            {/* Team selector dropdown */}
+            <div className="relative" data-team-selector>
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -332,11 +331,11 @@ export default function DashboardPage() {
                   setTeamsDropdownOpen((prev) => !prev);
                 }}
                 disabled={displayTeams.length === 0}
-                className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
                 aria-label="Select team"
                 type="button"
               >
-                <span className="flex-1 text-left truncate text-gray-100">
+                <span className="flex-1 text-left truncate text-gray-900 dark:text-gray-100">
                   {displayTeams.length === 0
                     ? 'Select Your Team'
                     : selectedTeamName || 'Select Your Team'}
@@ -359,7 +358,7 @@ export default function DashboardPage() {
               </button>
 
               {teamsDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                   {displayTeams.map((team) => (
                     <button
                       key={team.team_key}
@@ -367,8 +366,8 @@ export default function DashboardPage() {
                         e.stopPropagation();
                         handleSelectTeam(team.team_key);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
-                        selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
+                      className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-left ${
+                        selectedTeam === team.team_key ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                       }`}
                     >
                       {team.team_logos?.[0]?.url && (
@@ -378,13 +377,13 @@ export default function DashboardPage() {
                           className="w-8 h-8 rounded shrink-0"
                         />
                       )}
-                      <span className="flex-1 text-sm truncate text-gray-100">
+                      <span className="flex-1 text-sm truncate text-gray-900 dark:text-gray-100">
                         {team.name || `Team ${team.team_key}`}
                         {team.is_owner && ' ⭐'}
                       </span>
                       {selectedTeam === team.team_key && (
                         <svg
-                          className="w-5 h-5 text-venom-500 shrink-0"
+                          className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -399,13 +398,12 @@ export default function DashboardPage() {
                   ))}
 
                   {displayTeams.length === 0 && teams.length === 0 && (
-                    <div className="p-4 text-center text-sm text-gray-400">
+                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
                       No teams available
                     </div>
                   )}
                 </div>
               )}
-              </div>
             </div>
           </div>
         </div>
@@ -415,29 +413,28 @@ export default function DashboardPage() {
 
   // ===== STATE 3: CONNECTED AND TEAM SELECTED - SHOW HUB =====
   return (
-    <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {/* Header with Team Selector */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-100 mb-1">War Room</h1>
-              <p className="text-gray-400">Your tactical command center</p>
-            </div>
-            {/* Team selector dropdown */}
-            <div className="relative" data-team-selector>
-              <button
+    <div className="container max-w-6xl mx-auto py-8">
+      <div className="space-y-8">
+        {/* Header with Team Selector */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Your fantasy football command center</p>
+          </div>
+          {/* Team selector dropdown */}
+          <div className="relative" data-team-selector>
+            <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setTeamsDropdownOpen((prev) => !prev);
               }}
               disabled={displayTeams.length === 0}
-              className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer"
               aria-label="Select team"
               type="button"
             >
-              <span className="flex-1 text-left truncate text-gray-100">
+              <span className="flex-1 text-left truncate text-gray-900 dark:text-gray-100">
                 {displayTeams.length === 0
                   ? 'Select Your Team'
                   : selectedTeamName || 'Select Your Team'}
@@ -459,8 +456,8 @@ export default function DashboardPage() {
               </svg>
             </button>
 
-              {teamsDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+            {teamsDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                 {displayTeams.map((team) => (
                   <button
                     key={team.team_key}
@@ -468,8 +465,8 @@ export default function DashboardPage() {
                       e.stopPropagation();
                       handleSelectTeam(team.team_key);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-field-700 text-left transition-colors ${
-                      selectedTeam === team.team_key ? 'bg-venom-500/10 border-l-2 border-venom-500' : ''
+                    className={`w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-left ${
+                      selectedTeam === team.team_key ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                     }`}
                   >
                     {team.team_logos?.[0]?.url && (
@@ -479,13 +476,13 @@ export default function DashboardPage() {
                         className="w-8 h-8 rounded shrink-0"
                       />
                     )}
-                    <span className="flex-1 text-sm truncate text-gray-100">
+                    <span className="flex-1 text-sm truncate text-gray-900 dark:text-gray-100">
                       {team.name || `Team ${team.team_key}`}
                       {team.is_owner && ' ⭐'}
                     </span>
                     {selectedTeam === team.team_key && (
                       <svg
-                        className="w-5 h-5 text-venom-500 shrink-0"
+                        className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -500,26 +497,25 @@ export default function DashboardPage() {
                 ))}
 
                 {displayTeams.length === 0 && teams.length === 0 && (
-                  <div className="p-4 text-center text-sm text-gray-400">
+                  <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
                     No teams available
                   </div>
                 )}
               </div>
             )}
-            </div>
           </div>
-
-          {/* Quick Metrics - Only show if team selected */}
-            {selectedTeam && (
-            <DashboardMetrics
-              teamKey={selectedTeam}
-              leagueKey={selectedTeamObj?.league_key || null}
-            />
-          )}
-
-          {/* Navigation Cards - Main Feature */}
-          <NavigationCards />
         </div>
+
+        {/* Quick Metrics - Only show if team selected */}
+        {selectedTeam && (
+          <DashboardMetrics
+            teamKey={selectedTeam}
+            leagueKey={selectedTeamObj?.league_key || null}
+          />
+        )}
+
+        {/* Navigation Cards - Main Feature */}
+        <NavigationCards />
       </div>
     </div>
   );

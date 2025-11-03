@@ -1,17 +1,60 @@
 ﻿// NextAuth.js configuration
-// Supports Google, Yahoo, Twitter (X), and Facebook social login
+// Supports Google, Yahoo, Twitter (X), Facebook social login, and email/password
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import FacebookProvider from 'next-auth/providers/facebook';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
+import bcrypt from 'bcryptjs';
 
 import { prisma } from './db';
 // Note: Yahoo OAuth is handled separately via custom /api/yahoo/* routes
 // Only include providers that have credentials configured
 const providers = [];
+
+// Email/password credentials provider (Design System v2.0)
+if (process.env['ENABLE_CREDENTIALS_AUTH'] !== 'false') {
+  providers.push(
+    CredentialsProvider({
+      name: 'credentials',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' }
+      },
+        async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Email and password are required');
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
+
+        if (!user || !user.password) {
+          throw new Error('Invalid email or password');
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+
+        if (!isValid) {
+          throw new Error('Invalid email or password');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          tier: user.tier,
+          role: user.role
+        };
+      }
+    })
+  );
+}
 
 // Google OAuth (required for now)
 if (process.env['GOOGLE_CLIENT_ID'] && process.env['GOOGLE_CLIENT_SECRET']) {
@@ -77,19 +120,58 @@ export const authOptions = {
           // Update user role to admin if they're signing in
           await prisma.user.update({
             where: { id: user.id },
-            data: { role: ROLES.ADMIN },
+            data: { role: 'ADMIN' as const },
           });
         }
       }
       return true;
     },
-    async session({ session, user }: { session: Session; user: User }) {
-      // Map all fields from DB user to session
-      if (session.user && user.id) {
-        session.user.id = user.id;
+    async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
+      // Initial sign in
+      if (user) {
+        token.id = user.id;
+        // Use enum fields (UserTier, UserRole) if available, fallback to legacy
+        token.tier = 'tier' in user ? user.tier : (user as any).legacyTier || 'FREE';
+        token.role = 'role' in user ? user.role : (user as any).legacyRole || 'USER';
 
-        // Role mapping
-        session.user.role = ('role' in user ? user.role : 'free') as
+        // Yahoo fields
+        token.sub = 'sub' in user && user.sub ? (user.sub as string) : undefined;
+        token.yah = 'yah' in user && user.yah ? (user.yah as string) : undefined;
+
+        // Stripe fields
+        token.stripeCustomerId = 'stripeCustomerId' in user && user.stripeCustomerId
+          ? (user.stripeCustomerId as string)
+          : undefined;
+      }
+
+      // Refresh user data from DB periodically (every request for credentials provider)
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string }
+        });
+        if (dbUser) {
+          token.tier = dbUser.tier;
+          token.role = dbUser.role;
+          token.sub = dbUser.sub || undefined;
+          token.yah = dbUser.yah || undefined;
+          token.stripeCustomerId = dbUser.stripeCustomerId || undefined;
+        }
+      }
+
+      return token;
+    },
+    async session({ session, token }: { session: any; token: any }) {
+      // Map all fields from token to session
+      if (session.user && token) {
+        session.user.id = token.id as string;
+
+        // Design System v2.0 tier and role (from enum fields)
+        session.user.tier = token.tier as string;
+        session.user.role = token.role as string;
+
+        // Legacy role mapping for backward compatibility
+        session.user.legacyRole = ('legacyRole' in token ? token.legacyRole :
+          (token.role === 'ADMIN' ? 'admin' : token.role === 'USER' ? 'free' : 'free')) as
           | 'free'
           | 'pro'
           | 'team'
@@ -97,24 +179,23 @@ export const authOptions = {
           | undefined;
 
         // Yahoo fields - require sub for Yahoo-authenticated users
-        session.user.sub = 'sub' in user && user.sub ? (user.sub as string) : '';
-        session.user.yah = 'yah' in user && user.yah ? (user.yah as string) : undefined;
+        session.user.sub = token.sub as string | undefined;
+        session.user.yah = token.yah as string | undefined;
 
         // Stripe fields - for paid feature gates
-        session.user.stripeCustomerId =
-          'stripeCustomerId' in user && user.stripeCustomerId
-            ? (user.stripeCustomerId as string)
-            : undefined;
+        session.user.stripeCustomerId = token.stripeCustomerId as string | undefined;
       }
       return session;
     },
   },
   pages: {
-    // Remove custom signIn page to use NextAuth default
-    error: '/auth/error', // Custom error page
+    signIn: '/login',
+    signOut: '/login',
+    error: '/auth/error',
   },
   session: {
-    strategy: 'jwt' as const,
+    strategy: 'jwt' as const, // Use JWT for credentials provider compatibility
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   debug: process.env['NODE_ENV'] === 'development',
 };

@@ -621,3 +621,86 @@ img {
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================
+   Design System v2.0 - Special Effects
+   ============================================ */
+
+/* Venom Glow Animation */
+@keyframes venom-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+}
+
+.venom-glow {
+  animation: venom-glow 2s ease-in-out infinite;
+}
+
+.venom-glow:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4),
+              0 0 40px rgba(16, 185, 129, 0.2);
+}
+
+/* Strike Pulse Animation */
+@keyframes strike-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes venom-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.strike-pulse {
+  animation: strike-pulse 2s ease-in-out infinite;
+}
+
+.venom-pulse {
+  animation: venom-pulse 2s ease-in-out infinite;
+}
+
+/* Scale Pattern (Dashboard texture) */
+.scale-pattern {
+  background-image:
+    radial-gradient(circle at 20px 20px, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 60px 60px, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: 0 0, 40px 40px;
+}
+
+/* Yard Line Pattern (Public hub) */
+.yard-lines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 49px,
+    rgba(16, 185, 129, 0.08) 49px,
+    rgba(16, 185, 129, 0.08) 51px
+  );
+}
+
+/* Design System v2.0 - CSS Variables */
+:root {
+  /* Public Hub - Light */
+  --bg-public: 255 255 255;
+  --text-public: 17 24 39;
+}
+
+.dashboard-hub {
+  /* Dashboard Hub - Dark */
+  --bg-dashboard: 10 15 11;
+  --text-dashboard: 249 250 251;
+}

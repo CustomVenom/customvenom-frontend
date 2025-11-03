@@ -15,29 +15,29 @@ interface MetricCardProps {
 function MetricCard({ label, value, change, icon, isLoading }: MetricCardProps) {
   const trendIcon = change ? (
     change > 0 ? (
-      <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+      <TrendingUp className="h-4 w-4 text-venom-400" />
     ) : change < 0 ? (
-      <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+      <TrendingDown className="h-4 w-4 text-alert-500" />
     ) : (
       <Minus className="h-4 w-4 text-gray-400" />
     )
   ) : null;
 
   return (
-    <Card>
+    <Card variant="dashboard">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
+            <p className="text-sm text-gray-400">{label}</p>
             {isLoading ? (
-              <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+              <div className="h-8 w-20 bg-field-700 rounded animate-pulse" />
             ) : (
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
+              <p className="text-2xl font-bold text-gray-100">{value}</p>
             )}
           </div>
           <div className="flex flex-col items-end space-y-1">
             {icon && (
-              <div className="p-2 rounded-lg bg-primary-600/10 dark:bg-primary-400/10">{icon}</div>
+              <div className="p-2 rounded-lg bg-venom-500/10">{icon}</div>
             )}
             {change !== undefined && !isLoading && (
               <div className="flex items-center space-x-1 text-sm">
@@ -45,10 +45,10 @@ function MetricCard({ label, value, change, icon, isLoading }: MetricCardProps) 
                 <span
                   className={
                     change > 0
-                      ? 'text-green-600 dark:text-green-400'
+                      ? 'text-venom-400'
                       : change < 0
-                        ? 'text-red-600 dark:text-red-400'
-                        : 'text-gray-500 dark:text-gray-400'
+                        ? 'text-alert-500'
+                        : 'text-gray-400'
                   }
                 >
                   {change > 0 ? '+' : ''}
@@ -93,7 +93,7 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
     const fetchStats = async () => {
       try {
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
-        
+
         // Fetch standings for the league to get team stats
         const res = await fetch(
           `${API_BASE}/yahoo/leagues/${leagueKey}/standings?format=json`,
@@ -107,7 +107,7 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
         }
 
         const data = await res.json();
-        
+
         // Find the current team in standings
         const standings = data?.standings?.team || [];
         const teamStanding = standings.find(
@@ -122,12 +122,12 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
           const losses = teamStanding.team_stats?.stats?.find(
             (s: { stat_id: string }) => s.stat_id === '2' // losses
           )?.value || 0;
-          
+
           // Try to get points_for or average points
           const pointsFor = teamStanding.team_stats?.stats?.find(
             (s: { stat_id: string }) => s.stat_id === '14' // points_for
           )?.value || 0;
-          
+
           const rank = teamStanding.team_standings?.rank || null;
 
           setStats({
@@ -175,17 +175,17 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
   if (error) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-100">
           Team Overview
         </h2>
-        <div className="text-sm text-gray-600 dark:text-gray-400">{error}</div>
+        <div className="text-sm text-gray-400">{error}</div>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-100">
         Team Overview
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
