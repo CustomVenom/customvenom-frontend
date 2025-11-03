@@ -92,7 +92,10 @@ console.log('[auth] NEXTAUTH_URL:', process.env['NEXTAUTH_URL']);
 console.log('[auth] NEXTAUTH_SECRET set:', Boolean(process.env['NEXTAUTH_SECRET']));
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma),
+  // Type assertion to bridge PrismaAdapter's AdapterUser with NextAuth's expected AdapterUser
+  // Both types are extended in src/types/next-auth.d.ts, but TypeScript sees them as different
+  // due to nested node_modules (@auth/prisma-adapter/node_modules/@auth/core)
+  adapter: PrismaAdapter(prisma) as any,
   providers,
   trustHost: true,
   // TEMP: allow linking same email across providers (dev only)
