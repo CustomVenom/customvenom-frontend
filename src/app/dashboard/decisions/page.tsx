@@ -137,7 +137,7 @@ function DecisionsContent() {
           />
         )}
 
-      <ToolPageHeader title="Important Decisions" currentTool="decisions" />
+      <ToolPageHeader title="Decisions" currentTool="decisions" />
 
         <EmptyState title="No decisions yet">
           Try switching your risk mode or refresh projections to see personalized recommendations.

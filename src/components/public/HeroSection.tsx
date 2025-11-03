@@ -24,8 +24,8 @@ export function HeroSection() {
               </div>
 
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-                Pick Your
-                <span className="block text-venom-600">Poison</span>
+                Fantasy Football
+                <span className="block text-venom-600">Analytics</span>
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed">

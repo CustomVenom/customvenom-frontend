@@ -7,7 +7,7 @@ import Button from '@/components/Button';
 import EmptyState from '@/components/EmptyState';
 import { useToast } from '@/components/Toast';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
-import ToolsTabs from '@/components/ToolsTabs';
+import { ToolPageHeader } from '@/components/ToolPageHeader';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { LeagueContextHeader } from '@/components/LeagueContextHeader';

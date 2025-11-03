@@ -9,7 +9,7 @@ import PlayerDrawer from '@/components/PlayerDrawer';
 import PlayerSearch from '@/components/PlayerSearch';
 import { useToast } from '@/components/Toast';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
-import ToolsTabs from '@/components/ToolsTabs';
+import { ToolPageHeader } from '@/components/ToolPageHeader';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { LeagueContextHeader } from '@/components/LeagueContextHeader';
@@ -169,13 +169,10 @@ function StartSitContent() {
         />
       )}
 
-      <h1 className="h1">
-        Start / Sit Tie‑Breaker <GlossaryTip term="risk modes" />
-      </h1>
-      <p className="text-sm text-muted">
-        <GlossaryTip term="range band" /> · <GlossaryTip term="driver chip" />
+      <ToolPageHeader title="Start / Sit Tie‑Breaker" currentTool="start-sit" />
+      <p className="text-sm text-muted mb-4">
+        <GlossaryTip term="range band" /> · <GlossaryTip term="driver chip" /> · <GlossaryTip term="risk modes" />
       </p>
-      <ToolsTabs />
 
       {!result ? (
         <EmptyState title="Compare two players" onExample={handleExample}>
