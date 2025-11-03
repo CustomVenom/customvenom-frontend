@@ -2,5 +2,5 @@
   "git": {
     "ignoredCommitters": ["dependabot[bot]"]
   },
-  "buildCommand": "npm ci --include=prod && npm run build"
+  "buildCommand": "npm install && npm run build"
 }
