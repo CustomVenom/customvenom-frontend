@@ -6,7 +6,7 @@ import ActionBar from '@/components/ActionBar';
 import EmptyState from '@/components/EmptyState';
 import PlayerDrawer from '@/components/PlayerDrawer';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
-import ToolsTabs from '@/components/ToolsTabs';
+import { ToolPageHeader } from '@/components/ToolPageHeader';
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { LeagueContextHeader } from '@/components/LeagueContextHeader';
@@ -137,8 +137,7 @@ function DecisionsContent() {
           />
         )}
 
-        <h1 className="h1">Important Decisions</h1>
-        <ToolsTabs />
+      <ToolPageHeader title="Important Decisions" currentTool="decisions" />
 
         <EmptyState title="No decisions yet">
           Try switching your risk mode or refresh projections to see personalized recommendations.

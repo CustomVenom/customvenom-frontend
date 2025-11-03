@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 
 import { LeagueSwitcher } from './LeagueSwitcher';
 
+// Tools in consistent order: Decisions, Start/Sit, FAAB, Players
 const tabs = [
-  { href: '/dashboard/leagues', label: 'Leagues' },
+  { href: '/dashboard/decisions', label: 'Decisions' },
   { href: '/dashboard/start-sit', label: 'Start/Sit' },
   { href: '/dashboard/faab', label: 'FAAB' },
-  { href: '/dashboard/decisions', label: 'Decisions' },
+  { href: '/dashboard/waivers', label: 'Players' },
 ];
 
 export function ToolsTabs() {
