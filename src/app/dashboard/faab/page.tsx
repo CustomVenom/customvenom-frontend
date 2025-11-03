@@ -94,10 +94,10 @@ function FaabContent() {
         />
       )}
 
-      <h1 className="h1">
-        FAAB Bid Helper <GlossaryTip term="faab band" />
-      </h1>
-      <ToolsTabs />
+      <ToolPageHeader title="FAAB Bid Helper" currentTool="faab" />
+      <p className="text-sm text-muted mb-4">
+        <GlossaryTip term="faab band" />
+      </p>
 
       {!result ? (
         <EmptyState title="Calculate FAAB bid range" onExample={handleExample}>

@@ -14,7 +14,7 @@ const tools = [
   { id: 'decisions' as const, label: 'Decisions', href: '/dashboard/decisions' },
   { id: 'start-sit' as const, label: 'Start/Sit', href: '/dashboard/start-sit' },
   { id: 'faab' as const, label: 'FAAB', href: '/dashboard/faab' },
-  { id: 'players' as const, label: 'Players', href: '/dashboard/waivers' },
+  { id: 'players' as const, label: 'Players', href: '/dashboard/waivers' }, // Also accessible at /league/waivers (redirect)
 ];
 
 export function ToolPageHeader({ title, currentTool }: ToolPageHeaderProps) {

@@ -126,7 +126,7 @@ function DecisionsContent() {
   if (decisions.length === 0) {
     return (
       <main className="container section space-y-4">
-        <Breadcrumb items={[{ label: 'Important Decisions', href: '/dashboard/decisions' }]} />
+        <Breadcrumb items={[{ label: 'Decisions', href: '/dashboard/decisions' }]} />
 
         {!leagueContext.isLoading && (
           <LeagueContextHeader
@@ -161,11 +161,10 @@ function DecisionsContent() {
         />
       )}
 
-      <h1 className="h1">Important Decisions</h1>
-      <p className="text-sm text-muted">
+      <ToolPageHeader title="Decisions" currentTool="decisions" />
+      <p className="text-sm text-muted mb-4">
         <GlossaryTip term="driver chip" /> · <GlossaryTip term="coverage" />
       </p>
-      <ToolsTabs />
 
       <div>
         <label className="block text-sm font-medium mb-2 text-[rgb(var(--text-secondary))]">
