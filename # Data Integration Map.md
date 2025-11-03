@@ -112,8 +112,8 @@ User selection → Frontend
 **Yahoo Integration Points:**
 
 1. **Optional:** Auto-populate from user's roster
-    - `GET /yahoo/team/:teamKey/roster` → extract player IDs
-    - Match Yahoo player IDs to NFLverse IDs (mapping table needed)
+   - `GET /yahoo/team/:teamKey/roster` → extract player IDs
+   - Match Yahoo player IDs to NFLverse IDs (mapping table needed)
 2. **Future:** Show which player is currently in user's lineup
 
 **Risk Adjustment Logic:**
@@ -126,11 +126,11 @@ User selection → Frontend
 
 ```tsx
 type PlayerIDMap = {
-  yahoo_id: string
-  nflverse_id: string  
-  espn_id?: string
-  sleeper_id?: string
-}
+  yahoo_id: string;
+  nflverse_id: string;
+  espn_id?: string;
+  sleeper_id?: string;
+};
 ```
 
 ---
@@ -179,15 +179,15 @@ Frontend → Calculate bid bands (min/likely/max) + single rationale chip
 
 ```tsx
 {
-  player_id: string
-  routes_per_game: number
-  target_share: number
-  wopr: number  // Weighted Opportunity Rating
-  snap_share: number
-  red_zone_touches: number
+  player_id: string;
+  routes_per_game: number;
+  target_share: number;
+  wopr: number; // Weighted Opportunity Rating
+  snap_share: number;
+  red_zone_touches: number;
   trends: {
-    targets_2w: number
-    targets_4w: number
+    targets_2w: number;
+    targets_4w: number;
   }
 }
 ```
@@ -196,14 +196,14 @@ Frontend → Calculate bid bands (min/likely/max) + single rationale chip
 
 ```tsx
 function calculateBidBands(projection, usage, budget, positionalNeed) {
-  const baseScore = projection.p50 * 0.4 + usage.wopr * 0.3 + usage.trend * 0.3
-  const needMultiplier = positionalNeed ? 1.2 : 1.0
-  
+  const baseScore = projection.p50 * 0.4 + usage.wopr * 0.3 + usage.trend * 0.3;
+  const needMultiplier = positionalNeed ? 1.2 : 1.0;
+
   return {
     min: Math.floor(budget * 0.04 * baseScore * needMultiplier),
     likely: Math.floor(budget * 0.07 * baseScore * needMultiplier),
-    max: Math.floor(budget * 0.10 * baseScore * needMultiplier)
-  }
+    max: Math.floor(budget * 0.1 * baseScore * needMultiplier),
+  };
 }
 ```
 
@@ -245,7 +245,7 @@ type Decision = {
 
 function scoreDecisions(roster, projections, injuries, byes) {
   const decisions: Decision[] = []
-  
+
   // Injury/availability: +40 points
   roster.forEach(player => {
     if (injuries[[player.id](http://player.id)]?.status === 'OUT') {
@@ -258,7 +258,7 @@ function scoreDecisions(roster, projections, injuries, byes) {
       })
     }
   })
-  
+
   // Bye weeks: +20 points if within 7 days
   roster.forEach(player => {
     if (byes[[player.id](http://player.id)]?.weeks_until <= 1) {
@@ -271,10 +271,10 @@ function scoreDecisions(roster, projections, injuries, byes) {
       })
     }
   })
-  
+
   // Roster gaps vs waivers: +15 points
   // Volatility/uncertainty: +5-10 points
-  
+
   return decisions
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, 5)
@@ -417,29 +417,28 @@ Yahoo OAuth → /yahoo/leagues → Select league
 **Required Transformations:**
 
 1. **Yahoo → NFLverse ID mapping:**
-    
-    ```tsx
-    function mapYahooToNFLverse(yahooPlayerId: string): string {
-      // Query mapping table or use name + team matching
-      return nflverseId
-    }
-    ```
-    
+
+   ```tsx
+   function mapYahooToNFLverse(yahooPlayerId: string): string {
+     // Query mapping table or use name + team matching
+     return nflverseId;
+   }
+   ```
+
 2. **Enrich with projections:**
-    
-    ```tsx
-    async function enrichRoster(yahooRoster) {
-      const playerIds = [yahooRoster.map](http://yahooRoster.map)(p => mapYahooToNFLverse(p.player_id))
-      const projections = await getProjections(playerIds)
-      
-      return [yahooRoster.map](http://yahooRoster.map)(player => ({
-        ...player,
-        projection: projections[[player.id](http://player.id)],
-        cvStatus: determineStatus(player, projections[[player.id](http://player.id)])
-      }))
-    }
-    ```
-    
+
+   ```tsx
+   async function enrichRoster(yahooRoster) {
+     const playerIds = [yahooRoster.map](http://yahooRoster.map)(p => mapYahooToNFLverse(p.player_id))
+     const projections = await getProjections(playerIds)
+
+     return [yahooRoster.map](http://yahooRoster.map)(player => ({
+       ...player,
+       projection: projections[[player.id](http://player.id)],
+       cvStatus: determineStatus(player, projections[[player.id](http://player.id)])
+     }))
+   }
+   ```
 
 **Waivers Page:**
 
@@ -477,17 +476,17 @@ Yahoo roster + lineup → Frontend
 ```tsx
 function detectBubbles(roster, lineup, projections) {
   const bubbles = []
-  
+
   // Compare starters vs bench at same position
   lineup.forEach(starter => {
     const starterProj = projections[[starter.id](http://starter.id)]
     const eligibleBench = roster
       .filter(p => p.status === 'bench' && canPlay(p.pos, starter.slot))
-    
+
     eligibleBench.forEach(bench => {
       const benchProj = projections[[bench.id](http://bench.id)]
       const overlap = calculateRangeOverlap(starterProj.range, benchProj.range)
-      
+
       if (overlap >= 0.5) {  // 50% range overlap
         bubbles.push({
           starter: [starter.id](http://starter.id),
@@ -498,19 +497,19 @@ function detectBubbles(roster, lineup, projections) {
       }
     })
   })
-  
+
   return bubbles.sort((a, b) => b.overlap_pct - a.overlap_pct)
 }
 
 function calculateRangeOverlap(rangeA, rangeB) {
   const overlapStart = Math.max(rangeA.p10, rangeB.p10)
   const overlapEnd = Math.min(rangeA.p90, rangeB.p90)
-  
+
   if (overlapStart >= overlapEnd) return 0
-  
+
   const overlapSize = overlapEnd - overlapStart
   const avgRangeSize = ((rangeA.p90 - rangeA.p10) + (rangeB.p90 - rangeB.p10)) / 2
-  
+
   return overlapSize / avgRangeSize
 }
 ```
@@ -535,7 +534,7 @@ function calculateRangeOverlap(rangeA, rangeB) {
 GET /users;use_login=1
 // Returns: user guid, profile
 
-// 2. Get user's leagues for current season  
+// 2. Get user's leagues for current season
 GET /users;use_login=1/games;game_keys=nfl;seasons=2025/leagues
 // Returns: Array of league objects
 
@@ -595,7 +594,7 @@ NFLverse GitHub → DuckDB ingestion → Transform & aggregate → R2 artifacts
 
 ```
 data/stats/nfl/{year}/week={week}/weekly_stats.json
-data/injuries/nfl/{year}/week={week}/consensus.json  
+data/injuries/nfl/{year}/week={week}/consensus.json
 data/weather/nfl/{year}/week={week}/games.json
 data/usage/nfl/{year}/week={week}/usage_metrics.json
 data/projections/nfl/{year}/week={week}/baseline.json
@@ -621,8 +620,8 @@ data/projections/nfl/{year}/week={week}/baseline.json
       pass_yards?: number
       pass_tds?: number
       interceptions?: number
-      
-      // RB/WR/TE  
+
+      // RB/WR/TE
       targets?: number
       receptions?: number
       rec_yards?: number
@@ -630,7 +629,7 @@ data/projections/nfl/{year}/week={week}/baseline.json
       rush_attempts?: number
       rush_yards?: number
       rush_tds?: number
-      
+
       // Efficiency
       yards_per_attempt?: number
       yards_per_target?: number
@@ -669,7 +668,7 @@ Response: {
   players: Array<PlayerProjection>
 }
 
-// Single player projection  
+// Single player projection
 GET /players/:id/projection?week=YYYY-WW
 Response: {
   schema_version: string
@@ -744,36 +743,36 @@ access-control-allow-credentials: true
 
 ```tsx
 // Yahoo player ID → NFLverse ID
-export function mapYahooToNFLverse(yahooPlayerId: string): string
+export function mapYahooToNFLverse(yahooPlayerId: string): string;
 
 // Enrich Yahoo roster with projections
 export async function enrichRosterWithProjections(
   yahooRoster: YahooPlayer[],
-  week: string
-): Promise<EnrichedPlayer[]>
+  week: string,
+): Promise<EnrichedPlayer[]>;
 
 // Calculate FAAB bid bands
 export function calculateFAABBands(
   projection: PlayerProjection,
   usage: UsageMetrics,
   budget: number,
-  need: boolean
-): { min: number, likely: number, max: number }
+  need: boolean,
+): { min: number; likely: number; max: number };
 
 // Score decisions for Important Decisions
 export function scoreDecisions(
   roster: YahooPlayer[],
   projections: PlayerProjection[],
   injuries: InjuryReport,
-  byes: ByeWeek[]
-): Decision[]
+  byes: ByeWeek[],
+): Decision[];
 
 // Detect bubble decisions
 export function detectBubbles(
   roster: YahooPlayer[],
   lineup: LineupSlot[],
-  projections: Record<string, PlayerProjection>
-): Bubble[]
+  projections: Record<string, PlayerProjection>,
+): Bubble[];
 ```
 
 ---
@@ -817,12 +816,12 @@ function fuzzyMatchPlayer(
   nflversePlayers: NFLversePlayer[]
 ): string | null {
   // 1. Exact match
-  let match = nflversePlayers.find(p => 
-    [p.name](http://p.name) === [yahooPlayer.name](http://yahooPlayer.name) && 
+  let match = nflversePlayers.find(p =>
+    [p.name](http://p.name) === [yahooPlayer.name](http://yahooPlayer.name) &&
     [p.team](http://p.team) === [yahooPlayer.team](http://yahooPlayer.team)
   )
   if (match) return [match.id](http://match.id)
-  
+
   // 2. Name variations
   const normalized = normalizeName([yahooPlayer.name](http://yahooPlayer.name))
   match = nflversePlayers.find(p =>
@@ -830,17 +829,17 @@ function fuzzyMatchPlayer(
     [p.team](http://p.team) === [yahooPlayer.team](http://yahooPlayer.team)
   )
   if (match) return [match.id](http://match.id)
-  
+
   // 3. Levenshtein distance
   const candidates = nflversePlayers
     .filter(p => [p.team](http://p.team) === [yahooPlayer.team](http://yahooPlayer.team) && p.pos === yahooPlayer.pos)
     .map(p => ({ id: [p.id](http://p.id), distance: levenshtein([p.name](http://p.name), [yahooPlayer.name](http://yahooPlayer.name)) }))
     .sort((a, b) => a.distance - b.distance)
-  
+
   if (candidates[0]?.distance <= 2) {
     return candidates[0].id
   }
-  
+
   return null  // Manual review needed
 }
 ```
@@ -854,18 +853,18 @@ function fuzzyMatchPlayer(
 ```tsx
 // Static data (rarely changes)
 const leagueSettings = await fetch('/yahoo/leagues/:key/settings', {
-  next: { revalidate: 3600 }  // 1 hour
-})
+  next: { revalidate: 3600 }, // 1 hour
+});
 
 // Dynamic data (changes weekly)
 const projections = await fetch('/projections?week=2025-06', {
-  next: { revalidate: 60 }  // 1 minute  
-})
+  next: { revalidate: 60 }, // 1 minute
+});
 
 // Real-time data (changes frequently)
 const roster = await fetch('/yahoo/team/:key/roster', {
-  next: { revalidate: 300 }  // 5 minutes
-})
+  next: { revalidate: 300 }, // 5 minutes
+});
 ```
 
 **Workers API:**
@@ -934,12 +933,12 @@ GET /projections/batch?week=YYYY-WW&player_ids=id1,id2,id3
 export default async function RosterPage({ searchParams }) {
   const session = await getYahooSession()
   if (!session) redirect('/tools')
-  
+
   const teamKey = await getUserTeamKey(session)
   const roster = await fetchYahooRoster(teamKey)
   const playerIds = [roster.map](http://roster.map)(p => mapYahooToNFLverse(p.player_id))
   const projections = await fetchProjections(playerIds, searchParams.week)
-  
+
   return <RosterTable roster={roster} projections={projections} />
 }
 ```
@@ -963,7 +962,7 @@ export default async function RosterPage({ searchParams }) {
 // Add optional roster integration
 const userRoster = session ? await fetchRoster(session) : null
 
-<StartSitTool 
+<StartSitTool
   defaultPlayers={userRoster?.starters}  // Pre-fill with likely comparisons
 />
 ```
@@ -1025,21 +1024,27 @@ const decisions = scoreDecisions(roster, lineup, projections, injuries, byes)
 ```tsx
 // Abstract provider interface
 interface FantasyProvider {
-  name: 'yahoo' | 'espn' | 'sleeper'
-  authenticate(): Promise<Session>
-  getLeagues(session: Session): Promise<League[]>
-  getRoster(teamKey: string): Promise<Player[]>
-  getSettings(leagueKey: string): Promise<Settings>
+  name: 'yahoo' | 'espn' | 'sleeper';
+  authenticate(): Promise<Session>;
+  getLeagues(session: Session): Promise<League[]>;
+  getRoster(teamKey: string): Promise<Player[]>;
+  getSettings(leagueKey: string): Promise<Settings>;
 }
 
 // Implementation
-class YahooProvider implements FantasyProvider { /* ... */ }
-class ESPNProvider implements FantasyProvider { /* ... */ }
-class SleeperProvider implements FantasyProvider { /* ... */ }
+class YahooProvider implements FantasyProvider {
+  /* ... */
+}
+class ESPNProvider implements FantasyProvider {
+  /* ... */
+}
+class SleeperProvider implements FantasyProvider {
+  /* ... */
+}
 
 // Usage
-const provider = getProvider(user.preferredProvider)
-const roster = await provider.getRoster(teamKey)
+const provider = getProvider(user.preferredProvider);
+const roster = await provider.getRoster(teamKey);
 ```
 
 **Required Abstractions:**
@@ -1091,45 +1096,45 @@ const roster = await provider.getRoster(teamKey)
 
 ### Data Infrastructure
 
-- [ ]  Create player ID mapping table (D1 or KV)
-- [ ]  Build initial Yahoo ↔ NFLverse mapping
-- [ ]  Add fuzzy matching for name variations
-- [ ]  Set up weekly mapping refresh job
-- [ ]  Create mapping API endpoints
+- [ ] Create player ID mapping table (D1 or KV)
+- [ ] Build initial Yahoo ↔ NFLverse mapping
+- [ ] Add fuzzy matching for name variations
+- [ ] Set up weekly mapping refresh job
+- [ ] Create mapping API endpoints
 
 ### Workers API Enhancements
 
-- [ ]  Add batch projections endpoint
-- [ ]  Add usage metrics endpoint
-- [ ]  Build transformation utilities
-- [ ]  Add FAAB calculation logic
-- [ ]  Add decision scoring algorithm
-- [ ]  Add bubble detection logic
+- [ ] Add batch projections endpoint
+- [ ] Add usage metrics endpoint
+- [ ] Build transformation utilities
+- [ ] Add FAAB calculation logic
+- [ ] Add decision scoring algorithm
+- [ ] Add bubble detection logic
 
 ### Frontend Integration
 
-- [ ]  Wire Roster page to Yahoo API
-- [ ]  Add projection enrichment
-- [ ]  Update Start/Sit with roster auto-populate
-- [ ]  Update FAAB Helper with budget display
-- [ ]  Update Important Decisions with real roster
-- [ ]  Add Waivers page with availability
-- [ ]  Add Bubble Detector UI
+- [ ] Wire Roster page to Yahoo API
+- [ ] Add projection enrichment
+- [ ] Update Start/Sit with roster auto-populate
+- [ ] Update FAAB Helper with budget display
+- [ ] Update Important Decisions with real roster
+- [ ] Add Waivers page with availability
+- [ ] Add Bubble Detector UI
 
 ### Testing
 
-- [ ]  Unit tests for ID mapping
-- [ ]  Integration tests for Yahoo → NFLverse flow
-- [ ]  E2E test: OAuth → Roster → Projections
-- [ ]  Load test: 100 concurrent roster fetches
-- [ ]  Error handling: Unmapped players, API timeouts
+- [ ] Unit tests for ID mapping
+- [ ] Integration tests for Yahoo → NFLverse flow
+- [ ] E2E test: OAuth → Roster → Projections
+- [ ] Load test: 100 concurrent roster fetches
+- [ ] Error handling: Unmapped players, API timeouts
 
 ### Documentation
 
-- [ ]  API endpoint documentation
-- [ ]  Data flow diagrams
-- [ ]  ID mapping maintenance guide
-- [ ]  Troubleshooting runbook
+- [ ] API endpoint documentation
+- [ ] Data flow diagrams
+- [ ] ID mapping maintenance guide
+- [ ] Troubleshooting runbook
 
 ---
 
@@ -1187,30 +1192,30 @@ const roster = await provider.getRoster(teamKey)
 
 **Phase 1 Complete:**
 
-- [ ]  90%+ player ID mapping coverage
-- [ ]  Round-trip test: Yahoo → NFLverse → Projections
-- [ ]  Mapping API endpoints operational
+- [ ] 90%+ player ID mapping coverage
+- [ ] Round-trip test: Yahoo → NFLverse → Projections
+- [ ] Mapping API endpoints operational
 
 **Phase 2 Complete:**
 
-- [ ]  Roster page displays with projections
-- [ ]  All mapped players show correct data
-- [ ]  Unmapped players handled gracefully
-- [ ]  Page loads in <2 seconds
+- [ ] Roster page displays with projections
+- [ ] All mapped players show correct data
+- [ ] Unmapped players handled gracefully
+- [ ] Page loads in <2 seconds
 
 **Phase 3 Complete:**
 
-- [ ]  Start/Sit auto-populates from roster
-- [ ]  FAAB Helper shows remaining budget
-- [ ]  Important Decisions uses real roster data
-- [ ]  All tools work without Yahoo connection
+- [ ] Start/Sit auto-populates from roster
+- [ ] FAAB Helper shows remaining budget
+- [ ] Important Decisions uses real roster data
+- [ ] All tools work without Yahoo connection
 
 **Phase 4 Complete:**
 
-- [ ]  Bubble Detector identifies close calls
-- [ ]  Waivers page shows filtered free agents
-- [ ]  League scoring adjustments applied
-- [ ]  Full integration end-to-end tested
+- [ ] Bubble Detector identifies close calls
+- [ ] Waivers page shows filtered free agents
+- [ ] League scoring adjustments applied
+- [ ] Full integration end-to-end tested
 
 ---
 
@@ -1247,14 +1252,14 @@ Implement the Player ID Mapping system to connect Yahoo Fantasy player IDs with 
 
 ## ✅ Acceptance Criteria
 
-- [ ]  D1 database created and schema deployed
-- [ ]  Core mapping functions work (single + batch)
-- [ ]  All 5 API endpoints functional
-- [ ]  Population script loads initial data
-- [ ]  Coverage ≥90% for current week players
-- [ ]  Batch mapping <100ms for 20 players
-- [ ]  Unmapped players tracked (not errors)
-- [ ]  Tests pass for exact, fuzzy, and unmapped cases
+- [ ] D1 database created and schema deployed
+- [ ] Core mapping functions work (single + batch)
+- [ ] All 5 API endpoints functional
+- [ ] Population script loads initial data
+- [ ] Coverage ≥90% for current week players
+- [ ] Batch mapping <100ms for 20 players
+- [ ] Unmapped players tracked (not errors)
+- [ ] Tests pass for exact, fuzzy, and unmapped cases
 
 ## 📦 Implementation Steps (90 minutes)
 
@@ -1844,12 +1849,12 @@ curl "http://localhost:8787/api/players/map/nfl.p.32725"
 
 ### Acceptance Tests
 
-- [ ]  All 5 endpoints return 200 status
-- [ ]  Batch mapping handles 20 players in <100ms
-- [ ]  Unknown Yahoo ID returns null (not error)
-- [ ]  Stats show accurate coverage percentage
-- [ ]  Unmapped list is empty initially
-- [ ]  NFLverse → Yahoo reverse lookup works
+- [ ] All 5 endpoints return 200 status
+- [ ] Batch mapping handles 20 players in <100ms
+- [ ] Unknown Yahoo ID returns null (not error)
+- [ ] Stats show accurate coverage percentage
+- [ ] Unmapped list is empty initially
+- [ ] NFLverse → Yahoo reverse lookup works
 
 ---
 
@@ -1994,24 +1999,23 @@ When complete, reply with:
 ### Manual Steps Remaining
 
 1. **Deploy schema (requires confirmation):**
-    
-    ```bash
-    npx wrangler d1 execute customvenom-player-mappings --remote --file=./schema/player_mappings.sql
-    ```
-    
+
+   ```bash
+   npx wrangler d1 execute customvenom-player-mappings --remote --file=./schema/player_mappings.sql
+   ```
+
 2. **Test locally:**
-    
-    ```bash
-    npm run dev
-    # Test endpoints per Testing Checklist above
-    ```
-    
+
+   ```bash
+   npm run dev
+   # Test endpoints per Testing Checklist above
+   ```
+
 3. **Populate data:**
-    
-    ```bash
-    npm run populate:mappings
-    ```
-    
+
+   ```bash
+   npm run populate:mappings
+   ```
 
 ### Unblocked Features
 

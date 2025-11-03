@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-// Redirect shim: /tools/yahoo → /dashboard/leagues
+// Legacy redirect: /tools/yahoo → /dashboard/leagues
+// Note: /tools page no longer exists, all functionality moved to /dashboard/*
 // Keeps backward compatibility for old links while maintaining canonical OAuth destination
 export default function YahooToolPageRedirect() {
   const router = useRouter();

@@ -109,30 +109,23 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
         const data = await res.json();
 
         // Find the current team in standings
-        const standings = data?.standings?.team || [];
+        const standings = data?.standings || [];
         const teamStanding = standings.find(
           (t: { team_key?: string }) => t.team_key === teamKey
         );
 
         if (teamStanding) {
-          // Extract record, points, rank from Yahoo standings format
-          const wins = teamStanding.team_stats?.stats?.find(
-            (s: { stat_id: string }) => s.stat_id === '1' // wins
-          )?.value || 0;
-          const losses = teamStanding.team_stats?.stats?.find(
-            (s: { stat_id: string }) => s.stat_id === '2' // losses
-          )?.value || 0;
-
-          // Try to get points_for or average points
-          const pointsFor = teamStanding.team_stats?.stats?.find(
-            (s: { stat_id: string }) => s.stat_id === '14' // points_for
-          )?.value || 0;
-
-          const rank = teamStanding.team_standings?.rank || null;
+          // Extract record, points, rank from standings format
+          const wins = teamStanding.outcome_totals?.wins || 0;
+          const losses = teamStanding.outcome_totals?.losses || 0;
+          const ties = teamStanding.outcome_totals?.ties || 0;
+          const pointsFor = parseFloat(teamStanding.points_for || '0');
+          const rank = teamStanding.rank || null;
+          const totalGames = wins + losses + ties || 1;
 
           setStats({
-            record: `${wins}-${losses}`,
-            avgPoints: wins + losses > 0 ? Math.round((pointsFor / (wins + losses)) * 10) / 10 : 0,
+            record: `${wins}-${losses}${ties > 0 ? `-${ties}` : ''}`,
+            avgPoints: totalGames > 0 ? Math.round((pointsFor / totalGames) * 10) / 10 : 0,
             powerRank: rank,
           });
         } else {

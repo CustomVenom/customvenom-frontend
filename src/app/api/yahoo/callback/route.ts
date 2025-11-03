@@ -38,7 +38,8 @@ export async function GET(req: NextRequest) {
         } else if (parsedReturnTo.startsWith('/dashboard/')) {
           returnTo = parsedReturnTo;
         } else if (parsedReturnTo.startsWith('/tools/')) {
-          // Legacy support: redirect old /tools/* to /dashboard/leagues
+          // Legacy support: redirect old /tools/* paths to /dashboard/leagues
+          // Note: /tools page no longer exists, all functionality moved to /dashboard/*
           returnTo = '/dashboard/leagues';
         }
         // Never redirect to /settings - settings is not a valid OAuth callback destination
