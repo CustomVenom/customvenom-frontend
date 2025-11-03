@@ -28,26 +28,26 @@ export async function requireAuth() {
 }
 
 /**
- * Require Pro subscription
- * Redirects to /go-pro if user is not Pro
+ * Require Pro subscription (VIPER or MAMBA tier)
+ * Redirects to /account if user is FREE tier
  */
 export async function requirePro() {
   const session = await requireAuth();
 
-  if (session.user.role !== 'pro') {
-    redirect('/go-pro');
+  if (session.user.tier === 'FREE') {
+    redirect('/account?upgrade=viper');
   }
 
   return session;
 }
 
 /**
- * Check if user is Pro (boolean check)
+ * Check if user is Pro (VIPER or MAMBA tier)
  * Use this for conditional rendering
  */
 export async function isPro() {
   const session = await getServerSession();
-  return session?.user?.role === 'pro';
+  return session?.user?.tier === 'VIPER' || session?.user?.tier === 'MAMBA';
 }
 
 /**

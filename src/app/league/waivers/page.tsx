@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function WaiversPage() {
   const session = await getServerSession();
-  const isPro = session?.user?.role === 'pro';
+  const isPro = session?.user?.tier === 'VIPER' || session?.user?.tier === 'MAMBA';
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">

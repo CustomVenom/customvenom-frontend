@@ -1,17 +1,18 @@
 import { DefaultUser } from 'next-auth';
+import type { UserTier, UserRole } from '@prisma/client';
 import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session {
     user: NonNullable<Session['user']> & {
       id: string;
-      role?: 'free' | 'pro' | 'team' | 'admin';
-      // Design System v2.0 - New tier system
-      tier?: 'FREE' | 'VIPER' | 'MAMBA';
-      // Legacy role (backward compatibility)
+      // Design System v2.0 - New enum system
+      tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
+      role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
+      // Legacy role (backward compatibility - optional)
       legacyRole?: 'free' | 'pro' | 'team' | 'admin';
       // Yahoo
-      sub: string;
+      sub?: string;
       yah?: string;
       // Stripe
       stripeCustomerId?: string;
@@ -19,9 +20,9 @@ declare module 'next-auth' {
   }
 
   interface User extends DefaultUser {
-    role?: 'free' | 'pro' | 'team' | 'admin';
-    // Design System v2.0 - New tier system
-    tier?: 'FREE' | 'VIPER' | 'MAMBA';
+    // Design System v2.0 - New enum system
+    tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
+    role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
     sub?: string;
     yah?: string;
     stripeCustomerId?: string;
@@ -30,11 +31,10 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    id?: string;
-    userId?: string;
-    role?: 'free' | 'pro' | 'team' | 'admin';
-    // Design System v2.0 - New tier system
-    tier?: 'FREE' | 'VIPER' | 'MAMBA';
+    id: string;
+    // Design System v2.0 - New enum system
+    tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
+    role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
     stripeCustomerId?: string;
     yah?: {
       sub?: string;

@@ -4,6 +4,7 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
 import type { Session, User, Account, Profile } from 'next-auth';
+import type { UserTier, UserRole } from '@prisma/client';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import FacebookProvider from 'next-auth/providers/facebook';
 import GoogleProvider from 'next-auth/providers/google';
@@ -48,8 +49,8 @@ if (process.env['ENABLE_CREDENTIALS_AUTH'] !== 'false') {
           email: user.email,
           name: user.name,
           image: user.image,
-          tier: user.tier,
-          role: user.role
+          tier: user.tier as UserTier,
+          role: user.role as UserRole
         };
       }
     })
@@ -114,13 +115,13 @@ export const authOptions = {
     }) {
       // Auto-assign admin role to admin emails
       if (user.email && user.id) {
-        const { isAdminEmail, ROLES } = await import('./rbac');
+        const { isAdminEmail } = await import('./rbac');
 
         if (isAdminEmail(user.email)) {
-          // Update user role to admin if they're signing in
+          // Update user role to admin if they're signing in (using new enum)
           await prisma.user.update({
             where: { id: user.id },
-            data: { role: 'ADMIN' as const },
+            data: { role: 'ADMIN' },
           });
         }
       }
@@ -131,8 +132,8 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         // Use enum fields (UserTier, UserRole) if available, fallback to legacy
-        token.tier = 'tier' in user ? user.tier : (user as any).legacyTier || 'FREE';
-        token.role = 'role' in user ? user.role : (user as any).legacyRole || 'USER';
+        token.tier = ('tier' in user ? user.tier : (user as any).legacyTier || 'FREE') as UserTier;
+        token.role = ('role' in user ? user.role : (user as any).legacyRole || 'USER') as UserRole;
 
         // Yahoo fields
         token.sub = 'sub' in user && user.sub ? (user.sub as string) : undefined;
@@ -146,12 +147,12 @@ export const authOptions = {
 
       // Refresh user data from DB periodically (every request for credentials provider)
       if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string }
-        });
-        if (dbUser) {
-          token.tier = dbUser.tier;
-          token.role = dbUser.role;
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string }
+          });
+          if (dbUser) {
+            token.tier = dbUser.tier as UserTier;
+            token.role = dbUser.role as UserRole;
           token.sub = dbUser.sub || undefined;
           token.yah = dbUser.yah || undefined;
           token.stripeCustomerId = dbUser.stripeCustomerId || undefined;
@@ -166,8 +167,8 @@ export const authOptions = {
         session.user.id = token.id as string;
 
         // Design System v2.0 tier and role (from enum fields)
-        session.user.tier = token.tier as string;
-        session.user.role = token.role as string;
+        session.user.tier = token.tier;
+        session.user.role = token.role;
 
         // Legacy role mapping for backward compatibility
         session.user.legacyRole = ('legacyRole' in token ? token.legacyRole :
