@@ -7,7 +7,7 @@ export default function Footer() {
     <footer role="contentinfo" className="mt-10 border-t border-[rgba(148,163,184,0.1)]">
       <div className="container py-6 text-xs text-[rgb(var(--text-muted))] flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div>© {new Date().getFullYear()} Custom Venom · Pick Your Poison</div>
+          <div>© {new Date().getFullYear()} Custom Venom</div>
           <OpsStatus />
         </div>
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-3">

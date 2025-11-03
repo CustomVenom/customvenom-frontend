@@ -2,7 +2,6 @@
 
 import { useSelectedLeague } from '@/lib/selection';
 import { useEffect, useState } from 'react';
-import { NavigationCards } from '@/components/dashboard/NavigationCards';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 
@@ -320,7 +319,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-gray-100">War Room</h1>
+                <h1 className="text-4xl font-bold text-gray-100">Dashboard</h1>
                 <p className="text-gray-400 mt-1">Select your team to continue</p>
               </div>
               {/* Team selector dropdown */}
@@ -421,8 +420,7 @@ export default function DashboardPage() {
           {/* Header with Team Selector */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-100 mb-1">War Room</h1>
-              <p className="text-gray-400">Your tactical command center</p>
+              <h1 className="text-3xl font-bold text-gray-100 mb-1">Dashboard</h1>
             </div>
             {/* Team selector dropdown */}
             <div className="relative" data-team-selector>
@@ -517,8 +515,7 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* Navigation Cards - Main Feature */}
-          <NavigationCards />
+          {/* Dashboard content will be added here */}
         </div>
       </div>
     </div>

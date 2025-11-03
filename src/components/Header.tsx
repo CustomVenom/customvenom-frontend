@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Settings, User } from 'lucide-react';
 
 import Brand from '@/components/Brand';
 import DensityToggle from '@/components/DensityToggle';
@@ -15,34 +15,41 @@ const mainLinks = [
   { href: '/projections', label: 'Projections' },
 ];
 
+// Tools in consistent order: Decisions, Start/Sit, FAAB, Players
 const toolsLinks = [
-  { href: '/dashboard/decisions', label: 'Important Decisions' },
+  { href: '/dashboard/decisions', label: 'Decisions' },
   { href: '/dashboard/start-sit', label: 'Start/Sit' },
-  { href: '/dashboard/faab', label: 'FAAB Helper' },
-  { href: '/dashboard/waivers', label: 'Waivers' },
+  { href: '/dashboard/faab', label: 'FAAB' },
+  { href: '/dashboard/waivers', label: 'Players' },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
+  const toolsDropdownRef = useRef<HTMLDivElement>(null);
+  const settingsDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(target)) {
         setToolsDropdownOpen(false);
+      }
+      if (settingsDropdownRef.current && !settingsDropdownRef.current.contains(target)) {
+        setSettingsDropdownOpen(false);
       }
     };
 
-    if (toolsDropdownOpen) {
+    if (toolsDropdownOpen || settingsDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [toolsDropdownOpen]);
+  }, [toolsDropdownOpen, settingsDropdownOpen]);
 
   const isToolsActive = toolsLinks.some((link) => pathname?.startsWith(link.href));
 
@@ -72,7 +79,7 @@ export default function Header() {
           ))}
 
           {/* Tools Dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative" ref={toolsDropdownRef}>
             <button
               onClick={() => setToolsDropdownOpen(!toolsDropdownOpen)}
               className={`flex items-center gap-1 transition-colors ${
@@ -111,16 +118,47 @@ export default function Header() {
             )}
           </div>
 
-          <Link
-            href="/settings"
-            className={
-              pathname?.startsWith('/settings')
-                ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-semibold'
-                : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] transition-colors'
-            }
-          >
-            Settings
-          </Link>
+          {/* Settings Dropdown - Discreet icon */}
+          <div className="relative" ref={settingsDropdownRef}>
+            <button
+              onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
+              className={`flex items-center gap-1 transition-colors p-1 rounded ${
+                pathname?.startsWith('/settings')
+                  ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))]'
+                  : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]'
+              }`}
+              aria-expanded={settingsDropdownOpen}
+              aria-haspopup="true"
+              aria-label="Settings"
+            >
+              <Settings className="h-4 w-4" />
+            </button>
+
+            {settingsDropdownOpen && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                <div className="py-1">
+                  <Link
+                    href="/settings"
+                    onClick={() => setSettingsDropdownOpen(false)}
+                    className={`block px-4 py-2 text-sm transition-colors ${
+                      pathname?.startsWith('/settings')
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-medium'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    Settings
+                  </Link>
+                  <Link
+                    href="/account"
+                    onClick={() => setSettingsDropdownOpen(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Account
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="flex items-center gap-2">

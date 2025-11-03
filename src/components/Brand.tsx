@@ -7,7 +7,6 @@ export default function Brand({ size = 'lg' }: { size?: 'sm' | 'md' | 'lg' }) {
   return (
     <div className={`inline-flex items-baseline gap-2 ${wrap}`}>
       <span className="brand-title">Custom Venom</span>
-      <span className="brand-tagline">Pick Your Poison</span>
     </div>
   );
 }

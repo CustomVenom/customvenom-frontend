@@ -6,7 +6,7 @@ interface ShareButtonsProps {
 }
 
 export default function ShareButtons({
-  text = 'Check out Custom Venom — Pick Your Poison',
+  text = 'Check out Custom Venom — Fantasy Football Analytics',
   url = 'https://customvenom.com',
 }: ShareButtonsProps) {
   const encodedText = encodeURIComponent(text);
