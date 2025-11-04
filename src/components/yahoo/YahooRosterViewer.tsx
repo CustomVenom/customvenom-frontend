@@ -21,10 +21,14 @@ interface Player {
   name: { full: string };
   display_position: string;
   editorial_team_abbr: string;
+  nflverse_id?: string | null;
+  mapped?: boolean;
+  projected_points?: number | null;
+  confidence?: number;
 }
 
 export function YahooRosterViewer() {
-  const { loading, error, fetchLeagues, fetchTeams, fetchRoster } = useYahooApi();
+  const { loading, error, fetchLeagues, fetchTeams } = useYahooApi();
   const [leagues, setLeagues] = useState<YahooLeague[]>([]);
   const [_selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [teams, setTeams] = useState<YahooTeam[]>([]);
@@ -52,8 +56,15 @@ export function YahooRosterViewer() {
     setSelectedTeam(teamKey);
     setView('roster');
     try {
-      const rosterData = await fetchRoster(teamKey);
-      setRoster(rosterData);
+      // Use enriched roster API instead of raw Yahoo API
+      const res = await fetch(`/api/roster?teamKey=${encodeURIComponent(teamKey)}`, {
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to fetch roster: ${res.status}`);
+      }
+      const data = await res.json();
+      setRoster(data.roster || []);
     } catch (e) {
       console.error('Failed to load roster:', e);
     }
@@ -176,6 +187,12 @@ export function YahooRosterViewer() {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
                       Team
                     </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Projected
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -188,6 +205,26 @@ export function YahooRosterViewer() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{player.editorial_team_abbr}</td>
+                      <td className="px-4 py-3">
+                        {player.projected_points !== null && player.projected_points !== undefined ? (
+                          <span className="font-semibold text-gray-900">
+                            {player.projected_points.toFixed(1)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {player.mapped ? (
+                          <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded">
+                            Mapped
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded">
+                            Unmapped
+                          </span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
