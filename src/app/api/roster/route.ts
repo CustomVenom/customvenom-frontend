@@ -96,9 +96,10 @@ export async function GET(request: NextRequest) {
     const week = getCurrentNFLWeek();
 
     // Step 1: Extract Yahoo IDs from roster
+    // Accept both 'nfl.p.*' and league-specific formats like '461.p.*'
     const yahooIds = roster
       .map((p) => p.player_key)
-      .filter((id): id is string => Boolean(id && id.startsWith('nfl.p.')));
+      .filter((id): id is string => Boolean(id && id.includes('.p.')));
 
     // Step 2: Map Yahoo IDs to NFLverse IDs via batch endpoint
     let nflverseIdMap: Map<string, string> = new Map();
