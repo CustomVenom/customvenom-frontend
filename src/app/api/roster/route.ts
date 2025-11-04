@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
       .filter((id): id is string => Boolean(id && id.includes('.p.')));
 
     // Step 2: Map Yahoo IDs to NFLverse IDs via batch endpoint
-    let nflverseIdMap: Map<string, string> = new Map();
+    const nflverseIdMap: Map<string, string> = new Map();
     if (yahooIds.length > 0) {
       try {
         const mapResponse = await fetch(`${API_BASE}/api/players/map/batch`, {
@@ -122,6 +122,10 @@ export async function GET(request: NextRequest) {
               nflverseIdMap.set(m.yahoo_id, m.nflverse_id);
             }
           });
+        } else {
+          const errorText = await mapResponse.text().catch(() => 'Unable to read error response');
+          console.error('[roster] Mapping endpoint failed:', mapResponse.status, errorText);
+          // Continue with unmapped players
         }
       } catch (e) {
         console.error('[/api/roster] Failed to map player IDs:', e);
@@ -141,8 +145,10 @@ export async function GET(request: NextRequest) {
     // Note: Projections adapter returns player_id in espn:XXX format after ESPN ID lookup
     // We'll match projections back to NFLverse IDs by building ESPN ID → NFLverse ID map
     const nflverseIds = Array.from(nflverseIdMap.values()).filter((id): id is string => Boolean(id));
-    const espnToNflverseMap: Map<string, string> = new Map(); // ESPN ID → NFLverse ID
-    let projectionsByEspnId: Map<string, { projected_points: number; reasons?: any[] }> = new Map();
+    const projectionsByEspnId: Map<
+      string,
+      { projected_points: number; reasons?: Array<{ label: string; effect: string; confidence: number }> }
+    > = new Map();
 
     if (nflverseIds.length > 0) {
       try {
@@ -158,7 +164,7 @@ export async function GET(request: NextRequest) {
           const projData = await projResponse.json();
           // Projections come back with player_id in espn:XXX format
           // Adapter now includes nflverse_id field for matching
-          (projData || []).forEach((proj: any) => {
+          (projData || []).forEach((proj: { player_id: string; nflverse_id?: string; projected_points: number; reasons?: Array<{ label: string; effect: string; confidence: number }> }) => {
             if (proj.player_id && typeof proj.projected_points === 'number') {
               // Use nflverse_id if provided (adapter enhancement), otherwise fall back to ESPN ID
               const matchKey = proj.nflverse_id || proj.player_id;
@@ -168,6 +174,10 @@ export async function GET(request: NextRequest) {
               });
             }
           });
+        } else {
+          const errorText = await projResponse.text().catch(() => 'Unable to read error response');
+          console.error('[roster] Projection endpoint failed:', projResponse.status, errorText);
+          // Continue without projections
         }
       } catch (e) {
         console.error('[/api/roster] Failed to fetch projections:', e);
