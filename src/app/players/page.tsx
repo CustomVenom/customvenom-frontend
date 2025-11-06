@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import {
   Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
+  THead,
+  TBody,
+  Tr,
+  Th,
+  Td,
 } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/badge';
 import type { PlayerListItem } from '@/types/players';
@@ -164,41 +164,34 @@ export default function PlayersPage() {
 
       {/* Players Table */}
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Player</TableHead>
-            <TableHead>Team</TableHead>
-            <TableHead>Opp</TableHead>
-            {/* @ts-expect-error - Custom props work at runtime, TypeScript doesn't recognize forwardRef props */}
-            <TableHead
-              sortable
-              sorted={(sortBy === 'projected' ? 'desc' : null) as 'asc' | 'desc' | null}
-              onSort={() => setSortBy('projected')}
-            >
-              Proj
-            </TableHead>
-            <TableHead>Floor</TableHead>
-            <TableHead>Ceil</TableHead>
-            <TableHead></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+        <THead>
+          <Tr>
+            <Th>Player</Th>
+            <Th>Team</Th>
+            <Th>Opp</Th>
+            <Th>Proj</Th>
+            <Th>Floor</Th>
+            <Th>Ceil</Th>
+            <Th></Th>
+          </Tr>
+        </THead>
+        <TBody>
           {filteredPlayers.slice(0, 50).map((player) => (
-            <TableRow key={player.player_id}>
-              <TableCell>
+            <Tr key={player.player_id}>
+              <Td>
                 <div>
                   <div className="font-semibold">{player.name}</div>
                   <div className="text-xs text-text-tertiary">{player.position}</div>
                 </div>
-              </TableCell>
-              <TableCell>{player.team}</TableCell>
-              <TableCell>{player.opponent || 'BYE'}</TableCell>
-              <TableCell>
+              </Td>
+              <Td>{player.team}</Td>
+              <Td>{player.opponent || 'BYE'}</Td>
+              <Td>
                 <span className="stat-number">{player.p50?.toFixed(1) || '-'}</span>
-              </TableCell>
-              <TableCell className="text-text-secondary">{player.p10?.toFixed(1) || '-'}</TableCell>
-              <TableCell className="text-text-secondary">{player.p90?.toFixed(1) || '-'}</TableCell>
-              <TableCell>
+              </Td>
+              <Td className="text-text-secondary">{player.p10?.toFixed(1) || '-'}</Td>
+              <Td className="text-text-secondary">{player.p90?.toFixed(1) || '-'}</Td>
+              <Td>
                 {player.reasons && player.reasons.length > 0 && (
                   <div className="flex gap-1">
                     {player.reasons.slice(0, 2).map((reason: string, i: number) => (
@@ -208,10 +201,10 @@ export default function PlayersPage() {
                     ))}
                   </div>
                 )}
-              </TableCell>
-            </TableRow>
+              </Td>
+            </Tr>
           ))}
-        </TableBody>
+        </TBody>
       </Table>
     </div>
   );
