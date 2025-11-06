@@ -131,7 +131,7 @@ If issues occur:
 
 ---
 
-**Deployment Date**: ****\_\_\_****
-**Deployed By**: ****\_\_\_****
+**Deployment Date**: \***\*\_\_\_\*\***
+**Deployed By**: \***\*\_\_\_\*\***
 **Migration Status**: Pending / Complete
-**Post-Deployment Status**: ****\_\_\_****
+**Post-Deployment Status**: \***\*\_\_\_\*\***
