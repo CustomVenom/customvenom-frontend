@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Zap } from 'lucide-react'
-import { VenomLogo } from '@/components/ui/VenomLogo'
+import { Zap } from 'lucide-react'
 
 export function HeroSection() {
   return (
@@ -14,10 +13,9 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Copy */}
           <div className="space-y-8">
-            {/* Logo + Tagline */}
+            {/* Tagline */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <VenomLogo size="lg" variant="light" />
                 <span className="text-sm font-medium text-venom-600 tracking-wide uppercase">
                   Fantasy Analytics
                 </span>
@@ -38,11 +36,10 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center gap-2 bg-venom-500 hover:bg-venom-600 text-white font-semibold px-8 py-4 rounded-lg shadow-lg shadow-venom-500/30 transition-all hover:shadow-venom-500/50 hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 bg-venom-500 hover:bg-venom-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors"
+                style={{ color: 'white' }}
               >
-                <Zap className="w-5 h-5" />
                 Get Started Free
-                <ArrowRight className="w-5 h-5" />
               </Link>
 
               <Link

@@ -26,6 +26,32 @@ export function useLeagueContext(): LeagueContext {
   useEffect(() => {
     const fetchContext = async () => {
       try {
+        // ✅ Check if user has selection before fetching
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+        const selectionRes = await fetch(`${API_BASE}/api/session/selection`, {
+          credentials: 'include',
+        });
+
+        // If no selection, don't fetch roster data
+        if (!selectionRes.ok) {
+          setContext((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: null,
+          }));
+          return;
+        }
+
+        const selection = await selectionRes.json();
+        if (!selection.active_team_key || !selection.active_league_key) {
+          setContext((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: null,
+          }));
+          return;
+        }
+
         const res = await fetch('/api/roster', {
           credentials: 'include',
           cache: 'no-store',
@@ -56,8 +82,9 @@ export function useLeagueContext(): LeagueContext {
           isLoading: false,
           error: null,
         });
-      } catch {
+      } catch (e) {
         // On error, use defaults (silent failure)
+        console.debug('[useLeagueContext] Failed to fetch context (expected if not connected)', e);
         setContext((prev) => ({
           ...prev,
           isLoading: false,

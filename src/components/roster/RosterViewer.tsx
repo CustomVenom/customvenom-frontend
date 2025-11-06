@@ -37,9 +37,32 @@ export function RosterViewer() {
   const [roster, setRoster] = useState<Player[]>([]);
   const [view, setView] = useState<'leagues' | 'teams' | 'roster'>('leagues');
 
-  // Load leagues on mount
+  // Load leagues on mount - only if connected
   useEffect(() => {
-    fetchLeagues().then(setLeagues).catch(console.error);
+    // Check if user is connected before fetching
+    const checkAndFetch = async () => {
+      try {
+        const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
+        const meRes = await fetch(`${API_BASE}/yahoo/me`, {
+          credentials: 'include',
+        });
+
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          // Only fetch leagues if user is connected
+          if (meData.guid) {
+            fetchLeagues().then(setLeagues).catch((e) => {
+              console.debug('[RosterViewer] Failed to fetch leagues (expected if not connected)', e);
+            });
+          }
+        }
+      } catch (e) {
+        // Fail silently - expected if not connected
+        console.debug('[RosterViewer] Connection check failed (expected if not logged in)', e);
+      }
+    };
+
+    checkAndFetch();
   }, [fetchLeagues]);
 
   const handleLeagueClick = async (leagueKey: string) => {

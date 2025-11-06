@@ -2,7 +2,9 @@
 
 import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
+import { DashboardHeader, DashboardToolGrid } from '@/components/dashboard';
 import { RosterViewer } from '@/components/roster/RosterViewer';
+import { useSession } from '@/hooks/useSession';
 // Removed useSelectedLeague import - we use direct POST instead of setSelection
 import { useEffect, useState } from 'react';
 
@@ -37,6 +39,9 @@ interface SessionSelectionResponse {
 // ===== MAIN COMPONENT =====
 
 export default function DashboardPage() {
+  // Check session status first
+  const { sess, loading: sessionLoading } = useSession();
+
   // Removed setSelection - we use direct POST instead to avoid redundant calls
   const [me, setMe] = useState<YahooMeResponse | null>(null);
   const [leagues, setLeagues] = useState<YahooLeaguesResponse | null>(null);
@@ -78,7 +83,8 @@ export default function DashboardPage() {
           }
         }
       } catch (e) {
-        console.error('Failed to load connection status:', e);
+        // Fail silently - not an error if user is not logged in
+        console.debug('[Dashboard] Connection check failed (expected if not logged in)', e);
       } finally {
         setLoading(false);
       }
@@ -109,7 +115,8 @@ export default function DashboardPage() {
           }
         }
       } catch (e) {
-        console.error('Failed to load selection:', e);
+        // Fail silently - not an error if user is not connected
+        console.debug('[Dashboard] Failed to load selection (expected if not connected)', e);
       }
     };
     loadSelection();
@@ -172,13 +179,14 @@ export default function DashboardPage() {
             }
           } catch (leagueError) {
             // Continue with next league even if one fails
-            console.error('Error fetching teams for league:', leagueError);
+            console.debug('[Dashboard] Error fetching teams for league (skipping)', leagueError);
           }
         }
 
         setTeams(allTeams);
       } catch (e) {
-        console.error('Failed to load teams:', e);
+        // Fail silently - expected if not connected
+        console.debug('[Dashboard] Failed to load teams (expected if not connected)', e);
         setTeams([]);
       }
     };
@@ -266,7 +274,7 @@ export default function DashboardPage() {
   // ===== RENDER =====
 
   // Prevent hydration mismatch by showing loading state until client-side mounted
-  if (!mounted || loading) {
+  if (!mounted || sessionLoading || loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen bg-field-900 dashboard-hub scale-pattern">
         <div className="text-gray-400">Loading...</div>
@@ -274,69 +282,75 @@ export default function DashboardPage() {
     );
   }
 
-  // ===== STATE 1: NOT CONNECTED =====
-  if (!isConnected) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-field-900 dashboard-hub scale-pattern">
-        <div className="container max-w-2xl mx-auto py-12 px-4">
-          <div className="text-center space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-100">
-                Connect Your Fantasy League
-              </h1>
-              <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto">
-                Get personalized AI-powered projections, lineup recommendations, and waiver wire
-                insights for your team.
-              </p>
-            </div>
+  const isLoggedIn = sess && sess.ok;
 
-            <div className="flex justify-center pt-4">
-              <ConnectLeagueButton />
-            </div>
+  return (
+    <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
+      {/* Simple login message at top */}
+      {!isLoggedIn && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
+          Please login to see your data.
+        </div>
+      )}
 
-            <div className="pt-8 max-w-md mx-auto">
-              <div className="rounded-lg border border-field-600 bg-field-800 p-6 shadow-sm">
-                <h3 className="font-semibold mb-4 text-lg text-gray-100">What you'll get:</h3>
-                <ul className="space-y-3 text-left text-sm text-gray-400">
-                  <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
-                    <span>AI-powered projections for your roster</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
-                    <span>Start/Sit recommendations</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
-                    <span>FAAB budget optimization</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-venom-500 mr-2 mt-0.5">✓</span>
-                    <span>Waiver wire analysis</span>
-                  </li>
-                </ul>
+      {/* ===== STATE 1: NOT CONNECTED ===== */}
+      {!isConnected && isLoggedIn ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="container max-w-2xl mx-auto py-12 px-4">
+            <div className="text-center space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-100">
+                  Connect Your Fantasy League
+                </h1>
+                <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto">
+                  Get personalized AI-powered projections, lineup recommendations, and waiver wire
+                  insights for your team.
+                </p>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <ConnectLeagueButton />
+              </div>
+
+              <div className="pt-8 max-w-md mx-auto">
+                <div className="rounded-lg border border-field-600 bg-field-800 p-6 shadow-sm">
+                  <h3 className="font-semibold mb-4 text-lg text-gray-100">What you'll get:</h3>
+                  <ul className="space-y-3 text-left text-sm text-gray-400">
+                    <li className="flex items-start">
+                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span>AI-powered projections for your roster</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span>Start/Sit recommendations</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span>FAAB budget optimization</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span>Waiver wire analysis</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  // ===== STATE 2: CONNECTED BUT NO TEAM SELECTED =====
-  if (!selectedTeam) {
-    return (
-      <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
-        <div className="container max-w-4xl mx-auto py-12 px-4">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold text-gray-100">Dashboard</h1>
-                <p className="text-gray-400 mt-1">Select your team to continue</p>
-              </div>
-              {/* Team selector dropdown */}
-              <div className="relative" data-team-selector>
-                <button
+      ) : !selectedTeam && isLoggedIn ? (
+        // ===== STATE 2: CONNECTED BUT NO TEAM SELECTED =====
+        <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
+          <div className="container max-w-4xl mx-auto py-12 px-4">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-4xl font-bold text-gray-100">Dashboard</h1>
+                  <p className="text-gray-400 mt-1">Select your team to continue</p>
+                </div>
+                {/* Team selector dropdown */}
+                <div className="relative" data-team-selector>
+                  <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -429,25 +443,16 @@ export default function DashboardPage() {
                     )}
                   </div>
                 )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  // ===== STATE 3: CONNECTED AND TEAM SELECTED - SHOW HUB =====
-  return (
-    <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {/* Header with Team Selector */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-100 mb-1">Dashboard</h1>
-            </div>
-            {/* Team selector dropdown */}
+      ) : (
+        // ===== STATE 3: CONNECTED AND TEAM SELECTED - SHOW HUB =====
+        (() => {
+          // Extract team selector button for reuse in DashboardHeader
+          const TeamSelectorButton = () => (
             <div className="relative" data-team-selector>
               <button
                 onClick={(e) => {
@@ -541,82 +546,86 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-          </div>
+          );
 
-          {/* Information-focused grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left column (primary info) */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Roster Preview */}
-              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                <h2 className="text-lg font-semibold text-gray-100 mb-3">Roster</h2>
-                <div className="bg-field-900/40 rounded-lg p-2">
-                  <RosterViewer />
+          return (
+            <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="space-y-8">
+                {/* Dashboard Header with Team Selector */}
+                <DashboardHeader
+                  title="Dashboard"
+                  subtitle="Your fantasy command center"
+                  actions={<TeamSelectorButton />}
+                />
+
+                {/* Quick Stats Section - Integrated with DashboardMetrics */}
+
+                {/* Tools Grid - Card-based layout matching ESPN/Yahoo/Sleeper */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-100 mb-4">Tools</h2>
+                  <DashboardToolGrid columns={3} />
+                </div>
+
+                {/* Information-focused grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Left column (primary info) */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {/* Roster Preview */}
+                    <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                      <h2 className="text-lg font-semibold text-gray-100 mb-3">Roster</h2>
+                      <div className="bg-field-900/40 rounded-lg p-2">
+                        <RosterViewer />
+                      </div>
+                    </div>
+
+                    {/* League Standings (placeholder) */}
+                    <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                      <h2 className="text-lg font-semibold text-gray-100 mb-3">League Standings</h2>
+                      <p className="text-sm text-gray-400">Standings will appear here.</p>
+                    </div>
+
+                    {/* Player News (placeholder) */}
+                    <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                      <h2 className="text-lg font-semibold text-gray-100 mb-3">Player News</h2>
+                      <p className="text-sm text-gray-400">Latest news and injuries will appear here.</p>
+                    </div>
+                  </div>
+
+                  {/* Right column (quick stats) */}
+                  <div className="space-y-6">
+                    {/* Quick Stats */}
+                    {selectedTeam && (
+                      <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                        <h2 className="text-lg font-semibold text-gray-100 mb-3">Team Stats</h2>
+                        <DashboardMetrics
+                          teamKey={selectedTeam}
+                          leagueKey={selectedTeamObj?.league_key || null}
+                        />
+                      </div>
+                    )}
+
+                    {/* Matchup Preview (placeholder) */}
+                    <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                      <h2 className="text-lg font-semibold text-gray-100 mb-3">This Week's Matchup</h2>
+                      <p className="text-sm text-gray-400">Your matchup preview will appear here.</p>
+                    </div>
+
+                    {/* Team Stats - Using DashboardMetrics */}
+                    {selectedTeam && (
+                      <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                        <DashboardMetrics
+                          teamKey={selectedTeam}
+                          leagueKey={selectedTeamObj?.league_key || null}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              {/* League Standings (placeholder) */}
-              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                <h2 className="text-lg font-semibold text-gray-100 mb-3">League Standings</h2>
-                <p className="text-sm text-gray-400">Standings will appear here.</p>
-              </div>
-
-              {/* Player News (placeholder) */}
-              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                <h2 className="text-lg font-semibold text-gray-100 mb-3">Player News</h2>
-                <p className="text-sm text-gray-400">Latest news and injuries will appear here.</p>
-              </div>
             </div>
-
-            {/* Right column (quick stats) */}
-            <div className="space-y-6">
-              {/* Quick Stats */}
-              {selectedTeam && (
-                <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-3">Team Stats</h2>
-                  <DashboardMetrics
-                    teamKey={selectedTeam}
-                    leagueKey={selectedTeamObj?.league_key || null}
-                  />
-                </div>
-              )}
-
-              {/* Matchup Preview (placeholder) */}
-              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                <h2 className="text-lg font-semibold text-gray-100 mb-3">This Week's Matchup</h2>
-                <p className="text-sm text-gray-400">Your matchup preview will appear here.</p>
-              </div>
-
-              {/* Quick Links */}
-              <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                <h2 className="text-lg font-semibold text-gray-100 mb-3">Quick Links</h2>
-                <ul className="space-y-2 text-sm">
-                  <li>
-                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/decisions">
-                      Decisions
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/start-sit">
-                      Start/Sit
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/faab">
-                      FAAB
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-venom-400 hover:text-venom-300" href="/dashboard/players">
-                      Players
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          );
+        })()
+      )}
     </div>
   );
 }

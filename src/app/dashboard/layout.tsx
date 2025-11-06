@@ -1,8 +1,8 @@
-import ToolsInner from './tools-inner';
+import { ToolLayout } from '@/components/layouts';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-export default function ToolsLayout({ children }: { children: React.ReactNode }) {
-  return <ToolsInner>{children}</ToolsInner>;
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return <ToolLayout showBreadcrumbs={true}>{children}</ToolLayout>;
 }

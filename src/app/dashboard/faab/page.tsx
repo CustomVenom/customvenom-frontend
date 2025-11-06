@@ -12,10 +12,12 @@ import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { LeagueContextHeader } from '@/components/LeagueContextHeader';
 import { useLeagueContext } from '@/hooks/useLeagueContext';
+import { useSession } from '@/hooks/useSession';
 import { trackToolUsage, trackFeatureInteraction } from '@/lib/analytics';
 import { faabSummary } from '@/lib/summary';
 
 function FaabContent() {
+  const { sess, loading: sessionLoading } = useSession();
   const leagueContext = useLeagueContext();
   const [player, setPlayer] = useState('');
   const [budget, setBudget] = useState('100');
@@ -81,8 +83,33 @@ function FaabContent() {
     setBudget('100');
   }
 
+  // ✅ Check session first
+  if (sessionLoading) {
+    return (
+      <main className="container section space-y-4">
+        <div className="text-center py-8 text-gray-400">Loading...</div>
+      </main>
+    );
+  }
+
+  const isLoggedIn = sess && sess.ok;
+
   return (
     <main className="container section space-y-4">
+      {/* Simple login message at top */}
+      {!isLoggedIn && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
+          Please login to see your data.
+        </div>
+      )}
+
+      {/* Simple connection notice - NOT blocking */}
+      {!leagueContext.isLoading && leagueContext.leagueName === 'My League' && !leagueContext.error && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+          Connect your league to load player data
+        </div>
+      )}
+
       <Breadcrumb items={[{ label: 'FAAB Helper', href: '/dashboard/faab' }]} />
 
       {!leagueContext.isLoading && (

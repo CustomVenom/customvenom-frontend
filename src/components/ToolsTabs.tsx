@@ -24,10 +24,10 @@ export function ToolsTabs() {
             <Link
               key={t.href}
               href={t.href}
-              className={`py-2 text-sm transition-colors ${
+              className={`py-2 text-sm transition-colors border-b-2 ${
                 p?.startsWith(t.href)
-                  ? 'border-b-2 border-(--cv-primary) dark:border-(--cv-accent) text-(--cv-primary) dark:text-(--cv-accent) font-medium'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-(--cv-primary) dark:hover:text-(--cv-accent)'
+                  ? 'border-[rgb(var(--cv-primary-strong))] dark:border-[rgb(var(--cv-primary))] text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-medium'
+                  : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] hover:border-[rgb(var(--cv-primary-strong))]/50 dark:hover:border-[rgb(var(--cv-primary))]/50'
               }`}
             >
               {t.label}

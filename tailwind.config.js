@@ -120,6 +120,16 @@ const config = {
     'bg-cv-accent',
     'text-cv-accent',
     'border-cv-accent',
+    // Venom color classes (ensure they're always included)
+    'bg-venom-400',
+    'bg-venom-500',
+    'bg-venom-600',
+    'hover:bg-venom-500',
+    'hover:bg-venom-600',
+    'text-venom-500',
+    'text-venom-600',
+    'border-venom-500',
+    'border-venom-600',
 
     // Dark mode variants for safelist
     'dark:bg-red-500',

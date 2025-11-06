@@ -38,6 +38,12 @@ const nextConfig = {
     ];
     return config;
   },
+  // Fix lucide-react barrel optimization by transpiling it
+  transpilePackages: ['lucide-react'],
+  // Disable barrel optimization for lucide-react
+  experimental: {
+    optimizePackageImports: [],
+  },
 };
 
 export default nextConfig;

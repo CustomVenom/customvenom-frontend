@@ -1,17 +1,23 @@
 'use client';
-import { useLayoutEffect, useState } from 'react';
+
+import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const stored = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return stored ? stored === 'dark' : prefersDark;
-  });
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-  useLayoutEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
+  useEffect(() => {
+    setMounted(true);
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg" disabled>
+        <span>Theme</span>
+      </button>
+    );
+  }
 
   return (
     <button
@@ -21,11 +27,11 @@ export default function ThemeToggle() {
         localStorage.setItem('theme', next ? 'dark' : 'light');
         setIsDark(next);
       }}
-      className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       aria-label="Toggle theme"
     >
-      <span className="h-4 w-4 rounded-full bg-gray-900 dark:bg-gray-50" />
-      {isDark ? 'Dark' : 'Light'}
+      {isDark ? '🌙' : '☀️'}
+      <span>{isDark ? 'Dark' : 'Light'}</span>
     </button>
   );
 }

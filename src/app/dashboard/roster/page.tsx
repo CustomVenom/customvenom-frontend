@@ -9,6 +9,7 @@ import { ProLock } from '@/components/ProLock';
 import { ProviderStatus } from '@/components/ProviderStatus';
 import Badge from '@/components/Badge';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { useSession } from '@/hooks/useSession';
 
 interface EnrichedPlayer {
   player_key: string;
@@ -45,6 +46,7 @@ interface RosterResponse {
 type Tab = 'starters' | 'bench' | 'ir';
 
 function RosterPageClient() {
+  const { sess, loading: sessionLoading } = useSession();
   const [data, setData] = useState<RosterResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -130,27 +132,16 @@ function RosterPageClient() {
   const isPro = false; // TODO: Get from subscription/entitlements API if needed
   const connected = yahooConnected;
 
-  // Early return if not connected - redirect to dashboard
-  if (!loading && !connected) {
+  // Check session first
+  if (sessionLoading) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4">
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
-            No League Connected
-          </h2>
-          <p className="text-blue-700 dark:text-blue-300 mb-4">
-            Connect your fantasy league on the Dashboard to view your roster with projections.
-          </p>
-          <a
-            href="/dashboard"
-            className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Dashboard →
-          </a>
-        </div>
+        <div className="text-center py-8 text-gray-400">Loading...</div>
       </div>
     );
   }
+
+  const isLoggedIn = sess && sess.ok;
 
   if (loading) {
     return (
@@ -193,6 +184,20 @@ function RosterPageClient() {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
+      {/* Simple login message at top */}
+      {!isLoggedIn && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
+          Please login to see your data.
+        </div>
+      )}
+
+      {/* Simple connection notice - NOT blocking */}
+      {!loading && !connected && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+          Connect your league to load player data
+        </div>
+      )}
+
       <Breadcrumb
         items={[
           { label: 'Dashboard', href: '/dashboard' },

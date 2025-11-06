@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TrustRibbonProps {
   schemaVersion?: string;
@@ -19,12 +19,25 @@ export function TrustRibbon({
   stale = false,
   staleAge: _staleAge,
 }: TrustRibbonProps) {
-  const formattedTime = lastRefresh
-    ? new Date(lastRefresh).toLocaleTimeString('en-US', {
+  const [mounted, setMounted] = useState(false);
+  // Capture initial lastRefresh to prevent hydration mismatch
+  const initialLastRefresh = useRef<string | undefined>(lastRefresh);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Format time only on client after hydration to prevent mismatch
+  const formattedTime = mounted && initialLastRefresh.current
+    ? new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
       })
     : '—';
+
+  // Use empty string for dateTime until mounted to ensure server/client consistency
+  // After mount, use the current lastRefresh value
+  const dateTimeValue = mounted ? (lastRefresh || '') : '';
 
   return (
     <>
@@ -38,7 +51,7 @@ export function TrustRibbon({
       >
         <span className="text-gray-600 dark:text-gray-400">v{schemaVersion}</span>
         <span className="text-gray-400 dark:text-gray-500">•</span>
-        <time dateTime={lastRefresh || ''} className="text-gray-600 dark:text-gray-400">
+        <time dateTime={dateTimeValue} className="text-gray-600 dark:text-gray-400">
           {formattedTime}
         </time>
         {stale && (
