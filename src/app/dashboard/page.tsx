@@ -317,19 +317,19 @@ export default function DashboardPage() {
                   <h3 className="font-semibold mb-4 text-lg text-gray-100">What you'll get:</h3>
                   <ul className="space-y-3 text-left text-sm text-gray-400">
                     <li className="flex items-start">
-                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span className="text-venom-500 mr-2 mt-0.5">âœ“</span>
                       <span>AI-powered projections for your roster</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span className="text-venom-500 mr-2 mt-0.5">âœ“</span>
                       <span>Start/Sit recommendations</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span className="text-venom-500 mr-2 mt-0.5">âœ“</span>
                       <span>FAAB budget optimization</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="text-venom-500 mr-2 mt-0.5">✓</span>
+                      <span className="text-venom-500 mr-2 mt-0.5">âœ“</span>
                       <span>Waiver wire analysis</span>
                     </li>
                   </ul>

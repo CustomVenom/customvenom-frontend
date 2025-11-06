@@ -82,7 +82,7 @@ function DecisionsContent() {
           team: 'DAL',
           position: 'WR',
           range: { p10: 12.5, p50: 16.8, p90: 21.3 },
-          explanations: [{ component: 'Target share ↑', delta_points: 0.028, confidence: 0.78 }],
+          explanations: [{ component: 'Target share â†‘', delta_points: 0.028, confidence: 0.78 }],
           schema_version: 'v1',
           last_refresh: new Date().toISOString(),
         },
@@ -163,7 +163,7 @@ function DecisionsContent() {
 
           <ToolPageHeader title="Decisions" currentTool="decisions" />
           <p className="text-sm text-muted mb-4">
-            <GlossaryTip term="driver chip" /> · <GlossaryTip term="coverage" />
+            <GlossaryTip term="driver chip" /> Â· <GlossaryTip term="coverage" />
           </p>
 
           <div>
@@ -223,10 +223,10 @@ function DecisionsContent() {
 
                 <div className="flex gap-2 mt-3 text-xs">
                   <span className="text-gray-500 dark:text-gray-400">
-                    {d.row.team} · {d.row.position}
+                    {d.row.team} Â· {d.row.position}
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">
-                    · Median: {d.row.range.p50.toFixed(1)}
+                    Â· Median: {d.row.range.p50.toFixed(1)}
                   </span>
                 </div>
               </div>

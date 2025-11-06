@@ -24,7 +24,7 @@ export default async function PlayersPage() {
         <ProviderStatus provider="yahoo" connected={!!session} />
       </div>
 
-      <ToolPageHeader title="Players • Free Agents & Waivers" currentTool="players" />
+      <ToolPageHeader title="Players â€¢ Free Agents & Waivers" currentTool="players" />
 
       <ProLock isPro={isPro}>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">

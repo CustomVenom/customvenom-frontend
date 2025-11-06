@@ -172,9 +172,9 @@ function StartSitContent() {
           />
         )}
 
-        <ToolPageHeader title="Start / Sit Tie—Breaker" currentTool="start-sit" />
+        <ToolPageHeader title="Start / Sit Tieâ€”Breaker" currentTool="start-sit" />
         <p className="text-sm text-muted mb-4">
-          <GlossaryTip term="range band" /> · <GlossaryTip term="driver chip" /> ·{' '}
+          <GlossaryTip term="range band" /> Â· <GlossaryTip term="driver chip" /> Â·{' '}
           <GlossaryTip term="risk modes" />
         </p>
 
@@ -192,7 +192,7 @@ function StartSitContent() {
               </label>
               <PlayerSearch
                 rows={suggestions}
-                placeholder="Search Player A…"
+                placeholder="Search Player Aâ€¦"
                 onSelect={(row) => setPlayerA(row.player_name || '')}
                 className="mb-2"
               />
@@ -211,7 +211,7 @@ function StartSitContent() {
               </label>
               <PlayerSearch
                 rows={suggestions}
-                placeholder="Search Player B…"
+                placeholder="Search Player Bâ€¦"
                 onSelect={(row) => setPlayerB(row.player_name || '')}
                 className="mb-2"
               />

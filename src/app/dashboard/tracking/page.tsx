@@ -49,7 +49,7 @@ export default function TrackingPage() {
             href="/dashboard"
             className="inline-block text-primary-600 dark:text-primary-400 hover:underline"
           >
-            Go to Dashboard →
+            Go to Dashboard â†’
           </Link>
         </div>
       ) : (

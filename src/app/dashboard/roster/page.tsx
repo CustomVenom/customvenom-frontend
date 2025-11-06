@@ -350,7 +350,7 @@ function RosterPageClient() {
                               {player.projected_points.toFixed(1)}
                             </span>
                           ) : (
-                            <span className="text-gray-400">—</span>
+                            <span className="text-gray-400">â€”</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
