@@ -53,12 +53,8 @@ declare module 'next-auth/jwt' {
     tier: UserTier; // 'FREE' | 'VIPER' | 'MAMBA'
     role: UserRole; // 'USER' | 'ADMIN' | 'DEVELOPER'
     stripeCustomerId?: string;
-    yah?: {
-      sub?: string;
-      email?: string;
-      expires_at?: number;
-    };
     // Yahoo OAuth fields
     sub?: string;
+    yah?: string; // Yahoo user ID as string
   }
 }

@@ -190,7 +190,7 @@ export const authOptions = {
         session.user.role = (token.role || 'USER') as UserRole;
 
         // Legacy role mapping for backward compatibility
-        session.user.legacyRole = ('legacyRole' in token ? token.legacyRole :
+        session.user.legacyRole = ('legacyRole' in token ? token['legacyRole'] :
           (token.role === 'ADMIN' ? 'admin' : token.role === 'USER' ? 'free' : 'free')) as
           | 'free'
           | 'pro'
