@@ -46,4 +46,3 @@ export function ToolPageHeader({ title, currentTool }: ToolPageHeaderProps) {
     </div>
   );
 }
-

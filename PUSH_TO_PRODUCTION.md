@@ -50,6 +50,7 @@ npx prisma migrate deploy
 ```
 
 **Or via Neon Dashboard:**
+
 1. Go to Neon console
 2. Open SQL editor
 3. Copy contents of: `prisma/migrations/20251102211353_add_auth_tier_role_enums/migration.sql`
@@ -98,4 +99,3 @@ If something goes wrong:
 ---
 
 **Ready to push?** Run the commands above!
-

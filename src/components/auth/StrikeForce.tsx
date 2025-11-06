@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import { useSession } from 'next-auth/react'
-import { ReactNode } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Lock, Zap } from 'lucide-react'
+import { useSession } from 'next-auth/react';
+import { ReactNode } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Lock, Zap } from 'lucide-react';
 
-type Tier = 'FREE' | 'VIPER' | 'MAMBA'
+type Tier = 'FREE' | 'VIPER' | 'MAMBA';
 
 interface StrikeForceProps {
   /** Minimum tier required to access */
-  requiredTier: Tier
+  requiredTier: Tier;
 
   /** Feature name for messaging */
-  featureName: string
+  featureName: string;
 
   /** Children shown when user has access */
-  children: ReactNode
+  children: ReactNode;
 
   /** Variant: 'inline' (shows in place) or 'blur' (blurs content) */
-  variant?: 'inline' | 'blur'
+  variant?: 'inline' | 'blur';
 
   /** Custom upgrade message */
-  upgradeMessage?: string
+  upgradeMessage?: string;
 
   /** Show feature preview/screenshot */
-  preview?: ReactNode
+  preview?: ReactNode;
 }
 
-const TIER_HIERARCHY = { FREE: 0, VIPER: 1, MAMBA: 2 }
+const TIER_HIERARCHY = { FREE: 0, VIPER: 1, MAMBA: 2 };
 
 export function StrikeForce({
   requiredTier,
@@ -37,9 +37,9 @@ export function StrikeForce({
   children,
   variant = 'inline',
   upgradeMessage,
-  preview
+  preview,
 }: StrikeForceProps) {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   // Loading state
   if (status === 'loading') {
@@ -47,7 +47,7 @@ export function StrikeForce({
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin h-8 w-8 border-4 border-venom-500 border-t-transparent rounded-full" />
       </div>
-    )
+    );
   }
 
   // Not authenticated
@@ -56,34 +56,29 @@ export function StrikeForce({
       <div className="border-2 border-dashed border-strike-500/30 rounded-lg p-8 text-center bg-field-800">
         <Lock className="h-12 w-12 text-strike-500 mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2 text-gray-100">Connect Your League to Unlock</h3>
-        <p className="text-gray-400 mb-6">
-          {featureName} requires a connected fantasy league.
-        </p>
+        <p className="text-gray-400 mb-6">{featureName} requires a connected fantasy league.</p>
         <Link href="/login">
-          <Button variant="primary">
-            Connect League
-          </Button>
+          <Button variant="primary">Connect League</Button>
         </Link>
       </div>
-    )
+    );
   }
 
   // Check tier access
-  const userTier = (session.user?.tier || 'FREE') as Tier
-  const hasAccess = TIER_HIERARCHY[userTier] >= TIER_HIERARCHY[requiredTier]
+  const userTier = (session.user?.tier || 'FREE') as Tier;
+  const hasAccess = TIER_HIERARCHY[userTier] >= TIER_HIERARCHY[requiredTier];
 
   // User has access - show feature
   if (hasAccess) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   // User needs upgrade
-  const tierName = requiredTier === 'MAMBA' ? 'Mamba' : 'Viper'
-  const tierPrice = requiredTier === 'MAMBA' ? '$19.99' : '$9.99'
-  const tierIcon = requiredTier === 'MAMBA' ? '🐍' : '⚡'
+  const tierName = requiredTier === 'MAMBA' ? 'Mamba' : 'Viper';
+  const tierPrice = requiredTier === 'MAMBA' ? '$19.99' : '$9.99';
+  const tierIcon = requiredTier === 'MAMBA' ? '🐍' : '⚡';
 
-  const defaultMessage = upgradeMessage ||
-    `Unlock ${featureName} with ${tierName} tier access.`
+  const defaultMessage = upgradeMessage || `Unlock ${featureName} with ${tierName} tier access.`;
 
   if (variant === 'blur') {
     return (
@@ -102,10 +97,7 @@ export function StrikeForce({
             <h3 className="text-2xl font-bold mb-2 text-gray-100">{featureName}</h3>
             <p className="text-gray-400 mb-6">{defaultMessage}</p>
             <Link href={`/account?upgrade=${requiredTier.toLowerCase()}`}>
-              <Button
-                variant="primary"
-                className="group"
-              >
+              <Button variant="primary" className="group">
                 <Zap className="h-4 w-4 mr-2 group-hover:animate-pulse" />
                 Unleash Full Venom · {tierPrice}/mo
               </Button>
@@ -113,7 +105,7 @@ export function StrikeForce({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Inline variant (default)
@@ -128,30 +120,20 @@ export function StrikeForce({
       </Badge>
 
       <h3 className="text-xl font-bold mb-2 text-gray-100">{featureName}</h3>
-      <p className="text-gray-400 mb-6 max-w-md mx-auto">
-        {defaultMessage}
-      </p>
+      <p className="text-gray-400 mb-6 max-w-md mx-auto">{defaultMessage}</p>
 
       {preview && (
-        <div className="mb-6 rounded-lg overflow-hidden border border-field-600">
-          {preview}
-        </div>
+        <div className="mb-6 rounded-lg overflow-hidden border border-field-600">{preview}</div>
       )}
 
       <Link href={`/account?upgrade=${requiredTier.toLowerCase()}`}>
-        <Button
-          variant="primary"
-          className="group"
-        >
+        <Button variant="primary" className="group">
           <Zap className="h-4 w-4 mr-2 group-hover:animate-pulse" />
           Upgrade to {tierName} · {tierPrice}/mo
         </Button>
       </Link>
 
-      <p className="text-xs text-gray-500 mt-4">
-        7-day free trial · Cancel anytime
-      </p>
+      <p className="text-xs text-gray-500 mt-4">7-day free trial · Cancel anytime</p>
     </div>
-  )
+  );
 }
-

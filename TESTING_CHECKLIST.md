@@ -1,11 +1,13 @@
 # UI Redesign Testing Checklist
 
 ## ✅ Build & Type Safety
+
 - [ ] `npm run type-check` passes (all TypeScript errors resolved)
 - [ ] `npm run build` completes successfully
 - [ ] No console warnings in dev mode
 
 ## 🌐 Public Hub (Light Mode)
+
 - [ ] Landing page (`/`) loads with light background
 - [ ] Yard-line pattern visible on background
 - [ ] VenomLogo displays correctly
@@ -18,6 +20,7 @@
 - [ ] Mobile responsive (test on mobile viewport)
 
 ## 🔐 Auth Flow
+
 - [ ] `/login` page renders (dark theme, scale pattern)
 - [ ] `/signup` page renders (dark theme)
 - [ ] Email/password login works
@@ -27,6 +30,7 @@
 - [ ] Account tabs (Profile, Billing, Leagues, Preferences) render
 
 ## 🐍 Dashboard Hub (Dark Mode)
+
 - [ ] Dashboard (`/dashboard`) loads with dark background
 - [ ] Scale pattern visible on background
 - [ ] "War Room" heading displays
@@ -38,6 +42,7 @@
 - [ ] Mobile responsive
 
 ## 💎 StrikeForce Paywall
+
 - [ ] StrikeForce component renders for FREE users
 - [ ] Tier badges display correctly (Viper/Mamba)
 - [ ] Upgrade CTA links to `/account?upgrade=`
@@ -47,6 +52,7 @@
 - [ ] Unauthenticated state shows "Connect League"
 
 ## 🛡️ Middleware Protection
+
 - [ ] `/dashboard` redirects to `/login` when not authenticated
 - [ ] `/account` redirects to `/login` when not authenticated
 - [ ] MAMBA routes (`/dashboard/killshots`, etc.) check tier
@@ -55,6 +61,7 @@
 - [ ] Static files load correctly
 
 ## 🎨 Design System
+
 - [ ] Venom colors applied (venom-500, venom-600, etc.)
 - [ ] Strike gold accents visible
 - [ ] Field dark backgrounds applied
@@ -64,18 +71,21 @@
 - [ ] Badge variants (trust/venom/strike) render
 
 ## 🔗 Integration Points
+
 - [ ] Yahoo OAuth flow unchanged
 - [ ] Player data API (`/api/projections`) works
 - [ ] Trust Snapshot shows schema_version and last_refresh
 - [ ] No breaking changes to existing functionality
 
 ## 📱 Performance
+
 - [ ] LCP < 2.5s on landing page
 - [ ] No layout shift on navigation
 - [ ] Images optimize correctly
 - [ ] Fonts load properly
 
 ## 🐛 Known Issues
+
 - NextAuth build warning: `Module not found: Can't resolve './lib/oauth2'` (dependency issue, may need `npm install` or dependency update)
 
 ---
@@ -110,4 +120,3 @@ npm run dev
 **Tester**: _[Fill in]_
 **Environment**: Development / Staging / Production
 **Notes**: _[Any issues or observations]_
-

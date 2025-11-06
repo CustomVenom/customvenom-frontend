@@ -1,38 +1,38 @@
 // Middleware for route protection
 // Handles tier-based access control, domain redirects, and HTTPS enforcement
 
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // Public routes - always allowed
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const url = new URL(request.url)
+  const { pathname } = request.nextUrl;
+  const url = new URL(request.url);
 
   // HTTPS enforcement (preserve existing functionality)
   if (request.nextUrl.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
-    const httpsUrl = request.nextUrl.clone()
-    httpsUrl.protocol = 'https:'
-    return NextResponse.redirect(httpsUrl, 301)
+    const httpsUrl = request.nextUrl.clone();
+    httpsUrl.protocol = 'https:';
+    return NextResponse.redirect(httpsUrl, 301);
   }
 
   // Force apex to www (preserve existing functionality)
   if (url.hostname === 'customvenom.com') {
-    url.hostname = 'www.customvenom.com'
-    return NextResponse.redirect(url, 308)
+    url.hostname = 'www.customvenom.com';
+    return NextResponse.redirect(url, 308);
   }
 
   // Public routes - always allow
-  if (PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith(route))) {
-    return NextResponse.next()
+  if (PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route))) {
+    return NextResponse.next();
   }
 
   // Yahoo OAuth routes - always allow (preserve existing functionality)
   if (pathname.startsWith('/api/yahoo') || pathname.startsWith('/api/oauth/yahoo')) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
   // Static files and Next.js internals - always allow
@@ -42,33 +42,35 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/favicon') ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|css|js|woff|woff2|ttf)$/)
   ) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
   // Protected routes - require authentication
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/account')) {
-    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
-    const token = secret ? await getToken({
-      req: request,
-      secret
-    }) : null
+    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET'];
+    const token = secret
+      ? await getToken({
+          req: request,
+          secret,
+        })
+      : null;
 
     // Not authenticated - redirect to login
     if (!token) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('callbackUrl', pathname)
-      return NextResponse.redirect(loginUrl)
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     // Get user tier from token (default to FREE)
-    const userTier = ((token.tier as string) || 'FREE') as 'FREE' | 'VIPER' | 'MAMBA'
+    const userTier = ((token.tier as string) || 'FREE') as 'FREE' | 'VIPER' | 'MAMBA';
 
     // Mamba routes (most restrictive) - /dashboard/killshots, /dashboard/faceoff, etc.
     if (pathname.match(/\/(killshots|faceoff|strike-ranges)/)) {
       if (userTier !== 'MAMBA') {
-        const redirectUrl = new URL('/dashboard', request.url)
-        redirectUrl.searchParams.set('upgrade', 'mamba')
-        return NextResponse.redirect(redirectUrl)
+        const redirectUrl = new URL('/dashboard', request.url);
+        redirectUrl.searchParams.set('upgrade', 'mamba');
+        return NextResponse.redirect(redirectUrl);
       }
     }
 
@@ -78,22 +80,22 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/dashboard')) {
       // Development mode: Allow all authenticated users
       // Production: Require VIPER or MAMBA
-      const isDevelopment = process.env['NODE_ENV'] === 'development'
+      const isDevelopment = process.env['NODE_ENV'] === 'development';
       if (!isDevelopment && userTier === 'FREE') {
-        const redirectUrl = new URL('/', request.url)
-        redirectUrl.searchParams.set('upgrade', 'viper')
-        return NextResponse.redirect(redirectUrl)
+        const redirectUrl = new URL('/', request.url);
+        redirectUrl.searchParams.set('upgrade', 'viper');
+        return NextResponse.redirect(redirectUrl);
       }
     }
 
     // Account page requires authentication (already checked above)
     if (pathname.startsWith('/account')) {
-      return NextResponse.next()
+      return NextResponse.next();
     }
   }
 
   // Allow all other routes through
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 // Apply to all routes except static files
@@ -109,4 +111,4 @@ export const config = {
      */
     '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)).*)',
   ],
-}
+};

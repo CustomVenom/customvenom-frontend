@@ -37,15 +37,15 @@ export interface BaselineProjections {
 
 // Scoring configuration (from league settings)
 export interface ScoringSettings {
-  pass_yards_per_point: number;  // e.g., 25 (1 pt per 25 yards)
-  pass_td: number;               // e.g., 4 or 6
-  int: number;                   // e.g., -2
-  rush_yards_per_point: number;  // e.g., 10 (1 pt per 10 yards)
-  rush_td: number;               // e.g., 6
-  rec: number;                   // 0 (Standard), 0.5 (Half PPR), 1 (Full PPR)
-  rec_yards_per_point: number;   // e.g., 10
-  rec_td: number;                // e.g., 6
-  fumbles: number;               // e.g., -2
+  pass_yards_per_point: number; // e.g., 25 (1 pt per 25 yards)
+  pass_td: number; // e.g., 4 or 6
+  int: number; // e.g., -2
+  rush_yards_per_point: number; // e.g., 10 (1 pt per 10 yards)
+  rush_td: number; // e.g., 6
+  rec: number; // 0 (Standard), 0.5 (Half PPR), 1 (Full PPR)
+  rec_yards_per_point: number; // e.g., 10
+  rec_td: number; // e.g., 6
+  fumbles: number; // e.g., -2
 }
 
 // API response with calculated fantasy points

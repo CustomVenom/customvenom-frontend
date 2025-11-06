@@ -18,10 +18,7 @@ interface LoginRequiredProps {
  * - Sign up link (secondary CTA)
  * - Responsive design
  */
-export function LoginRequired({
-  featureName = 'this feature',
-  className
-}: LoginRequiredProps) {
+export function LoginRequired({ featureName = 'this feature', className }: LoginRequiredProps) {
   return (
     <div className={`flex items-center justify-center min-h-[60vh] px-4 ${className || ''}`}>
       <div className="max-w-md w-full text-center space-y-6">
@@ -29,9 +26,7 @@ export function LoginRequired({
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-venom-500/10 border border-venom-500/20">
             <LogIn className="w-8 h-8 text-venom-500" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Sign In Required
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Sign In Required</h2>
           <p className="text-gray-600 dark:text-gray-400">
             You need to sign in to access {featureName}.
           </p>
@@ -62,4 +57,3 @@ export function LoginRequired({
     </div>
   );
 }
-

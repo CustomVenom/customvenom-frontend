@@ -405,4 +405,3 @@ function RosterPageClient() {
 export default function RosterPage() {
   return <RosterPageClient />;
 }
-

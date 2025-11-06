@@ -19,7 +19,7 @@
 
 **Venom = Decisive Advantage**
 
-- Not poison (negative), but *precision strike* (strategic)
+- Not poison (negative), but _precision strike_ (strategic)
 - Clean lines with venomous accents
 - Data that bites back against your opponents
 
@@ -33,22 +33,22 @@
 /* Venom Green (Primary) */
 --venom-50: #ecfdf5;
 --venom-100: #d1fae5;
---venom-400: #34d399;  /* Light actions */
---venom-500: #10b981;  /* Primary brand */
---venom-600: #059669;  /* Hover states */
---venom-700: #047857;  /* Active states */
---venom-900: #064e3b;  /* Dark accents */
+--venom-400: #34d399; /* Light actions */
+--venom-500: #10b981; /* Primary brand */
+--venom-600: #059669; /* Hover states */
+--venom-700: #047857; /* Active states */
+--venom-900: #064e3b; /* Dark accents */
 
 /* Strike Gold (Accent) */
 --strike-400: #fbbf24;
---strike-500: #f59e0b;  /* Dashboard accent */
+--strike-500: #f59e0b; /* Dashboard accent */
 --strike-600: #d97706;
 
 /* Field Dark (Backgrounds) */
---field-900: #0a0f0b;   /* Deepest background */
---field-800: #111827;   /* Card backgrounds */
---field-700: #1f2937;   /* Elevated surfaces */
---field-600: #374151;   /* Borders */
+--field-900: #0a0f0b; /* Deepest background */
+--field-800: #111827; /* Card backgrounds */
+--field-700: #1f2937; /* Elevated surfaces */
+--field-600: #374151; /* Borders */
 
 /* Trust Blue (Data reliability) */
 --trust-500: #3b82f6;
@@ -63,8 +63,8 @@
 
 ```css
 /* Backgrounds */
---bg-public: #ffffff;           /* Public hub - light */
---bg-dashboard: #0a0f0b;        /* Dashboard hub - dark */
+--bg-public: #ffffff; /* Public hub - light */
+--bg-dashboard: #0a0f0b; /* Dashboard hub - dark */
 --bg-card-public: #f9fafb;
 --bg-card-dashboard: #111827;
 --bg-elevated: #1f2937;
@@ -105,31 +105,31 @@
 
 ```css
 /* Display - Hero sections */
---text-display: 3.75rem;  /* 60px */
+--text-display: 3.75rem; /* 60px */
 --text-display-line: 1;
 
 /* H1 - Page titles */
---text-h1: 2.25rem;  /* 36px */
+--text-h1: 2.25rem; /* 36px */
 --text-h1-line: 1.2;
 
 /* H2 - Section headers */
---text-h2: 1.875rem;  /* 30px */
+--text-h2: 1.875rem; /* 30px */
 --text-h2-line: 1.3;
 
 /* H3 - Subsections */
---text-h3: 1.5rem;  /* 24px */
+--text-h3: 1.5rem; /* 24px */
 --text-h3-line: 1.4;
 
 /* Body */
---text-base: 1rem;  /* 16px */
+--text-base: 1rem; /* 16px */
 --text-base-line: 1.5;
 
 /* Small - Labels, captions */
---text-sm: 0.875rem;  /* 14px */
+--text-sm: 0.875rem; /* 14px */
 --text-sm-line: 1.4;
 
 /* Tiny - Metadata */
---text-xs: 0.75rem;  /* 12px */
+--text-xs: 0.75rem; /* 12px */
 --text-xs-line: 1.3;
 ```
 
@@ -212,25 +212,25 @@
 ### Container Widths
 
 ```css
---container-sm: 640px;   /* Forms, narrow content */
---container-md: 768px;   /* Standard content */
---container-lg: 1024px;  /* Wide content */
---container-xl: 1280px;  /* Dashboard layouts */
+--container-sm: 640px; /* Forms, narrow content */
+--container-md: 768px; /* Standard content */
+--container-lg: 1024px; /* Wide content */
+--container-xl: 1280px; /* Dashboard layouts */
 --container-2xl: 1536px; /* Full-width tables */
 ```
 
 ### Spacing Scale
 
 ```css
---space-1: 0.25rem;  /* 4px */
---space-2: 0.5rem;   /* 8px */
---space-3: 0.75rem;  /* 12px */
---space-4: 1rem;     /* 16px */
---space-6: 1.5rem;   /* 24px */
---space-8: 2rem;     /* 32px */
---space-12: 3rem;    /* 48px */
---space-16: 4rem;    /* 64px */
---space-24: 6rem;    /* 96px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+--space-12: 3rem; /* 48px */
+--space-16: 4rem; /* 64px */
+--space-24: 6rem; /* 96px */
 ```
 
 ---
@@ -242,14 +242,20 @@
 ```css
 /* Hover glow effect */
 .venom-glow:hover {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4),
-              0 0 40px rgba(16, 185, 129, 0.2);
+  box-shadow:
+    0 0 20px rgba(16, 185, 129, 0.4),
+    0 0 40px rgba(16, 185, 129, 0.2);
 }
 
 /* Pulsing badge */
 @keyframes venom-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 .venom-pulse {
   animation: venom-pulse 2s ease-in-out infinite;
@@ -261,11 +267,13 @@
 ```css
 /* Subtle reptilian texture for dashboard */
 .scale-pattern {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20px 20px, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
     radial-gradient(circle at 60px 60px, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
   background-size: 80px 80px;
-  background-position: 0 0, 40px 40px;
+  background-position:
+    0 0,
+    40px 40px;
 }
 ```
 
@@ -328,10 +336,10 @@
 
 ```css
 /* Mobile first approach */
---breakpoint-sm: 640px;   /* Phones landscape */
---breakpoint-md: 768px;   /* Tablets */
---breakpoint-lg: 1024px;  /* Laptop */
---breakpoint-xl: 1280px;  /* Desktop */
+--breakpoint-sm: 640px; /* Phones landscape */
+--breakpoint-md: 768px; /* Tablets */
+--breakpoint-lg: 1024px; /* Laptop */
+--breakpoint-xl: 1280px; /* Desktop */
 --breakpoint-2xl: 1536px; /* Large displays */
 ```
 
@@ -341,7 +349,7 @@
 // Compact spacing on mobile
 <div className="p-4 md:p-6 lg:p-8">
 
-// Stack on mobile, grid on desktop  
+// Stack on mobile, grid on desktop
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
 // Smaller text on mobile
@@ -387,7 +395,7 @@ module.exports = {
       },
     },
   },
-}
+};
 ```
 
 ### CSS Variables
@@ -404,7 +412,7 @@ module.exports = {
     --bg-public: 255 255 255;
     --text-public: 17 24 39;
   }
-  
+
   .dashboard-hub {
     /* Dashboard Hub - Dark */
     --bg-dashboard: 10 15 11;
@@ -432,40 +440,41 @@ All components, colors, and patterns ready for implementation across both Public
 ## 📄 File: `src/app/page.tsx`
 
 ```tsx
-import { HeroSection } from '@/components/public/HeroSection'
-import { ProjectionsShowcase } from '@/components/public/ProjectionsShowcase'
-import { TrustSection } from '@/components/public/TrustSection'
-import { FeaturesGrid } from '@/components/public/FeaturesGrid'
-import { CTASection } from '@/components/public/CTASection'
-import { PublicFooter } from '@/components/public/PublicFooter'
+import { HeroSection } from '@/components/public/HeroSection';
+import { ProjectionsShowcase } from '@/components/public/ProjectionsShowcase';
+import { TrustSection } from '@/components/public/TrustSection';
+import { FeaturesGrid } from '@/components/public/FeaturesGrid';
+import { CTASection } from '@/components/public/CTASection';
+import { PublicFooter } from '@/components/public/PublicFooter';
 
 export const metadata = {
   title: 'Custom Venom | Fantasy Football Analytics with Bite',
-  description: 'Probabilistic projections and explainable AI for fantasy football. See the floor, median, and ceiling for every player.'
-}
+  description:
+    'Probabilistic projections and explainable AI for fantasy football. See the floor, median, and ceiling for every player.',
+};
 
 export default function PublicHomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero - Above the fold */}
       <HeroSection />
-      
+
       {/* Live Projections Preview - Filterable by scoring format */}
       <ProjectionsShowcase />
-      
+
       {/* Trust Section - Our analytical moat */}
       <TrustSection />
-      
+
       {/* Features - What you get */}
       <FeaturesGrid />
-      
+
       {/* CTA - Get started */}
       <CTASection />
-      
+
       {/* Footer */}
       <PublicFooter />
     </div>
-  )
+  );
 }
 ```
 
@@ -485,7 +494,7 @@ export function HeroSection() {
     <section className="relative overflow-hidden yard-lines">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-venom-50/50 to-white pointer-events-none" />
-      
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Copy */}
@@ -498,37 +507,37 @@ export function HeroSection() {
                   Fantasy Analytics
                 </span>
               </div>
-              
+
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
                 Pick Your
                 <span className="block text-venom-600">Poison</span>
               </h1>
-              
+
               <p className="text-xl text-gray-600 leading-relaxed">
-                See <strong>floor, median, and ceiling</strong> projections for every player. 
+                See <strong>floor, median, and ceiling</strong> projections for every player.
                 Understand the <em>why</em> behind the numbers.
               </p>
             </div>
-            
+
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link 
-                href="/dashboard" 
+              <Link
+                href="/dashboard"
                 className="inline-flex items-center justify-center gap-2 bg-venom-500 hover:bg-venom-600 text-white font-semibold px-8 py-4 rounded-lg shadow-lg shadow-venom-500/30 transition-all hover:shadow-venom-500/50 hover:scale-105"
               >
                 <Zap className="w-5 h-5" />
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              
-              <Link 
-                href="#projections" 
+
+              <Link
+                href="#projections"
                 className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-900 font-medium px-8 py-4 rounded-lg border-2 border-gray-200 transition-colors"
               >
                 View Projections
               </Link>
             </div>
-            
+
             {/* Social Proof */}
             <div className="flex items-center gap-6 pt-4">
               <div>
@@ -550,7 +559,7 @@ export function HeroSection() {
               </div>
             </div>
           </div>
-          
+
           {/* Right: Visual */}
           <div className="relative">
             {/* Projection card preview */}
@@ -567,7 +576,7 @@ export function HeroSection() {
                 </div>
                 <div className="bg-venom-50 text-venom-700 text-xs font-medium px-2 py-1 rounded">Week 9</div>
               </div>
-              
+
               {/* Floor-Median-Ceiling visual */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
@@ -585,7 +594,7 @@ export function HeroSection() {
                   <span className="font-mono font-semibold text-gray-900">32.8</span>
                 </div>
               </div>
-              
+
               {/* Reasons */}
               <div className="flex gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1 bg-venom-50 text-venom-700 text-xs font-medium px-2 py-1 rounded border border-venom-200">
@@ -596,7 +605,7 @@ export function HeroSection() {
                 </span>
               </div>
             </div>
-            
+
             {/* Floating badge */}
             <div className="absolute -top-4 -right-4 bg-gradient-to-br from-strike-400 to-strike-600 text-gray-900 px-4 py-2 rounded-full shadow-xl font-bold text-sm flex items-center gap-2 animate-pulse">
               <Zap className="w-4 h-4" />
@@ -625,7 +634,7 @@ type ScoringFormat = '0.5ppr' | 'standard' | 'ppr'
 export function ProjectionsShowcase() {
   const [format, setFormat] = useState<ScoringFormat>('0.5ppr')
   const [position, setPosition] = useState<string>('ALL')
-  
+
   return (
     <section id="projections" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -639,7 +648,7 @@ export function ProjectionsShowcase() {
             Filter by scoring format to match your league.
           </p>
         </div>
-        
+
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between">
           {/* Scoring format toggle */}
@@ -658,7 +667,7 @@ export function ProjectionsShowcase() {
               </button>
             ))}
           </div>
-          
+
           {/* Position filter */}
           <div className="flex gap-2">
             {['ALL', 'QB', 'RB', 'WR', 'TE'].map((pos) => (
@@ -676,7 +685,7 @@ export function ProjectionsShowcase() {
             ))}
           </div>
         </div>
-        
+
         {/* Projections Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
@@ -715,11 +724,11 @@ export function ProjectionsShowcase() {
               </tbody>
             </table>
           </div>
-          
+
           {/* View more CTA */}
           <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 text-center">
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               className="inline-flex items-center gap-2 text-venom-600 hover:text-venom-700 font-medium text-sm"
             >
               View All Projections + Your Roster
@@ -781,38 +790,42 @@ export function TrustSection() {
           <div>
             <TrustSnapshot />
           </div>
-          
+
           {/* Right: Explanation */}
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 bg-trust-50 text-trust-600 px-3 py-1 rounded-full border border-trust-200 text-sm font-medium">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd"/>
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                  clipRule="evenodd"
+                />
               </svg>
               Calibrated Weekly
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
               Why Our Projections Bite Harder
             </h2>
-            
+
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Most sites give you a single number. We give you the **full picture**: 
-                floor, median, and ceiling outcomes based on thousands of simulations.
+                Most sites give you a single number. We give you the **full picture**: floor,
+                median, and ceiling outcomes based on thousands of simulations.
               </p>
-              
+
               <p>
-                Every projection comes with <strong>explainable drivers</strong> — 
-                see exactly why a player's outlook changed this week.
+                Every projection comes with <strong>explainable drivers</strong> — see exactly why a
+                player's outlook changed this week.
               </p>
-              
+
               <p>
-                Our Trust Snapshot shows real-time calibration. When we say 70% confidence, 
-                we hit that target historically. No smoke and mirrors.
+                Our Trust Snapshot shows real-time calibration. When we say 70% confidence, we hit
+                that target historically. No smoke and mirrors.
               </p>
             </div>
-            
+
             {/* Trust Metrics */}
             <div className="grid grid-cols-3 gap-4 pt-4">
               <div className="text-center p-4 bg-gray-50 rounded-lg">
@@ -832,7 +845,7 @@ export function TrustSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 ```
 
@@ -841,7 +854,6 @@ export function TrustSection() {
 **Public Hub Complete** ✅
 
 All components ready for landing page with live projections showcase.
-
 
 # Dashboard Hub - Complete Implementation
 
@@ -856,27 +868,27 @@ All components ready for landing page with live projections showcase.
 ## 📄 File: `src/app/dashboard/page.tsx`
 
 ```tsx
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { TeamSelector } from '@/components/dashboard/TeamSelector'
-import { QuickStats } from '@/components/dashboard/QuickStats'
-import { ToolTabs } from '@/components/dashboard/ToolTabs'
-import { ConnectLeaguePrompt } from '@/components/dashboard/ConnectLeaguePrompt'
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { TeamSelector } from '@/components/dashboard/TeamSelector';
+import { QuickStats } from '@/components/dashboard/QuickStats';
+import { ToolTabs } from '@/components/dashboard/ToolTabs';
+import { ConnectLeaguePrompt } from '@/components/dashboard/ConnectLeaguePrompt';
 
 export const metadata = {
   title: 'Dashboard | Custom Venom',
-  description: 'Your fantasy football command center'
-}
+  description: 'Your fantasy football command center',
+};
 
 export default async function DashboardPage() {
-  const session = await getServerSession()
-  
+  const session = await getServerSession();
+
   // Not authenticated - redirect to home
   if (!session) {
-    redirect('/?signin=required')
+    redirect('/?signin=required');
   }
-  
+
   // Authenticated but no league connected
   if (!session.yahooAccessToken) {
     return (
@@ -884,9 +896,9 @@ export default async function DashboardPage() {
         <DashboardHeader />
         <ConnectLeaguePrompt />
       </div>
-    )
+    );
   }
-  
+
   // Authenticated but no team selected
   if (!session.teamKey) {
     return (
@@ -900,14 +912,14 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
-  
+
   // Fully authenticated + team selected - show dashboard
   return (
     <div className="min-h-screen bg-field-900 scale-pattern">
       <DashboardHeader />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Team Selector + Quick Stats */}
         <div className="flex items-center justify-between">
@@ -917,15 +929,15 @@ export default async function DashboardPage() {
           </div>
           <TeamSelector />
         </div>
-        
+
         {/* Quick Stats Overview */}
         <QuickStats teamKey={session.teamKey} />
-        
+
         {/* Tool Tabs - All tools in one place */}
         <ToolTabs teamKey={session.teamKey} />
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -934,48 +946,51 @@ export default async function DashboardPage() {
 ## 🎛️ Component: `DashboardHeader.tsx`
 
 ```tsx
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useSession, signOut } from 'next-auth/react'
-import { VenomLogo } from '@/components/VenomLogo'
-import { Zap, User, LogOut, Settings } from 'lucide-react'
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+import { VenomLogo } from '@/components/VenomLogo';
+import { Zap, User, LogOut, Settings } from 'lucide-react';
 
 export function DashboardHeader() {
-  const { data: session } = useSession()
-  
+  const { data: session } = useSession();
+
   return (
     <header className="bg-field-800 border-b border-field-600 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
             <VenomLogo size="md" variant="dark" />
             <span className="text-lg font-bold text-gray-100">Custom Venom</span>
           </Link>
-          
+
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               className="text-gray-300 hover:text-venom-400 transition-colors font-medium"
             >
               Dashboard
             </Link>
-            <Link 
-              href="/dashboard/roster" 
+            <Link
+              href="/dashboard/roster"
               className="text-gray-300 hover:text-venom-400 transition-colors font-medium"
             >
               Roster
             </Link>
-            <Link 
-              href="/dashboard/players" 
+            <Link
+              href="/dashboard/players"
               className="text-gray-300 hover:text-venom-400 transition-colors font-medium"
             >
               Players
             </Link>
           </nav>
-          
+
           {/* User Menu */}
           <div className="flex items-center gap-4">
             {session?.user?.isPro && (
@@ -984,7 +999,7 @@ export function DashboardHeader() {
                 VIPER
               </span>
             )}
-            
+
             <div className="relative group">
               <button className="flex items-center gap-2 text-gray-300 hover:text-gray-100 transition-colors">
                 <User className="w-5 h-5" />
@@ -992,17 +1007,17 @@ export function DashboardHeader() {
                   {session?.user?.name || 'Account'}
                 </span>
               </button>
-              
+
               {/* Dropdown */}
               <div className="absolute right-0 mt-2 w-48 bg-field-700 border border-field-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <Link 
-                  href="/settings" 
+                <Link
+                  href="/settings"
                   className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-field-600 rounded-t-lg transition-colors"
                 >
                   <Settings className="w-4 h-4" />
                   Settings
                 </Link>
-                <button 
+                <button
                   onClick={() => signOut()}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-300 hover:bg-field-600 rounded-b-lg transition-colors"
                 >
@@ -1015,7 +1030,7 @@ export function DashboardHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }
 ```
 
@@ -1024,57 +1039,60 @@ export function DashboardHeader() {
 ## 📊 Component: `QuickStats.tsx`
 
 ```tsx
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { TrendingUp, TrendingDown, Trophy, DollarSign } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { TrendingUp, TrendingDown, Trophy, DollarSign } from 'lucide-react';
 
 interface QuickStatsProps {
-  teamKey: string
+  teamKey: string;
 }
 
 interface TeamStats {
-  record: string
-  pointsFor: number
-  pointsAgainst: number
-  rank: number
-  faabRemaining: number
+  record: string;
+  pointsFor: number;
+  pointsAgainst: number;
+  rank: number;
+  faabRemaining: number;
 }
 
 export function QuickStats({ teamKey }: QuickStatsProps) {
-  const [stats, setStats] = useState<TeamStats | null>(null)
-  const [loading, setLoading] = useState(true)
-  
+  const [stats, setStats] = useState<TeamStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch(`/api/league/stats?teamKey=${teamKey}`)
-        const data = await res.json()
-        setStats(data)
+        const res = await fetch(`/api/league/stats?teamKey=${teamKey}`);
+        const data = await res.json();
+        setStats(data);
       } catch (error) {
-        console.error('Failed to fetch stats:', error)
+        console.error('Failed to fetch stats:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    
-    fetchStats()
-  }, [teamKey])
-  
+
+    fetchStats();
+  }, [teamKey]);
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map(i => (
-          <div key={i} className="bg-field-800 rounded-xl border border-field-600 p-6 animate-pulse">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="bg-field-800 rounded-xl border border-field-600 p-6 animate-pulse"
+          >
             <div className="h-20" />
           </div>
         ))}
       </div>
-    )
+    );
   }
-  
-  if (!stats) return null
-  
+
+  if (!stats) return null;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Record */}
@@ -1084,7 +1102,7 @@ export function QuickStats({ teamKey }: QuickStatsProps) {
         icon={<Trophy className="w-5 h-5" />}
         color="venom"
       />
-      
+
       {/* Points For */}
       <StatCard
         label="Points For"
@@ -1092,7 +1110,7 @@ export function QuickStats({ teamKey }: QuickStatsProps) {
         icon={<TrendingUp className="w-5 h-5" />}
         color="venom"
       />
-      
+
       {/* Rank */}
       <StatCard
         label="League Rank"
@@ -1100,7 +1118,7 @@ export function QuickStats({ teamKey }: QuickStatsProps) {
         icon={<Trophy className="w-5 h-5" />}
         color="strike"
       />
-      
+
       {/* FAAB */}
       <StatCard
         label="FAAB Budget"
@@ -1109,7 +1127,7 @@ export function QuickStats({ teamKey }: QuickStatsProps) {
         color="trust"
       />
     </div>
-  )
+  );
 }
 
 function StatCard({ label, value, icon, color }: any) {
@@ -1117,19 +1135,17 @@ function StatCard({ label, value, icon, color }: any) {
     venom: 'bg-venom-500/10 text-venom-400 border-venom-500/20',
     strike: 'bg-strike-500/10 text-strike-400 border-strike-500/20',
     trust: 'bg-trust-500/10 text-trust-400 border-trust-500/20',
-  }
-  
+  };
+
   return (
     <div className="bg-field-800 rounded-xl border border-field-600 p-6 hover:border-venom-500/50 transition-colors">
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm text-gray-400">{label}</span>
-        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
-          {icon}
-        </div>
+        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>{icon}</div>
       </div>
       <div className="text-2xl font-bold text-gray-100">{value}</div>
     </div>
-  )
+  );
 }
 ```
 
@@ -1156,7 +1172,7 @@ interface ToolTabsProps {
 
 export function ToolTabs({ teamKey }: ToolTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
-  
+
   const tabs = [
     { id: 'overview' as TabId, label: 'Overview', icon: Users },
     { id: 'decisions' as TabId, label: 'Kill Shots', icon: AlertCircle },
@@ -1164,7 +1180,7 @@ export function ToolTabs({ teamKey }: ToolTabsProps) {
     { id: 'faab' as TabId, label: 'Bid Hunter', icon: DollarSign },
     { id: 'projections' as TabId, label: 'Strike Ranges', icon: TrendingUp },
   ]
-  
+
   return (
     <div className="bg-field-800 rounded-xl border border-field-600 overflow-hidden">
       {/* Tab Navigation */}
@@ -1173,15 +1189,15 @@ export function ToolTabs({ teamKey }: ToolTabsProps) {
           {[tabs.map](http://tabs.map)(tab => {
             const Icon = tab.icon
             const isActive = activeTab === [tab.id](http://tab.id)
-            
+
             return (
               <button
                 key={[tab.id](http://tab.id)}
                 onClick={() => setActiveTab([tab.id](http://tab.id))}
                 className={`
                   flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap
-                  ${isActive 
-                    ? 'text-venom-400 border-b-2 border-venom-400 bg-field-800' 
+                  ${isActive
+                    ? 'text-venom-400 border-b-2 border-venom-400 bg-field-800'
                     : 'text-gray-400 hover:text-gray-300 border-b-2 border-transparent'
                   }
                 `}
@@ -1193,7 +1209,7 @@ export function ToolTabs({ teamKey }: ToolTabsProps) {
           })}
         </div>
       </div>
-      
+
       {/* Tab Content */}
       <div className="p-6">
         {activeTab === 'overview' && <RosterOverview teamKey={teamKey} />}
@@ -1220,7 +1236,7 @@ export function ConnectLeaguePrompt() {
   const handleConnect = () => {
     window.location.href = `${[process.env.NEXT](http://process.env.NEXT)_PUBLIC_API_BASE}/api/yahoo/connect?redirect=/dashboard`
   }
-  
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <div className="text-center space-y-8">
@@ -1230,18 +1246,18 @@ export function ConnectLeaguePrompt() {
             <Zap className="w-10 h-10 text-venom-400" />
           </div>
         </div>
-        
+
         {/* Heading */}
         <div className="space-y-3">
           <h1 className="text-4xl font-bold text-gray-100">
             Connect Your Fantasy League
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Link your Yahoo Fantasy league to unlock AI-powered projections, 
+            Link your Yahoo Fantasy league to unlock AI-powered projections,
             lineup recommendations, and waiver wire analysis.
           </p>
         </div>
-        
+
         {/* CTA */}
         <button
           onClick={handleConnect}
@@ -1250,7 +1266,7 @@ export function ConnectLeaguePrompt() {
           <Zap className="w-5 h-5" />
           Connect Yahoo Fantasy
         </button>
-        
+
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
           <FeatureCard
@@ -1295,7 +1311,6 @@ function FeatureCard({ icon, title, description }: any) {
 
 All dashboard components ready with dark theme, tool tabs, and secure authentication flow.
 
-
 # Complete Component Library
 
 **Location**: `src/components/`
@@ -1307,45 +1322,45 @@ All dashboard components ready with dark theme, tool tabs, and secure authentica
 ## 🐍 Component: `VenomLogo.tsx`
 
 ```tsx
-import { FC } from 'react'
+import { FC } from 'react';
 
 interface VenomLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  variant?: 'light' | 'dark'
-  className?: string
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'light' | 'dark';
+  className?: string;
 }
 
-export const VenomLogo: FC<VenomLogoProps> = ({ 
-  size = 'md', 
+export const VenomLogo: FC<VenomLogoProps> = ({
+  size = 'md',
   variant = 'light',
-  className = '' 
+  className = '',
 }) => {
   const sizes = {
     sm: 'w-6 h-6',
     md: 'w-8 h-8',
     lg: 'w-12 h-12',
-    xl: 'w-16 h-16'
-  }
-  
+    xl: 'w-16 h-16',
+  };
+
   const colors = {
     light: {
       primary: '#10b981',
       secondary: '#059669',
-      accent: '#047857'
+      accent: '#047857',
     },
     dark: {
       primary: '#34d399',
       secondary: '#10b981',
-      accent: '#059669'
-    }
-  }
-  
-  const c = colors[variant]
-  
+      accent: '#059669',
+    },
+  };
+
+  const c = colors[variant];
+
   return (
-    <svg 
+    <svg
       className={`${sizes[size]} ${className}`}
-      viewBox="0 0 64 64" 
+      viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -1354,30 +1369,22 @@ export const VenomLogo: FC<VenomLogoProps> = ({
         d="M32 8C22 8 14 16 14 26C14 32 16 36 20 40L24 44V52C24 54 26 56 28 56H36C38 56 40 54 40 52V44L44 40C48 36 50 32 50 26C50 16 42 8 32 8Z"
         fill={c.primary}
       />
-      
+
       {/* Eyes */}
       <circle cx="24" cy="22" r="3" fill="#0a0f0b" />
       <circle cx="40" cy="22" r="3" fill="#0a0f0b" />
-      
+
       {/* Fang highlights */}
-      <path
-        d="M28 32L26 42H30L28 32Z"
-        fill="white"
-        opacity="0.9"
-      />
-      <path
-        d="M36 32L34 42H38L36 32Z"
-        fill="white"
-        opacity="0.9"
-      />
-      
+      <path d="M28 32L26 42H30L28 32Z" fill="white" opacity="0.9" />
+      <path d="M36 32L34 42H38L36 32Z" fill="white" opacity="0.9" />
+
       {/* Scale pattern */}
       <circle cx="32" cy="16" r="2" fill={c.secondary} opacity="0.3" />
       <circle cx="26" cy="14" r="1.5" fill={c.accent} opacity="0.2" />
       <circle cx="38" cy="14" r="1.5" fill={c.accent} opacity="0.2" />
     </svg>
-  )
-}
+  );
+};
 ```
 
 ---
@@ -1385,34 +1392,37 @@ export const VenomLogo: FC<VenomLogoProps> = ({
 ## 🔘 Component: `Button.tsx`
 
 ```tsx
-import { ButtonHTMLAttributes, forwardRef } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
   {
     variants: {
       variant: {
-        primary: 'bg-venom-500 hover:bg-venom-600 text-white shadow-lg shadow-venom-500/30 hover:shadow-venom-500/50 hover:scale-105 focus:ring-venom-500',
-        secondary: 'bg-field-700 hover:bg-field-600 text-gray-100 border border-field-600 focus:ring-field-500',
+        primary:
+          'bg-venom-500 hover:bg-venom-600 text-white shadow-lg shadow-venom-500/30 hover:shadow-venom-500/50 hover:scale-105 focus:ring-venom-500',
+        secondary:
+          'bg-field-700 hover:bg-field-600 text-gray-100 border border-field-600 focus:ring-field-500',
         ghost: 'text-venom-400 hover:text-venom-300 hover:bg-venom-500/10 focus:ring-venom-500',
         danger: 'bg-alert-500 hover:bg-alert-600 text-white focus:ring-alert-500',
-        outline: 'border-2 border-venom-500 text-venom-500 hover:bg-venom-500 hover:text-white focus:ring-venom-500'
+        outline:
+          'border-2 border-venom-500 text-venom-500 hover:bg-venom-500 hover:text-white focus:ring-venom-500',
       },
       size: {
         sm: 'px-3 py-1.5 text-sm rounded-md',
         md: 'px-5 py-2.5 text-base rounded-lg',
         lg: 'px-8 py-4 text-lg rounded-lg',
-        icon: 'p-2 rounded-md'
-      }
+        icon: 'p-2 rounded-md',
+      },
     },
     defaultVariants: {
       variant: 'primary',
-      size: 'md'
-    }
-  }
-)
+      size: 'md',
+    },
+  },
+);
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
@@ -1421,15 +1431,11 @@ export interface ButtonProps
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <button
-        ref={ref}
-        className={cn(buttonVariants({ variant, size, className }))}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = 'Button'
+      <button ref={ref} className={cn(buttonVariants({ variant, size, className }))} {...props} />
+    );
+  },
+);
+Button.displayName = 'Button';
 ```
 
 ---
@@ -1437,55 +1443,51 @@ Button.displayName = 'Button'
 ## 📦 Component: `Card.tsx`
 
 ```tsx
-import { HTMLAttributes, forwardRef } from 'react'
-import { cn } from '@/lib/utils'
+import { HTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'public' | 'dashboard' | 'stat' | 'alert'
+  variant?: 'public' | 'dashboard' | 'stat' | 'alert';
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'public', children, ...props }, ref) => {
     const variants = {
-      public: 'bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow',
-      dashboard: 'bg-field-800 rounded-xl border border-field-600 p-6 hover:border-venom-500/50 transition-colors',
+      public:
+        'bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow',
+      dashboard:
+        'bg-field-800 rounded-xl border border-field-600 p-6 hover:border-venom-500/50 transition-colors',
       stat: 'bg-gradient-to-br from-venom-500 to-venom-700 rounded-xl p-6 text-white shadow-xl',
-      alert: 'bg-strike-500/10 border-l-4 border-strike-500 p-4 rounded-r-lg'
-    }
-    
+      alert: 'bg-strike-500/10 border-l-4 border-strike-500 p-4 rounded-r-lg',
+    };
+
     return (
-      <div
-        ref={ref}
-        className={cn(variants[variant], className)}
-        {...props}
-      >
+      <div ref={ref} className={cn(variants[variant], className)} {...props}>
         {children}
       </div>
-    )
-  }
-)
-Card.displayName = 'Card'
+    );
+  },
+);
+Card.displayName = 'Card';
 
 export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cn('space-y-1.5', className)} {...props} />
-  )
-)
-CardHeader.displayName = 'CardHeader'
+  ),
+);
+CardHeader.displayName = 'CardHeader';
 
 export const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h3 ref={ref} className={cn('text-lg font-semibold', className)} {...props} />
-  )
-)
-CardTitle.displayName = 'CardTitle'
+  ),
+);
+CardTitle.displayName = 'CardTitle';
 
 export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('pt-4', className)} {...props} />
-  )
-)
-CardContent.displayName = 'CardContent'
+  ({ className, ...props }, ref) => <div ref={ref} className={cn('pt-4', className)} {...props} />,
+);
+CardContent.displayName = 'CardContent';
 ```
 
 ---
@@ -1493,33 +1495,30 @@ CardContent.displayName = 'CardContent'
 ## 🏷️ Component: `Badge.tsx`
 
 ```tsx
-import { HTMLAttributes, forwardRef } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { HTMLAttributes, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 font-medium rounded-full border',
-  {
-    variants: {
-      variant: {
-        trust: 'bg-trust-500/10 text-trust-600 border-trust-500/20',
-        venom: 'bg-venom-500/10 text-venom-400 border-venom-500/20',
-        strike: 'bg-gradient-to-r from-strike-400 to-strike-600 text-gray-900 border-0 shadow-md',
-        alert: 'bg-alert-500/10 text-alert-600 border-alert-500/20',
-        neutral: 'bg-gray-100 text-gray-600 border-gray-200'
-      },
-      size: {
-        sm: 'px-2 py-0.5 text-xs',
-        md: 'px-2.5 py-1 text-xs',
-        lg: 'px-3 py-1 text-sm'
-      }
+const badgeVariants = cva('inline-flex items-center gap-1.5 font-medium rounded-full border', {
+  variants: {
+    variant: {
+      trust: 'bg-trust-500/10 text-trust-600 border-trust-500/20',
+      venom: 'bg-venom-500/10 text-venom-400 border-venom-500/20',
+      strike: 'bg-gradient-to-r from-strike-400 to-strike-600 text-gray-900 border-0 shadow-md',
+      alert: 'bg-alert-500/10 text-alert-600 border-alert-500/20',
+      neutral: 'bg-gray-100 text-gray-600 border-gray-200',
     },
-    defaultVariants: {
-      variant: 'neutral',
-      size: 'md'
-    }
-  }
-)
+    size: {
+      sm: 'px-2 py-0.5 text-xs',
+      md: 'px-2.5 py-1 text-xs',
+      lg: 'px-3 py-1 text-sm',
+    },
+  },
+  defaultVariants: {
+    variant: 'neutral',
+    size: 'md',
+  },
+});
 
 export interface BadgeProps
   extends HTMLAttributes<HTMLSpanElement>,
@@ -1528,15 +1527,11 @@ export interface BadgeProps
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <span
-        ref={ref}
-        className={cn(badgeVariants({ variant, size, className }))}
-        {...props}
-      />
-    )
-  }
-)
-Badge.displayName = 'Badge'
+      <span ref={ref} className={cn(badgeVariants({ variant, size, className }))} {...props} />
+    );
+  },
+);
+Badge.displayName = 'Badge';
 ```
 
 ---
@@ -1544,33 +1539,26 @@ Badge.displayName = 'Badge'
 ## ⚡ Component: `LoadingSpinner.tsx`
 
 ```tsx
-import { FC } from 'react'
-import { cn } from '@/lib/utils'
+import { FC } from 'react';
+import { cn } from '@/lib/utils';
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg'
-  text?: string
-  className?: string
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+  className?: string;
 }
 
-export const LoadingSpinner: FC<LoadingSpinnerProps> = ({ 
-  size = 'md',
-  text,
-  className 
-}) => {
+export const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size = 'md', text, className }) => {
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
-    lg: 'w-12 h-12'
-  }
-  
+    lg: 'w-12 h-12',
+  };
+
   return (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
       <svg
-        className={cn(
-          'animate-spin text-venom-500',
-          sizes[size]
-        )}
+        className={cn('animate-spin text-venom-500', sizes[size])}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -1589,12 +1577,10 @@ export const LoadingSpinner: FC<LoadingSpinnerProps> = ({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-      {text && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">{text}</p>
-      )}
+      {text && <p className="text-sm text-gray-500 dark:text-gray-400">{text}</p>}
     </div>
-  )
-}
+  );
+};
 ```
 
 ---
@@ -1602,44 +1588,31 @@ export const LoadingSpinner: FC<LoadingSpinnerProps> = ({
 ## 🚨 Component: `EmptyState.tsx`
 
 ```tsx
-import { FC, ReactNode } from 'react'
-import { Button } from './Button'
+import { FC, ReactNode } from 'react';
+import { Button } from './Button';
 
 interface EmptyStateProps {
-  icon: ReactNode
-  title: string
-  description: string
+  icon: ReactNode;
+  title: string;
+  description: string;
   action?: {
-    label: string
-    onClick: () => void
-  }
+    label: string;
+    onClick: () => void;
+  };
 }
 
-export const EmptyState: FC<EmptyStateProps> = ({
-  icon,
-  title,
-  description,
-  action
-}) => {
+export const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, action }) => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       <div className="w-16 h-16 bg-gray-100 dark:bg-field-700 rounded-2xl flex items-center justify-center text-gray-400 dark:text-gray-500 mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-        {title}
-      </h3>
-      <p className="text-gray-600 dark:text-gray-400 max-w-sm mb-6">
-        {description}
-      </p>
-      {action && (
-        <Button onClick={action.onClick}>
-          {action.label}
-        </Button>
-      )}
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+      <p className="text-gray-600 dark:text-gray-400 max-w-sm mb-6">{description}</p>
+      {action && <Button onClick={action.onClick}>{action.label}</Button>}
     </div>
-  )
-}
+  );
+};
 ```
 
 ---
@@ -1647,22 +1620,17 @@ export const EmptyState: FC<EmptyStateProps> = ({
 ## 🔍 Component: `SearchInput.tsx`
 
 ```tsx
-'use client'
+'use client';
 
-import { FC, InputHTMLAttributes } from 'react'
-import { Search, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { FC, InputHTMLAttributes } from 'react';
+import { Search, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  onClear?: () => void
+  onClear?: () => void;
 }
 
-export const SearchInput: FC<SearchInputProps> = ({
-  className,
-  onClear,
-  value,
-  ...props
-}) => {
+export const SearchInput: FC<SearchInputProps> = ({ className, onClear, value, ...props }) => {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -1674,7 +1642,7 @@ export const SearchInput: FC<SearchInputProps> = ({
           'text-gray-900 dark:text-gray-100 placeholder-gray-400',
           'focus:outline-none focus:ring-2 focus:ring-venom-500 focus:border-transparent',
           'transition-colors',
-          className
+          className,
         )}
         {...props}
       />
@@ -1687,8 +1655,8 @@ export const SearchInput: FC<SearchInputProps> = ({
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 ```
 
 ---
@@ -1696,8 +1664,6 @@ export const SearchInput: FC<SearchInputProps> = ({
 **Component Library Complete** ✅
 
 All reusable components ready with TypeScript types, variants, and dark/light mode support.
-
-
 
 **Purpose**: Lightweight auth framework for CustomVenom MVP. Supports tiers (Free/Viper/Mamba), paywalls, and role-based access without blocking data flow.
 
@@ -1748,8 +1714,8 @@ All reusable components ready with TypeScript types, variants, and dark/light mo
 - **Database**: Neon Postgres (existing)
 - **Session**: JWT + database sessions (hybrid)
 - **Providers**:
-    - Email/password (primary)
-    - Yahoo OAuth (for league connection, not login)
+  - Email/password (primary)
+  - Yahoo OAuth (for league connection, not login)
 
 ### Authorization
 
@@ -1775,7 +1741,7 @@ model User {
   role          UserRole  @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
+
   // Relations
   accounts      Account[]
   sessions      Session[]
@@ -1809,7 +1775,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([provider, providerAccountId])
 }
 
@@ -1825,7 +1791,7 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  
+
   @@unique([identifier, token])
 }
 
@@ -1840,9 +1806,9 @@ model League {
   connected   Boolean  @default(true)
   lastSync    DateTime @default(now())
   createdAt   DateTime @default(now())
-  
+
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, provider, leagueKey])
 }
 
@@ -1853,7 +1819,7 @@ model Subscription {
   status            String   // 'active', 'canceled', 'past_due'
   currentPeriodEnd  DateTime
   cancelAtPeriodEnd Boolean  @default(false)
-  
+
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 ```
@@ -1878,34 +1844,34 @@ const TIER_ROUTES = {
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request })
   const { pathname } = request.nextUrl
-  
+
   // Public routes - always allow
   if (pathname === '/' || pathname.startsWith('/api/auth')) {
     return [NextResponse.next](http://NextResponse.next)()
   }
-  
+
   // Protected routes - require authentication
   if (pathname.startsWith('/dashboard')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-    
+
     // Check tier access
     const userTier = token.tier as string
-    
+
     // Mamba routes (most restrictive)
     if (pathname.match(/\/(killshots|faceoff|strike-ranges)/)) {
       if (userTier !== 'MAMBA') {
         return NextResponse.redirect(new URL('/dashboard?upgrade=mamba', request.url))
       }
     }
-    
+
     // Viper routes (basic dashboard access)
     if (userTier === 'FREE') {
       return NextResponse.redirect(new URL('/?upgrade=viper', request.url))
     }
   }
-  
+
   return [NextResponse.next](http://NextResponse.next)()
 }
 
@@ -1992,16 +1958,15 @@ src/
 
 ## Acceptance Criteria
 
-- [ ]  Prisma schema defined with User, Session, Subscription models
-- [ ]  NextAuth configured with email/password provider
-- [ ]  Login and signup pages functional (framework)
-- [ ]  Middleware protects `/dashboard` routes by tier
-- [ ]  `<StrikeForce>` component replaces "Go Pro" buttons
-- [ ]  Free users can view public projections without blocking
-- [ ]  Account page shows current tier and upgrade options
-- [ ]  Role check (ADMIN) grants bypass for development
-- [ ]  No auth logic blocks live data ingestion or API calls
-
+- [ ] Prisma schema defined with User, Session, Subscription models
+- [ ] NextAuth configured with email/password provider
+- [ ] Login and signup pages functional (framework)
+- [ ] Middleware protects `/dashboard` routes by tier
+- [ ] `<StrikeForce>` component replaces "Go Pro" buttons
+- [ ] Free users can view public projections without blocking
+- [ ] Account page shows current tier and upgrade options
+- [ ] Role check (ADMIN) grants bypass for development
+- [ ] No auth logic blocks live data ingestion or API calls
 
 **Purpose**: Venom-themed paywall component that replaces generic "Go Pro" buttons. Contextual, beautiful, and conversion-focused.
 
@@ -2031,35 +1996,35 @@ src/
 ### StrikeForce.tsx
 
 ```tsx
-import { useSession } from 'next-auth/react'
-import { ReactNode } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Lock, Zap } from 'lucide-react'
+import { useSession } from 'next-auth/react';
+import { ReactNode } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Lock, Zap } from 'lucide-react';
 
-type Tier = 'FREE' | 'VIPER' | 'MAMBA'
+type Tier = 'FREE' | 'VIPER' | 'MAMBA';
 
 interface StrikeForceProps {
   /** Minimum tier required to access */
-  requiredTier: Tier
-  
+  requiredTier: Tier;
+
   /** Feature name for messaging */
-  featureName: string
-  
+  featureName: string;
+
   /** Children shown when user has access */
-  children: ReactNode
-  
+  children: ReactNode;
+
   /** Variant: 'inline' (shows in place) or 'blur' (blurs content) */
-  variant?: 'inline' | 'blur'
-  
+  variant?: 'inline' | 'blur';
+
   /** Custom upgrade message */
-  upgradeMessage?: string
-  
+  upgradeMessage?: string;
+
   /** Show feature preview/screenshot */
-  preview?: ReactNode
+  preview?: ReactNode;
 }
 
-const TIER_HIERARCHY = { FREE: 0, VIPER: 1, MAMBA: 2 }
+const TIER_HIERARCHY = { FREE: 0, VIPER: 1, MAMBA: 2 };
 
 export function StrikeForce({
   requiredTier,
@@ -2067,52 +2032,49 @@ export function StrikeForce({
   children,
   variant = 'inline',
   upgradeMessage,
-  preview
+  preview,
 }: StrikeForceProps) {
-  const { data: session, status } = useSession()
-  
+  const { data: session, status } = useSession();
+
   // Loading state
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin h-8 w-8 border-4 border-venom-500 border-t-transparent rounded-full" />
       </div>
-    )
+    );
   }
-  
+
   // Not authenticated
   if (!session) {
     return (
       <div className="border-2 border-dashed border-strike-500/30 rounded-lg p-8 text-center">
         <Lock className="h-12 w-12 text-strike-500 mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2">Connect Your League to Unlock</h3>
-        <p className="text-gray-400 mb-6">
-          {featureName} requires a connected fantasy league.
-        </p>
+        <p className="text-gray-400 mb-6">{featureName} requires a connected fantasy league.</p>
         <Button href="/login" variant="primary">
           Connect League
         </Button>
       </div>
-    )
+    );
   }
-  
+
   // Check tier access
-  const userTier = session.user.tier as Tier
-  const hasAccess = TIER_HIERARCHY[userTier] >= TIER_HIERARCHY[requiredTier]
-  
+  const userTier = session.user.tier as Tier;
+  const hasAccess = TIER_HIERARCHY[userTier] >= TIER_HIERARCHY[requiredTier];
+
   // User has access - show feature
   if (hasAccess) {
-    return <>{children}</>
+    return <>{children}</>;
   }
-  
+
   // User needs upgrade
-  const tierName = requiredTier === 'MAMBA' ? 'Mamba' : 'Viper'
-  const tierPrice = requiredTier === 'MAMBA' ? '$19.99' : '$9.99'
-  const tierIcon = requiredTier === 'MAMBA' ? '🐍' : '⚡'
-  
-  const defaultMessage = upgradeMessage || 
-    `Unlock ${featureName} with ${tierName} tier access.`
-  
+  const tierName = requiredTier === 'MAMBA' ? 'Mamba' : 'Viper';
+  const tierPrice = requiredTier === 'MAMBA' ? '$19.99' : '$9.99';
+  const tierIcon = requiredTier === 'MAMBA' ? '🐍' : '⚡';
+
+  const defaultMessage = upgradeMessage || `Unlock ${featureName} with ${tierName} tier access.`;
+
   if (variant === 'blur') {
     return (
       <div className="relative">
@@ -2120,7 +2082,7 @@ export function StrikeForce({
         <div className="filter blur-sm pointer-events-none select-none opacity-40">
           {preview || children}
         </div>
-        
+
         {/* Overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-field-900 via-field-900/95 to-transparent">
           <div className="text-center max-w-md px-6">
@@ -2129,7 +2091,7 @@ export function StrikeForce({
             </Badge>
             <h3 className="text-2xl font-bold mb-2">{featureName}</h3>
             <p className="text-gray-400 mb-6">{defaultMessage}</p>
-            <Button 
+            <Button
               href={`/account?upgrade=${requiredTier.toLowerCase()}`}
               variant="primary"
               className="group"
@@ -2140,32 +2102,28 @@ export function StrikeForce({
           </div>
         </div>
       </div>
-    )
+    );
   }
-  
+
   // Inline variant (default)
   return (
     <div className="border-2 border-strike-500/30 bg-gradient-to-br from-strike-900/10 to-transparent rounded-lg p-8 text-center">
       <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-strike-500/10 mb-4">
         <Lock className="h-8 w-8 text-strike-500" />
       </div>
-      
+
       <Badge variant="strike" className="mb-3">
         {tierIcon} {tierName} Feature
       </Badge>
-      
+
       <h3 className="text-xl font-bold mb-2">{featureName}</h3>
-      <p className="text-gray-400 mb-6 max-w-md mx-auto">
-        {defaultMessage}
-      </p>
-      
+      <p className="text-gray-400 mb-6 max-w-md mx-auto">{defaultMessage}</p>
+
       {preview && (
-        <div className="mb-6 rounded-lg overflow-hidden border border-gray-800">
-          {preview}
-        </div>
+        <div className="mb-6 rounded-lg overflow-hidden border border-gray-800">{preview}</div>
       )}
-      
-      <Button 
+
+      <Button
         href={`/account?upgrade=${requiredTier.toLowerCase()}`}
         variant="primary"
         className="group"
@@ -2173,12 +2131,10 @@ export function StrikeForce({
         <Zap className="h-4 w-4 mr-2 group-hover:animate-pulse" />
         Upgrade to {tierName} · {tierPrice}/mo
       </Button>
-      
-      <p className="text-xs text-gray-500 mt-4">
-        7-day free trial · Cancel anytime
-      </p>
+
+      <p className="text-xs text-gray-500 mt-4">7-day free trial · Cancel anytime</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -2190,19 +2146,15 @@ export function StrikeForce({
 
 ```tsx
 // app/dashboard/killshots/page.tsx
-import { StrikeForce } from '@/components/auth/StrikeForce'
-import { KillShotsContent } from './KillShotsContent'
+import { StrikeForce } from '@/components/auth/StrikeForce';
+import { KillShotsContent } from './KillShotsContent';
 
 export default function KillShotsPage() {
   return (
-    <StrikeForce 
-      requiredTier="MAMBA"
-      featureName="Kill Shots Trade Analyzer"
-      variant="inline"
-    >
+    <StrikeForce requiredTier="MAMBA" featureName="Kill Shots Trade Analyzer" variant="inline">
       <KillShotsContent />
     </StrikeForce>
-  )
+  );
 }
 ```
 
@@ -2210,16 +2162,16 @@ export default function KillShotsPage() {
 
 ```tsx
 // app/dashboard/players/page.tsx
-import { StrikeForce } from '@/components/auth/StrikeForce'
+import { StrikeForce } from '@/components/auth/StrikeForce';
 
 export default function PlayersPage() {
   return (
     <div>
       <h1>Player Database</h1>
-      
+
       {/* Free users see top 100 */}
       <PlayerTable limit={100} />
-      
+
       {/* Premium feature: Advanced filters */}
       <StrikeForce
         requiredTier="VIPER"
@@ -2227,8 +2179,8 @@ export default function PlayersPage() {
         variant="blur"
         upgradeMessage="Filter by injury status, matchup grade, and custom projections."
         preview={
-          <img 
-            src="/images/filters-preview.png" 
+          <img
+            src="/images/filters-preview.png"
             alt="Advanced filters preview"
             className="w-full"
           />
@@ -2237,7 +2189,7 @@ export default function PlayersPage() {
         <AdvancedFilters />
       </StrikeForce>
     </div>
-  )
+  );
 }
 ```
 
@@ -2245,7 +2197,7 @@ export default function PlayersPage() {
 
 ```tsx
 // app/dashboard/page.tsx
-import { StrikeForce } from '@/components/auth/StrikeForce'
+import { StrikeForce } from '@/components/auth/StrikeForce';
 
 export default function DashboardPage() {
   return (
@@ -2253,25 +2205,17 @@ export default function DashboardPage() {
       {/* Available tools */}
       <ToolCard title="Start/Sit" href="/dashboard/startsit" />
       <ToolCard title="FAAB Helper" href="/dashboard/faab" />
-      
+
       {/* Premium tools with paywall */}
-      <StrikeForce
-        requiredTier="MAMBA"
-        featureName="Kill Shots"
-        variant="inline"
-      >
+      <StrikeForce requiredTier="MAMBA" featureName="Kill Shots" variant="inline">
         <ToolCard title="Kill Shots" href="/dashboard/killshots" />
       </StrikeForce>
-      
-      <StrikeForce
-        requiredTier="MAMBA"
-        featureName="Face-Off"
-        variant="inline"
-      >
+
+      <StrikeForce requiredTier="MAMBA" featureName="Face-Off" variant="inline">
         <ToolCard title="Face-Off" href="/dashboard/faceoff" />
       </StrikeForce>
     </div>
-  )
+  );
 }
 ```
 
@@ -2285,8 +2229,8 @@ export default function DashboardPage() {
 // Badge color mapping
 const TIER_BADGES = {
   VIPER: 'bg-venom-500/10 text-venom-500 border-venom-500/30',
-  MAMBA: 'bg-strike-500/10 text-strike-500 border-strike-500/30'
-}
+  MAMBA: 'bg-strike-500/10 text-strike-500 border-strike-500/30',
+};
 ```
 
 ### Glow Animation (Tailwind)
@@ -2294,8 +2238,13 @@ const TIER_BADGES = {
 ```css
 /* globals.css */
 @keyframes venom-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(16, 163, 74, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(16, 163, 74, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 163, 74, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 163, 74, 0.6);
+  }
 }
 
 .venom-glow {
@@ -2303,8 +2252,13 @@ const TIER_BADGES = {
 }
 
 @keyframes strike-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .strike-pulse {
@@ -2363,28 +2317,27 @@ const trackPaywall = {
   view: (feature: string, tier: string) => {
     // analytics.track('paywall_viewed', { feature, tier })
   },
-  
+
   click: (feature: string, tier: string, cta: string) => {
     // analytics.track('paywall_clicked', { feature, tier, cta })
-  }
-}
+  },
+};
 ```
 
 ---
 
 ## Acceptance Criteria
 
-- [ ]  Component renders correctly for all tiers (FREE, VIPER, MAMBA)
-- [ ]  Inline variant shows upgrade card with feature description
-- [ ]  Blur variant overlays blurred content with centered CTA
-- [ ]  Loading state shows spinner
-- [ ]  Unauthenticated state shows "Connect League" prompt
-- [ ]  All CTAs link to account page with `?upgrade=` param
-- [ ]  Venom/Strike theming applied (no generic "Pro" language)
-- [ ]  Animations smooth, respects reduced motion
-- [ ]  Mobile responsive and touch-friendly
-- [ ]  Screen reader accessible
-
+- [ ] Component renders correctly for all tiers (FREE, VIPER, MAMBA)
+- [ ] Inline variant shows upgrade card with feature description
+- [ ] Blur variant overlays blurred content with centered CTA
+- [ ] Loading state shows spinner
+- [ ] Unauthenticated state shows "Connect League" prompt
+- [ ] All CTAs link to account page with `?upgrade=` param
+- [ ] Venom/Strike theming applied (no generic "Pro" language)
+- [ ] Animations smooth, respects reduced motion
+- [ ] Mobile responsive and touch-friendly
+- [ ] Screen reader accessible
 
 **Purpose**: Sitewide authentication pages with email/password. Venom-themed, secure, and mobile-first.
 
@@ -2423,18 +2376,18 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-venom-900 via-field-900 to-field-950 p-12 items-center justify-center relative overflow-hidden">
         {/* Scale pattern background */}
         <div className="absolute inset-0 opacity-10" style= backgroundImage: 'url(/patterns/scales.svg)'  />
-        
+
         <div className="relative z-10 max-w-md">
           <VenomLogo size="lg" variant="full" className="mb-8" />
-          
+
           <h1 className="text-4xl font-bold mb-4">
             Your Fantasy Edge,<br />Backed by Data
           </h1>
-          
+
           <p className="text-gray-300 text-lg mb-8">
             Connect your league and unlock personalized projections, waiver recommendations, and lineup optimization.
           </p>
-          
+
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -2447,7 +2400,7 @@ export default function LoginPage() {
                 <p className="text-sm text-gray-400">Confidence ranges that actually match reality</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="h-3 w-3 text-venom-500" fill="currentColor" viewBox="0 0 20 20">
@@ -2459,7 +2412,7 @@ export default function LoginPage() {
                 <p className="text-sm text-gray-400">Scoring format and roster settings baked in</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="h-3 w-3 text-venom-500" fill="currentColor" viewBox="0 0 20 20">
@@ -2474,14 +2427,14 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Right side: Login form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-field-900">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-8">
             <VenomLogo size="sm" variant="icon" className="mx-auto" />
           </div>
-          
+
           <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
           <p className="text-gray-400 mb-8">
             Don't have an account?{' '}
@@ -2489,7 +2442,7 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
-          
+
           <LoginForm />
         </div>
       </div>
@@ -2519,30 +2472,30 @@ export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
-  
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    
+
     try {
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false
       })
-      
+
       if (result?.error) {
         setError('Invalid email or password')
         setLoading(false)
         return
       }
-      
+
       router.push(callbackUrl)
       router.refresh()
     } catch (err) {
@@ -2550,7 +2503,7 @@ export function LoginForm() {
       setLoading(false)
     }
   }
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
@@ -2559,7 +2512,7 @@ export function LoginForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-2">
           Email
@@ -2575,7 +2528,7 @@ export function LoginForm() {
           autoComplete="email"
         />
       </div>
-      
+
       <div>
         <label htmlFor="password" className="block text-sm font-medium mb-2">
           Password
@@ -2591,30 +2544,30 @@ export function LoginForm() {
           autoComplete="current-password"
         />
       </div>
-      
+
       <div className="flex items-center justify-between text-sm">
         <label className="flex items-center gap-2">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             className="rounded border-gray-700 bg-field-800 text-venom-500 focus:ring-venom-500"
           />
           <span className="text-gray-400">Remember me</span>
         </label>
-        
+
         <a href="/forgot-password" className="text-venom-500 hover:text-venom-400">
           Forgot password?
         </a>
       </div>
-      
-      <Button 
-        type="submit" 
-        variant="primary" 
+
+      <Button
+        type="submit"
+        variant="primary"
         className="w-full"
         disabled={loading}
       >
         {loading ? 'Signing in...' : 'Sign In'}
       </Button>
-      
+
       {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
@@ -2624,11 +2577,11 @@ export function LoginForm() {
           <span className="px-4 bg-field-900 text-gray-400">or continue with</span>
         </div>
       </div>
-      
+
       {/* OAuth providers (future) */}
-      <Button 
-        type="button" 
-        variant="outline" 
+      <Button
+        type="button"
+        variant="outline"
         className="w-full"
         disabled
       >
@@ -2649,15 +2602,15 @@ export function LoginForm() {
 ### app/signup/page.tsx
 
 ```tsx
-import { Metadata } from 'next'
-import { SignupForm } from '@/components/auth/SignupForm'
-import { VenomLogo } from '@/components/ui/VenomLogo'
-import Link from 'next/link'
+import { Metadata } from 'next';
+import { SignupForm } from '@/components/auth/SignupForm';
+import { VenomLogo } from '@/components/ui/VenomLogo';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Create Account · CustomVenom',
-  description: 'Start your 7-day free trial of fantasy football analytics.'
-}
+  description: 'Start your 7-day free trial of fantasy football analytics.',
+};
 
 export default function SignupPage() {
   return (
@@ -2673,22 +2626,22 @@ export default function SignupPage() {
             </Link>
           </p>
         </div>
-        
+
         <SignupForm />
-        
+
         <p className="text-center text-xs text-gray-500 mt-6">
           By signing up, you agree to our{' '}
           <Link href="/terms" className="underline hover:text-gray-400">
             Terms of Service
-          </Link>
-          {' '}and{' '}
+          </Link>{' '}
+          and{' '}
           <Link href="/privacy" className="underline hover:text-gray-400">
             Privacy Policy
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -2706,7 +2659,7 @@ import { Mail, Lock, User, AlertCircle, Check } from 'lucide-react'
 
 export function SignupForm() {
   const router = useRouter()
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -2715,31 +2668,31 @@ export function SignupForm() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   const passwordRequirements = [
     { label: 'At least 8 characters', met: formData.password.length >= 8 },
     { label: 'Contains a number', met: /\d/.test(formData.password) },
     { label: 'Contains uppercase & lowercase', met: /[a-z]/.test(formData.password) && /[A-Z]/.test(formData.password) }
   ]
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    
+
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
       setLoading(false)
       return
     }
-    
+
     if (!passwordRequirements.every(req => req.met)) {
       setError('Password does not meet requirements')
       setLoading(false)
       return
     }
-    
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -2750,15 +2703,15 @@ export function SignupForm() {
           password: formData.password
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (!response.ok) {
         setError(data.error || 'Failed to create account')
         setLoading(false)
         return
       }
-      
+
       // Redirect to login
       router.push('/login?signup=success')
     } catch (err) {
@@ -2766,7 +2719,7 @@ export function SignupForm() {
       setLoading(false)
     }
   }
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
@@ -2775,7 +2728,7 @@ export function SignupForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       <div>
         <label htmlFor="name" className="block text-sm font-medium mb-2">
           Name
@@ -2791,7 +2744,7 @@ export function SignupForm() {
           autoComplete="name"
         />
       </div>
-      
+
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-2">
           Email
@@ -2807,7 +2760,7 @@ export function SignupForm() {
           autoComplete="email"
         />
       </div>
-      
+
       <div>
         <label htmlFor="password" className="block text-sm font-medium mb-2">
           Password
@@ -2822,7 +2775,7 @@ export function SignupForm() {
           required
           autoComplete="new-password"
         />
-        
+
         {/* Password requirements */}
         {formData.password && (
           <div className="mt-2 space-y-1">
@@ -2837,7 +2790,7 @@ export function SignupForm() {
           </div>
         )}
       </div>
-      
+
       <div>
         <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
           Confirm Password
@@ -2853,16 +2806,16 @@ export function SignupForm() {
           autoComplete="new-password"
         />
       </div>
-      
-      <Button 
-        type="submit" 
-        variant="primary" 
+
+      <Button
+        type="submit"
+        variant="primary"
         className="w-full"
         disabled={loading}
       >
         {loading ? 'Creating account...' : 'Start Free Trial'}
       </Button>
-      
+
       <div className="bg-venom-500/10 border border-venom-500/30 rounded-lg p-4">
         <p className="text-sm text-center">
           ⚡ 7-day free trial · No credit card required · Cancel anytime
@@ -2899,21 +2852,21 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Invalid credentials')
         }
-        
+
         const user = await prisma.user.findUnique({
           where: { email: [credentials.email](http://credentials.email) }
         })
-        
+
         if (!user || !user.password) {
           throw new Error('Invalid credentials')
         }
-        
+
         const isValid = await [bcrypt.compare](http://bcrypt.compare)(credentials.password, user.password)
-        
+
         if (!isValid) {
           throw new Error('Invalid credentials')
         }
-        
+
         return {
           id: [user.id](http://user.id),
           email: [user.email](http://user.email),
@@ -2964,7 +2917,7 @@ import bcrypt from 'bcryptjs'
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json()
-    
+
     // Validate
     if (!email || !password || password.length < 8) {
       return NextResponse.json(
@@ -2972,22 +2925,22 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
-    
+
     // Check if user exists
     const existing = await prisma.user.findUnique({
       where: { email }
     })
-    
+
     if (existing) {
       return NextResponse.json(
         { error: 'Email already registered' },
         { status: 400 }
       )
     }
-    
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
-    
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -2998,7 +2951,7 @@ export async function POST(request: Request) {
         role: 'USER'
       }
     })
-    
+
     return NextResponse.json(
       { success: true, userId: [user.id](http://user.id) },
       { status: 201 }
@@ -3017,19 +2970,18 @@ export async function POST(request: Request) {
 
 ## Acceptance Criteria
 
-- [ ]  Login page renders with left branding panel (desktop) and form
-- [ ]  Login form validates email/password and shows errors
-- [ ]  Successful login redirects to `/dashboard` or `callbackUrl`
-- [ ]  Signup page shows form with password requirements
-- [ ]  Password requirements update in real-time
-- [ ]  Signup creates user with FREE tier and redirects to login
-- [ ]  NextAuth configured with credentials provider
-- [ ]  JWT includes tier and role for authorization checks
-- [ ]  Pages are mobile-responsive and touch-friendly
-- [ ]  All forms are keyboard accessible
-- [ ]  "Remember me" checkbox persists session (optional)
-- [ ]  Venom theming consistent across all auth pages
-
+- [ ] Login page renders with left branding panel (desktop) and form
+- [ ] Login form validates email/password and shows errors
+- [ ] Successful login redirects to `/dashboard` or `callbackUrl`
+- [ ] Signup page shows form with password requirements
+- [ ] Password requirements update in real-time
+- [ ] Signup creates user with FREE tier and redirects to login
+- [ ] NextAuth configured with credentials provider
+- [ ] JWT includes tier and role for authorization checks
+- [ ] Pages are mobile-responsive and touch-friendly
+- [ ] All forms are keyboard accessible
+- [ ] "Remember me" checkbox persists session (optional)
+- [ ] Venom theming consistent across all auth pages
 
 **Purpose**: Central account settings page. Shows current tier, upgrade options, connected leagues, and preferences.
 
@@ -3048,24 +3000,24 @@ export async function POST(request: Request) {
 ### app/account/page.tsx
 
 ```tsx
-import { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { AccountContent } from './AccountContent'
+import { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { AccountContent } from './AccountContent';
 
 export const metadata: Metadata = {
   title: 'Account Settings · CustomVenom',
-  description: 'Manage your account, subscription, and preferences.'
-}
+  description: 'Manage your account, subscription, and preferences.',
+};
 
 export default async function AccountPage() {
-  const session = await getServerSession()
-  
+  const session = await getServerSession();
+
   if (!session) {
-    redirect('/login?callbackUrl=/account')
+    redirect('/login?callbackUrl=/account');
   }
-  
-  return <AccountContent session={session} />
+
+  return <AccountContent session={session} />;
 }
 ```
 
@@ -3081,11 +3033,11 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
-import { 
-  User, 
-  Mail, 
-  Shield, 
-  CreditCard, 
+import {
+  User,
+  Mail,
+  Shield,
+  CreditCard,
   Link as LinkIcon,
   Settings,
   LogOut,
@@ -3101,14 +3053,14 @@ interface AccountContentProps {
 export function AccountContent({ session }: AccountContentProps) {
   const searchParams = useSearchParams()
   const upgradeParam = searchParams.get('upgrade')
-  
+
   const [activeTab, setActiveTab] = useState(
     upgradeParam ? 'billing' : 'profile'
   )
-  
+
   const tier = session.user.tier as string
   const role = session.user.role as string
-  
+
   return (
     <div className="min-h-screen bg-field-900 py-12 px-6">
       <div className="max-w-4xl mx-auto">
@@ -3119,7 +3071,7 @@ export function AccountContent({ session }: AccountContentProps) {
             Manage your profile, subscription, and preferences
           </p>
         </div>
-        
+
         {/* Tabs */}
         <div className="flex gap-4 border-b border-gray-800 mb-8">
           {[
@@ -3145,7 +3097,7 @@ export function AccountContent({ session }: AccountContentProps) {
             )
           })}
         </div>
-        
+
         {/* Tab Content */}
         {activeTab === 'profile' && <ProfileTab session={session} />}
         {activeTab === 'billing' && <BillingTab tier={tier} upgradeParam={upgradeParam} />}
@@ -3160,19 +3112,19 @@ export function AccountContent({ session }: AccountContentProps) {
 function ProfileTab({ session }: { session: Session }) {
   const [name, setName] = useState([session.user.name](http://session.user.name) || '')
   const [loading, setLoading] = useState(false)
-  
+
   const handleSave = async () => {
     setLoading(true)
     // TODO: API call to update profile
     await new Promise(resolve => setTimeout(resolve, 1000))
     setLoading(false)
   }
-  
+
   return (
     <div className="space-y-6">
       <Card variant="dashboard">
         <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Name</label>
@@ -3182,7 +3134,7 @@ function ProfileTab({ session }: { session: Session }) {
               placeholder="Your name"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
             <Input
@@ -3194,7 +3146,7 @@ function ProfileTab({ session }: { session: Session }) {
               Contact support to change your email
             </p>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium mb-2">Role</label>
             <div className="flex items-center gap-2">
@@ -3204,8 +3156,8 @@ function ProfileTab({ session }: { session: Session }) {
               </Badge>
             </div>
           </div>
-          
-          <Button 
+
+          <Button
             onClick={handleSave}
             disabled={loading}
             variant="primary"
@@ -3214,16 +3166,16 @@ function ProfileTab({ session }: { session: Session }) {
           </Button>
         </div>
       </Card>
-      
+
       <Card variant="dashboard">
         <h3 className="text-lg font-semibold mb-4">Security</h3>
-        
+
         <div className="space-y-4">
           <Button variant="outline">
             Change Password
           </Button>
-          
-          <Button 
+
+          <Button
             variant="danger"
             onClick={() => signOut({ callbackUrl: '/' })}
           >
@@ -3268,7 +3220,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
       ]
     }
   ]
-  
+
   return (
     <div className="space-y-6">
       {/* Current Plan */}
@@ -3282,7 +3234,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
             {tier === 'FREE' ? '🆓 Hatchling' : tier === 'VIPER' ? '⚡ Viper' : '🐍 Mamba'}
           </Badge>
         </div>
-        
+
         {tier === 'FREE' && (
           <div className="bg-venom-500/10 border border-venom-500/30 rounded-lg p-4">
             <p className="text-sm">
@@ -3290,7 +3242,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
             </p>
           </div>
         )}
-        
+
         {(tier === 'VIPER' || tier === 'MAMBA') && (
           <div>
             <div className="flex items-center justify-between py-3 border-b border-gray-800">
@@ -3305,7 +3257,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
               <span className="text-sm text-gray-400">Payment method</span>
               <span className="font-medium">•••• 4242</span>
             </div>
-            
+
             <div className="mt-6 flex gap-3">
               <Button variant="outline" size="sm">
                 Update Payment Method
@@ -3317,14 +3269,14 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
           </div>
         )}
       </Card>
-      
+
       {/* Upgrade Plans */}
       {tier !== 'MAMBA' && (
         <div>
           <h3 className="text-lg font-semibold mb-4">Available Plans</h3>
           <div className="grid md:grid-cols-2 gap-6">
             {[plans.map](http://plans.map)(plan => (
-              <Card 
+              <Card
                 key={[plan.id](http://plan.id)}
                 variant="dashboard"
                 className={`relative ${
@@ -3339,7 +3291,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
                     </Badge>
                   </div>
                 )}
-                
+
                 <div className="text-center mb-6">
                   <div className="text-4xl mb-2">{plan.icon}</div>
                   <h4 className="text-xl font-bold mb-2">{[plan.name](http://plan.name)}</h4>
@@ -3348,7 +3300,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
                     <span className="text-lg text-gray-400 font-normal">/mo</span>
                   </div>
                 </div>
-                
+
                 <ul className="space-y-3 mb-6">
                   {[plan.features.map](http://plan.features.map)((feature, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
@@ -3357,15 +3309,15 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
                     </li>
                   ))}
                 </ul>
-                
-                <Button 
-                  variant="primary" 
+
+                <Button
+                  variant="primary"
                   className="w-full"
                   disabled={tier === [plan.id](http://plan.id).toUpperCase()}
                 >
                   {tier === [plan.id](http://plan.id).toUpperCase() ? 'Current Plan' : `Upgrade to ${[plan.name](http://plan.name)}`}
                 </Button>
-                
+
                 <p className="text-xs text-center text-gray-500 mt-3">
                   7-day free trial · Cancel anytime
                 </p>
@@ -3384,7 +3336,7 @@ function LeaguesTab() {
     { id: '1', name: 'Main League 2025', provider: 'Yahoo', status: 'connected', lastSync: '2 hours ago' },
     { id: '2', name: 'Dynasty League', provider: 'Yahoo', status: 'connected', lastSync: '5 hours ago' }
   ]
-  
+
   return (
     <div className="space-y-6">
       <Card variant="dashboard">
@@ -3398,10 +3350,10 @@ function LeaguesTab() {
             Connect New League
           </Button>
         </div>
-        
+
         <div className="space-y-4">
           {[leagues.map](http://leagues.map)(league => (
-            <div 
+            <div
               key={[league.id](http://league.id)}
               className="flex items-center justify-between p-4 border border-gray-800 rounded-lg"
             >
@@ -3418,7 +3370,7 @@ function LeaguesTab() {
                   <span>Synced {league.lastSync}</span>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm">
                   Sync Now
@@ -3441,7 +3393,7 @@ function PreferencesTab() {
     <div className="space-y-6">
       <Card variant="dashboard">
         <h3 className="text-lg font-semibold mb-4">Display Preferences</h3>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -3450,7 +3402,7 @@ function PreferencesTab() {
             </div>
             <input type="checkbox" defaultChecked className="toggle" />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Compact Mode</p>
@@ -3460,10 +3412,10 @@ function PreferencesTab() {
           </div>
         </div>
       </Card>
-      
+
       <Card variant="dashboard">
         <h3 className="text-lg font-semibold mb-4">Notifications</h3>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -3472,7 +3424,7 @@ function PreferencesTab() {
             </div>
             <input type="checkbox" defaultChecked className="toggle" />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Injury Alerts</p>
@@ -3491,17 +3443,16 @@ function PreferencesTab() {
 
 ## Acceptance Criteria
 
-- [ ]  Account page requires authentication (redirects to login if not signed in)
-- [ ]  Displays current tier badge (Hatchling/Viper/Mamba)
-- [ ]  Profile tab shows name, email, role
-- [ ]  Billing tab shows current plan and upgrade options
-- [ ]  Upgrade cards highlight if `?upgrade=` param present
-- [ ]  Leagues tab shows connected fantasy leagues
-- [ ]  Preferences tab has toggles for dark mode, compact mode, notifications
-- [ ]  Sign out button works correctly
-- [ ]  Mobile responsive with proper tab navigation
-- [ ]  Venom theming consistent throughout
-
+- [ ] Account page requires authentication (redirects to login if not signed in)
+- [ ] Displays current tier badge (Hatchling/Viper/Mamba)
+- [ ] Profile tab shows name, email, role
+- [ ] Billing tab shows current plan and upgrade options
+- [ ] Upgrade cards highlight if `?upgrade=` param present
+- [ ] Leagues tab shows connected fantasy leagues
+- [ ] Preferences tab has toggles for dark mode, compact mode, notifications
+- [ ] Sign out button works correctly
+- [ ] Mobile responsive with proper tab navigation
+- [ ] Venom theming consistent throughout
 
 **Purpose**: Complete database schema for users, authentication, permissions, and subscriptions. Ready for live data integration.
 
@@ -3532,16 +3483,16 @@ model User {
   password      String    // bcrypt hashed, nullable for OAuth-only users
   name          String?
   image         String?
-  
+
   // Authorization
   tier          UserTier  @default(FREE)
   role          UserRole  @default(USER)
-  
+
   // Metadata
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastLoginAt   DateTime?
-  
+
   // Relations
   accounts      Account[]
   sessions      Session[]
@@ -3549,7 +3500,7 @@ model User {
   subscription  Subscription?
   preferences   UserPreferences?
   apiKeys       ApiKey[]
-  
+
   @@index([email])
   @@index([tier])
 }
@@ -3573,7 +3524,7 @@ model Account {
   type              String   // 'oauth' | 'email' | 'credentials'
   provider          String   // 'yahoo', 'google', etc.
   providerAccountId String
-  
+
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
@@ -3581,9 +3532,9 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  
+
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
@@ -3594,9 +3545,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  
+
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([sessionToken])
 }
@@ -3606,7 +3557,7 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  
+
   @@unique([identifier, token])
 }
 
@@ -3617,16 +3568,16 @@ model VerificationToken {
 model Subscription {
   id                String   @id @default(cuid())
   userId            String   @unique
-  
+
   // Subscription details
   tier              UserTier
   status            SubscriptionStatus @default(ACTIVE)
-  
+
   // Billing
   stripeCustomerId       String? @unique
   stripeSubscriptionId   String? @unique
   stripePriceId          String?
-  
+
   // Dates
   currentPeriodStart     DateTime
   currentPeriodEnd       DateTime
@@ -3634,13 +3585,13 @@ model Subscription {
   canceledAt             DateTime?
   trialStart             DateTime?
   trialEnd               DateTime?
-  
+
   // Metadata
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
-  
+
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([status])
 }
@@ -3661,31 +3612,31 @@ enum SubscriptionStatus {
 model League {
   id          String   @id @default(cuid())
   userId      String
-  
+
   // Provider info
   provider    LeagueProvider
   leagueKey   String        // Provider's league ID
   leagueName  String
-  
+
   // Season & sport
   season      Int           // e.g., 2025
   gameType    String        // 'nfl' (future: 'nba')
-  
+
   // Scoring settings (stored for local calculations)
   scoringType String        // 'PPR', 'HALF_PPR', 'STANDARD'
-  
+
   // Connection status
   connected   Boolean       @default(true)
   lastSync    DateTime      @default(now())
   syncError   String?
-  
+
   // Metadata
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  
+
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   rosters     Roster[]
-  
+
   @@unique([userId, provider, leagueKey])
   @@index([userId])
   @@index([provider])
@@ -3701,10 +3652,10 @@ enum LeagueProvider {
 model Roster {
   id              String   @id @default(cuid())
   leagueId        String
-  
+
   // Team info
   teamKey         String   // Provider's team ID
   teamName        String
-  
+
   // Current players (JSON array of player
 ```

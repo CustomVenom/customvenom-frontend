@@ -1,28 +1,32 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart3, Target, Shield, Zap } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart3, Target, Shield, Zap } from 'lucide-react';
 
 const features = [
   {
     icon: BarChart3,
     title: 'Floor/Median/Ceiling',
-    description: 'See the full range, not just a misleading single number. Understand the spread of possible outcomes.'
+    description:
+      'See the full range, not just a misleading single number. Understand the spread of possible outcomes.',
   },
   {
     icon: Target,
     title: 'Confidence-Gated Reasons',
-    description: 'Max 2 driver chips per player, only when confidence ≥ 0.65. Clear, actionable insights.'
+    description:
+      'Max 2 driver chips per player, only when confidence ≥ 0.65. Clear, actionable insights.',
   },
   {
     icon: Shield,
     title: 'Trust-First Transparency',
-    description: 'schema_version + last_refresh on every result. Know when your data was updated and how.'
+    description:
+      'schema_version + last_refresh on every result. Know when your data was updated and how.',
   },
   {
     icon: Zap,
     title: 'Live Roster Integration',
-    description: 'Connect your fantasy league and see projections tailored to your team. Start/sit decisions made easy.'
-  }
-]
+    description:
+      'Connect your fantasy league and see projections tailored to your team. Start/sit decisions made easy.',
+  },
+];
 
 export function FeaturesGrid() {
   return (
@@ -39,7 +43,7 @@ export function FeaturesGrid() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, idx) => {
-            const Icon = feature.icon
+            const Icon = feature.icon;
             return (
               <Card key={idx} variant="public" className="h-full">
                 <CardHeader>
@@ -52,11 +56,10 @@ export function FeaturesGrid() {
                   <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
-

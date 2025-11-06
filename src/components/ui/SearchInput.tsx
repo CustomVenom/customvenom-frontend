@@ -1,19 +1,14 @@
-'use client'
+'use client';
 
-import { FC, InputHTMLAttributes } from 'react'
-import { Search, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { FC, InputHTMLAttributes } from 'react';
+import { Search, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  onClear?: () => void
+  onClear?: () => void;
 }
 
-export const SearchInput: FC<SearchInputProps> = ({
-  className,
-  onClear,
-  value,
-  ...props
-}) => {
+export const SearchInput: FC<SearchInputProps> = ({ className, onClear, value, ...props }) => {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -25,7 +20,7 @@ export const SearchInput: FC<SearchInputProps> = ({
           'text-gray-900 dark:text-gray-100 placeholder-gray-400',
           'focus:outline-none focus:ring-2 focus:ring-venom-500 focus:border-transparent',
           'transition-colors',
-          className
+          className,
         )}
         {...props}
       />
@@ -38,6 +33,5 @@ export const SearchInput: FC<SearchInputProps> = ({
         </button>
       )}
     </div>
-  )
-}
-
+  );
+};

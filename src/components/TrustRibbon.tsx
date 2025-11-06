@@ -35,7 +35,7 @@ export function TrustRibbon({
           new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
-          })
+          }),
         );
       }
     }, 0);
@@ -44,7 +44,7 @@ export function TrustRibbon({
 
   // Use empty string for dateTime until mounted to ensure server/client consistency
   // After mount, use the current lastRefresh value
-  const dateTimeValue = mounted ? (lastRefresh || '') : '';
+  const dateTimeValue = mounted ? lastRefresh || '' : '';
 
   return (
     <>

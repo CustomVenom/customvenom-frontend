@@ -141,7 +141,7 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
 ```
 
 ### Step 1.3: Add Design Tokens to globals.css
@@ -151,8 +151,13 @@ module.exports = {
 
 /* Venom Glow Animation */
 @keyframes venom-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  }
 }
 
 .venom-glow {
@@ -160,8 +165,13 @@ module.exports = {
 }
 
 @keyframes strike-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .strike-pulse {
@@ -170,11 +180,13 @@ module.exports = {
 
 /* Scale Pattern (Dashboard texture) */
 .scale-pattern {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20px 20px, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
     radial-gradient(circle at 60px 60px, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
   background-size: 80px 80px;
-  background-position: 0 0, 40px 40px;
+  background-position:
+    0 0,
+    40px 40px;
 }
 
 /* Yard Line Pattern (Public sections) */
@@ -193,30 +205,30 @@ module.exports = {
 
 ```tsx
 // src/lib/utils.ts - NEW FILE
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatNumber(num: number, decimals = 1): string {
-  return num.toFixed(decimals)
+  return num.toFixed(decimals);
 }
 
 export function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max)
+  return Math.min(Math.max(value, min), max);
 }
 
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null
+  let timeout: NodeJS.Timeout | null = null;
   return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
-  }
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
 }
 ```
 
@@ -282,13 +294,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen bg-white">
       {/* Public header */}
-      <header className="border-b border-gray-200 bg-white">
-        {/* Add minimal header */}
-      </header>
-      
+      <header className="border-b border-gray-200 bg-white">{/* Add minimal header */}</header>
+
       {children}
     </div>
-  )
+  );
 }
 ```
 
@@ -393,8 +403,8 @@ mv src/app/dashboard/page.tsx src/app/dashboard/page.tsx.old
 
 ```tsx
 // In new dashboard components, import existing API utils
-import { fetchYahooTeams } from '@/lib/yahoo-api'  // KEEP EXISTING
-import { getProjections } from '@/lib/api-client'  // KEEP EXISTING
+import { fetchYahooTeams } from '@/lib/yahoo-api'; // KEEP EXISTING
+import { getProjections } from '@/lib/api-client'; // KEEP EXISTING
 
 // Don't create new API logic - reuse what works
 ```
@@ -432,7 +442,7 @@ import { getProjections } from '@/lib/api-client'  // KEEP EXISTING
 ```tsx
 // Wrap premium features but don't block for MVP
 <StrikeForce requiredTier="MAMBA" featureName="Kill Shots">
-  <KillShotsContent />  {/* Will show for everyone during dev */}
+  <KillShotsContent /> {/* Will show for everyone during dev */}
 </StrikeForce>
 ```
 
@@ -487,16 +497,16 @@ curl [http://localhost:3000/api/projections?week=2025-09](http://localhost:3000/
 
 ### **Smoke Tests**
 
-- [ ]  Public landing page loads (light mode)
-- [ ]  Dashboard loads (dark mode, scale pattern visible)
-- [ ]  Login/signup flow works
-- [ ]  Yahoo OAuth unaffected
-- [ ]  Team selector shows correct teams
-- [ ]  Roster displays player projections
-- [ ]  API calls return data (`/api/projections`)
-- [ ]  No console errors
-- [ ]  Mobile responsive
-- [ ]  All links navigate correctly
+- [ ] Public landing page loads (light mode)
+- [ ] Dashboard loads (dark mode, scale pattern visible)
+- [ ] Login/signup flow works
+- [ ] Yahoo OAuth unaffected
+- [ ] Team selector shows correct teams
+- [ ] Roster displays player projections
+- [ ] API calls return data (`/api/projections`)
+- [ ] No console errors
+- [ ] Mobile responsive
+- [ ] All links navigate correctly
 
 ---
 
@@ -595,18 +605,18 @@ git push origin main
 
 **Before considering complete:**
 
-- [ ]  All 8 phases completed
-- [ ]  All checkpoints passed
-- [ ]  Yahoo OAuth flow intact
-- [ ]  Player data loads correctly
-- [ ]  Roster integration works
-- [ ]  New landing page live
-- [ ]  Dashboard redesigned
-- [ ]  Auth framework functional
-- [ ]  No console errors
-- [ ]  Mobile responsive
-- [ ]  Performance acceptable (LCP < 2.5s)
-- [ ]  All existing features preserved
+- [ ] All 8 phases completed
+- [ ] All checkpoints passed
+- [ ] Yahoo OAuth flow intact
+- [ ] Player data loads correctly
+- [ ] Roster integration works
+- [ ] New landing page live
+- [ ] Dashboard redesigned
+- [ ] Auth framework functional
+- [ ] No console errors
+- [ ] Mobile responsive
+- [ ] Performance acceptable (LCP < 2.5s)
+- [ ] All existing features preserved
 
 ---
 

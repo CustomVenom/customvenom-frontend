@@ -1,9 +1,9 @@
-import { InputHTMLAttributes, forwardRef } from 'react'
-import { cn } from '@/lib/utils'
+import { InputHTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  icon?: React.ReactNode
-  error?: boolean
+  icon?: React.ReactNode;
+  error?: boolean;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -11,9 +11,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            {icon}
-          </div>
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{icon}</div>
         )}
         <input
           ref={ref}
@@ -32,13 +30,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             error
               ? 'dark:border-alert-500 dark:focus:border-alert-500'
               : 'dark:focus:border-venom-500',
-            className
+            className,
           )}
           {...props}
         />
       </div>
-    )
-  }
-)
-Input.displayName = 'Input'
-
+    );
+  },
+);
+Input.displayName = 'Input';

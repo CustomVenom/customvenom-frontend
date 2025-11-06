@@ -3,6 +3,7 @@
 ## Pre-Deployment Checklist
 
 ### ✅ Code Changes
+
 - [x] All UI redesign phases complete (8 phases)
 - [x] New design system implemented
 - [x] Auth framework with tier system
@@ -20,9 +21,11 @@ npx prisma migrate deploy
 ```
 
 **Or via Prisma Studio/Neon dashboard:**
+
 - Run the SQL from: `prisma/migrations/20251102211353_add_auth_tier_role_enums/migration.sql`
 
 **Migration adds:**
+
 - `UserTier` enum (FREE, VIPER, MAMBA)
 - `UserRole` enum (USER, ADMIN, DEVELOPER)
 - New `tier` and `role` columns on User table
@@ -36,6 +39,7 @@ npx prisma migrate deploy
 ## Environment Variables Required
 
 **Vercel Production Environment:**
+
 - `DATABASE_URL` - Neon Postgres connection string
 - `NEXTAUTH_SECRET` - Generate with: `openssl rand -base64 32`
 - `NEXTAUTH_URL` - `https://www.customvenom.com` (or your domain)
@@ -44,6 +48,7 @@ npx prisma migrate deploy
 - `YAHOO_CLIENT_SECRET` - Yahoo OAuth credentials
 
 **Optional (for OAuth providers):**
+
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `TWITTER_CLIENT_ID`
@@ -126,8 +131,7 @@ If issues occur:
 
 ---
 
-**Deployment Date**: ___________
-**Deployed By**: ___________
+**Deployment Date**: ****\_\_\_****
+**Deployed By**: ****\_\_\_****
 **Migration Status**: Pending / Complete
-**Post-Deployment Status**: ___________
-
+**Post-Deployment Status**: ****\_\_\_****

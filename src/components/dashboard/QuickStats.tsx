@@ -55,7 +55,11 @@ export function QuickStats({ stats, className }: QuickStatsProps) {
         const changeValue = stat.change !== undefined ? stat.change : null;
 
         return (
-          <Card key={index} variant="dashboard" className="hover:border-venom-500/50 transition-colors">
+          <Card
+            key={index}
+            variant="dashboard"
+            className="hover:border-venom-500/50 transition-colors"
+          >
             <CardContent className="pt-6">
               <div className="flex items-start justify-between">
                 <div className="space-y-1 flex-1">
@@ -75,7 +79,7 @@ export function QuickStats({ stats, className }: QuickStatsProps) {
                             ? 'text-venom-400'
                             : changeValue < 0
                               ? 'text-alert-500'
-                              : 'text-gray-400'
+                              : 'text-gray-400',
                         )}
                       >
                         {changeValue > 0 ? '+' : ''}
@@ -104,4 +108,3 @@ export const StatIcons = {
   target: <Target className="h-5 w-5 text-venom-400" />,
   chart: <BarChart3 className="h-5 w-5 text-venom-400" />,
 };
-

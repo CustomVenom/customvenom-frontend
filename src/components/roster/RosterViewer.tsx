@@ -51,9 +51,14 @@ export function RosterViewer() {
           const meData = await meRes.json();
           // Only fetch leagues if user is connected
           if (meData.guid) {
-            fetchLeagues().then(setLeagues).catch((e) => {
-              console.debug('[RosterViewer] Failed to fetch leagues (expected if not connected)', e);
-            });
+            fetchLeagues()
+              .then(setLeagues)
+              .catch((e) => {
+                console.debug(
+                  '[RosterViewer] Failed to fetch leagues (expected if not connected)',
+                  e,
+                );
+              });
           }
         }
       } catch (e) {
@@ -230,7 +235,8 @@ export function RosterViewer() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">{player.editorial_team_abbr}</td>
                       <td className="px-4 py-3">
-                        {player.projected_points !== null && player.projected_points !== undefined ? (
+                        {player.projected_points !== null &&
+                        player.projected_points !== undefined ? (
                           <span className="font-semibold text-gray-900">
                             {player.projected_points.toFixed(1)}
                           </span>

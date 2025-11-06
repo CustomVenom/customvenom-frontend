@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { Zap } from 'lucide-react'
+import Link from 'next/link';
+import { Zap } from 'lucide-react';
 
 export function HeroSection() {
   return (
@@ -86,7 +86,9 @@ export function HeroSection() {
                     <div className="text-sm text-gray-500">SF vs ARI</div>
                   </div>
                 </div>
-                <div className="bg-venom-50 text-venom-700 text-xs font-medium px-2 py-1 rounded">Week 9</div>
+                <div className="bg-venom-50 text-venom-700 text-xs font-medium px-2 py-1 rounded">
+                  Week 9
+                </div>
               </div>
 
               {/* Floor-Median-Ceiling visual */}
@@ -96,7 +98,10 @@ export function HeroSection() {
                   <span className="font-mono font-semibold text-gray-900">14.2</span>
                 </div>
                 <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-                  <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-venom-200 via-venom-400 to-venom-600 rounded-lg" style={{ width: '85%' }} />
+                  <div
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-venom-200 via-venom-400 to-venom-600 rounded-lg"
+                    style={{ width: '85%' }}
+                  />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-sm font-bold text-gray-900">Median: 21.5</span>
                   </div>
@@ -127,6 +132,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-

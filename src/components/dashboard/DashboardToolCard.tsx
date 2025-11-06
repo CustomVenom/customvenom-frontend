@@ -41,7 +41,7 @@ export function DashboardToolCard({
         variant="dashboard"
         className={cn(
           'h-full transition-all hover:border-venom-500/50 hover:shadow-lg hover:shadow-venom-500/10',
-          isActive && 'border-venom-500/50 ring-2 ring-venom-500/20'
+          isActive && 'border-venom-500/50 ring-2 ring-venom-500/20',
         )}
       >
         <CardHeader>
@@ -77,4 +77,3 @@ export function DashboardToolCard({
     </Link>
   );
 }
-

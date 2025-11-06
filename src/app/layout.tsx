@@ -26,10 +26,12 @@ const merri = Merriweather_Sans({
 
 export const metadata: Metadata = {
   title: 'Custom Venom — Fantasy Football Analytics',
-  description: 'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
+  description:
+    'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
   openGraph: {
     title: 'Custom Venom — Fantasy Football Analytics',
-    description: 'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
+    description:
+      'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
     type: 'website',
     url: 'https://www.customvenom.com',
     siteName: 'Custom Venom',

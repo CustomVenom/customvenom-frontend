@@ -1,37 +1,37 @@
 // Middleware for route protection
 // Handles tier-based access control and domain redirects
 
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // Public routes - always allowed
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const url = new URL(request.url)
+  const { pathname } = request.nextUrl;
+  const url = new URL(request.url);
 
   // Force apex to www (preserve existing functionality)
   if (url.hostname === 'customvenom.com') {
-    url.hostname = 'www.customvenom.com'
-    return NextResponse.redirect(url, 308)
+    url.hostname = 'www.customvenom.com';
+    return NextResponse.redirect(url, 308);
   }
 
   // Public routes - always allow
-  if (PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith(route))) {
-    return NextResponse.next()
+  if (PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route))) {
+    return NextResponse.next();
   }
 
   // Redirect legacy /league/* routes to /dashboard/*
   if (pathname.startsWith('/league/')) {
-    const newPath = pathname.replace('/league/', '/dashboard/')
-    return NextResponse.redirect(new URL(newPath, request.url))
+    const newPath = pathname.replace('/league/', '/dashboard/');
+    return NextResponse.redirect(new URL(newPath, request.url));
   }
 
   // Yahoo OAuth routes - always allow (preserve existing functionality)
   if (pathname.startsWith('/api/yahoo') || pathname.startsWith('/api/oauth/yahoo')) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
   // Static files and Next.js internals - always allow
@@ -41,65 +41,40 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/favicon') ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|css|js|woff|woff2|ttf)$/)
   ) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
-  // Protected routes - require authentication
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/account')) {
-    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET']
+  // Dashboard routes - public access (Yahoo OAuth only, no CustomVenom login required)
+  if (pathname.startsWith('/dashboard')) {
+    // Allow all users to access dashboard - they'll connect via Yahoo OAuth
+    return NextResponse.next();
+  }
+
+  // Account page - still requires CustomVenom authentication
+  if (pathname.startsWith('/account')) {
+    const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET'];
     if (!secret) {
-      console.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET')
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('callbackUrl', pathname)
-      return NextResponse.redirect(loginUrl)
+      console.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET');
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     const token = await getToken({
       req: request,
-      secret
-    })
+      secret,
+    });
 
     // Not authenticated - redirect to login
     if (!token) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('callbackUrl', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    // Get user tier from token (default to FREE)
-    const userTier = ((token.tier as string) || 'FREE') as 'FREE' | 'VIPER' | 'MAMBA'
-
-    // Mamba routes (most restrictive) - /dashboard/killshots, /dashboard/faceoff, etc.
-    if (pathname.match(/\/(killshots|faceoff|strike-ranges)/)) {
-      if (userTier !== 'MAMBA') {
-        const redirectUrl = new URL('/dashboard', request.url)
-        redirectUrl.searchParams.set('upgrade', 'mamba')
-        return NextResponse.redirect(redirectUrl)
-      }
-    }
-
-    // Viper routes (basic dashboard access) - require VIPER or MAMBA
-    // Note: For development, we may want to allow FREE users to view dashboard
-    // In production, uncomment the tier check below
-    if (pathname.startsWith('/dashboard')) {
-      // Allow VIPER and MAMBA tiers to access dashboard
-      // Development mode: Allow all authenticated users (comment out in production)
-      const isDevelopment = process.env['NODE_ENV'] === 'development'
-      if (!isDevelopment && userTier === 'FREE') {
-        const redirectUrl = new URL('/', request.url)
-        redirectUrl.searchParams.set('upgrade', 'viper')
-        return NextResponse.redirect(redirectUrl)
-      }
-    }
-
-    // Account page requires authentication (already checked above)
-    if (pathname.startsWith('/account')) {
-      return NextResponse.next()
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
   // Allow all other routes through
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 // Apply to all routes except static files
@@ -115,4 +90,4 @@ export const config = {
      */
     '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)).*)',
   ],
-}
+};

@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Session } from 'next-auth'
-import { useSearchParams } from 'next/navigation'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/Input'
+import { useState } from 'react';
+import { Session } from 'next-auth';
+import { useSearchParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/Input';
 import {
   User,
   Mail,
@@ -15,24 +15,22 @@ import {
   Link as LinkIcon,
   Settings,
   LogOut,
-  Zap
-} from 'lucide-react'
-import { signOut } from 'next-auth/react'
+  Zap,
+} from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 interface AccountContentProps {
-  session: Session
+  session: Session;
 }
 
 export function AccountContent({ session }: AccountContentProps) {
-  const searchParams = useSearchParams()
-  const upgradeParam = searchParams.get('upgrade')
+  const searchParams = useSearchParams();
+  const upgradeParam = searchParams.get('upgrade');
 
-  const [activeTab, setActiveTab] = useState(
-    upgradeParam ? 'billing' : 'profile'
-  )
+  const [activeTab, setActiveTab] = useState(upgradeParam ? 'billing' : 'profile');
 
-  const tier = (session.user?.tier as string) || 'FREE'
-  const _role = (session.user?.role as string) || 'USER'
+  const tier = (session.user?.tier as string) || 'FREE';
+  const _role = (session.user?.role as string) || 'USER';
 
   return (
     <div className="min-h-screen bg-field-900 py-12 px-6 dashboard-hub">
@@ -40,9 +38,7 @@ export function AccountContent({ session }: AccountContentProps) {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 text-white">Account Settings</h1>
-          <p className="text-gray-400">
-            Manage your profile, subscription, and preferences
-          </p>
+          <p className="text-gray-400">Manage your profile, subscription, and preferences</p>
         </div>
 
         {/* Tabs */}
@@ -51,9 +47,9 @@ export function AccountContent({ session }: AccountContentProps) {
             { id: 'profile', label: 'Profile', icon: User },
             { id: 'billing', label: 'Billing', icon: CreditCard },
             { id: 'leagues', label: 'Connected Leagues', icon: LinkIcon },
-            { id: 'preferences', label: 'Preferences', icon: Settings }
-          ].map(tab => {
-            const Icon = tab.icon
+            { id: 'preferences', label: 'Preferences', icon: Settings },
+          ].map((tab) => {
+            const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
@@ -67,7 +63,7 @@ export function AccountContent({ session }: AccountContentProps) {
                 <Icon className="h-4 w-4" />
                 {tab.label}
               </button>
-            )
+            );
           })}
         </div>
 
@@ -78,20 +74,20 @@ export function AccountContent({ session }: AccountContentProps) {
         {activeTab === 'preferences' && <PreferencesTab />}
       </div>
     </div>
-  )
+  );
 }
 
 // Profile Tab
 function ProfileTab({ session }: { session: Session }) {
-  const [name, setName] = useState(session.user?.name || '')
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState(session.user?.name || '');
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
-    setLoading(true)
+    setLoading(true);
     // TODO: API call to update profile
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setLoading(false)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setLoading(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -101,23 +97,13 @@ function ProfileTab({ session }: { session: Session }) {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-300">Name</label>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-            />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-300">Email</label>
-            <Input
-              value={session.user?.email || ''}
-              disabled
-              icon={<Mail className="h-4 w-4" />}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Contact support to change your email
-            </p>
+            <Input value={session.user?.email || ''} disabled icon={<Mail className="h-4 w-4" />} />
+            <p className="text-xs text-gray-500 mt-1">Contact support to change your email</p>
           </div>
 
           <div>
@@ -130,11 +116,7 @@ function ProfileTab({ session }: { session: Session }) {
             </div>
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={loading}
-            variant="primary"
-          >
+          <Button onClick={handleSave} disabled={loading} variant="primary">
             {loading ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
@@ -144,21 +126,16 @@ function ProfileTab({ session }: { session: Session }) {
         <h3 className="text-lg font-semibold mb-4 text-white">Security</h3>
 
         <div className="space-y-4">
-          <Button variant="outline">
-            Change Password
-          </Button>
+          <Button variant="outline">Change Password</Button>
 
-          <Button
-            variant="danger"
-            onClick={() => signOut({ callbackUrl: '/' })}
-          >
+          <Button variant="danger" onClick={() => signOut({ callbackUrl: '/' })}>
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
           </Button>
         </div>
       </Card>
     </div>
-  )
+  );
 }
 
 // Billing Tab
@@ -169,23 +146,23 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
       name: 'Hatchling',
       icon: '🥚',
       price: 'Free',
-      features: ['Public projections', 'Basic stats']
+      features: ['Public projections', 'Basic stats'],
     },
     {
       id: 'VIPER',
       name: 'Viper',
       icon: '⚡',
       price: '$9.99/month',
-      features: ['All Hatchling features', 'League integration', 'Start/Sit tool', 'FAAB helper']
+      features: ['All Hatchling features', 'League integration', 'Start/Sit tool', 'FAAB helper'],
     },
     {
       id: 'MAMBA',
       name: 'Mamba',
       icon: '🐍',
       price: '$19.99/month',
-      features: ['All Viper features', 'Killshot calculator', 'Faceoff tool', 'Strike ranges']
-    }
-  ]
+      features: ['All Viper features', 'Killshot calculator', 'Faceoff tool', 'Strike ranges'],
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -194,12 +171,12 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">Current Plan</h3>
             <Badge variant={tier === 'FREE' ? 'neutral' : tier === 'VIPER' ? 'venom' : 'strike'}>
-              {plans.find(p => p.id === tier)?.name || tier}
+              {plans.find((p) => p.id === tier)?.name || tier}
             </Badge>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-white">
-              {plans.find(p => p.id === tier)?.price || 'Free'}
+              {plans.find((p) => p.id === tier)?.price || 'Free'}
             </div>
           </div>
         </div>
@@ -214,7 +191,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
       </Card>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {plans.map(plan => (
+        {plans.map((plan) => (
           <Card
             key={plan.id}
             variant={plan.id === tier ? 'stat' : 'dashboard'}
@@ -244,7 +221,7 @@ function BillingTab({ tier, upgradeParam }: { tier: string; upgradeParam: string
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Leagues Tab
@@ -260,7 +237,7 @@ function LeaguesTab() {
         Connect League
       </Button>
     </Card>
-  )
+  );
 }
 
 // Preferences Tab
@@ -268,10 +245,7 @@ function PreferencesTab() {
   return (
     <Card variant="dashboard">
       <h3 className="text-lg font-semibold mb-4 text-white">Preferences</h3>
-      <p className="text-gray-400">
-        User preferences coming soon.
-      </p>
+      <p className="text-gray-400">User preferences coming soon.</p>
     </Card>
-  )
+  );
 }
-

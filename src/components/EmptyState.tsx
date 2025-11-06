@@ -14,7 +14,7 @@ export default function EmptyState({
   children,
   onExample,
   showConnectButton = false,
-  message
+  message,
 }: EmptyStateProps) {
   return (
     <div className="rounded-lg border border-[rgba(148,163,184,0.2)] p-8 text-center bg-[rgb(var(--bg-elevated))]">

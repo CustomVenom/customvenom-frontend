@@ -4,7 +4,8 @@ import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardHeader, DashboardToolGrid } from '@/components/dashboard';
 import { RosterViewer } from '@/components/roster/RosterViewer';
-import { useSession } from '@/hooks/useSession';
+// Removed useSession - dashboard is public, Yahoo OAuth only
+// import { useSession } from '@/hooks/useSession';
 // Removed useSelectedLeague import - we use direct POST instead of setSelection
 import { useEffect, useState } from 'react';
 
@@ -39,8 +40,7 @@ interface SessionSelectionResponse {
 // ===== MAIN COMPONENT =====
 
 export default function DashboardPage() {
-  // Check session status first
-  const { sess, loading: sessionLoading } = useSession();
+  // No longer checking CustomVenom session - dashboard is public, Yahoo OAuth only
 
   // Removed setSelection - we use direct POST instead to avoid redundant calls
   const [me, setMe] = useState<YahooMeResponse | null>(null);
@@ -71,8 +71,8 @@ export default function DashboardPage() {
           const meData: YahooMeResponse = await meRes.json();
           setMe(meData);
 
-          // If connected, load leagues
-          if (meData.guid) {
+          // If connected (has guid and no error), load leagues
+          if (meData.guid && !meData.error && !meData.auth_required) {
             const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
               credentials: 'include',
             });
@@ -92,7 +92,8 @@ export default function DashboardPage() {
     load();
   }, [API_BASE]);
 
-  const isConnected = Boolean(me?.guid);
+  // Only connected if we have a guid AND no errors
+  const isConnected = Boolean(me?.guid && !me?.error && !me?.auth_required);
 
   // ===== FILTERING LOGIC =====
   // Show only user-owned teams in the dropdown
@@ -274,7 +275,7 @@ export default function DashboardPage() {
   // ===== RENDER =====
 
   // Prevent hydration mismatch by showing loading state until client-side mounted
-  if (!mounted || sessionLoading || loading) {
+  if (!mounted || loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen bg-field-900 dashboard-hub scale-pattern">
         <div className="text-gray-400">Loading...</div>
@@ -282,19 +283,13 @@ export default function DashboardPage() {
     );
   }
 
-  const isLoggedIn = sess && sess.ok;
+  // No longer checking isLoggedIn - dashboard is public, Yahoo OAuth only
+  // const isLoggedIn = sess && sess.ok;
 
   return (
     <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
-      {/* Simple login message at top */}
-      {!isLoggedIn && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
-          Please login to see your data.
-        </div>
-      )}
-
       {/* ===== STATE 1: NOT CONNECTED ===== */}
-      {!isConnected && isLoggedIn ? (
+      {!isConnected ? (
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="container max-w-2xl mx-auto py-12 px-4">
             <div className="text-center space-y-8">
@@ -338,7 +333,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      ) : !selectedTeam && isLoggedIn ? (
+      ) : !selectedTeam ? (
         // ===== STATE 2: CONNECTED BUT NO TEAM SELECTED =====
         <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
           <div className="container max-w-4xl mx-auto py-12 px-4">
@@ -351,98 +346,98 @@ export default function DashboardPage() {
                 {/* Team selector dropdown */}
                 <div className="relative" data-team-selector>
                   <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTeamsDropdownOpen((prev) => !prev);
-                  }}
-                  disabled={displayTeams.length === 0}
-                  className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
-                  aria-label="Select team"
-                  type="button"
-                >
-                  {selectedTeamObj?.team_logos?.[0]?.url && (
-                    <img
-                      src={selectedTeamObj.team_logos[0].url}
-                      alt=""
-                      className="w-6 h-6 rounded shrink-0"
-                    />
-                  )}
-                  <span className="flex-1 text-left truncate text-gray-100">
-                    {displayTeams.length === 0
-                      ? 'Select Your Team'
-                      : selectedTeamName || 'Select Your Team'}
-                  </span>
-                  <svg
-                    className={`w-3 h-3 transition-transform shrink-0 ${
-                      teamsDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTeamsDropdownOpen((prev) => !prev);
+                    }}
+                    disabled={displayTeams.length === 0}
+                    className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+                    aria-label="Select team"
+                    type="button"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {teamsDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                    {displayTeams.map((team) => (
-                      <button
-                        key={team.team_key}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSelectTeam(team.team_key);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-field-700 text-left transition-colors ${
-                          selectedTeam === team.team_key
-                            ? 'bg-venom-500/10 border-l-2 border-venom-500'
-                            : ''
-                        }`}
-                      >
-                        {team.team_logos?.[0]?.url && (
-                          <img
-                            src={team.team_logos[0].url}
-                            alt=""
-                            className="w-8 h-8 rounded shrink-0"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium truncate text-gray-100">
-                            {team.name || `Team ${team.team_key}`}
-                          </div>
-                          <div className="text-xs text-gray-400 truncate">
-                            {team.league_key ? getLeagueName(team.league_key) : 'Unknown League'}
-                          </div>
-                        </div>
-                        {selectedTeam === team.team_key && (
-                          <svg
-                            className="w-5 h-5 text-venom-500 shrink-0"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    ))}
-
-                    {displayTeams.length === 0 && teams.length === 0 && (
-                      <div className="p-4 text-center text-sm text-gray-400">
-                        No teams available
-                      </div>
+                    {selectedTeamObj?.team_logos?.[0]?.url && (
+                      <img
+                        src={selectedTeamObj.team_logos[0].url}
+                        alt=""
+                        className="w-6 h-6 rounded shrink-0"
+                      />
                     )}
-                  </div>
-                )}
+                    <span className="flex-1 text-left truncate text-gray-100">
+                      {displayTeams.length === 0
+                        ? 'Select Your Team'
+                        : selectedTeamName || 'Select Your Team'}
+                    </span>
+                    <svg
+                      className={`w-3 h-3 transition-transform shrink-0 ${
+                        teamsDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {teamsDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                      {displayTeams.map((team) => (
+                        <button
+                          key={team.team_key}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectTeam(team.team_key);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-field-700 text-left transition-colors ${
+                            selectedTeam === team.team_key
+                              ? 'bg-venom-500/10 border-l-2 border-venom-500'
+                              : ''
+                          }`}
+                        >
+                          {team.team_logos?.[0]?.url && (
+                            <img
+                              src={team.team_logos[0].url}
+                              alt=""
+                              className="w-8 h-8 rounded shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium truncate text-gray-100">
+                              {team.name || `Team ${team.team_key}`}
+                            </div>
+                            <div className="text-xs text-gray-400 truncate">
+                              {team.league_key ? getLeagueName(team.league_key) : 'Unknown League'}
+                            </div>
+                          </div>
+                          {selectedTeam === team.team_key && (
+                            <svg
+                              className="w-5 h-5 text-venom-500 shrink-0"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+
+                      {displayTeams.length === 0 && teams.length === 0 && (
+                        <div className="p-4 text-center text-sm text-gray-400">
+                          No teams available
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -587,7 +582,9 @@ export default function DashboardPage() {
                     {/* Player News (placeholder) */}
                     <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
                       <h2 className="text-lg font-semibold text-gray-100 mb-3">Player News</h2>
-                      <p className="text-sm text-gray-400">Latest news and injuries will appear here.</p>
+                      <p className="text-sm text-gray-400">
+                        Latest news and injuries will appear here.
+                      </p>
                     </div>
                   </div>
 
@@ -606,8 +603,12 @@ export default function DashboardPage() {
 
                     {/* Matchup Preview (placeholder) */}
                     <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                      <h2 className="text-lg font-semibold text-gray-100 mb-3">This Week's Matchup</h2>
-                      <p className="text-sm text-gray-400">Your matchup preview will appear here.</p>
+                      <h2 className="text-lg font-semibold text-gray-100 mb-3">
+                        This Week's Matchup
+                      </h2>
+                      <p className="text-sm text-gray-400">
+                        Your matchup preview will appear here.
+                      </p>
                     </div>
 
                     {/* Team Stats - Using DashboardMetrics */}

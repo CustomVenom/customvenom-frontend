@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { VenomLogo } from '@/components/ui/VenomLogo'
+import Link from 'next/link';
+import { VenomLogo } from '@/components/ui/VenomLogo';
 
 export function PublicFooter() {
   return (
@@ -21,10 +21,26 @@ export function PublicFooter() {
           <div>
             <h3 className="text-sm font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
-              <li><Link href="/projections" className="hover:text-white transition-colors">Projections</Link></li>
-              <li><Link href="/dashboard/startsit" className="hover:text-white transition-colors">Start/Sit Tool</Link></li>
-              <li><Link href="/dashboard/faab" className="hover:text-white transition-colors">FAAB Helper</Link></li>
+              <li>
+                <Link href="/dashboard" className="hover:text-white transition-colors">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link href="/projections" className="hover:text-white transition-colors">
+                  Projections
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/startsit" className="hover:text-white transition-colors">
+                  Start/Sit Tool
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/faab" className="hover:text-white transition-colors">
+                  FAAB Helper
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -32,10 +48,26 @@ export function PublicFooter() {
           <div>
             <h3 className="text-sm font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+              <li>
+                <Link href="/about" className="hover:text-white transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -43,9 +75,21 @@ export function PublicFooter() {
           <div>
             <h3 className="text-sm font-semibold text-white mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="hover:text-white transition-colors">
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -55,6 +99,5 @@ export function PublicFooter() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

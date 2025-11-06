@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import { colors, spacing, typography as typo } from './src/lib/design-tokens';
+import { spacing, typography as typo } from './src/lib/design-tokens';
 
 const config: Config = {
   darkMode: 'class',

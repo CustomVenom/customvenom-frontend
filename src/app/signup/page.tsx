@@ -1,12 +1,12 @@
-import { Metadata } from 'next'
-import { SignupForm } from '@/components/auth/SignupForm'
-import { VenomLogo } from '@/components/ui/VenomLogo'
-import Link from 'next/link'
+import { Metadata } from 'next';
+import { SignupForm } from '@/components/auth/SignupForm';
+import { VenomLogo } from '@/components/ui/VenomLogo';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Create Account · CustomVenom',
-  description: 'Start your 7-day free trial of fantasy football analytics.'
-}
+  description: 'Start your 7-day free trial of fantasy football analytics.',
+};
 
 export default function SignupPage() {
   return (
@@ -29,14 +29,13 @@ export default function SignupPage() {
           By signing up, you agree to our{' '}
           <Link href="/terms" className="underline hover:text-gray-400">
             Terms of Service
-          </Link>
-          {' '}and{' '}
+          </Link>{' '}
+          and{' '}
           <Link href="/privacy" className="underline hover:text-gray-400">
             Privacy Policy
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }
-

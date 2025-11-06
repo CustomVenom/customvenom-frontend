@@ -28,7 +28,9 @@ export default async function PlayersPage() {
 
       <ProLock isPro={isPro}>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
-          <p className="text-gray-600 dark:text-gray-400">Browse the player pool, track waivers, and plan FAAB bids here.</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Browse the player pool, track waivers, and plan FAAB bids here.
+          </p>
         </div>
       </ProLock>
     </div>

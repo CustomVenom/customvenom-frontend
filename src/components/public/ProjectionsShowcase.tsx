@@ -1,22 +1,30 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { useState } from 'react';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
-type ScoringFormat = '0.5ppr' | 'standard' | 'ppr'
+type ScoringFormat = '0.5ppr' | 'standard' | 'ppr';
 
 interface ProjectionRowProps {
-  player: string
-  team: string
-  position: string
-  floor: number
-  median: number
-  ceiling: number
-  drivers: string[]
+  player: string;
+  team: string;
+  position: string;
+  floor: number;
+  median: number;
+  ceiling: number;
+  drivers: string[];
 }
 
-function ProjectionRow({ player, team, position, floor, median, ceiling, drivers }: ProjectionRowProps) {
+function ProjectionRow({
+  player,
+  team,
+  position,
+  floor,
+  median,
+  ceiling,
+  drivers,
+}: ProjectionRowProps) {
   return (
     <tr className="hover:bg-gray-50 transition-colors">
       <td className="px-6 py-4">
@@ -40,19 +48,22 @@ function ProjectionRow({ player, team, position, floor, median, ceiling, drivers
       <td className="px-6 py-4">
         <div className="flex gap-1 flex-wrap">
           {drivers.map((d, i) => (
-            <span key={i} className="inline-block bg-venom-50 text-venom-700 text-xs px-2 py-0.5 rounded border border-venom-200">
+            <span
+              key={i}
+              className="inline-block bg-venom-50 text-venom-700 text-xs px-2 py-0.5 rounded border border-venom-200"
+            >
               {d}
             </span>
           ))}
         </div>
       </td>
     </tr>
-  )
+  );
 }
 
 export function ProjectionsShowcase() {
-  const [format, setFormat] = useState<ScoringFormat>('0.5ppr')
-  const [position, setPosition] = useState<string>('ALL')
+  const [format, setFormat] = useState<ScoringFormat>('0.5ppr');
+  const [position, setPosition] = useState<string>('ALL');
 
   // Sample data - replace with actual API call
   const sampleProjections: ProjectionRowProps[] = [
@@ -63,7 +74,7 @@ export function ProjectionsShowcase() {
       floor: 14.2,
       median: 21.5,
       ceiling: 32.8,
-      drivers: ['↑ 85% Rush Share', '• Positive Script']
+      drivers: ['↑ 85% Rush Share', '• Positive Script'],
     },
     {
       player: 'CeeDee Lamb',
@@ -72,21 +83,19 @@ export function ProjectionsShowcase() {
       floor: 11.8,
       median: 18.3,
       ceiling: 29.5,
-      drivers: ['↑ Target Share 28%', '↓ Tough DB']
-    }
-  ]
+      drivers: ['↑ Target Share 28%', '↓ Tough DB'],
+    },
+  ];
 
   return (
     <section id="projections" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Week 9 Projections
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Week 9 Projections</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            See probabilistic ranges and explainable drivers for every player.
-            Filter by scoring format to match your league.
+            See probabilistic ranges and explainable drivers for every player. Filter by scoring
+            format to match your league.
           </p>
         </div>
 
@@ -133,12 +142,24 @@ export function ProjectionsShowcase() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Floor</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Median</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ceiling</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key Drivers</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Player
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Team
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Floor
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Median
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ceiling
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Key Drivers
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -162,6 +183,5 @@ export function ProjectionsShowcase() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-

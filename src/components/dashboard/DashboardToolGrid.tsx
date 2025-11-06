@@ -1,14 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import {
-  Brain,
-  Users,
-  DollarSign,
-  Search,
-  BarChart3,
-  Target,
-} from 'lucide-react';
+import { Brain, Users, DollarSign, Search, BarChart3, Target } from 'lucide-react';
 import { DashboardToolCard, DashboardToolCardProps } from './DashboardToolCard';
 
 const defaultTools: Omit<DashboardToolCardProps, 'isActive'>[] = [
@@ -82,13 +75,8 @@ export function DashboardToolGrid({
   return (
     <div className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}>
       {tools.map((tool) => (
-        <DashboardToolCard
-          key={tool.href}
-          {...tool}
-          isActive={pathname?.startsWith(tool.href)}
-        />
+        <DashboardToolCard key={tool.href} {...tool} isActive={pathname?.startsWith(tool.href)} />
       ))}
     </div>
   );
 }
-

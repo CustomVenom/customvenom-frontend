@@ -1,12 +1,12 @@
-import { Metadata } from 'next'
-import { LoginForm } from '@/components/auth/LoginForm'
-import { VenomLogo } from '@/components/ui/VenomLogo'
-import Link from 'next/link'
+import { Metadata } from 'next';
+import { LoginForm } from '@/components/auth/LoginForm';
+import { VenomLogo } from '@/components/ui/VenomLogo';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Sign In · CustomVenom',
-  description: 'Sign in to access your fantasy football analytics.'
-}
+  description: 'Sign in to access your fantasy football analytics.',
+};
 
 export default function LoginPage() {
   return (
@@ -19,31 +19,43 @@ export default function LoginPage() {
           <VenomLogo size="lg" variant="dark" className="mb-8" />
 
           <h1 className="text-4xl font-bold mb-4 text-white">
-            Your Fantasy Edge,<br />
+            Your Fantasy Edge,
+            <br />
             <span className="text-venom-400">Backed by Data</span>
           </h1>
 
           <p className="text-gray-300 text-lg mb-8">
-            Connect your league and unlock personalized projections, waiver recommendations, and lineup optimization.
+            Connect your league and unlock personalized projections, waiver recommendations, and
+            lineup optimization.
           </p>
 
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="h-3 w-3 text-venom-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
                 <h3 className="font-semibold text-gray-100">Calibrated Projections</h3>
-                <p className="text-sm text-gray-400">Confidence ranges that actually match reality</p>
+                <p className="text-sm text-gray-400">
+                  Confidence ranges that actually match reality
+                </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="h-3 w-3 text-venom-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
@@ -55,7 +67,11 @@ export default function LoginPage() {
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-venom-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="h-3 w-3 text-venom-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
@@ -86,6 +102,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

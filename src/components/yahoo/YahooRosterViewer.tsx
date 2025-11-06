@@ -206,7 +206,8 @@ export function YahooRosterViewer() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">{player.editorial_team_abbr}</td>
                       <td className="px-4 py-3">
-                        {player.projected_points !== null && player.projected_points !== undefined ? (
+                        {player.projected_points !== null &&
+                        player.projected_points !== undefined ? (
                           <span className="font-semibold text-gray-900">
                             {player.projected_points.toFixed(1)}
                           </span>

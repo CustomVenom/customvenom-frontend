@@ -32,7 +32,8 @@ export function NavigationCards() {
   const pathname = usePathname();
 
   // Determine active tab based on current path
-  const activeTab = quickLinks.find((link) => pathname?.startsWith(link.href))?.value || 'decisions';
+  const activeTab =
+    quickLinks.find((link) => pathname?.startsWith(link.href))?.value || 'decisions';
 
   return (
     <div>
@@ -41,7 +42,10 @@ export function NavigationCards() {
         <TabsList className="grid w-full grid-cols-4 bg-field-800 border-field-600">
           {quickLinks.map((link) => (
             <TabsTrigger key={link.value} value={link.value} asChild>
-              <Link href={link.href} className="w-full data-[state=active]:bg-field-700 data-[state=active]:text-venom-400">
+              <Link
+                href={link.href}
+                className="w-full data-[state=active]:bg-field-700 data-[state=active]:text-venom-400"
+              >
                 {link.label}
               </Link>
             </TabsTrigger>

@@ -25,15 +25,15 @@ if (process.env['ENABLE_CREDENTIALS_AUTH'] !== 'false') {
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
       },
-        async authorize(credentials) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required');
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
         });
 
         if (!user || !user.password) {
@@ -52,10 +52,10 @@ if (process.env['ENABLE_CREDENTIALS_AUTH'] !== 'false') {
           name: user.name,
           image: user.image,
           tier: user.tier as UserTier,
-          role: user.role as UserRole
+          role: user.role as UserRole,
         };
-      }
-    })
+      },
+    }),
   );
 }
 
@@ -147,7 +147,7 @@ export const authOptions = {
         } else {
           // OAuth provider - fetch from database
           const dbUser = await prisma.user.findUnique({
-            where: { id: user.id }
+            where: { id: user.id },
           });
           token.tier = (dbUser?.tier || 'FREE') as UserTier;
           token.role = (dbUser?.role || 'USER') as UserRole;
@@ -158,19 +158,20 @@ export const authOptions = {
         token.yah = 'yah' in user && user.yah ? (user.yah as string) : undefined;
 
         // Stripe fields
-        token.stripeCustomerId = 'stripeCustomerId' in user && user.stripeCustomerId
-          ? (user.stripeCustomerId as string)
-          : undefined;
+        token.stripeCustomerId =
+          'stripeCustomerId' in user && user.stripeCustomerId
+            ? (user.stripeCustomerId as string)
+            : undefined;
       }
 
       // Refresh user data from DB periodically (every request for credentials provider)
       if (token.id) {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.id as string }
-          });
-          if (dbUser) {
-            token.tier = dbUser.tier as UserTier;
-            token.role = dbUser.role as UserRole;
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+        });
+        if (dbUser) {
+          token.tier = dbUser.tier as UserTier;
+          token.role = dbUser.role as UserRole;
           token.sub = dbUser.sub || undefined;
           token.yah = dbUser.yah || undefined;
           token.stripeCustomerId = dbUser.stripeCustomerId || undefined;
@@ -190,13 +191,15 @@ export const authOptions = {
         session.user.role = (token.role || 'USER') as UserRole;
 
         // Legacy role mapping for backward compatibility
-        session.user.legacyRole = ('legacyRole' in token ? token['legacyRole'] :
-          (token.role === 'ADMIN' ? 'admin' : token.role === 'USER' ? 'free' : 'free')) as
-          | 'free'
-          | 'pro'
-          | 'team'
-          | 'admin'
-          | undefined;
+        session.user.legacyRole = (
+          'legacyRole' in token
+            ? token['legacyRole']
+            : token.role === 'ADMIN'
+              ? 'admin'
+              : token.role === 'USER'
+                ? 'free'
+                : 'free'
+        ) as 'free' | 'pro' | 'team' | 'admin' | undefined;
 
         // Yahoo fields - require sub for Yahoo-authenticated users
         session.user.sub = token.sub as string | undefined;

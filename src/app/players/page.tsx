@@ -1,14 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Table,
-  THead,
-  TBody,
-  Tr,
-  Th,
-  Td,
-} from '@/components/ui/Table';
+import { Table, THead, TBody, Tr, Th, Td } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/badge';
 import type { PlayerListItem } from '@/types/players';
 

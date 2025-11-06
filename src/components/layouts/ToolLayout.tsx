@@ -24,11 +24,7 @@ interface ToolLayoutProps {
  * - /dashboard/faab
  * - /dashboard/players
  */
-export function ToolLayout({
-  children,
-  showBreadcrumbs = true,
-  className
-}: ToolLayoutProps) {
+export function ToolLayout({ children, showBreadcrumbs = true, className }: ToolLayoutProps) {
   return (
     <div className={className || ''}>
       {/* Breadcrumbs */}
@@ -46,4 +42,3 @@ export function ToolLayout({
     </div>
   );
 }
-

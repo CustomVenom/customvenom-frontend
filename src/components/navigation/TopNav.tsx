@@ -88,7 +88,7 @@ export function TopNav({
       aria-label="Main navigation"
       className={cn(
         'sticky top-0 z-40 border-b border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg))]/95 backdrop-blur-md shadow-lg',
-        className
+        className,
       )}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -109,7 +109,7 @@ export function TopNav({
                   'transition-colors',
                   isActive
                     ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-semibold'
-                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]'
+                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]',
                 )}
               >
                 {link.label}
@@ -125,7 +125,7 @@ export function TopNav({
                 'flex items-center gap-1 transition-colors',
                 isToolsActive
                   ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-semibold'
-                  : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]'
+                  : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]',
               )}
               aria-expanded={toolsDropdownOpen}
               aria-haspopup="true"
@@ -151,7 +151,7 @@ export function TopNav({
                           'block px-4 py-2 text-sm transition-colors',
                           isActive
                             ? 'bg-primary-50 dark:bg-primary-900/20 text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-medium'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
                         )}
                       >
                         {link.label}
@@ -172,7 +172,7 @@ export function TopNav({
                   'flex items-center gap-1 transition-colors p-1 rounded',
                   pathname?.startsWith('/settings')
                     ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))]'
-                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]'
+                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))]',
                 )}
                 aria-expanded={settingsDropdownOpen}
                 aria-haspopup="true"
@@ -191,7 +191,7 @@ export function TopNav({
                         'block px-4 py-2 text-sm transition-colors',
                         pathname?.startsWith('/settings')
                           ? 'bg-primary-50 dark:bg-primary-900/20 text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] font-medium'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
                       )}
                     >
                       Settings
@@ -221,4 +221,3 @@ export function TopNav({
 }
 
 export default TopNav;
-

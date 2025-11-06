@@ -36,19 +36,13 @@ function MetricCard({ label, value, change, icon, isLoading }: MetricCardProps) 
             )}
           </div>
           <div className="flex flex-col items-end space-y-1">
-            {icon && (
-              <div className="p-2 rounded-lg bg-venom-500/10">{icon}</div>
-            )}
+            {icon && <div className="p-2 rounded-lg bg-venom-500/10">{icon}</div>}
             {change !== undefined && !isLoading && (
               <div className="flex items-center space-x-1 text-sm">
                 {trendIcon}
                 <span
                   className={
-                    change > 0
-                      ? 'text-venom-400'
-                      : change < 0
-                        ? 'text-alert-500'
-                        : 'text-gray-400'
+                    change > 0 ? 'text-venom-400' : change < 0 ? 'text-alert-500' : 'text-gray-400'
                   }
                 >
                   {change > 0 ? '+' : ''}
@@ -95,12 +89,9 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
         const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
         // Fetch standings for the league to get team stats
-        const res = await fetch(
-          `${API_BASE}/yahoo/leagues/${leagueKey}/standings?format=json`,
-          {
-            credentials: 'include',
-          }
-        );
+        const res = await fetch(`${API_BASE}/yahoo/leagues/${leagueKey}/standings?format=json`, {
+          credentials: 'include',
+        });
 
         if (!res.ok) {
           throw new Error('Failed to fetch standings');
@@ -110,9 +101,7 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
 
         // Find the current team in standings
         const standings = data?.standings || [];
-        const teamStanding = standings.find(
-          (t: { team_key?: string }) => t.team_key === teamKey
-        );
+        const teamStanding = standings.find((t: { team_key?: string }) => t.team_key === teamKey);
 
         if (teamStanding) {
           // Extract record, points, rank from standings format
@@ -168,9 +157,7 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
   if (error) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold mb-4 text-gray-100">
-          Team Overview
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-100">Team Overview</h2>
         <div className="text-sm text-gray-400">{error}</div>
       </div>
     );
@@ -178,26 +165,16 @@ export function DashboardMetrics({ teamKey, leagueKey }: DashboardMetricsProps) 
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 text-gray-100">
-        Team Overview
-      </h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-100">Team Overview</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {stats?.record && (
           <MetricCard label="Your Record" value={stats.record} isLoading={isLoading} />
         )}
         {stats?.avgPoints !== undefined && (
-          <MetricCard
-            label="Avg Points"
-            value={stats.avgPoints.toFixed(1)}
-            isLoading={isLoading}
-          />
+          <MetricCard label="Avg Points" value={stats.avgPoints.toFixed(1)} isLoading={isLoading} />
         )}
         {stats?.powerRank && (
-          <MetricCard
-            label="Power Rank"
-            value={`#${stats.powerRank}`}
-            isLoading={isLoading}
-          />
+          <MetricCard label="Power Rank" value={`#${stats.powerRank}`} isLoading={isLoading} />
         )}
       </div>
     </div>

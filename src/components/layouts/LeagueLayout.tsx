@@ -23,11 +23,7 @@ interface LeagueLayoutProps {
  * - Roster views
  * - League-specific projections
  */
-export function LeagueLayout({
-  children,
-  showTeamSelector = true,
-  className
-}: LeagueLayoutProps) {
+export function LeagueLayout({ children, showTeamSelector = true, className }: LeagueLayoutProps) {
   return (
     <div className={className || ''}>
       {/* League Context Bar */}
@@ -56,4 +52,3 @@ export function LeagueLayout({
     </div>
   );
 }
-

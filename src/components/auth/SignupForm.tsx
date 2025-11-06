@@ -1,46 +1,49 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/Input'
-import { Alert, AlertDescription } from '@/components/ui/Alert'
-import { Mail, Lock, User, AlertCircle, Check } from 'lucide-react'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/Input';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
+import { Mail, Lock, User, AlertCircle, Check } from 'lucide-react';
 
 export function SignupForm() {
-  const router = useRouter()
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+    confirmPassword: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const passwordRequirements = [
     { label: 'At least 8 characters', met: formData.password.length >= 8 },
     { label: 'Contains a number', met: /\d/.test(formData.password) },
-    { label: 'Contains uppercase & lowercase', met: /[a-z]/.test(formData.password) && /[A-Z]/.test(formData.password) }
-  ]
+    {
+      label: 'Contains uppercase & lowercase',
+      met: /[a-z]/.test(formData.password) && /[A-Z]/.test(formData.password),
+    },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
     }
 
-    if (!passwordRequirements.every(req => req.met)) {
-      setError('Password does not meet requirements')
-      setLoading(false)
-      return
+    if (!passwordRequirements.every((req) => req.met)) {
+      setError('Password does not meet requirements');
+      setLoading(false);
+      return;
     }
 
     try {
@@ -50,25 +53,25 @@ export function SignupForm() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
-        })
-      })
+          password: formData.password,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Failed to create account')
-        setLoading(false)
-        return
+        setError(data.error || 'Failed to create account');
+        setLoading(false);
+        return;
       }
 
       // Redirect to login
-      router.push('/login?signup=success')
+      router.push('/login?signup=success');
     } catch {
-      setError('Something went wrong. Please try again.')
-      setLoading(false)
+      setError('Something went wrong. Please try again.');
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -87,7 +90,7 @@ export function SignupForm() {
           id="name"
           type="text"
           value={formData.name}
-          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
           placeholder="John Doe"
           icon={<User className="h-4 w-4" />}
           required
@@ -103,7 +106,7 @@ export function SignupForm() {
           id="email"
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
           placeholder="you@example.com"
           icon={<Mail className="h-4 w-4" />}
           required
@@ -119,7 +122,7 @@ export function SignupForm() {
           id="password"
           type="password"
           value={formData.password}
-          onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
           placeholder="••••••••"
           icon={<Lock className="h-4 w-4" />}
           required
@@ -132,9 +135,7 @@ export function SignupForm() {
             {passwordRequirements.map((req, i) => (
               <div key={i} className="flex items-center gap-2 text-xs">
                 <Check className={`h-3 w-3 ${req.met ? 'text-venom-500' : 'text-gray-600'}`} />
-                <span className={req.met ? 'text-gray-400' : 'text-gray-600'}>
-                  {req.label}
-                </span>
+                <span className={req.met ? 'text-gray-400' : 'text-gray-600'}>{req.label}</span>
               </div>
             ))}
           </div>
@@ -149,7 +150,7 @@ export function SignupForm() {
           id="confirmPassword"
           type="password"
           value={formData.confirmPassword}
-          onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, confirmPassword: e.target.value }))}
           placeholder="••••••••"
           icon={<Lock className="h-4 w-4" />}
           required
@@ -157,12 +158,7 @@ export function SignupForm() {
         />
       </div>
 
-      <Button
-        type="submit"
-        variant="primary"
-        className="w-full"
-        disabled={loading}
-      >
+      <Button type="submit" variant="primary" className="w-full" disabled={loading}>
         {loading ? 'Creating account...' : 'Start Free Trial'}
       </Button>
 
@@ -172,6 +168,5 @@ export function SignupForm() {
         </p>
       </div>
     </form>
-  )
+  );
 }
-

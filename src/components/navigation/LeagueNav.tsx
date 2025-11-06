@@ -58,11 +58,7 @@ const defaultLeagueLinks: LeagueNavLink[] = [
  * Used in LeagueLayout to provide consistent navigation
  * for all league-related pages.
  */
-export function LeagueNav({
-  leagueKey,
-  links = defaultLeagueLinks,
-  className,
-}: LeagueNavProps) {
+export function LeagueNav({ leagueKey, links = defaultLeagueLinks, className }: LeagueNavProps) {
   const pathname = usePathname();
 
   // If leagueKey is provided, prepend it to hrefs
@@ -78,7 +74,7 @@ export function LeagueNav({
       aria-label="League navigation"
       className={cn(
         'border-b border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg-elevated))]',
-        className
+        className,
       )}
     >
       <div className="mx-auto max-w-6xl px-4">
@@ -94,7 +90,7 @@ export function LeagueNav({
                   'border-b-2 border-transparent',
                   isActive
                     ? 'text-[rgb(var(--cv-primary-strong))] dark:text-[rgb(var(--cv-primary))] border-[rgb(var(--cv-primary-strong))] dark:border-[rgb(var(--cv-primary))]'
-                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] hover:border-[rgb(var(--cv-primary-strong))]/50 dark:hover:border-[rgb(var(--cv-primary))]/50'
+                    : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--cv-primary-strong))] dark:hover:text-[rgb(var(--cv-primary))] hover:border-[rgb(var(--cv-primary-strong))]/50 dark:hover:border-[rgb(var(--cv-primary))]/50',
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -110,4 +106,3 @@ export function LeagueNav({
 }
 
 export default LeagueNav;
-
