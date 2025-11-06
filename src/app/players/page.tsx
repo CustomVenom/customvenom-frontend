@@ -8,7 +8,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from '@/components/ui/table';
+} from '@/components/ui/Table';
 import { Badge } from '@/components/ui/badge';
 import type { PlayerListItem } from '@/types/players';
 
