@@ -1,0 +1,30 @@
+[33m80fbf7a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbackend/types-sync[m[33m, [m[1;31morigin/backend/types-sync[m[33m)[m fix: P0 blockers (TypeScript, NetworkErrors, ConnectionGuards)
+[33md030a6f[m fix: P0 blockers (TypeScript, NetworkErrors, ConnectionGuards)
+[33m3702009[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/frontend/ui-restructure[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix: Remove blocking banners, fix TypeScript exports, mobile dock scroll, remove unused imports
+[33mbec81c4[m[33m ([m[1;35mrefs/stash[m[33m)[m On main: Stashing existing work before prophet-scoring branch
+[33m6dd8cb3[m index on main: 211faa8 Add missing badge component
+[33m211faa8[m[33m ([m[1;31morigin/backend/prophet-scoring[m[33m, [m[1;32mmain[m[33m, [m[1;32mbackend/prophet-scoring[m[33m)[m Add missing badge component
+[33m0d7946b[m Update frontend components and dependencies
+[33m9344240[m fix(roster): add error logging for mapping and projection endpoints
+[33m5a93191[m fix(roster): accept league-specific Yahoo ID formats (461.p.*) in addition to nfl.p.*
+[33mbf2ea18[m fix(roster): use enriched /api/roster route instead of direct backend call
+[33m2fad973[m fix(roster): correct week calculation to use week 9 instead of week 10
+[33m136c512[m chore: remove legacy Yahoo routes and redirect duplicate projections page
+[33m496cefd[m feat(roster): update RosterViewer to use enriched roster API
+[33mf5ef947[m fix(dashboard): remove unused useSelectedLeague import
+[33mf63e3df[m fix(dashboard): remove redundant setSelection POST call
+[33medbacaa[m fix(dashboard): pass both team_key and league_key to setSelection
+[33m1333ba7[m fix(api): add /api/ prefix to session/selection proxy route
+[33mcf15300[m fix(dashboard): add league context to team selector dropdown
+[33mf2f00b5[m feat: standings endpoint integration + file restructure
+[33ma0def54[m Deploy player projections - Phase 1 complete
+[33m4ab9bc3[m chore(P0): Remove redundant 'Change Team' button from LeagueContextHeader to reduce clutter
+[33mcf33e92[m fix(P0): Make MobileDock scroll with content (remove fixed bottom positioning)
+[33mac0ac8c[m feat(P0): Phase 3 - Dashboard info-focused layout
+[33m7f7e722[m refactor(P0): Consolidate Waivers into /dashboard/players and update routing
+[33m4cd1b9f[m fix: Convert /dashboard/waivers to server component
+[33m8cd4152[m fix: Convert /league/waivers to server component redirect
+[33me90ea47[m refactor: Phase 5 - Complete routing cleanup
+[33m390d99a[m refactor: Phase 1 cleanup - Remove duplicate buttons from home page
+[33m0e3dd4f[m refactor: Fix decisions page - replace remaining ToolsTabs with ToolPageHeader
+[33m65ffe72[m refactor: Phase 4 - Apply ToolPageHeader to all tool pages

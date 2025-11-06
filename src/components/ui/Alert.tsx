@@ -1,6 +1,6 @@
 import { HTMLAttributes, forwardRef, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 
 export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'danger' | 'success' | 'info'

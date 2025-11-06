@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 
 type Platform = 'yahoo' | 'espn' | 'sleeper';

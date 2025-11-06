@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown, Settings, User } from 'lucide-react';
+import { ChevronDown, Settings } from 'lucide-react';
 
 import Brand from '@/components/Brand';
 import DensityToggle from '@/components/DensityToggle';

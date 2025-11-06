@@ -7,7 +7,6 @@ import {
   DollarSign,
   Search,
   BarChart3,
-  Calendar,
   Target,
 } from 'lucide-react';
 import { DashboardToolCard, DashboardToolCardProps } from './DashboardToolCard';

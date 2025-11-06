@@ -7,8 +7,12 @@ export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    setIsDark(document.documentElement.classList.contains('dark'));
+    // Use setTimeout to defer state updates and avoid cascading renders
+    const timer = setTimeout(() => {
+      setMounted(true);
+      setIsDark(document.documentElement.classList.contains('dark'));
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) {

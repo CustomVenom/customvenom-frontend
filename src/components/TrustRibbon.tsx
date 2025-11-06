@@ -23,17 +23,20 @@ export function TrustRibbon({
   // Capture initial lastRefresh to prevent hydration mismatch
   const initialLastRefresh = useRef<string | undefined>(lastRefresh);
 
+  const [formattedTime, setFormattedTime] = useState('—');
+
   useEffect(() => {
     setMounted(true);
+    // Format time only on client after hydration to prevent mismatch
+    if (initialLastRefresh.current) {
+      setFormattedTime(
+        new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+        })
+      );
+    }
   }, []);
-
-  // Format time only on client after hydration to prevent mismatch
-  const formattedTime = mounted && initialLastRefresh.current
-    ? new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-      })
-    : '—';
 
   // Use empty string for dateTime until mounted to ensure server/client consistency
   // After mount, use the current lastRefresh value
