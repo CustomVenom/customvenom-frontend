@@ -31,8 +31,8 @@ export function AccountContent({ session }: AccountContentProps) {
     upgradeParam ? 'billing' : 'profile'
   )
 
-  const tier = (session.user as any).tier as string || 'FREE'
-  const role = (session.user as any).role as string || 'USER'
+  const tier = (session.user?.tier as string) || 'FREE'
+  const _role = (session.user?.role as string) || 'USER'
 
   return (
     <div className="min-h-screen bg-field-900 py-12 px-6 dashboard-hub">
@@ -125,7 +125,7 @@ function ProfileTab({ session }: { session: Session }) {
             <div className="flex items-center gap-2">
               <Badge variant="venom">
                 <Shield className="h-3 w-3 mr-1" />
-                {(session.user as any).role || 'USER'}
+                {session.user?.role || 'USER'}
               </Badge>
             </div>
           </div>

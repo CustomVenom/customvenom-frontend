@@ -3,7 +3,9 @@
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { getServerSession } from 'next-auth';
-import type { Session, User, Account, Profile } from 'next-auth';
+import type { User, Account, Profile } from 'next-auth';
+import type { Session } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import type { UserTier, UserRole } from '@prisma/client';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import FacebookProvider from 'next-auth/providers/facebook';
@@ -95,6 +97,7 @@ export const authOptions = {
   // Type assertion to bridge PrismaAdapter's AdapterUser with NextAuth's expected AdapterUser
   // Both types are extended in src/types/next-auth.d.ts, but TypeScript sees them as different
   // due to nested node_modules (@auth/prisma-adapter/node_modules/@auth/core)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: PrismaAdapter(prisma) as any,
   providers,
   trustHost: true,
@@ -130,7 +133,7 @@ export const authOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
+    async jwt({ token, user }: { token: JWT; user?: User; account?: Account | null }) {
       // Initial sign in
       if (user) {
         token.id = user.id;
@@ -176,7 +179,7 @@ export const authOptions = {
 
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       // Map all fields from token to session
       if (session.user && token) {
         session.user.id = token.id as string;

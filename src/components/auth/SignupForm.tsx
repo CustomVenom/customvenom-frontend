@@ -64,7 +64,7 @@ export function SignupForm() {
 
       // Redirect to login
       router.push('/login?signup=success')
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.')
       setLoading(false)
     }

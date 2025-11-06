@@ -26,16 +26,20 @@ export function TrustRibbon({
   const [formattedTime, setFormattedTime] = useState('—');
 
   useEffect(() => {
-    setMounted(true);
-    // Format time only on client after hydration to prevent mismatch
-    if (initialLastRefresh.current) {
-      setFormattedTime(
-        new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-        })
-      );
-    }
+    // Defer state updates to avoid cascading renders
+    const timer = setTimeout(() => {
+      setMounted(true);
+      // Format time only on client after hydration to prevent mismatch
+      if (initialLastRefresh.current) {
+        setFormattedTime(
+          new Date(initialLastRefresh.current).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+          })
+        );
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Use empty string for dateTime until mounted to ensure server/client consistency

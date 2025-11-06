@@ -68,11 +68,11 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Signup error:', error)
 
     // Handle unique constraint violations
-    if (error.code === 'P2002') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json(
         { error: 'Email already registered' },
         { status: 400 }

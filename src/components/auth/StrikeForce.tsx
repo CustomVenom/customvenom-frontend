@@ -69,7 +69,7 @@ export function StrikeForce({
   }
 
   // Check tier access
-  const userTier = ((session.user as any)?.tier || 'FREE') as Tier
+  const userTier = (session.user?.tier || 'FREE') as Tier
   const hasAccess = TIER_HIERARCHY[userTier] >= TIER_HIERARCHY[requiredTier]
 
   // User has access - show feature

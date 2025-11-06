@@ -5,15 +5,6 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
-const TIER_HIERARCHY = { FREE: 0, VIPER: 1, MAMBA: 2 }
-
-// Routes that require specific tiers
-const TIER_ROUTES = {
-  FREE: ['/'],
-  VIPER: ['/dashboard', '/dashboard/roster', '/dashboard/players', '/dashboard/start-sit', '/dashboard/faab', '/dashboard/decisions'],
-  MAMBA: ['/dashboard/killshots', '/dashboard/faceoff', '/dashboard/strike-ranges']
-}
-
 // Public routes - always allowed
 const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth']
 
