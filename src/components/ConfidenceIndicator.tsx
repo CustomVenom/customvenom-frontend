@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 
 interface ConfidenceIndicatorProps {
   confidence: number;
@@ -31,4 +31,3 @@ function getConfidenceColor(confidence: number): string {
   if (confidence >= 0.65) return '#f59e0b'; // orange
   return '#ef4444'; // low confidence (should be filtered out before display)
 }
-
