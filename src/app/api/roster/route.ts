@@ -40,6 +40,7 @@ interface RosterResponse {
     unmapped: number;
   };
   week: string;
+  scoring_format?: ScoringFormat;
 }
 
 /**
