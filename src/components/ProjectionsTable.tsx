@@ -5,6 +5,9 @@ import { useMemo, useState } from 'react';
 import ColumnToggle from '@/components/ColumnToggle';
 import PlayerDrawer from '@/components/PlayerDrawer';
 import { clampChips, type Row } from '@/lib/tools';
+import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
+import { ExplanationChips } from '@/components/ExplanationChips';
+import { ProjectionRibbon } from '@/components/ProjectionRibbon';
 
 type Props = { rows: Row[] };
 
@@ -203,8 +206,17 @@ export default function ProjectionsTable({ rows }: Props) {
                   )}
 
                   {visible['median'] !== false && (
-                    <td className="px-3 py-2 font-semibold text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent">
-                      {r.range.p50.toFixed(1)}
+                    <td className="px-3 py-2 align-top">
+                      <div className="font-semibold text-[rgb(var(--cv-primary-strong))] dark:text-brand-accent flex items-center">
+                        {r.range.p50.toFixed(1)}
+                        {visible['confidence'] !== false && r.confidence !== undefined && (
+                          <ConfidenceIndicator confidence={r.confidence} />
+                        )}
+                      </div>
+                      {visible['reasons'] !== false && chips.length > 0 && (
+                        <ExplanationChips explanations={chips} />
+                      )}
+                      <ProjectionRibbon floor={r.range.p10} median={r.range.p50} ceiling={r.range.p90} />
                     </td>
                   )}
 
@@ -228,15 +240,13 @@ export default function ProjectionsTable({ rows }: Props) {
 
                   {visible['reasons'] !== false && (
                     <td className="px-3 py-2">
-                      <div className="flex flex-wrap gap-1">
-                        {chips.length === 0 && <span className="text-xs text-gray-400">—</span>}
-                        {chips.map((chip, idx) => (
-                          <span key={idx} className="cv-chip">
-                            {chip.component} {chip.delta_points >= 0 ? '+' : ''}
-                            {(chip.delta_points * 100).toFixed(1)}%
-                          </span>
-                        ))}
-                      </div>
+                      {chips.length === 0 ? (
+                        <span className="text-xs text-gray-400">—</span>
+                      ) : (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Shown with projection
+                        </span>
+                      )}
                     </td>
                   )}
                 </tr>

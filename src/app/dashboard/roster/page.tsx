@@ -10,6 +10,7 @@ import { ProviderStatus } from '@/components/ProviderStatus';
 import Badge from '@/components/Badge';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { useSession } from '@/hooks/useSession';
+import { ScoringFormatSelector } from '@/components/roster/ScoringFormatSelector';
 
 interface EnrichedPlayer {
   player_key: string;
@@ -41,9 +42,11 @@ interface RosterResponse {
   league_name?: string;
   current_week?: number;
   scoring_type?: string;
+  scoring_format?: ScoringFormat;
 }
 
 type Tab = 'starters' | 'bench' | 'ir';
+type ScoringFormat = 'standard' | 'half_ppr' | 'full_ppr';
 
 function RosterPageClient() {
   const { sess, loading: sessionLoading } = useSession();
@@ -52,15 +55,18 @@ function RosterPageClient() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('starters');
   const [yahooConnected, setYahooConnected] = useState(false);
+  const [scoringFormat, setScoringFormat] = useState<ScoringFormat>('half_ppr');
 
   const API_BASE = process.env['NEXT_PUBLIC_API_BASE'] || 'https://api.customvenom.com';
 
-  const loadRoster = useCallback(async () => {
+  const loadRoster = useCallback(async (format: ScoringFormat) => {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await fetch('/api/roster', {
+      const params = new URLSearchParams({ scoring_format: format });
+
+      const res = await fetch(`/api/roster?${params.toString()}`, {
         credentials: 'include',
         cache: 'no-store',
       });
@@ -93,9 +99,7 @@ function RosterPageClient() {
           const connected = Boolean(meData.guid);
           setYahooConnected(connected);
 
-          if (connected) {
-            loadRoster();
-          } else {
+          if (!connected) {
             setLoading(false);
           }
         } else {
@@ -110,7 +114,15 @@ function RosterPageClient() {
     };
 
     checkConnection();
-  }, [API_BASE, loadRoster]);
+  }, [API_BASE]);
+
+  useEffect(() => {
+    if (!yahooConnected) {
+      return;
+    }
+
+    loadRoster(scoringFormat);
+  }, [yahooConnected, scoringFormat, loadRoster]);
 
   // Filter players by tab
   const filteredPlayers = data
@@ -215,11 +227,16 @@ function RosterPageClient() {
         />
       )}
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">My Roster</h1>
           <p className="text-muted-foreground mt-1">View your lineup with AI-powered projections</p>
         </div>
+        <ScoringFormatSelector
+          value={scoringFormat}
+          onChange={(value) => setScoringFormat(value)}
+          disabled={loading}
+        />
       </div>
 
       <div className="mb-6">
@@ -390,7 +407,7 @@ function RosterPageClient() {
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
             <p className="text-gray-600 dark:text-gray-400">No roster data available.</p>
             <button
-              onClick={loadRoster}
+              onClick={() => loadRoster(scoringFormat)}
               className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               Refresh

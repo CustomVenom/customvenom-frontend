@@ -30,6 +30,8 @@ interface EnrichedPlayer {
   confidence?: number | undefined;
 }
 
+type ScoringFormat = 'standard' | 'half_ppr' | 'full_ppr';
+
 interface RosterResponse {
   roster: EnrichedPlayer[];
   stats: {
@@ -68,6 +70,11 @@ export async function GET(request: NextRequest) {
 
     // Support teamKey query parameter (optional - falls back to cookie)
     const teamKey = request.nextUrl.searchParams.get('teamKey');
+    const scoringFormatParam = request.nextUrl.searchParams.get('scoring_format') || 'half_ppr';
+    const validFormats: ScoringFormat[] = ['standard', 'half_ppr', 'full_ppr'];
+    const scoringFormat = validFormats.includes(scoringFormatParam as ScoringFormat)
+      ? (scoringFormatParam as ScoringFormat)
+      : 'half_ppr';
 
     const rosterUrl = teamKey
       ? `${API_BASE}/yahoo/roster?team_key=${encodeURIComponent(teamKey)}`
@@ -158,7 +165,12 @@ export async function GET(request: NextRequest) {
     if (nflverseIds.length > 0) {
       try {
         // Fetch projections with NFLverse IDs (adapter will do ESPN lookup internally)
-        const projectionsUrl = `${API_BASE}/api/projections?week=${week}&player_ids=${nflverseIds.join(',')}`;
+        const projectionParams = new URLSearchParams({
+          week,
+          player_ids: nflverseIds.join(','),
+          scoring_format: scoringFormat,
+        });
+        const projectionsUrl = `${API_BASE}/api/projections?${projectionParams.toString()}`;
         const projResponse = await fetch(projectionsUrl, {
           headers: {
             Cookie: cookieHeader,
@@ -237,6 +249,7 @@ export async function GET(request: NextRequest) {
       roster: enrichedRoster,
       stats,
       week,
+      scoring_format: scoringFormat,
     };
 
     return NextResponse.json(transformedResponse, {

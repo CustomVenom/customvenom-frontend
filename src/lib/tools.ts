@@ -17,8 +17,7 @@ export function clampChips(chips: Reason[], maxVisible = 2): Reason[] {
   return chips
     .filter((c) => c.confidence >= 0.65)
     .sort((a, b) => Math.abs(b.delta_points) - Math.abs(a.delta_points))
-    .slice(0, maxVisible)
-    .map((c) => ({ ...c, delta_points: Math.max(-0.04, Math.min(0.04, c.delta_points)) }));
+    .slice(0, maxVisible);
 }
 
 // API Explanation type from backend
@@ -57,11 +56,21 @@ export type ApiProjectionsResponse = {
 
 // Map API explanation to frontend Reason
 export function mapExplanationToReason(explanation: ApiExplanation): Reason {
-  // Extract delta from text if present (e.g., "+3.4%" or "-2.1%")
-  const deltaMatch = explanation.text.match(/[+-]?(\d+\.?\d*)%/);
-  const deltaPoints = deltaMatch && deltaMatch[1] ? parseFloat(deltaMatch[1]) / 100 : 0;
+  const pointsMatch = explanation.text.match(/[+-](\d+\.?\d*)\s?pts?/i);
+  const percentMatch = explanation.text.match(/[+-](\d+\.?\d*)%/);
 
-  // Extract component/icon from type or text
+  let deltaPoints: number;
+  let unit: Reason['unit'] = undefined;
+  if (pointsMatch && pointsMatch[0]) {
+    deltaPoints = parseFloat(pointsMatch[0]);
+    unit = 'points';
+  } else if (percentMatch && percentMatch[0]) {
+    deltaPoints = parseFloat(percentMatch[0]) / 100;
+    unit = 'percent';
+  } else {
+    deltaPoints = 0;
+  }
+
   const componentMap: Record<string, string> = {
     method: '⚙️',
     sources: '📊',
@@ -71,8 +80,9 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
 
   return {
     component,
-    delta_points: Math.max(-0.04, Math.min(0.04, deltaPoints)), // Clamp to ±4%
+    delta_points: deltaPoints,
     confidence: explanation.confidence,
+    unit,
   };
 }
 
