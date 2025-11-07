@@ -181,7 +181,7 @@ function RosterPageClient() {
           </h2>
           <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
           <button
-            onClick={loadRoster}
+            onClick={() => loadRoster(scoringFormat)}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Retry
