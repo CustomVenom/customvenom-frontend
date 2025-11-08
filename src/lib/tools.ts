@@ -30,6 +30,8 @@ export type ApiExplanation = {
 // API Projection type from backend
 export type ApiProjection = {
   player_id: string;
+  name?: string;
+  player_name?: string;
   team?: string;
   floor?: number;
   median?: number;
@@ -92,8 +94,11 @@ export function mapApiProjectionToRow(
   schemaVersion: string,
   lastRefresh: string,
 ): Row {
-  // Extract player name from player_id (e.g., "espn:12345" -> extract if available)
-  const playerName = apiProj.player_id.split(':').pop() || apiProj.player_id;
+  const playerName =
+    apiProj.name ??
+    apiProj.player_name ??
+    apiProj.player_id.split(':').pop() ??
+    apiProj.player_id;
 
   // Map floor/median/ceiling to range
   const floor = apiProj.floor ?? apiProj.range?.p10 ?? 0;
