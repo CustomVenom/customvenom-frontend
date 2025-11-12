@@ -1,5 +1,5 @@
-import type { Position, ScoringFormat } from './enums';
-import type { Explanation, ProjectedPoints, ProjectionRange } from './projections';
+import type { ScoringFormat } from './enums';
+import type { ProjectedPoints } from './projections';
 
 export interface RosterPlayer {
   player_id: string;

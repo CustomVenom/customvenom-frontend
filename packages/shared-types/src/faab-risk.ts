@@ -1,5 +1,3 @@
-import type { NflvPlayerVendors } from './vendors';
-
 export interface FaabCandidate {
   player_id: string;
   name: string;
