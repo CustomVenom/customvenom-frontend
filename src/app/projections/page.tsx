@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import { ApiErrorBoundary } from '@/components/ApiErrorBoundary';
 import DemoBadge from '@/components/DemoBadge';
-import GoProButton from '@/components/GoProButton';
+// import GoProButton from '@/components/GoProButton';
 import PositionFilter, { type Position } from '@/components/PositionFilter';
 import ProjectionsTable from '@/components/ProjectionsTable';
 import WeekSelector from '@/components/WeekSelector';
@@ -35,7 +35,7 @@ import {
   fetchProjections,
   mapApiProjectionToRow,
   type Row,
-  type ApiProjectionsResponse,
+  type FetchProjectionsResult,
 } from '@/lib/tools';
 
 function ProjectionsPageInner() {
@@ -62,23 +62,21 @@ function ProjectionsPageInner() {
           throw new Error(`Failed to fetch projections: ${result.status}`);
         }
 
-        const data: ApiProjectionsResponse = result.body;
-
-        // Map API projections to Row format
-        const mappedRows = data.projections.map((proj) =>
-          mapApiProjectionToRow(proj, data.schema_version, data.last_refresh),
+        const mappedRows = result.body.projections.map((proj) =>
+          mapApiProjectionToRow(
+            {
+              ...proj,
+              schema_version: (proj.schema_version ?? 'v2.1') as 'v2.1',
+            } as Parameters<typeof mapApiProjectionToRow>[0],
+            result.schemaVersion,
+            result.lastRefresh,
+          ),
         );
 
         setRows(mappedRows);
-        setSchemaVersion(data.schema_version);
-        setLastRefresh(data.last_refresh);
-
-        // Check for stale headers (would come from response headers, but we don't have access here)
-        // For now, we'll check if last_refresh is older than 24 hours
-        const refreshTime = new Date(data.last_refresh).getTime();
-        const now = Date.now();
-        const ageHours = (now - refreshTime) / (1000 * 60 * 60);
-        setIsStale(ageHours > 24);
+        setSchemaVersion(result.schemaVersion);
+        setLastRefresh(result.lastRefresh);
+        setIsStale(result.stale);
         setIsDemoMode(false); // Could be set from header if available
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch projections');
@@ -114,7 +112,7 @@ function ProjectionsPageInner() {
     return selectImportantDecisions(rows, 0.65);
   }, [rows]);
 
-  const isPro = entitlements?.isPro || false;
+  const _isPro = entitlements?.isPro || false;
 
   if (loading) {
     return (
@@ -141,16 +139,22 @@ function ProjectionsPageInner() {
               setError(null);
               setLoading(true);
               fetchProjections({ week: selectedWeek })
-                .then((result) => {
+                .then((result: FetchProjectionsResult) => {
                   if (result.ok && result.body) {
-                    const data: ApiProjectionsResponse = result.body;
-                    const mappedRows = data.projections.map((proj) =>
-                      mapApiProjectionToRow(proj, data.schema_version, data.last_refresh),
+                    const mappedRows = result.body.projections.map((proj) =>
+                      mapApiProjectionToRow(
+                        {
+                          ...proj,
+                          schema_version: (proj.schema_version ?? 'v2.1') as 'v2.1',
+                        } as Parameters<typeof mapApiProjectionToRow>[0],
+                        result.schemaVersion,
+                        result.lastRefresh,
+                      ),
                     );
                     setRows(mappedRows);
-                    setSchemaVersion(data.schema_version);
-                    setLastRefresh(data.last_refresh);
-                    setIsStale(result.status === 203);
+                    setSchemaVersion(result.schemaVersion);
+                    setLastRefresh(result.lastRefresh);
+                    setIsStale(result.stale);
                   } else {
                     throw new Error(`Failed to fetch: ${result.status}`);
                   }
@@ -192,13 +196,14 @@ function ProjectionsPageInner() {
           <div className="trust-badge-container">
             <TrustSnapshot ts={lastRefresh || ''} ver={schemaVersion} stale={isStale} />
           </div>
-          {!isPro && (
+          {/* TODO: Re-enable GoProButton when Stripe checkout is ready */}
+          {/* {!isPro && (
             <div className="bg-linear-to-br from-[#ff6b35] to-[#f7931e] p-3 px-4 rounded-lg shadow-lg">
               <GoProButton
                 priceId={process.env['NEXT_PUBLIC_STRIPE_PRICE_ID'] || 'price_pro_season'}
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

@@ -51,9 +51,18 @@ function StartSitContent() {
         if (response.ok && response.body) {
           const body = response.body;
           const apiProjections = body.projections ?? [];
-          const rows: Row[] = apiProjections.map((proj) =>
-            mapApiProjectionToRow(proj, body.schema_version, body.last_refresh),
-          );
+          const rows: Row[] = apiProjections.map((proj) => {
+            const normalizedProjection = {
+              ...proj,
+              schema_version: (proj.schema_version ?? 'v2.1') as 'v2.1',
+            };
+
+            return mapApiProjectionToRow(
+              normalizedProjection as Parameters<typeof mapApiProjectionToRow>[0],
+              (body.schema_version ?? 'v2.1') as 'v2.1',
+              body.last_refresh,
+            );
+          });
           setSuggestions(rows);
         }
       })
@@ -87,8 +96,12 @@ function StartSitContent() {
       position: 'QB',
       team: 'KC',
       range: { p10: 15.2, p50: 22.1, p90: 28.7 },
+      expected_points: 22.1,
+      confidence: 0.76,
+      scoring_format: 'half_ppr',
+      opponent: 'LAC',
       explanations: [],
-      schema_version: '1.0.0',
+      schema_version: 'v2.1',
       last_refresh: new Date().toISOString(),
     };
 
@@ -98,8 +111,12 @@ function StartSitContent() {
       position: 'QB',
       team: 'PHI',
       range: { p10: 12.8, p50: 19.4, p90: 25.1 },
+      expected_points: 19.4,
+      confidence: 0.71,
+      scoring_format: 'half_ppr',
+      opponent: 'DAL',
       explanations: [],
-      schema_version: '1.0.0',
+      schema_version: 'v2.1',
       last_refresh: new Date().toISOString(),
     };
 
