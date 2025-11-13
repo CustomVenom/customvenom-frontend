@@ -86,35 +86,37 @@ export function StandingsTable({ leagueKey }: { leagueKey: string | null }) {
   const playoffLine = 4; // Top 4 make playoffs
 
   return (
-    <div className="overflow-x-auto">
-      <Table>
-        <THead>
-          <Tr>
-            <Th>Rank</Th>
-            <Th>Team</Th>
-            <Th>W-L-T</Th>
-            <Th>PF</Th>
-            <Th>PA</Th>
-          </Tr>
-        </THead>
-        <TBody>
-          {standings.map((team, idx) => (
-            <Tr
-              key={team.team_key}
-              className={idx < playoffLine ? 'border-l-2 border-l-green-500' : ''}
-            >
-              <Td className="font-semibold">{team.rank}</Td>
-              <Td className="font-medium">{team.name}</Td>
-              <Td>
-                {team.outcome_totals.wins}-{team.outcome_totals.losses}
-                {team.outcome_totals.ties > 0 ? `-${team.outcome_totals.ties}` : ''}
-              </Td>
-              <Td>{parseFloat(team.points_for).toFixed(1)}</Td>
-              <Td>{parseFloat(team.points_against).toFixed(1)}</Td>
+    <div className="overflow-x-auto -mx-4 px-4">
+      <div className="min-w-full inline-block">
+        <Table className="min-w-full">
+          <THead>
+            <Tr>
+              <Th className="whitespace-nowrap">Rank</Th>
+              <Th className="whitespace-nowrap min-w-[120px]">Team</Th>
+              <Th className="whitespace-nowrap">W-L-T</Th>
+              <Th className="whitespace-nowrap">PF</Th>
+              <Th className="whitespace-nowrap">PA</Th>
             </Tr>
-          ))}
-        </TBody>
-      </Table>
+          </THead>
+          <TBody>
+            {standings.map((team, idx) => (
+              <Tr
+                key={team.team_key}
+                className={idx < playoffLine ? 'border-l-2 border-l-green-500' : ''}
+              >
+                <Td className="font-semibold whitespace-nowrap">{team.rank}</Td>
+                <Td className="font-medium min-w-[120px]">{team.name}</Td>
+                <Td className="whitespace-nowrap">
+                  {team.outcome_totals.wins}-{team.outcome_totals.losses}
+                  {team.outcome_totals.ties > 0 ? `-${team.outcome_totals.ties}` : ''}
+                </Td>
+                <Td className="whitespace-nowrap">{parseFloat(team.points_for).toFixed(1)}</Td>
+                <Td className="whitespace-nowrap">{parseFloat(team.points_against).toFixed(1)}</Td>
+              </Tr>
+            ))}
+          </TBody>
+        </Table>
+      </div>
     </div>
   );
 }

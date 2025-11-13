@@ -35,6 +35,13 @@ export function HeroSection() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium px-8 py-4 rounded-lg border-2 border-gray-300 dark:border-gray-600 transition-colors"
+              >
+                Login
+              </Link>
+
+              <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center gap-2 bg-venom-500 hover:bg-venom-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors"
                 style={{ color: 'white' }}

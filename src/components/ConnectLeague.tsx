@@ -142,6 +142,32 @@ export default function ConnectLeague() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Refresh connection status when page becomes visible (e.g., after OAuth redirect)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && !inFlight.current) {
+        probeOnce.current = false; // Allow refresh
+        void probeSession();
+      }
+    };
+
+    const handleFocus = () => {
+      if (!inFlight.current) {
+        probeOnce.current = false; // Allow refresh
+        void probeSession();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!selectedLeague) return;
     const t = setTimeout(() => void loadTeams(selectedLeague), 0);

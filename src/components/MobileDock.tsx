@@ -23,7 +23,8 @@ export function MobileDock() {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="relative w-full mt-auto lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 safe-area-inset-bottom"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {

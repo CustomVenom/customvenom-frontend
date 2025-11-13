@@ -71,6 +71,7 @@ export default function DashboardPage() {
       try {
         const meRes = await fetch(`${API_BASE}/yahoo/me`, {
           credentials: 'include',
+          cache: 'no-store',
         });
 
         if (meRes.ok) {
@@ -81,23 +82,48 @@ export default function DashboardPage() {
           if (meData.guid && !meData.error && !meData.auth_required) {
             const leaguesRes = await fetch(`${API_BASE}/yahoo/leagues?format=json`, {
               credentials: 'include',
+              cache: 'no-store',
             });
             if (leaguesRes.ok) {
               const leaguesData: YahooLeaguesResponse = await leaguesRes.json();
               setLeagues(leaguesData);
             }
           }
+        } else if (meRes.status === 401) {
+          // Explicitly set disconnected state on 401
+          setMe({ auth_required: true });
         }
       } catch (e) {
         // Fail silently - not an error if user is not logged in
         logger.debug('[Dashboard] Connection check failed (expected if not logged in)', {
           error: e instanceof Error ? e.message : String(e),
         });
+        setMe({ auth_required: true });
       } finally {
         setLoading(false);
       }
     };
     load();
+
+    // Refresh connection status when page becomes visible (e.g., after OAuth redirect)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        load();
+      }
+    };
+
+    // Refresh on focus (user returns to tab)
+    const handleFocus = () => {
+      load();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, [API_BASE]);
 
   // Only connected if we have a guid AND no errors
@@ -350,13 +376,13 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-field-900 dashboard-hub scale-pattern">
           <div className="container max-w-4xl mx-auto py-12 px-4">
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-4xl font-bold text-gray-100">Dashboard</h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-4xl font-bold text-gray-100 truncate">Dashboard</h1>
                   <p className="text-gray-400 mt-1">Select your team to continue</p>
                 </div>
                 {/* Team selector dropdown */}
-                <div className="relative" data-team-selector>
+                <div className="relative w-full sm:w-auto" data-team-selector>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -364,7 +390,7 @@ export default function DashboardPage() {
                       setTeamsDropdownOpen((prev) => !prev);
                     }}
                     disabled={displayTeams.length === 0}
-                    className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+                    className="w-full sm:w-auto px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
                     aria-label="Select team"
                     type="button"
                   >
@@ -460,7 +486,7 @@ export default function DashboardPage() {
         (() => {
           // Extract team selector button for reuse in DashboardHeader
           const TeamSelectorButton = () => (
-            <div className="relative" data-team-selector>
+            <div className="relative w-full sm:w-auto" data-team-selector>
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -468,7 +494,7 @@ export default function DashboardPage() {
                   setTeamsDropdownOpen((prev) => !prev);
                 }}
                 disabled={displayTeams.length === 0}
-                className="px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
+                className="w-full sm:w-auto px-3 py-1.5 bg-field-800 border border-field-600 rounded-md hover:bg-field-700 hover:border-venom-500/50 flex items-center gap-2 text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] cursor-pointer text-gray-100 transition-colors"
                 aria-label="Select team"
                 type="button"
               >
@@ -502,7 +528,7 @@ export default function DashboardPage() {
               </button>
 
               {teamsDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-field-800 border border-field-600 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                   {displayTeams.map((team) => (
                     <button
                       key={team.team_key}

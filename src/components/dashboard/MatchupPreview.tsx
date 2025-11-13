@@ -49,20 +49,37 @@ export function MatchupPreview({
         );
 
         if (!res.ok) {
-          throw new Error(`Failed to fetch matchup: ${res.status}`);
+          // Handle specific error cases
+          if (res.status === 401) {
+            setError('Authentication required. Please reconnect your Yahoo account.');
+          } else if (res.status === 502 || res.status === 503) {
+            setError('Matchup service temporarily unavailable. Please try again later.');
+          } else if (res.status === 404) {
+            setError('Matchup data not available for this week.');
+          } else {
+            setError(`Unable to load matchup (${res.status})`);
+          }
+          setMatchup(null);
+          return;
         }
 
         const data: MatchupResponse = await res.json();
-        if (data.ok) {
+        if (data.ok && data.my_team && data.opponent) {
           setMatchup(data);
         } else {
+          setError('Matchup data incomplete');
           setMatchup(null);
         }
       } catch (err) {
         logger.error('[MatchupPreview] Error fetching matchup', {
           error: err instanceof Error ? err.message : String(err),
         });
-        setError(err instanceof Error ? err.message : 'Failed to load matchup');
+        // Network errors or other exceptions
+        if (err instanceof TypeError && err.message.includes('fetch')) {
+          setError('Network error. Please check your connection.');
+        } else {
+          setError(err instanceof Error ? err.message : 'Failed to load matchup');
+        }
         setMatchup(null);
       } finally {
         setLoading(false);
@@ -73,15 +90,26 @@ export function MatchupPreview({
   }, [teamKey, leagueKey, API_BASE]);
 
   if (loading) {
-    return <div className="text-sm text-gray-400">Loading matchup...</div>;
+    return (
+      <div className="text-sm text-gray-400 animate-pulse">Loading matchup...</div>
+    );
   }
 
   if (error) {
-    return <div className="text-sm text-red-400">Error: {error}</div>;
+    return (
+      <div className="text-sm text-amber-400 space-y-2">
+        <div className="font-medium">Matchup unavailable</div>
+        <div className="text-xs text-gray-500">{error}</div>
+      </div>
+    );
   }
 
   if (!matchup || !matchup.my_team || !matchup.opponent) {
-    return <div className="text-sm text-gray-400">No matchup data available</div>;
+    return (
+      <div className="text-sm text-gray-400">
+        No matchup data available for this week
+      </div>
+    );
   }
 
   const yourProjected = matchup.my_team.projected_points || 0;

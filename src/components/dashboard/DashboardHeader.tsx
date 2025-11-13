@@ -31,11 +31,15 @@ export function DashboardHeader({
         className,
       )}
     >
-      <div>
-        <h1 className="text-3xl font-bold text-gray-100">{title}</h1>
-        {subtitle && <p className="text-gray-400 mt-1">{subtitle}</p>}
+      <div className="min-w-0 flex-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-100 truncate">{title}</h1>
+        {subtitle && <p className="text-gray-400 mt-1 truncate">{subtitle}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex items-center gap-2 flex-shrink-0 overflow-x-auto">
+          {actions}
+        </div>
+      )}
     </div>
   );
 }
