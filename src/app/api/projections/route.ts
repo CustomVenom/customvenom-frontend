@@ -16,8 +16,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'API base URL not configured' }, { status: 500 });
     }
 
-    // Fetch data from the workers-api
-    const response = await fetch(`${apiBase}/projections?week=${week}`, {
+    // Fetch data from the workers-api - use /api/projections endpoint
+    // Forward all query parameters to Workers API
+    const sport = searchParams.get('sport') || 'nfl';
+    const scoringFormat = searchParams.get('scoring_format') || 'half_ppr';
+    const leagueKey = searchParams.get('league_key');
+
+    const workersParams = new URLSearchParams();
+    workersParams.set('week', week);
+    workersParams.set('sport', sport);
+    workersParams.set('scoring_format', scoringFormat);
+    if (leagueKey) workersParams.set('league_key', leagueKey);
+
+    const response = await fetch(`${apiBase}/api/projections?${workersParams.toString()}`, {
       headers: {
         Accept: 'application/json',
       },
@@ -74,9 +85,11 @@ export async function GET(request: NextRequest) {
     // Forward relevant headers from the workers-api response
     const schemaVersion = response.headers.get('x-schema-version') || dataSchemaVersion;
     const lastRefresh = response.headers.get('x-last-refresh') || new Date().toISOString();
+    const isStale = response.headers.get('x-stale') || 'false';
 
     nextResponse.headers.set('x-schema-version', schemaVersion);
     nextResponse.headers.set('x-last-refresh', lastRefresh);
+    nextResponse.headers.set('x-stale', isStale);
 
     // Make x-request-id readable by client JS (fetch().headers.get(...))
     const exposed = new Set(

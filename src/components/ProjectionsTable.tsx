@@ -1,11 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, X } from 'lucide-react';
 
 import ColumnToggle from '@/components/ColumnToggle';
 import PlayerDrawer from '@/components/PlayerDrawer';
 import { clampChips, type Row } from '@/lib/tools';
 import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
+import { ConfidenceDecayBadge } from '@/components/ConfidenceDecayBadge';
 import { ExplanationChips } from '@/components/ExplanationChips';
 import { ProjectionRibbon } from '@/components/ProjectionRibbon';
 
@@ -21,16 +24,35 @@ const ALL_COLUMNS = [
   { key: 'reasons', label: 'Reasons', defaultOn: true, sortable: false },
 ];
 
+const POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'] as const;
+type Position = (typeof POSITIONS)[number];
+
 type SortConfig = {
   key: string;
   direction: 'asc' | 'desc';
 };
 
 export default function ProjectionsTable({ rows }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [visible, setVisible] = useState<Record<string, boolean>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'median', direction: 'desc' });
+
+  // Pagination state from URL or defaults
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const perPage = parseInt(searchParams.get('perPage') || '25', 10);
+
+  // Filter state
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [positionFilter, setPositionFilter] = useState<Position[]>(
+    searchParams
+      .get('positions')
+      ?.split(',')
+      .filter((p): p is Position => POSITIONS.includes(p as Position)) || [],
+  );
+  const [teamFilter, setTeamFilter] = useState(searchParams.get('team') || '');
 
   const columns = ALL_COLUMNS;
 
@@ -39,9 +61,38 @@ export default function ProjectionsTable({ rows }: Props) {
     [columns, visible],
   );
 
+  // Filter logic
+  const filteredRows = useMemo(() => {
+    let filtered = [...rows];
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (r) =>
+          r.player_name?.toLowerCase().includes(query) ||
+          r.player_id.toLowerCase().includes(query) ||
+          r.team?.toLowerCase().includes(query),
+      );
+    }
+
+    // Position filter
+    if (positionFilter.length > 0) {
+      filtered = filtered.filter((r) => positionFilter.includes(r.position as Position));
+    }
+
+    // Team filter
+    if (teamFilter.trim()) {
+      const team = teamFilter.toLowerCase().trim();
+      filtered = filtered.filter((r) => r.team?.toLowerCase() === team);
+    }
+
+    return filtered;
+  }, [rows, searchQuery, positionFilter, teamFilter]);
+
   // Sorting logic
   const sortedRows = useMemo(() => {
-    const sorted = [...rows];
+    const sorted = [...filteredRows];
     const { key, direction } = sortConfig;
 
     sorted.sort((a, b) => {
@@ -88,7 +139,56 @@ export default function ProjectionsTable({ rows }: Props) {
     });
 
     return sorted;
-  }, [rows, sortConfig]);
+  }, [filteredRows, sortConfig]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedRows.length / perPage);
+  const startIndex = (currentPage - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedRows = sortedRows.slice(startIndex, endIndex);
+
+  // Update URL when filters/pagination change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (currentPage > 1) params.set('page', currentPage.toString());
+    if (perPage !== 25) params.set('perPage', perPage.toString());
+    if (searchQuery.trim()) params.set('search', searchQuery.trim());
+    if (positionFilter.length > 0) params.set('positions', positionFilter.join(','));
+    if (teamFilter.trim()) params.set('team', teamFilter.trim());
+
+    const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [currentPage, perPage, searchQuery, positionFilter, teamFilter, router]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    if (currentPage > 1 && currentPage > totalPages) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', '1');
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [searchQuery, positionFilter, teamFilter, currentPage, totalPages, router, searchParams]);
+
+  const activeFilterCount =
+    (searchQuery.trim() ? 1 : 0) + positionFilter.length + (teamFilter.trim() ? 1 : 0);
+
+  function handlePageChange(newPage: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', newPage.toString());
+    router.push(`?${params.toString()}`, { scroll: false });
+  }
+
+  function togglePosition(pos: Position) {
+    setPositionFilter((prev) =>
+      prev.includes(pos) ? prev.filter((p) => p !== pos) : [...prev, pos],
+    );
+  }
+
+  function clearFilters() {
+    setSearchQuery('');
+    setPositionFilter([]);
+    setTeamFilter('');
+  }
 
   function handleSort(key: string) {
     setSortConfig((prev) => ({
@@ -107,11 +207,93 @@ export default function ProjectionsTable({ rows }: Props) {
     setDrawerRow(null);
   }
 
+  // Keyboard shortcuts for pagination
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return; // Don't interfere with typing
+      }
+
+      if (e.key === 'ArrowLeft' && e.ctrlKey && currentPage > 1) {
+        e.preventDefault();
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', (currentPage - 1).toString());
+        router.push(`?${params.toString()}`, { scroll: false });
+      } else if (e.key === 'ArrowRight' && e.ctrlKey && currentPage < totalPages) {
+        e.preventDefault();
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', (currentPage + 1).toString());
+        router.push(`?${params.toString()}`, { scroll: false });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, totalPages, router, searchParams]);
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="h2">Weekly Projections</h2>
         <ColumnToggle columns={columns} onChange={setVisible} className="justify-self-end" />
+      </div>
+
+      {/* Search and Filters */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search players..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(var(--cv-primary))]"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-1">
+            {POSITIONS.map((pos) => (
+              <button
+                key={pos}
+                onClick={() => togglePosition(pos)}
+                className={`px-2 py-1 text-xs rounded ${
+                  positionFilter.includes(pos)
+                    ? 'bg-[rgb(var(--cv-primary))] text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {pos}
+              </button>
+            ))}
+          </div>
+
+          {activeFilterCount > 0 && (
+            <button
+              onClick={clearFilters}
+              className="px-2 py-1 text-xs rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center gap-1"
+            >
+              <X className="h-3 w-3" />
+              Clear ({activeFilterCount})
+            </button>
+          )}
+        </div>
+
+        {/* Results count */}
+        <div className="text-xs text-gray-500 dark:text-gray-400">
+          Showing {startIndex + 1}-{Math.min(endIndex, sortedRows.length)} of {sortedRows.length}{' '}
+          players
+          {rows.length !== sortedRows.length && ` (filtered from ${rows.length} total)`}
+        </div>
       </div>
 
       <div className="overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 projections-table-container">
@@ -162,7 +344,7 @@ export default function ProjectionsTable({ rows }: Props) {
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((r, i) => {
+            {paginatedRows.map((r, i) => {
               const chips = clampChips(r.explanations);
               return (
                 <tr
@@ -236,9 +418,17 @@ export default function ProjectionsTable({ rows }: Props) {
 
                   {visible['confidence'] !== false && (
                     <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
-                      <span className="text-xs font-medium">
-                        {((r.confidence ?? 0) * 100).toFixed(0)}%
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-medium">
+                          {((r.confidence ?? 0) * 100).toFixed(0)}%
+                        </span>
+                        {r.confidence_metadata && r.confidence_metadata.decay_applied > 0 && (
+                          <ConfidenceDecayBadge
+                            confidence={r.confidence ?? 0}
+                            decayMetadata={r.confidence_metadata}
+                          />
+                        )}
+                      </div>
                     </td>
                   )}
 
@@ -260,8 +450,55 @@ export default function ProjectionsTable({ rows }: Props) {
         </table>
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            Page {currentPage} of {totalPages}
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+              className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+              aria-label="First page"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="px-3 py-1 text-sm">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+              aria-label="Last page"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <p className="text-xs text-gray-500 dark:text-gray-400">
         Tip: Use Columns to reduce clutter; player column stays pinned on scroll.
+        {totalPages > 1 && ' Use Ctrl+Arrow keys to navigate pages.'}
       </p>
 
       <PlayerDrawer open={drawerOpen} onClose={closeDrawer} row={drawerRow} />

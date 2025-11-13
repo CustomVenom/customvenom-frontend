@@ -1,32 +1,35 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: Request, ctx: unknown): Promise<Response> {
-  const { leagueKey } = (ctx as { params: { leagueKey: string } }).params;
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { leagueKey: string } },
+): Promise<NextResponse> {
+  const { leagueKey } = params;
   const reqId = crypto.randomUUID();
 
   try {
-    // Workers-only: forward the browser cookie to API (no NextAuth)
     const apiBase =
       process.env['API_BASE'] ||
       process.env['NEXT_PUBLIC_API_BASE'] ||
       'https://api.customvenom.com';
     const cookie = req.headers.get('cookie') || '';
-    const r = await fetch(`${apiBase}/yahoo/leagues/${leagueKey}/teams?format=json`, {
+    const { searchParams } = new URL(req.url);
+    const format = searchParams.get('format') || 'json';
+
+    const r = await fetch(`${apiBase}/yahoo/leagues/${leagueKey}/standings?format=${format}`, {
       headers: {
         'x-request-id': reqId,
         accept: 'application/json',
-        // Forward Yahoo cookie to API for auth
         cookie: cookie,
       },
-      // Do not cache auth-protected data at the edge
       cache: 'no-store',
     });
 
     if (!r.ok) {
       return NextResponse.json(
-        { connected: false, teams: [], error: 'upstream_unavailable' },
+        { ok: false, standings: [], error: 'upstream_unavailable' },
         { status: r.status },
       );
     }
@@ -46,9 +49,9 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('[api/leagues/teams]', error);
+    console.error('[api/yahoo/leagues/standings]', error);
     return NextResponse.json(
-      { connected: false, teams: [], error: 'internal_error' },
+      { ok: false, standings: [], error: 'internal_error' },
       { status: 500 },
     );
   }

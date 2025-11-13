@@ -32,11 +32,17 @@ export async function GET(req: Request, ctx: unknown): Promise<Response> {
     }
 
     const body = await r.json();
+
+    // Forward Trust Bundle headers
     return NextResponse.json(body, {
       headers: {
         'content-type': 'application/json',
         'cache-control': 'no-store',
         'x-request-id': reqId,
+        'x-schema-version': r.headers.get('x-schema-version') || body.schema_version || 'v1',
+        'x-last-refresh':
+          r.headers.get('x-last-refresh') || body.last_refresh || new Date().toISOString(),
+        'x-stale': r.headers.get('x-stale') || 'false',
       },
     });
   } catch (error) {

@@ -88,40 +88,64 @@ function StartSitContent() {
       risk,
     });
 
-    // TODO: Wire to API endpoint
-    // For now, return mock data
-    const mockRowA: Row = {
-      player_id: 'mock-a-1',
-      player_name: playerA || 'Player A',
-      position: 'QB',
-      team: 'KC',
-      range: { p10: 15.2, p50: 22.1, p90: 28.7 },
-      confidence: 0.76,
-      explanations: [],
-      schema_version: 'v2.1',
-      last_refresh: new Date().toISOString(),
-    };
+    // Find players in suggestions
+    const rowA = suggestions.find(
+      (r) =>
+        r.player_name?.toLowerCase() === playerA.toLowerCase() ||
+        r.player_id.toLowerCase() === playerA.toLowerCase(),
+    );
+    const rowB = suggestions.find(
+      (r) =>
+        r.player_name?.toLowerCase() === playerB.toLowerCase() ||
+        r.player_id.toLowerCase() === playerB.toLowerCase(),
+    );
 
-    const mockRowB: Row = {
-      player_id: 'mock-b-1',
-      player_name: playerB || 'Player B',
-      position: 'QB',
-      team: 'PHI',
-      range: { p10: 12.8, p50: 19.4, p90: 25.1 },
-      confidence: 0.71,
-      explanations: [],
-      schema_version: 'v2.1',
-      last_refresh: new Date().toISOString(),
-    };
+    if (!rowA || !rowB) {
+      setMsg('One or both players not found. Please search and select players.');
+      return;
+    }
+
+    // Determine winner based on risk mode
+    let winner: 'A' | 'B';
+    let recommendation: string;
+    let confidence: number;
+    let reasoning: string;
+    let riskAdjusted: number;
+
+    if (risk === 'protect') {
+      // Protect mode: prefer higher floor
+      const floorDiff = rowA.range.p10 - rowB.range.p10;
+      winner = floorDiff >= 0 ? 'A' : 'B';
+      recommendation = winner === 'A' ? rowA.player_name : rowB.player_name;
+      confidence = Math.min((rowA.confidence || 0.5) + (rowB.confidence || 0.5), 1.0) / 2;
+      reasoning = `In Protect mode, ${recommendation} has a higher floor (${winner === 'A' ? rowA.range.p10 : rowB.range.p10} vs ${winner === 'A' ? rowB.range.p10 : rowA.range.p10}), providing more reliable production.`;
+      riskAdjusted = Math.max(confidence - 0.1, 0.5);
+    } else if (risk === 'chase') {
+      // Chase mode: prefer higher ceiling
+      const ceilingDiff = rowA.range.p90 - rowB.range.p90;
+      winner = ceilingDiff >= 0 ? 'A' : 'B';
+      recommendation = winner === 'A' ? rowA.player_name : rowB.player_name;
+      confidence = Math.min((rowA.confidence || 0.5) + (rowB.confidence || 0.5), 1.0) / 2;
+      reasoning = `In Chase mode, ${recommendation} has a higher ceiling (${winner === 'A' ? rowA.range.p90 : rowB.range.p90} vs ${winner === 'A' ? rowB.range.p90 : rowA.range.p90}), offering more upside potential.`;
+      riskAdjusted = Math.min(confidence + 0.1, 0.95);
+    } else {
+      // Neutral mode: prefer higher median
+      const medianDiff = rowA.range.p50 - rowB.range.p50;
+      winner = medianDiff >= 0 ? 'A' : 'B';
+      recommendation = winner === 'A' ? rowA.player_name : rowB.player_name;
+      confidence = Math.min((rowA.confidence || 0.5) + (rowB.confidence || 0.5), 1.0) / 2;
+      reasoning = `${recommendation} has a higher median projection (${winner === 'A' ? rowA.range.p50 : rowB.range.p50} vs ${winner === 'A' ? rowB.range.p50 : rowA.range.p50}), making them the safer choice.`;
+      riskAdjusted = confidence;
+    }
 
     setResult({
-      winner: 'A',
-      rowA: mockRowA,
-      rowB: mockRowB,
-      recommendation: playerA || 'Player A',
-      confidence: 0.75,
-      reasoning: 'Higher projected points with better matchup',
-      risk_adjusted: risk === 'protect' ? 0.65 : risk === 'chase' ? 0.85 : 0.75,
+      winner,
+      rowA,
+      rowB,
+      recommendation,
+      confidence,
+      reasoning,
+      risk_adjusted: riskAdjusted,
     });
   }
 

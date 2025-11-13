@@ -86,7 +86,15 @@ export default function RootLayout({
           <SelectionProvider>
             <Header />
             <ClientLayout>
-              <main id="main" role="main" className="flex-1 mx-auto w-full max-w-6xl px-4 py-6">
+              <main
+                id="main"
+                role="main"
+                className="flex-1 mx-auto w-full max-w-6xl px-4 py-6"
+                style={{
+                  paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+                  minHeight: 'calc(100vh - 4rem)', // Account for header height
+                }}
+              >
                 {children}
               </main>
             </ClientLayout>

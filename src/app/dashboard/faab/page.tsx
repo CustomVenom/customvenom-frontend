@@ -43,15 +43,74 @@ function FaabContent() {
       budget: parseInt(budget) || 0,
     });
 
-    // TODO: Wire to API endpoint
-    // For now, return mock data
-    setResult({
-      min: 15,
-      likely: 22,
-      max: 35,
-      reason: 'High usage upside with favorable schedule',
-    });
-  }, [player, budget]);
+    if (!player || !budget) {
+      setMsg('Please enter both player name and budget');
+      return;
+    }
+
+    try {
+      // Call FAAB API endpoint
+      const params = new URLSearchParams({
+        player_id: player, // API may accept player_id or player name
+        budget: budget,
+        week: leagueContext.week || '2025-10', // Use current week from context
+      });
+
+      const res = await fetch(`/api/faab?${params.toString()}`, {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch FAAB bands: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Handle API response format
+      // API may return items array or direct min/likely/max
+      if (data.items && data.items.length > 0) {
+        const item = data.items[0];
+        setResult({
+          min: item.min || item.min_bid || 0,
+          likely: item.likely || item.recommended_bid || 0,
+          max: item.max || item.max_bid || 0,
+          reason: item.reason || item.rationale || 'Based on projected value and market conditions',
+        });
+      } else if (data.min !== undefined && data.likely !== undefined && data.max !== undefined) {
+        setResult({
+          min: data.min,
+          likely: data.likely,
+          max: data.max,
+          reason: data.reason || data.rationale || 'Based on projected value and market conditions',
+        });
+      } else {
+        // Fallback to calculated estimate if API format is unexpected
+        const budgetNum = parseInt(budget);
+        const estimatedMin = Math.floor(budgetNum * 0.15);
+        const estimatedLikely = Math.floor(budgetNum * 0.22);
+        const estimatedMax = Math.floor(budgetNum * 0.35);
+        setResult({
+          min: estimatedMin,
+          likely: estimatedLikely,
+          max: estimatedMax,
+          reason:
+            'Estimated bid range based on remaining budget. API response format may need adjustment.',
+        });
+      }
+    } catch (error) {
+      console.error('FAAB calculation error:', error);
+      setMsg('Failed to calculate FAAB bid. Please try again.');
+      // Fallback to estimated values
+      const budgetNum = parseInt(budget);
+      setResult({
+        min: Math.floor(budgetNum * 0.15),
+        likely: Math.floor(budgetNum * 0.22),
+        max: Math.floor(budgetNum * 0.35),
+        reason: 'Estimated bid range based on remaining budget',
+      });
+    }
+  }, [player, budget, leagueContext.week, setMsg]);
 
   // Keyboard shortcuts
   useEffect(() => {

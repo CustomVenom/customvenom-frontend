@@ -1,4 +1,5 @@
 import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
+import { ConfidenceDecayBadge } from '@/components/ConfidenceDecayBadge';
 import { ExplanationChips } from '@/components/ExplanationChips';
 import { ProjectionRibbon } from '@/components/ProjectionRibbon';
 import type { Reason } from '@/lib/types';
@@ -15,6 +16,11 @@ interface PlayerProjectionCardProps {
     };
     confidence: number;
     explanations: Reason[];
+    confidence_metadata?: {
+      original_confidence: number;
+      decay_applied: number;
+      expires_in_hours: number;
+    };
   };
 }
 
@@ -39,6 +45,12 @@ export function PlayerProjectionCard({ player }: PlayerProjectionCardProps) {
             <ConfidenceIndicator confidence={player.confidence} />
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">projected pts</p>
+          {player.confidence_metadata && player.confidence_metadata.decay_applied > 0 && (
+            <ConfidenceDecayBadge
+              confidence={player.confidence}
+              decayMetadata={player.confidence_metadata}
+            />
+          )}
         </div>
       </div>
 

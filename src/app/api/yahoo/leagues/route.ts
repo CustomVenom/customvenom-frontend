@@ -18,10 +18,17 @@ export async function GET(request: NextRequest) {
     });
 
     const body = await r.text();
+
+    // Forward Trust Bundle headers
     return new NextResponse(body, {
       status: r.status,
       headers: {
         'Content-Type': r.headers.get('content-type') || 'application/json',
+        'x-schema-version': r.headers.get('x-schema-version') || 'v1',
+        'x-last-refresh': r.headers.get('x-last-refresh') || new Date().toISOString(),
+        'x-stale': r.headers.get('x-stale') || 'false',
+        'x-request-id': r.headers.get('x-request-id') || 'unavailable',
+        'cache-control': 'no-store',
       },
     });
   } catch (error) {

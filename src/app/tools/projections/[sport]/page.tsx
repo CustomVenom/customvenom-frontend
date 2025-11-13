@@ -7,6 +7,7 @@ import { Sport, ProjectionResponse } from '@/lib/sports/base/SportClient';
 import ProjectionsTable from '@/components/ProjectionsTable';
 import WeekSelector from '@/components/WeekSelector';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
+import { AccuracyBadge } from '@/components/AccuracyBadge';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { type Row } from '@/lib/tools';
 
@@ -163,14 +164,15 @@ export default function SportProjectionsPage() {
             </select>
           </div>
 
-          {/* Trust Snapshot */}
+          {/* Trust Snapshot and Accuracy Badge */}
           {projections && (
-            <div className="trust-badge-container">
+            <div className="trust-badge-container flex flex-col items-end gap-2">
               <TrustSnapshot
                 ts={projections.last_refresh}
                 ver={projections.schema_version}
                 stale={false}
               />
+              <AccuracyBadge sport={sport} />
             </div>
           )}
         </div>

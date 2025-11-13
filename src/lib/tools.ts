@@ -11,6 +11,12 @@ export type Row = {
   explanations: Reason[];
   schema_version: string;
   last_refresh: string;
+  confidence_metadata?: {
+    original_confidence: number;
+    decay_applied: number;
+    decay_reasons: Record<string, number>;
+    expires_in_hours: number;
+  };
 };
 
 export function clampChips(chips: Reason[], maxVisible = 2): Reason[] {
@@ -40,13 +46,25 @@ export type ApiProjection = {
   explanations?: ApiExplanation[];
   position?: string;
   range?: { p10?: number; p50?: number; p90?: number };
+  confidence_metadata?: {
+    original_confidence: number;
+    decay_applied: number;
+    decay_reasons: Record<string, number>;
+    expires_in_hours: number;
+  };
   [key: string]:
     | string
     | number
     | boolean
     | undefined
     | ApiExplanation[]
-    | { p10?: number; p50?: number; p90?: number };
+    | { p10?: number; p50?: number; p90?: number }
+    | {
+        original_confidence: number;
+        decay_applied: number;
+        decay_reasons: Record<string, number>;
+        expires_in_hours: number;
+      };
 };
 
 // API Response type
@@ -115,13 +133,17 @@ export function mapApiProjectionToRow(
     explanations,
     schema_version: schemaVersion,
     last_refresh: lastRefresh,
+    confidence_metadata: apiProj.confidence_metadata,
   };
 }
 
 export async function fetchProjections(params?: Record<string, string>) {
-  const base = process.env['NEXT_PUBLIC_API_BASE'] || '';
+  // Use proxy route /api/projections instead of direct API call
   const qs = params ? `?${new URLSearchParams(params).toString()}` : '';
-  const res = await fetch(`${base}/projections${qs}`, { cache: 'no-store' });
+  const res = await fetch(`/api/projections${qs}`, {
+    cache: 'no-store',
+    credentials: 'include',
+  });
   const requestId = res.headers.get('x-request-id') || '';
   const body: ApiProjectionsResponse = await res.json();
   return { ok: res.ok, status: res.status, requestId, body };
