@@ -90,7 +90,9 @@ export default function DashboardPage() {
         }
       } catch (e) {
         // Fail silently - not an error if user is not logged in
-        logger.debug('[Dashboard] Connection check failed (expected if not logged in)', { error: e instanceof Error ? e.message : String(e) });
+        logger.debug('[Dashboard] Connection check failed (expected if not logged in)', {
+          error: e instanceof Error ? e.message : String(e),
+        });
       } finally {
         setLoading(false);
       }
@@ -123,7 +125,9 @@ export default function DashboardPage() {
         }
       } catch (e) {
         // Fail silently - not an error if user is not connected
-        logger.debug('[Dashboard] Failed to load selection (expected if not connected)', { error: e instanceof Error ? e.message : String(e) });
+        logger.debug('[Dashboard] Failed to load selection (expected if not connected)', {
+          error: e instanceof Error ? e.message : String(e),
+        });
       }
     };
     loadSelection();
@@ -186,7 +190,9 @@ export default function DashboardPage() {
             }
           } catch (leagueError) {
             // Continue with next league even if one fails
-            logger.debug('[Dashboard] Error fetching teams for league (skipping)', { error: leagueError instanceof Error ? leagueError.message : String(leagueError) });
+            logger.debug('[Dashboard] Error fetching teams for league (skipping)', {
+              error: leagueError instanceof Error ? leagueError.message : String(leagueError),
+            });
           }
         }
 
