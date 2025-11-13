@@ -7,10 +7,12 @@ import { MobileDock } from '@/components/MobileDock';
 import { QuickNav } from '@/components/QuickNav';
 import { SkipLink } from '@/components/SkipLink';
 import { TrustRibbon } from '@/components/TrustRibbon';
+import { SportClientInitializer } from '@/components/SportClientInitializer';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <SportClientInitializer />
       <SkipLink />
       <TrustRibbon schemaVersion="v1" lastRefresh={new Date().toISOString()} stale={false} />
       <CacheWarmer />

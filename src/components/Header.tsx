@@ -8,6 +8,7 @@ import { ChevronDown, Settings } from 'lucide-react';
 import Brand from '@/components/Brand';
 import DensityToggle from '@/components/DensityToggle';
 import ThemeToggle from '@/components/ThemeToggle';
+import { SportSwitcher } from '@/components/SportSwitcher';
 
 const mainLinks = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -59,9 +60,12 @@ export default function Header() {
       className="sticky top-0 z-40 border-b border-[rgba(148,163,184,0.1)] bg-[rgb(var(--bg))]/95 backdrop-blur-md shadow-lg"
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" aria-label="Home">
-          <Brand size="lg" />
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" aria-label="Home">
+            <Brand size="lg" />
+          </Link>
+          <SportSwitcher />
+        </div>
 
         <nav aria-label="Main navigation" className="hidden md:flex items-center gap-4 text-sm">
           {mainLinks.map((l) => (

@@ -1,7 +1,7 @@
-﻿import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 /**
- * Redirect old /projections route to NFL projections
+ * Redirect old /tools/projections route to NFL
  * Maintains backward compatibility
  */
 export default function ProjectionsRedirect() {
