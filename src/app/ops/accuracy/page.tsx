@@ -71,7 +71,7 @@ export default function AccuracyDashboard() {
   }, [fetchAccuracyMetrics]);
 
   // Calculate overall metrics
-  const overallMetrics = data?.metrics.reduce(
+  const overallMetrics = data?.metrics?.reduce(
     (acc, m) => {
       acc.totalPredictions += m.total_predictions;
       acc.totalHits += m.hit_rate * m.total_predictions;
@@ -114,7 +114,7 @@ export default function AccuracyDashboard() {
 
   // Group by position
   const byPosition: Record<string, AccuracyMetric[]> = {};
-  data?.metrics.forEach((m) => {
+  data?.metrics?.forEach((m) => {
     const pos = m.position || 'ALL';
     if (!byPosition[pos]) {
       byPosition[pos] = [];
@@ -123,11 +123,11 @@ export default function AccuracyDashboard() {
   });
 
   // Get latest week metrics
-  const latestWeek = data?.metrics.length ? Math.max(...data.metrics.map((m) => m.week)) : null;
-  const latestWeekMetrics = data?.metrics.filter((m) => m.week === latestWeek) || [];
+  const latestWeek = data?.metrics?.length ? Math.max(...(data?.metrics?.map((m) => m.week) || [])) : null;
+  const latestWeekMetrics = data?.metrics?.filter((m) => m.week === latestWeek) || [];
 
   // Get 4-week rolling average
-  const recentWeeks = data?.metrics.sort((a, b) => b.week - a.week).slice(0, 4) || [];
+  const recentWeeks = data?.metrics?.sort((a, b) => b.week - a.week).slice(0, 4) || [];
   const fourWeekHitRate =
     recentWeeks.length > 0
       ? (recentWeeks.reduce((sum, m) => sum + m.hit_rate * m.total_predictions, 0) /
@@ -313,37 +313,37 @@ export default function AccuracyDashboard() {
       )}
 
       {/* Confidence Buckets */}
-      {data?.metrics.length > 0 && (
+      {data?.metrics?.length > 0 && (
         <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
           <h3 className="text-lg font-semibold mb-4">Hit Rate by Confidence Bucket</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <div className="text-sm text-gray-600 mb-1">High (&gt;0.8)</div>
               <div className="text-2xl font-bold">
-                {data.metrics
-                  .filter((m) => m.high_confidence_hit_rate !== null)
+                {data?.metrics
+                  ?.filter((m) => m.high_confidence_hit_rate !== null)
                   .reduce((sum, m) => sum + (m.high_confidence_hit_rate || 0), 0) /
-                  data.metrics.filter((m) => m.high_confidence_hit_rate !== null).length || 0}
+                  (data?.metrics?.filter((m) => m.high_confidence_hit_rate !== null).length || 1) || 0}
                 %
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-600 mb-1">Medium (0.5-0.8)</div>
               <div className="text-2xl font-bold">
-                {data.metrics
-                  .filter((m) => m.medium_confidence_hit_rate !== null)
+                {data?.metrics
+                  ?.filter((m) => m.medium_confidence_hit_rate !== null)
                   .reduce((sum, m) => sum + (m.medium_confidence_hit_rate || 0), 0) /
-                  data.metrics.filter((m) => m.medium_confidence_hit_rate !== null).length || 0}
+                  (data?.metrics?.filter((m) => m.medium_confidence_hit_rate !== null).length || 1) || 0}
                 %
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-600 mb-1">Low (&lt;0.5)</div>
               <div className="text-2xl font-bold">
-                {data.metrics
-                  .filter((m) => m.low_confidence_hit_rate !== null)
+                {data?.metrics
+                  ?.filter((m) => m.low_confidence_hit_rate !== null)
                   .reduce((sum, m) => sum + (m.low_confidence_hit_rate || 0), 0) /
-                  data.metrics.filter((m) => m.low_confidence_hit_rate !== null).length || 0}
+                  (data?.metrics?.filter((m) => m.low_confidence_hit_rate !== null).length || 1) || 0}
                 %
               </div>
             </div>
@@ -352,7 +352,7 @@ export default function AccuracyDashboard() {
       )}
 
       {/* Empty State */}
-      {!loading && (!data || data.metrics.length === 0) && (
+      {!loading && (!data || (data.metrics?.length ?? 0) === 0) && (
         <div className="bg-gray-50 rounded-xl p-12 text-center">
           <div className="text-4xl mb-4">📊</div>
           <h3 className="text-xl font-semibold mb-2">No Metrics Available</h3>
