@@ -36,9 +36,7 @@ export function DashboardHeader({
         {subtitle && <p className="text-gray-400 mt-1 truncate">{subtitle}</p>}
       </div>
       {actions && (
-        <div className="flex items-center gap-2 flex-shrink-0 overflow-x-auto">
-          {actions}
-        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 overflow-x-auto">{actions}</div>
       )}
     </div>
   );

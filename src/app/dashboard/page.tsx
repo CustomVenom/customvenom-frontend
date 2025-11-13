@@ -378,7 +378,9 @@ export default function DashboardPage() {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-4xl font-bold text-gray-100 truncate">Dashboard</h1>
+                  <h1 className="text-2xl sm:text-4xl font-bold text-gray-100 truncate">
+                    Dashboard
+                  </h1>
                   <p className="text-gray-400 mt-1">Select your team to continue</p>
                 </div>
                 {/* Team selector dropdown */}

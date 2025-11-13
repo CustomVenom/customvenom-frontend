@@ -18,7 +18,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <DevOverlay stale={false} />
       <QuickNav />
       <div className="flex min-h-screen">
-        <main id="main-content" className="flex-1 pb-20 lg:pb-0" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
+        <main
+          id="main-content"
+          className="flex-1 pb-20 lg:pb-0"
+          style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+        >
           {children}
         </main>
       </div>

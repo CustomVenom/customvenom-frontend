@@ -90,9 +90,7 @@ export function MatchupPreview({
   }, [teamKey, leagueKey, API_BASE]);
 
   if (loading) {
-    return (
-      <div className="text-sm text-gray-400 animate-pulse">Loading matchup...</div>
-    );
+    return <div className="text-sm text-gray-400 animate-pulse">Loading matchup...</div>;
   }
 
   if (error) {
@@ -105,11 +103,7 @@ export function MatchupPreview({
   }
 
   if (!matchup || !matchup.my_team || !matchup.opponent) {
-    return (
-      <div className="text-sm text-gray-400">
-        No matchup data available for this week
-      </div>
-    );
+    return <div className="text-sm text-gray-400">No matchup data available for this week</div>;
   }
 
   const yourProjected = matchup.my_team.projected_points || 0;
