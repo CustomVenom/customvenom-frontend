@@ -123,7 +123,9 @@ export default function AccuracyDashboard() {
   });
 
   // Get latest week metrics
-  const latestWeek = data?.metrics?.length ? Math.max(...(data?.metrics?.map((m) => m.week) || [])) : null;
+  const latestWeek = data?.metrics?.length
+    ? Math.max(...(data?.metrics?.map((m) => m.week) || []))
+    : null;
   const latestWeekMetrics = data?.metrics?.filter((m) => m.week === latestWeek) || [];
 
   // Get 4-week rolling average
@@ -320,30 +322,33 @@ export default function AccuracyDashboard() {
             <div>
               <div className="text-sm text-gray-600 mb-1">High (&gt;0.8)</div>
               <div className="text-2xl font-bold">
-                {((data?.metrics
+                {(data?.metrics
                   ?.filter((m) => m.high_confidence_hit_rate !== null)
                   ?.reduce((sum, m) => sum + (m.high_confidence_hit_rate || 0), 0) ?? 0) /
-                  (data?.metrics?.filter((m) => m.high_confidence_hit_rate !== null).length || 1)) || 0}
+                  (data?.metrics?.filter((m) => m.high_confidence_hit_rate !== null).length || 1) ||
+                  0}
                 %
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-600 mb-1">Medium (0.5-0.8)</div>
               <div className="text-2xl font-bold">
-                {((data?.metrics
+                {(data?.metrics
                   ?.filter((m) => m.medium_confidence_hit_rate !== null)
                   ?.reduce((sum, m) => sum + (m.medium_confidence_hit_rate || 0), 0) ?? 0) /
-                  (data?.metrics?.filter((m) => m.medium_confidence_hit_rate !== null).length || 1)) || 0}
+                  (data?.metrics?.filter((m) => m.medium_confidence_hit_rate !== null).length ||
+                    1) || 0}
                 %
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-600 mb-1">Low (&lt;0.5)</div>
               <div className="text-2xl font-bold">
-                {((data?.metrics
+                {(data?.metrics
                   ?.filter((m) => m.low_confidence_hit_rate !== null)
                   ?.reduce((sum, m) => sum + (m.low_confidence_hit_rate || 0), 0) ?? 0) /
-                  (data?.metrics?.filter((m) => m.low_confidence_hit_rate !== null).length || 1)) || 0}
+                  (data?.metrics?.filter((m) => m.low_confidence_hit_rate !== null).length || 1) ||
+                  0}
                 %
               </div>
             </div>

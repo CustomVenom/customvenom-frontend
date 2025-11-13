@@ -1,135 +1,106 @@
+// Players page - Full projections table with filters
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Table, THead, TBody, Tr, Th, Td } from '@/components/ui/Table';
-import { Badge } from '@/components/ui/badge';
-import type { PlayerListItem } from '@/types/players';
+import { useMemo, useState } from 'react';
+import { useUserStore } from '@/lib/store';
+import { useProjections } from '@/hooks/use-projections';
+import ProjectionsTable from '@/components/ProjectionsTable';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
+import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+// Select component not available, using native select
+import { mapApiProjectionToRow } from '@/lib/tools';
 
-type Position = 'All' | 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF';
-type ScoringFormat = 'standard' | 'half_ppr' | 'full_ppr';
+type Position = 'ALL' | 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF';
 
-/**
- * Calculate current NFL week
- */
-function getCurrentNFLWeek(): number {
-  const now = new Date();
-  const year = now.getFullYear();
-  const startOfSeason = new Date(year, 8, 1); // Sept 1
-  const weeksSinceStart = Math.floor(
-    (now.getTime() - startOfSeason.getTime()) / (7 * 24 * 60 * 60 * 1000),
-  );
-  return Math.max(1, Math.min(18, weeksSinceStart + 1));
-}
+function PlayersContent() {
+  const { scoringFormat, setScoringFormat, selectedWeek } = useUserStore();
+  const { data: projectionsData, isLoading, error } = useProjections(selectedWeek);
+  const [positionFilter, setPositionFilter] = useState<Position>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
 
-export default function PlayersPage() {
-  const [players, setPlayers] = useState<PlayerListItem[]>([]);
-  const [position, setPosition] = useState<Position>('All');
-  const [sortBy, setSortBy] = useState<'projected' | 'floor' | 'ceiling'>('projected');
-  const [week, setWeek] = useState<number>(getCurrentNFLWeek());
-  const [scoringFormat, setScoringFormat] = useState<ScoringFormat>('standard');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Convert projections to Row format for ProjectionsTable
+  const rows = useMemo(() => {
+    if (!projectionsData?.data) return [];
 
-  useEffect(() => {
-    // Reset error state before new fetch - acceptable pattern for async operations
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setError(null);
-
-    // Build query params
-    const year = new Date().getFullYear();
-    const weekParam = `${year}-${String(week).padStart(2, '0')}`;
-    const params = new URLSearchParams({
-      week: weekParam,
-      format: scoringFormat,
+    return projectionsData.data.projections.map((proj) => {
+      const normalizedProjection = {
+        ...proj,
+        schema_version: 'v2.1' as const,
+      };
+      return mapApiProjectionToRow(
+        normalizedProjection as Parameters<typeof mapApiProjectionToRow>[0],
+        'v2.1',
+        projectionsData.data.last_refresh,
+      );
     });
+  }, [projectionsData]);
 
-    fetch(`/api/projections?${params}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to load projections: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setPlayers(data.projections || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message || 'Failed to load players');
-        setLoading(false);
-      });
-  }, [week, scoringFormat]);
+  // Filter rows by position
+  const filteredRows = useMemo(() => {
+    let filtered = rows;
 
-  const filteredPlayers = players
-    .filter((p) => position === 'All' || p.position === position)
-    .sort((a, b) => {
-      if (sortBy === 'projected') return (b.p50 || 0) - (a.p50 || 0);
-      if (sortBy === 'floor') return (b.p10 || 0) - (a.p10 || 0);
-      if (sortBy === 'ceiling') return (b.p90 || 0) - (a.p90 || 0);
-      return 0;
-    });
+    if (positionFilter !== 'ALL') {
+      filtered = filtered.filter((row) => row.position === positionFilter);
+    }
 
-  if (loading) return <div className="p-4">Loading...</div>;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (row) =>
+          row.player_name?.toLowerCase().includes(query) ||
+          row.player_id.toLowerCase().includes(query) ||
+          row.team?.toLowerCase().includes(query),
+      );
+    }
 
-  if (error) {
+    return filtered;
+  }, [rows, positionFilter, searchQuery]);
+
+  if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto p-4 pb-20 md:pb-4">
-        <div className="bg-negative/20 border border-negative rounded-lg p-4">
-          <p className="text-negative font-semibold">Error</p>
-          <p className="text-sm text-text-secondary mt-1">{error}</p>
-        </div>
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-96 w-full" />
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <Alert variant="danger">
+        <AlertDescription>Failed to load projections. Please try again.</AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
-    <div className="max-w-6xl mx-auto p-4 pb-20 md:pb-4">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-        <h1 className="text-2xl font-bold">Players</h1>
-        <div className="flex gap-2">
-          <select
-            value={week}
-            onChange={(e) => setWeek(parseInt(e.target.value))}
-            className="bg-background-secondary border border-border-default rounded-md px-3 py-2 text-text-primary text-sm"
-          >
-            {Array.from({ length: 18 }, (_, i) => i + 1).map((w) => (
-              <option key={w} value={w}>
-                Week {w}
-              </option>
-            ))}
-          </select>
-          <select
-            value={scoringFormat}
-            onChange={(e) => setScoringFormat(e.target.value as ScoringFormat)}
-            className="bg-background-secondary border border-border-default rounded-md px-3 py-2 text-text-primary text-sm"
-            title="Scoring Format"
-          >
-            <option value="standard">Standard</option>
-            <option value="half_ppr">Half PPR</option>
-            <option value="full_ppr">Full PPR</option>
-          </select>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Players</h1>
+
+        <select
+          value={scoringFormat}
+          onChange={(e) => setScoringFormat(e.target.value)}
+          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+        >
+          <option value="standard">Standard</option>
+          <option value="half_ppr">Half PPR</option>
+          <option value="full_ppr">Full PPR</option>
+        </select>
       </div>
 
-      {/* Search */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search players..."
-          className="w-full bg-background-secondary border border-border-default rounded-lg px-4 py-2 text-text-primary placeholder:text-text-tertiary"
-        />
-      </div>
-
-      {/* Position Filters */}
-      <div className="flex gap-2 mb-4 overflow-x-auto">
-        {(['All', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'] as Position[]).map((pos) => (
+      {/* Position Filter */}
+      <div className="flex gap-2">
+        {(['ALL', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'] as Position[]).map((pos) => (
           <button
             key={pos}
-            onClick={() => setPosition(pos)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-              position === pos
-                ? 'bg-venom-primary text-white'
-                : 'bg-background-secondary text-text-secondary hover:bg-background-tertiary'
+            onClick={() => setPositionFilter(pos)}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              positionFilter === pos
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {pos}
@@ -137,68 +108,35 @@ export default function PlayersPage() {
         ))}
       </div>
 
-      {/* Sort */}
-      <div className="flex gap-2 mb-4 text-sm">
-        <span className="text-text-secondary">Sort by:</span>
-        {(['projected', 'floor', 'ceiling'] as const).map((sort) => (
-          <button
-            key={sort}
-            onClick={() => setSortBy(sort)}
-            className={`px-3 py-1 rounded-md capitalize ${
-              sortBy === sort
-                ? 'text-venom-primary font-semibold'
-                : 'text-text-secondary hover:text-text-primary'
-            }`}
-          >
-            {sort}
-          </button>
-        ))}
+      {/* Search */}
+      <div>
+        <input
+          type="text"
+          placeholder="Search players..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full max-w-sm px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+        />
       </div>
 
-      {/* Players Table */}
-      <Table>
-        <THead>
-          <Tr>
-            <Th>Player</Th>
-            <Th>Team</Th>
-            <Th>Opp</Th>
-            <Th>Proj</Th>
-            <Th>Floor</Th>
-            <Th>Ceil</Th>
-            <Th></Th>
-          </Tr>
-        </THead>
-        <TBody>
-          {filteredPlayers.slice(0, 50).map((player) => (
-            <Tr key={player.player_id}>
-              <Td>
-                <div>
-                  <div className="font-semibold">{player.name}</div>
-                  <div className="text-xs text-text-tertiary">{player.position}</div>
-                </div>
-              </Td>
-              <Td>{player.team}</Td>
-              <Td>{player.opponent || 'BYE'}</Td>
-              <Td>
-                <span className="stat-number">{player.p50?.toFixed(1) || '-'}</span>
-              </Td>
-              <Td className="text-text-secondary">{player.p10?.toFixed(1) || '-'}</Td>
-              <Td className="text-text-secondary">{player.p90?.toFixed(1) || '-'}</Td>
-              <Td>
-                {player.reasons && player.reasons.length > 0 && (
-                  <div className="flex gap-1">
-                    {player.reasons.slice(0, 2).map((reason: string, i: number) => (
-                      <Badge key={i} variant="default">
-                        {reason}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </Td>
-            </Tr>
-          ))}
-        </TBody>
-      </Table>
+      {/* Projections Table */}
+      {filteredRows.length > 0 ? (
+        <ProjectionsTable rows={filteredRows} />
+      ) : (
+        <Alert>
+          <AlertDescription>No players found matching your filters.</AlertDescription>
+        </Alert>
+      )}
+
+      {projectionsData && <TrustSnapshot trust={projectionsData.trust} />}
     </div>
+  );
+}
+
+export default function PlayersPage() {
+  return (
+    <ToolErrorBoundary toolName="Players">
+      <PlayersContent />
+    </ToolErrorBoundary>
   );
 }

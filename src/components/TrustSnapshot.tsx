@@ -1,17 +1,26 @@
 'use client';
 import React from 'react';
+import type { TrustHeaders } from '@/types/api';
 
 type Props = {
-  ts: string;
-  ver: string;
-  stale: boolean;
+  // Legacy props (for backward compatibility)
+  ts?: string;
+  ver?: string;
+  stale?: boolean;
   accuracy7d?: number; // 0.0-1.0, e.g., 0.91 for 91%
   predictionsTracked?: number;
+  // New: Trust headers from API response
+  trust?: TrustHeaders;
 };
 
-export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked }: Props) {
-  const formatted = ts
-    ? new Date(ts).toLocaleString('en-US', {
+export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, trust }: Props) {
+  // Use trust headers if provided, otherwise fall back to legacy props
+  const schemaVersion = trust?.schemaVersion || ver || 'unknown';
+  const lastRefresh = trust?.lastRefresh || ts || new Date().toISOString();
+  const isStale = stale !== undefined ? stale : !!trust?.stale;
+
+  const formatted = lastRefresh
+    ? new Date(lastRefresh).toLocaleString('en-US', {
         month: 'short',
         day: 'numeric',
         hour: 'numeric',
@@ -37,33 +46,38 @@ export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked }
     return formatted;
   };
 
-  const relativeTime = formatRelativeTime(ts);
+  const relativeTime = formatRelativeTime(lastRefresh);
   const accuracyText =
     accuracy7d !== undefined ? `${Math.round(accuracy7d * 100)}% accurate` : null;
 
   return (
-    <div aria-label="Trust Snapshot" className="flex items-center gap-2 text-xs opacity-80">
-      <span className="font-medium">Trust: v{ver}</span>
-      <span>•</span>
-      <time dateTime={ts} title={formatted}>
-        Updated {relativeTime}
-      </time>
-      {accuracyText && (
-        <>
-          <span>•</span>
-          <span className="text-[rgb(var(--cv-primary))]">{accuracyText}</span>
-          {predictionsTracked !== undefined && predictionsTracked > 0 && (
-            <span className="text-[rgb(var(--text-muted))]">
-              ({predictionsTracked.toLocaleString()} predictions)
-            </span>
-          )}
-        </>
-      )}
-      {stale && (
-        <span className="ml-2 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
-          stale
-        </span>
-      )}
+    <div
+      aria-label="Trust Snapshot"
+      className="fixed bottom-4 right-4 bg-card border rounded-lg px-3 py-2 shadow-lg text-xs z-50"
+    >
+      <div className="flex items-center gap-2">
+        <span className="font-medium">Trust: v{schemaVersion}</span>
+        <span>•</span>
+        <time dateTime={lastRefresh} title={formatted}>
+          Updated {relativeTime}
+        </time>
+        {accuracyText && (
+          <>
+            <span>•</span>
+            <span className="text-[rgb(var(--cv-primary))]">{accuracyText}</span>
+            {predictionsTracked !== undefined && predictionsTracked > 0 && (
+              <span className="text-[rgb(var(--text-muted))]">
+                ({predictionsTracked.toLocaleString()} predictions)
+              </span>
+            )}
+          </>
+        )}
+        {isStale && (
+          <span className="ml-2 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
+            stale
+          </span>
+        )}
+      </div>
     </div>
   );
 }

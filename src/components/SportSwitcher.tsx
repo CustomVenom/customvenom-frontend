@@ -3,21 +3,28 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { Sport } from '@/lib/sports/base/SportClient';
 import { SportRegistry } from '@/lib/sports/registry';
+import { useUserStore } from '@/lib/store';
 
 /**
  * Global sport switcher for navigation
  * Shows in top nav, allows switching between NFL and NBA
+ * Integrates with Zustand store for global state
  */
 export function SportSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
+  const { activeSport, setActiveSport } = useUserStore();
 
-  // Detect current sport from URL
+  // Detect current sport from URL or use Zustand store
   // Check for /tools/projections/nfl, /tools/projections/nba, /league/nfl, /league/nba patterns
   const sportMatch = pathname.match(/\/(tools|league)\/(nfl|nba)/);
-  const currentSport: Sport = sportMatch ? (sportMatch[2] as Sport) : 'nfl';
+  const urlSport: Sport = sportMatch ? (sportMatch[2] as Sport) : activeSport;
+  const currentSport: Sport = urlSport || 'nfl';
 
   const handleSportChange = (sport: Sport) => {
+    // Update Zustand store
+    setActiveSport(sport);
+
     // Replace sport in current path
     let newPath = pathname;
 

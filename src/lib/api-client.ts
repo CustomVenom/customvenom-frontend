@@ -1,7 +1,10 @@
 // API Client with request_id logging and request deduplication
 // Wraps fetch to log errors with request_id for debugging and prevent duplicate requests
+// CRITICAL: Do NOT cache responses in KV - use React Query memory cache only
 
-interface ApiResponse<T = unknown> {
+import type { ApiResponse, TrustHeaders } from '@/types/api';
+
+interface LegacyApiResponse<T = unknown> {
   ok: boolean;
   data?: T;
   error?: string;
@@ -13,13 +16,43 @@ interface FetchOptions extends RequestInit {
   deduplicate?: boolean; // Enable request deduplication (default: true)
 }
 
-// Store pending requests to prevent duplicates
-const pendingRequests = new Map<string, Promise<ApiResponse<unknown>>>();
+// Store pending requests to prevent duplicates (using LegacyApiResponse for backward compatibility)
+const pendingRequests = new Map<string, Promise<LegacyApiResponse<unknown>>>();
 
-export async function apiFetch<T = unknown>(
+/**
+ * Fetch with trust headers extraction
+ * Returns data + trust metadata
+ * CRITICAL: Do NOT cache in KV - React Query handles caching
+ */
+export async function fetchWithTrust<T>(
   url: string,
   options: FetchOptions = {},
 ): Promise<ApiResponse<T>> {
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const trust: TrustHeaders = {
+    schemaVersion: response.headers.get('x-schema-version') || 'unknown',
+    lastRefresh: response.headers.get('x-last-refresh') || new Date().toISOString(),
+    requestId: response.headers.get('x-request-id') || 'unknown',
+    stale: response.headers.get('x-stale') || undefined,
+  };
+
+  return { data, trust };
+}
+
+/**
+ * Legacy apiFetch function (kept for backward compatibility)
+ * Returns ok/data/error format
+ */
+export async function apiFetch<T = unknown>(
+  url: string,
+  options: FetchOptions = {},
+): Promise<LegacyApiResponse<T>> {
   const { logErrors = true, deduplicate = true, ...fetchOptions } = options;
 
   // Create cache key from URL + method + body
@@ -38,7 +71,7 @@ export async function apiFetch<T = unknown>(
         }),
       );
     }
-    return pendingRequests.get(cacheKey)! as Promise<ApiResponse<T>>;
+    return pendingRequests.get(cacheKey)! as Promise<LegacyApiResponse<T>>;
   }
 
   // Create new request promise
@@ -86,9 +119,19 @@ export async function apiFetch<T = unknown>(
       }
 
       const data = await response.json();
+
+      // Extract trust headers
+      const trust: TrustHeaders = {
+        schemaVersion: response.headers.get('x-schema-version') || 'unknown',
+        lastRefresh: response.headers.get('x-last-refresh') || new Date().toISOString(),
+        requestId: requestId || 'unknown',
+        stale: response.headers.get('x-stale') || undefined,
+      };
+
       return {
         ok: true,
         data: data as T,
+        trust,
         ...(requestId ? { request_id: requestId } : {}),
       };
     } catch (error) {
@@ -126,7 +169,7 @@ export async function apiFetch<T = unknown>(
 }
 
 // Helper to extract request_id from response or error
-export function getRequestId(response: Response | ApiResponse | Error): string | undefined {
+export function getRequestId(response: Response | LegacyApiResponse | Error): string | undefined {
   if (response instanceof Response) {
     return response.headers.get('x-request-id') || undefined;
   }

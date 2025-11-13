@@ -17,10 +17,10 @@ export default function DemoPage() {
 
   // Sample reasons data
   const sampleReasons: Reason[] = [
-    { label: 'Usage ↑', effect: 2.1, confidence: 0.78 },
-    { label: 'Weather ↓', effect: -1.4, confidence: 0.72 },
-    { label: 'Def matchup', effect: 0.9, confidence: 0.6 }, // This will be filtered (below 0.65)
-    { label: 'Injury concern', effect: -0.8, confidence: 0.68 },
+    { component: 'Usage ↑', delta_points: 2.1, confidence: 0.78, unit: 'points' },
+    { component: 'Weather ↓', delta_points: -1.4, confidence: 0.72, unit: 'points' },
+    { component: 'Def matchup', delta_points: 0.9, confidence: 0.6, unit: 'points' }, // This will be filtered (below 0.65)
+    { component: 'Injury concern', delta_points: -0.8, confidence: 0.68, unit: 'points' },
   ];
 
   const samplePlayers = [
@@ -116,8 +116,8 @@ export default function DemoPage() {
             <p className="text-sm font-medium mb-2">Josh Allen</p>
             <ReasonChips
               reasons={[
-                { label: 'Home game', effect: 1.8, confidence: 0.75 },
-                { label: 'vs weak DEF', effect: 2.3, confidence: 0.81 },
+                { component: 'Home game', delta_points: 1.8, confidence: 0.75, unit: 'points' },
+                { component: 'vs weak DEF', delta_points: 2.3, confidence: 0.81, unit: 'points' },
               ]}
             />
           </div>
@@ -189,8 +189,18 @@ export default function DemoPage() {
                 <td>
                   <ReasonChips
                     reasons={[
-                      { label: 'Home game', effect: 1.8, confidence: 0.75 },
-                      { label: 'vs weak DEF', effect: 2.3, confidence: 0.81 },
+                      {
+                        component: 'Home game',
+                        delta_points: 1.8,
+                        confidence: 0.75,
+                        unit: 'points',
+                      },
+                      {
+                        component: 'vs weak DEF',
+                        delta_points: 2.3,
+                        confidence: 0.81,
+                        unit: 'points',
+                      },
                     ]}
                   />
                 </td>
@@ -201,7 +211,16 @@ export default function DemoPage() {
                 <td className="font-semibold">20.5</td>
                 <td className="text-sm text-gray-500">15.2–26.8</td>
                 <td>
-                  <ReasonChips reasons={[{ label: 'Rush usage', effect: 3.1, confidence: 0.89 }]} />
+                  <ReasonChips
+                    reasons={[
+                      {
+                        component: 'Rush usage',
+                        delta_points: 3.1,
+                        confidence: 0.89,
+                        unit: 'points',
+                      },
+                    ]}
+                  />
                 </td>
                 <td className="text-sm">75%</td>
               </tr>

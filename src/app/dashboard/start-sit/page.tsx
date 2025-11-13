@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
@@ -16,15 +17,25 @@ import { LeagueContextHeader } from '@/components/LeagueContextHeader';
 import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackFeatureInteraction, trackRiskModeChange, trackToolUsage } from '@/lib/analytics';
 import { startSitSummary } from '@/lib/summary';
-import { fetchProjections, mapApiProjectionToRow, type Row, type ApiProjection } from '@/lib/tools';
+import { mapApiProjectionToRow, type Row } from '@/lib/tools';
 import { ConnectionGuard, useIsConnected } from '@/components/ConnectionGuard';
+import { useProjections } from '@/hooks/use-projections';
+import { useUserStore } from '@/lib/store';
+import { PlayerCard } from '@/components/PlayerCard';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
 
 function StartSitContent() {
   const leagueContext = useLeagueContext();
   const isConnected = useIsConnected(leagueContext);
-  const [playerA, setPlayerA] = useState('');
-  const [playerB, setPlayerB] = useState('');
-  const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>('neutral');
+  const searchParams = useSearchParams();
+  const { riskTolerance, setRiskTolerance } = useUserStore();
+
+  // Pre-fill from URL params
+  const [playerA, setPlayerA] = useState(searchParams.get('playerA') || '');
+  const [playerB, setPlayerB] = useState(searchParams.get('playerB') || '');
+  const [risk, setRisk] = useState<'protect' | 'neutral' | 'chase'>(
+    (searchParams.get('risk') as 'protect' | 'neutral' | 'chase') || riskTolerance || 'neutral',
+  );
   const [result, setResult] = useState<{
     winner: 'A' | 'B';
     rowA: Row;
@@ -38,46 +49,42 @@ function StartSitContent() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerRow, setDrawerRow] = useState<Row | null>(null);
 
-  const [suggestions, setSuggestions] = useState<Row[]>([]);
-
   const { setMsg, Toast } = useToast();
+
+  // Use new useProjections hook
+  const { data: projectionsData } = useProjections();
+
+  // Convert projections to Row format for PlayerSearch compatibility
+  const suggestions = useMemo(() => {
+    if (!projectionsData?.data) return [];
+    return projectionsData.data.projections.map((proj) => {
+      const normalizedProjection = {
+        ...proj,
+        schema_version: 'v2.1' as const,
+      };
+      return mapApiProjectionToRow(
+        normalizedProjection as Parameters<typeof mapApiProjectionToRow>[0],
+        'v2.1',
+        projectionsData.data.last_refresh,
+      );
+    });
+  }, [projectionsData]);
 
   useEffect(() => {
     // Track tool view
     trackToolUsage('Start/Sit', { action: 'viewed' });
-
-    fetchProjections()
-      .then((response) => {
-        if (response.ok && response.body) {
-          const body = response.body;
-          const apiProjections = body.projections ?? [];
-          const rows: Row[] = apiProjections.map((proj: ApiProjection) => {
-            const normalizedProjection = {
-              ...proj,
-              schema_version: (proj['schema_version'] ?? 'v2.1') as 'v2.1',
-            };
-
-            return mapApiProjectionToRow(
-              normalizedProjection as Parameters<typeof mapApiProjectionToRow>[0],
-              (body.schema_version ?? 'v2.1') as 'v2.1',
-              body.last_refresh,
-            );
-          });
-          setSuggestions(rows);
-        }
-      })
-      .catch(() => {});
   }, []);
 
-  // Track risk mode changes
+  // Track risk mode changes and sync with Zustand store
   useEffect(() => {
     const previousRisk = risk;
+    setRiskTolerance(risk);
     return () => {
       if (previousRisk !== risk) {
         trackRiskModeChange(risk);
       }
     };
-  }, [risk]);
+  }, [risk, setRiskTolerance]);
 
   async function handleCompare() {
     // Track comparison
@@ -322,57 +329,48 @@ function StartSitContent() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <div
-                className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]"
-                onClick={() => openDrawer(result.rowA)}
-              >
-                <h4 className="font-semibold mb-2">
-                  <button
-                    className="text-[rgb(var(--cv-primary))] hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDrawer(result.rowA);
-                    }}
-                    aria-label={`Open ${result.rowA.player_name} details`}
-                  >
-                    {result.rowA.player_name}
-                  </button>
-                </h4>
-                <div className="text-sm space-y-1">
-                  <div>Floor: {result.rowA.range.p10.toFixed(1)}</div>
-                  <div>Median: {result.rowA.range.p50.toFixed(1)}</div>
-                  <div>Ceiling: {result.rowA.range.p90.toFixed(1)}</div>
-                </div>
-              </div>
+              <PlayerCard
+                player={{
+                  name: result.rowA.player_name || '',
+                  team: result.rowA.team || '',
+                  position: result.rowA.position || '',
+                  opponent: null, // Row type doesn't have opponent
+                  projection: {
+                    floor: result.rowA.range.p10,
+                    median: result.rowA.range.p50,
+                    ceiling: result.rowA.range.p90,
+                  },
+                  chips: result.rowA.explanations || [],
+                  confidence: result.rowA.confidence || 0.7,
+                }}
+                mode="comparison"
+                onDetails={() => openDrawer(result.rowA)}
+              />
 
-              <div
-                className="player-row rounded-lg p-4 bg-[rgb(var(--bg-elevated))] border border-[rgba(148,163,184,0.15)]"
-                onClick={() => openDrawer(result.rowB)}
-              >
-                <h4 className="font-semibold mb-2">
-                  <button
-                    className="text-[rgb(var(--cv-primary))] hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDrawer(result.rowB);
-                    }}
-                    aria-label={`Open ${result.rowB.player_name} details`}
-                  >
-                    {result.rowB.player_name}
-                  </button>
-                </h4>
-                <div className="text-sm space-y-1">
-                  <div>Floor: {result.rowB.range.p10.toFixed(1)}</div>
-                  <div>Median: {result.rowB.range.p50.toFixed(1)}</div>
-                  <div>Ceiling: {result.rowB.range.p90.toFixed(1)}</div>
-                </div>
-              </div>
+              <PlayerCard
+                player={{
+                  name: result.rowB.player_name || '',
+                  team: result.rowB.team || '',
+                  position: result.rowB.position || '',
+                  opponent: null, // Row type doesn't have opponent
+                  projection: {
+                    floor: result.rowB.range.p10,
+                    median: result.rowB.range.p50,
+                    ceiling: result.rowB.range.p90,
+                  },
+                  chips: result.rowB.explanations || [],
+                  confidence: result.rowB.confidence || 0.7,
+                }}
+                mode="comparison"
+                onDetails={() => openDrawer(result.rowB)}
+              />
             </div>
           </div>
         )}
 
         <ActionBar />
         <PlayerDrawer open={drawerOpen} onClose={closeDrawer} row={drawerRow} />
+        {projectionsData && <TrustSnapshot trust={projectionsData.trust} />}
         <Toast />
       </main>
     </ConnectionGuard>

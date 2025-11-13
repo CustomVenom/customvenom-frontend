@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import ActionBar from '@/components/ActionBar';
 import Button from '@/components/Button';
@@ -15,17 +16,32 @@ import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackToolUsage, trackFeatureInteraction } from '@/lib/analytics';
 import { faabSummary } from '@/lib/summary';
 import { ConnectionGuard, useIsConnected } from '@/components/ConnectionGuard';
+import { useUserStore } from '@/lib/store';
+import { getCurrentWeek } from '@/lib/utils';
+import { TrustSnapshot } from '@/components/TrustSnapshot';
+import { queryClient } from '@/app/providers';
 
 function FaabContent() {
   const leagueContext = useLeagueContext();
   const isConnected = useIsConnected(leagueContext);
-  const [player, setPlayer] = useState('');
+  const searchParams = useSearchParams();
+  const { activeLeague } = useUserStore();
+
+  // Pre-fill from URL params
+  const [player, setPlayer] = useState(searchParams.get('target') || '');
   const [budget, setBudget] = useState('100');
   const [result, setResult] = useState<{
     min: number;
     likely: number;
     max: number;
     reason: string;
+  } | null>(null);
+
+  const [trustHeaders, setTrustHeaders] = useState<{
+    schemaVersion: string;
+    lastRefresh: string;
+    requestId: string;
+    stale?: string;
   } | null>(null);
 
   const { setMsg, Toast } = useToast();
@@ -50,10 +66,11 @@ function FaabContent() {
 
     try {
       // Call FAAB API endpoint
+      const currentWeek = getCurrentWeek();
       const params = new URLSearchParams({
         player_id: player, // API may accept player_id or player name
         budget: budget,
-        week: String(leagueContext.week || '2025-10'), // Use current week from context
+        week: String(leagueContext.week || currentWeek), // Use current week from context or utility
       });
 
       const res = await fetch(`/api/faab?${params.toString()}`, {
@@ -64,6 +81,14 @@ function FaabContent() {
       if (!res.ok) {
         throw new Error(`Failed to fetch FAAB bands: ${res.status}`);
       }
+
+      // Extract trust headers
+      setTrustHeaders({
+        schemaVersion: res.headers.get('x-schema-version') || 'unknown',
+        lastRefresh: res.headers.get('x-last-refresh') || new Date().toISOString(),
+        requestId: res.headers.get('x-request-id') || 'unknown',
+        stale: res.headers.get('x-stale') || undefined,
+      });
 
       const data = await res.json();
 
@@ -98,6 +123,11 @@ function FaabContent() {
             'Estimated bid range based on remaining budget. API response format may need adjustment.',
         });
       }
+
+      // Invalidate roster query after bid calculation (for cache invalidation)
+      if (activeLeague) {
+        queryClient.invalidateQueries({ queryKey: ['roster', activeLeague] });
+      }
     } catch (error) {
       console.error('FAAB calculation error:', error);
       setMsg('Failed to calculate FAAB bid. Please try again.');
@@ -110,7 +140,7 @@ function FaabContent() {
         reason: 'Estimated bid range based on remaining budget',
       });
     }
-  }, [player, budget, leagueContext.week, setMsg]);
+  }, [player, budget, leagueContext.week, activeLeague, setMsg]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -281,6 +311,16 @@ function FaabContent() {
         )}
 
         <ActionBar />
+        {trustHeaders && (
+          <TrustSnapshot
+            trust={{
+              schemaVersion: trustHeaders.schemaVersion,
+              lastRefresh: trustHeaders.lastRefresh,
+              requestId: trustHeaders.requestId,
+              stale: trustHeaders.stale,
+            }}
+          />
+        )}
         <Toast />
       </main>
     </ConnectionGuard>
