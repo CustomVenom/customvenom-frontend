@@ -313,7 +313,7 @@ export default function AccuracyDashboard() {
       )}
 
       {/* Confidence Buckets */}
-      {data?.metrics?.length > 0 && (
+      {(data?.metrics?.length ?? 0) > 0 && (
         <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
           <h3 className="text-lg font-semibold mb-4">Hit Rate by Confidence Bucket</h3>
           <div className="grid grid-cols-3 gap-4">
