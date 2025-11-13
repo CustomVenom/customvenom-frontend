@@ -2,7 +2,12 @@
 
 import { ConnectLeagueButton } from '@/components/ConnectLeagueButton';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
-import { DashboardHeader, DashboardToolGrid } from '@/components/dashboard';
+import {
+  DashboardHeader,
+  DashboardToolGrid,
+  StandingsTable,
+  MatchupPreview,
+} from '@/components/dashboard';
 import { RosterViewer } from '@/components/roster/RosterViewer';
 // Removed useSession - dashboard is public, Yahoo OAuth only
 // import { useSession } from '@/hooks/useSession';
@@ -573,10 +578,10 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* League Standings (placeholder) */}
+                    {/* League Standings */}
                     <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
                       <h2 className="text-lg font-semibold text-gray-100 mb-3">League Standings</h2>
-                      <p className="text-sm text-gray-400">Standings will appear here.</p>
+                      <StandingsTable leagueKey={selectedTeamObj?.league_key || null} />
                     </div>
 
                     {/* Player News (placeholder) */}
@@ -601,15 +606,18 @@ export default function DashboardPage() {
                       </div>
                     )}
 
-                    {/* Matchup Preview (placeholder) */}
-                    <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
-                      <h2 className="text-lg font-semibold text-gray-100 mb-3">
-                        This Week's Matchup
-                      </h2>
-                      <p className="text-sm text-gray-400">
-                        Your matchup preview will appear here.
-                      </p>
-                    </div>
+                    {/* Matchup Preview */}
+                    {selectedTeam && (
+                      <div className="bg-field-800/60 border border-field-700 rounded-xl p-4">
+                        <h2 className="text-lg font-semibold text-gray-100 mb-3">
+                          This Week's Matchup
+                        </h2>
+                        <MatchupPreview
+                          teamKey={selectedTeam}
+                          leagueKey={selectedTeamObj?.league_key || null}
+                        />
+                      </div>
+                    )}
 
                     {/* Team Stats - Using DashboardMetrics */}
                     {selectedTeam && (

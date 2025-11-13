@@ -31,12 +31,7 @@ const UncertaintyBand = dynamic(() => import('@/components/UncertaintyBand'), {
 });
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { type Entitlements } from '@/lib/entitlements';
-import {
-  fetchProjections,
-  mapApiProjectionToRow,
-  type Row,
-  type FetchProjectionsResult,
-} from '@/lib/tools';
+import { fetchProjections, mapApiProjectionToRow, type Row } from '@/lib/tools';
 
 function ProjectionsPageInner() {
   const [rows, setRows] = useState<Row[]>([]);
@@ -66,17 +61,17 @@ function ProjectionsPageInner() {
           mapApiProjectionToRow(
             {
               ...proj,
-              schema_version: (proj.schema_version ?? 'v2.1') as 'v2.1',
+              schema_version: (proj['schema_version'] ?? 'v2.1') as 'v2.1',
             } as Parameters<typeof mapApiProjectionToRow>[0],
-            result.schemaVersion,
-            result.lastRefresh,
+            result.body.schema_version ?? 'v2.1',
+            result.body.last_refresh ?? new Date().toISOString(),
           ),
         );
 
         setRows(mappedRows);
-        setSchemaVersion(result.schemaVersion);
-        setLastRefresh(result.lastRefresh);
-        setIsStale(result.stale);
+        setSchemaVersion(result.body.schema_version ?? 'v2.1');
+        setLastRefresh(result.body.last_refresh ?? new Date().toISOString());
+        setIsStale(false); // Could be determined from x-stale header if needed
         setIsDemoMode(false); // Could be set from header if available
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch projections');
@@ -139,22 +134,22 @@ function ProjectionsPageInner() {
               setError(null);
               setLoading(true);
               fetchProjections({ week: selectedWeek })
-                .then((result: FetchProjectionsResult) => {
+                .then((result) => {
                   if (result.ok && result.body) {
-                    const mappedRows = result.body.projections.map((proj) =>
+                    const mappedRows = result.body.projections.map((proj: ApiProjection) =>
                       mapApiProjectionToRow(
                         {
                           ...proj,
-                          schema_version: (proj.schema_version ?? 'v2.1') as 'v2.1',
+                          schema_version: (proj['schema_version'] ?? 'v2.1') as 'v2.1',
                         } as Parameters<typeof mapApiProjectionToRow>[0],
-                        result.schemaVersion,
-                        result.lastRefresh,
+                        result.body.schema_version ?? 'v2.1',
+                        result.body.last_refresh ?? new Date().toISOString(),
                       ),
                     );
                     setRows(mappedRows);
-                    setSchemaVersion(result.schemaVersion);
-                    setLastRefresh(result.lastRefresh);
-                    setIsStale(result.stale);
+                    setSchemaVersion(result.body.schema_version ?? 'v2.1');
+                    setLastRefresh(result.body.last_refresh ?? new Date().toISOString());
+                    setIsStale(false);
                   } else {
                     throw new Error(`Failed to fetch: ${result.status}`);
                   }

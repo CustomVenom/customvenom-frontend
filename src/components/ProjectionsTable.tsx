@@ -216,7 +216,11 @@ export default function ProjectionsTable({ rows }: Props) {
                       {visible['reasons'] !== false && chips.length > 0 && (
                         <ExplanationChips explanations={chips} />
                       )}
-                      <ProjectionRibbon floor={r.range.p10} median={r.range.p50} ceiling={r.range.p90} />
+                      <ProjectionRibbon
+                        floor={r.range.p10}
+                        median={r.range.p50}
+                        ceiling={r.range.p90}
+                      />
                     </td>
                   )}
 

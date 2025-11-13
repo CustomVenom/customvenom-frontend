@@ -27,7 +27,7 @@ const format = url.searchParams.get('format') || 'half_ppr';
 if (!['standard', 'half_ppr', 'full_ppr'].includes(format)) {
   return new Response(
     JSON.stringify({ error: 'Invalid format. Use: standard, half_ppr, full_ppr' }),
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
@@ -39,15 +39,15 @@ if (!['standard', 'half_ppr', 'full_ppr'].includes(format)) {
 ```tsx
 function applyPPR(player: Player, format: string): Player {
   if (format === 'standard') return player;
-  
+
   const multiplier = format === 'half_ppr' ? 0.5 : 1.0;
-  
+
   if (['RB', 'WR', 'TE'].includes(player.position)) {
-    player.p50 += (player.receptions_p50 * multiplier);
-    player.p10 += (player.receptions_p10 * multiplier);
-    player.p90 += (player.receptions_p90 * multiplier);
+    player.p50 += player.receptions_p50 * multiplier;
+    player.p10 += player.receptions_p10 * multiplier;
+    player.p90 += player.receptions_p90 * multiplier;
   }
-  
+
   return player;
 }
 ```
@@ -75,18 +75,18 @@ curl "http://localhost:8787/projections?week=2025-10&format=standard"
 # Half PPR
 curl "http://localhost:8787/projections?week=2025-10&format=half_ppr"
 
-# Full PPR  
+# Full PPR
 curl "http://localhost:8787/projections?week=2025-10&format=full_ppr"
 ```
 
 ## Acceptance Criteria
 
-- [ ]  Format parameter accepted and validated
-- [ ]  Standard/Half PPR/Full PPR scoring applied correctly
-- [ ]  Invalid format returns 400 error
-- [ ]  RB/WR/TE positions show PPR adjustments
-- [ ]  QB/K/DEF positions unchanged
-- [ ]  Response includes `format` field
+- [ ] Format parameter accepted and validated
+- [ ] Standard/Half PPR/Full PPR scoring applied correctly
+- [ ] Invalid format returns 400 error
+- [ ] RB/WR/TE positions show PPR adjustments
+- [ ] QB/K/DEF positions unchanged
+- [ ] Response includes `format` field
 
 ## Deployment
 
@@ -94,7 +94,6 @@ curl "http://localhost:8787/projections?week=2025-10&format=full_ppr"
 wrangler deploy --env staging
 wrangler deploy --env production
 ```
-
 
 # Opponent Field (NFL Schedule Lookup)
 
@@ -135,11 +134,11 @@ const NFL_SCHEDULE_2025: ScheduleGame[] = [
 
 export function getOpponent(team: string, week: number): string {
   const game = NFL_SCHEDULE_2025.find(
-    g => g.week === week && (g.home_team === team || g.away_team === team)
+    (g) => g.week === week && (g.home_team === team || g.away_team === team),
   );
-  
+
   if (!game) return 'BYE';
-  
+
   if (game.home_team === team) {
     return `vs ${game.away_team}`;
   } else {
@@ -181,12 +180,12 @@ curl "http://localhost:8787/projections?week=2025-10" | jq '.projections[0].oppo
 
 ## Acceptance Criteria
 
-- [ ]  All players include `opponent` field
-- [ ]  Home games show `vs TEAM` format
-- [ ]  Away games show `@TEAM` format
-- [ ]  Bye weeks show `BYE`
-- [ ]  Schedule accurate for 2025 season weeks 1-18
-- [ ]  Works for all 32 NFL teams
+- [ ] All players include `opponent` field
+- [ ] Home games show `vs TEAM` format
+- [ ] Away games show `@TEAM` format
+- [ ] Bye weeks show `BYE`
+- [ ] Schedule accurate for 2025 season weeks 1-18
+- [ ] Works for all 32 NFL teams
 
 ## Deployment
 
@@ -227,22 +226,25 @@ const app = new Hono();
 app.get('/matchup', async (c) => {
   const week = c.req.query('week') || getCurrentWeek();
   const cookie = c.req.header('Cookie');
-  
+
   // Check auth
   if (!cookie?.includes('cv_yahoo')) {
-    return c.json({
-      authenticated: false,
-      error: 'Yahoo authentication required',
-      error_code: 'AUTH_REQUIRED'
-    }, 401);
+    return c.json(
+      {
+        authenticated: false,
+        error: 'Yahoo authentication required',
+        error_code: 'AUTH_REQUIRED',
+      },
+      401,
+    );
   }
-  
+
   // Fetch from Yahoo API
   const matchupData = await fetchYahooMatchup(cookie, week);
-  
+
   // Enrich with projections
   const enriched = await enrichMatchupWithProjections(matchupData, week);
-  
+
   return c.json({
     week: parseInt(week),
     format: enriched.format,
@@ -250,7 +252,7 @@ app.get('/matchup', async (c) => {
     authenticated: true,
     your_team: enriched.your_team,
     opponent: enriched.opponent,
-    win_probability: calculateWinProb(enriched.your_team, enriched.opponent)
+    win_probability: calculateWinProb(enriched.your_team, enriched.opponent),
   });
 });
 
@@ -267,9 +269,9 @@ export async function fetchYahooMatchup(cookie: string, week: string) {
   // GET /fantasy/v2/team/{team_key}/matchups;weeks={week}
   const response = await fetch(
     `https://fantasysports.yahooapis.com/fantasy/v2/team/${teamKey}/matchups;weeks=${week}`,
-    { headers: { Cookie: cookie } }
+    { headers: { Cookie: cookie } },
   );
-  
+
   const xml = await response.text();
   return parseYahooMatchup(xml);
 }
@@ -281,23 +283,17 @@ export async function fetchYahooMatchup(cookie: string, week: string) {
 async function enrichMatchupWithProjections(matchup: any, week: string) {
   // Load projections for this week
   const projections = await loadProjections(week);
-  
+
   // Enrich your team's roster
-  matchup.your_team.starters = enrichPlayers(
-    matchup.your_team.starters,
-    projections
-  );
-  
+  matchup.your_team.starters = enrichPlayers(matchup.your_team.starters, projections);
+
   // Enrich opponent's roster
-  matchup.opponent.starters = enrichPlayers(
-    matchup.opponent.starters,
-    projections
-  );
-  
+  matchup.opponent.starters = enrichPlayers(matchup.opponent.starters, projections);
+
   // Calculate totals
   matchup.your_team.projected_total = sumProjections(matchup.your_team.starters);
   matchup.opponent.projected_total = sumProjections(matchup.opponent.starters);
-  
+
   return matchup;
 }
 ```
@@ -325,14 +321,14 @@ curl "http://localhost:8787/yahoo/matchup?week=10"
 
 ## Acceptance Criteria
 
-- [ ]  Endpoint exists at `/yahoo/matchup`
-- [ ]  Accepts `week` parameter
-- [ ]  Returns 401 when not authenticated
-- [ ]  Returns matchup with both teams
-- [ ]  All players enriched with projections
-- [ ]  Projected totals calculated
-- [ ]  Includes `last_updated` timestamp
-- [ ]  Future weeks work (if scheduled)
+- [ ] Endpoint exists at `/yahoo/matchup`
+- [ ] Accepts `week` parameter
+- [ ] Returns 401 when not authenticated
+- [ ] Returns matchup with both teams
+- [ ] All players enriched with projections
+- [ ] Projected totals calculated
+- [ ] Includes `last_updated` timestamp
+- [ ] Future weeks work (if scheduled)
 
 ## Deployment
 
@@ -368,7 +364,7 @@ Ensure all projection endpoints accept and validate `?week=N` parameter.
 ```tsx
 export function getCurrentWeek(): number {
   // Calculate current NFL week based on date
-  const seasonStart = new Date('2025-09-05');  // Week 1 Thursday
+  const seasonStart = new Date('2025-09-05'); // Week 1 Thursday
   const now = new Date();
   const diff = now.getTime() - seasonStart.getTime();
   const weekNumber = Math.floor(diff / (7 * 24 * 60 * 60 * 1000)) + 1;
@@ -377,12 +373,12 @@ export function getCurrentWeek(): number {
 
 export function validateWeek(week: string | null): number {
   if (!week) return getCurrentWeek();
-  
+
   const weekNum = parseInt(week);
   if (isNaN(weekNum) || weekNum < 1 || weekNum > 18) {
     throw new Error('Invalid week parameter. Must be 1-18.');
   }
-  
+
   return weekNum;
 }
 ```
@@ -402,10 +398,13 @@ try {
   const week = validateWeek(c.req.query('week'));
   // ... use week
 } catch (error) {
-  return c.json({
-    error: error.message,
-    error_code: 'INVALID_PARAMETER'
-  }, 400);
+  return c.json(
+    {
+      error: error.message,
+      error_code: 'INVALID_PARAMETER',
+    },
+    400,
+  );
 }
 ```
 
@@ -416,12 +415,15 @@ const key = `projections/${week}/baseline.json`;
 const obj = await c.env.R2_BUCKET.get(key);
 
 if (!obj) {
-  return c.json({
-    week,
-    error: `Projections not available for Week ${week} yet`,
-    error_code: 'PROJECTIONS_NOT_READY',
-    last_available_week: getCurrentWeek()
-  }, 404);
+  return c.json(
+    {
+      week,
+      error: `Projections not available for Week ${week} yet`,
+      error_code: 'PROJECTIONS_NOT_READY',
+      last_available_week: getCurrentWeek(),
+    },
+    404,
+  );
 }
 ```
 
@@ -445,11 +447,11 @@ curl "http://localhost:8787/projections?week=18"
 
 ## Acceptance Criteria
 
-- [ ]  `?week=N` parameter works on all endpoints
-- [ ]  Missing week defaults to current NFL week
-- [ ]  Invalid weeks return 400 error
-- [ ]  Future weeks return 404 with helpful message
-- [ ]  Week validation consistent across endpoints
+- [ ] `?week=N` parameter works on all endpoints
+- [ ] Missing week defaults to current NFL week
+- [ ] Invalid weeks return 400 error
+- [ ] Future weeks return 404 with helpful message
+- [ ] Week validation consistent across endpoints
 
 ## Deployment
 
@@ -498,7 +500,7 @@ const players = [yahooRoster.players.map](http://yahooRoster.players.map)(p => (
 export async function getInjuryStatus(playerId: string): Promise<string | null> {
   // Load from NFLverse injury reports
   const injuries = await loadInjuryReports();
-  const player = injuries.find(i => i.player_id === playerId);
+  const player = injuries.find((i) => i.player_id === playerId);
   return player?.status || null;
 }
 ```
@@ -523,11 +525,11 @@ curl "http://localhost:8787/projections?week=2025-10" | \
 
 ## Acceptance Criteria
 
-- [ ]  Players include `status` field
-- [ ]  Status values: "Q", "O", "D", "IR", or null
-- [ ]  Data updates daily
-- [ ]  Healthy players show `null`
-- [ ]  Works in both roster and projections endpoints
+- [ ] Players include `status` field
+- [ ] Status values: "Q", "O", "D", "IR", or null
+- [ ] Data updates daily
+- [ ] Healthy players show `null`
+- [ ] Works in both roster and projections endpoints
 
 ## Deployment
 
@@ -569,7 +571,7 @@ Add `last_updated` and `schema_version` to all GET responses.
 return c.json({
   // ... existing data
   schema_version: 'v1',
-  last_updated: new Date().toISOString()
+  last_updated: new Date().toISOString(),
 });
 ```
 
@@ -600,11 +602,11 @@ curl "http://localhost:8787/yahoo/standings" | jq '{schema_version, last_updated
 
 ## Acceptance Criteria
 
-- [ ]  All GET endpoints include `last_updated`
-- [ ]  All GET endpoints include `schema_version`
-- [ ]  Timestamps in ISO 8601 format
-- [ ]  Cache headers set appropriately
-- [ ]  Headers include `x-last-refresh`
+- [ ] All GET endpoints include `last_updated`
+- [ ] All GET endpoints include `schema_version`
+- [ ] Timestamps in ISO 8601 format
+- [ ] Cache headers set appropriately
+- [ ] Headers include `x-last-refresh`
 
 ## Deployment
 

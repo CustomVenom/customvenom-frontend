@@ -29,4 +29,3 @@ export function ProjectionRibbon({ floor, median, ceiling }: ProjectionRibbonPro
     </div>
   );
 }
-

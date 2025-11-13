@@ -23,7 +23,8 @@ export function ProtectionModeBadge({ isStale, className = '' }: ProtectionModeB
           </div>
         </TooltipTrigger>
         <TooltipContent sideOffset={6}>
-          Data may be stale due to upstream issues. We're showing cached data to keep the service running.
+          Data may be stale due to upstream issues. We're showing cached data to keep the service
+          running.
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

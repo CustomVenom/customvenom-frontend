@@ -20,7 +20,10 @@ export function ScoringFormatSelector({ value, onChange, disabled }: ScoringForm
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="scoring-format" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label
+        htmlFor="scoring-format"
+        className="text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
         Scoring:
       </label>
       <select
@@ -39,4 +42,3 @@ export function ScoringFormatSelector({ value, onChange, disabled }: ScoringForm
     </div>
   );
 }
-

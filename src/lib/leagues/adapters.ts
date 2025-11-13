@@ -23,8 +23,8 @@ async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 // ADAPTER: Yahoo via Workers API
-// Expectation: Workers exposes a read endpoint using y_at (server reads cookie/header/session)
-// Example endpoint (implement in Workers): GET /api/providers/yahoo/leagues
+// Expectation: Workers exposes a read endpoint using cv_yahoo cookie (canonical cookie name)
+// Example endpoint: GET /api/providers/yahoo/leagues
 type YahooLeagueDto = {
   league_id: string;
   league_name: string;
@@ -45,7 +45,7 @@ export interface ProviderAdapter {
 export function getYahooAdapter(apiBase: string): ProviderAdapter {
   return {
     async listLeagues(): Promise<LeagueSummary[]> {
-      // Call your Workers API; it should use the user context to read y_at
+      // Call Workers API; it reads cv_yahoo cookie from request headers
       const data = await apiJson<YahooLeaguesResponse>(`${apiBase}/yahoo/leagues?format=json`);
       const out: LeagueSummary[] = [];
       for (const lg of data.leagues ?? []) {

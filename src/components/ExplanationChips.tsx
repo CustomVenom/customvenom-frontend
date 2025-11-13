@@ -38,4 +38,3 @@ function formatChipText(chip: Reason) {
   }
   return `${chip.component} ${sign}${(Math.abs(delta) * 100).toFixed(1)}%`;
 }
-

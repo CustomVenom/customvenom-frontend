@@ -24,4 +24,3 @@ function Badge({ intent = 'neutral', className, ...props }: Props) {
 }
 
 export default Badge;
-

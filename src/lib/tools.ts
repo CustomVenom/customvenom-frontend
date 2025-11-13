@@ -95,10 +95,7 @@ export function mapApiProjectionToRow(
   lastRefresh: string,
 ): Row {
   const playerName =
-    apiProj.name ??
-    apiProj.player_name ??
-    apiProj.player_id.split(':').pop() ??
-    apiProj.player_id;
+    apiProj.name ?? apiProj.player_name ?? apiProj.player_id.split(':').pop() ?? apiProj.player_id;
 
   // Map floor/median/ceiling to range
   const floor = apiProj.floor ?? apiProj.range?.p10 ?? 0;
