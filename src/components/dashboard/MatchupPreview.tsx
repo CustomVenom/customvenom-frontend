@@ -58,7 +58,7 @@ export function MatchupPreview({
           setMatchup(null);
         }
       } catch (err) {
-        console.error('[MatchupPreview] Error fetching matchup:', err);
+        logger.error('[MatchupPreview] Error fetching matchup', { error: err instanceof Error ? err.message : String(err) });
         setError(err instanceof Error ? err.message : 'Failed to load matchup');
         setMatchup(null);
       } finally {

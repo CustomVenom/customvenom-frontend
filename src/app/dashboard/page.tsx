@@ -8,6 +8,7 @@ import {
   StandingsTable,
   MatchupPreview,
 } from '@/components/dashboard';
+import { logger } from '@/lib/logger';
 import { RosterViewer } from '@/components/roster/RosterViewer';
 // Removed useSession - dashboard is public, Yahoo OAuth only
 // import { useSession } from '@/hooks/useSession';
@@ -225,14 +226,14 @@ export default function DashboardPage() {
       const team = teams.find((t) => t.team_key === teamKey);
 
       if (!team) {
-        console.error('[handleSelectTeam] Team not found:', teamKey);
+        logger.error('[handleSelectTeam] Team not found', { team_key: teamKey });
         return;
       }
 
       // Use the league_key we tagged when fetching teams
       // This is the correct league the team was fetched from
       const leagueKey = team.league_key;
-      console.log('[handleSelectTeam]', { teamKey, leagueKey, teamName: team.name });
+      logger.debug('[handleSelectTeam]', { teamKey, leagueKey, teamName: team.name });
 
       const res = await fetch(`${API_BASE}/api/session/selection`, {
         method: 'POST',
@@ -253,10 +254,10 @@ export default function DashboardPage() {
           }),
         );
       } else {
-        console.error('Failed to save team selection, status:', res.status);
+        logger.error('Failed to save team selection', { status: res.status });
       }
     } catch (e) {
-      console.error('Failed to save team:', e);
+      logger.error('Failed to save team', { error: e instanceof Error ? e.message : String(e) });
     }
   };
 

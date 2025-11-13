@@ -3,6 +3,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { logger } from '@/lib/logger';
 import { getToken } from 'next-auth/jwt';
 
 // Public routes - always allowed
@@ -54,7 +55,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/account')) {
     const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET'];
     if (!secret) {
-      console.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET');
+      logger.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET');
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -132,11 +133,11 @@ export async function GET(request: NextRequest) {
           });
         } else {
           const errorText = await mapResponse.text().catch(() => 'Unable to read error response');
-          console.error('[roster] Mapping endpoint failed:', mapResponse.status, errorText);
+          logger.error('[roster] Mapping endpoint failed', { status: mapResponse.status, error: errorText.substring(0, 200) });
           // Continue with unmapped players
         }
       } catch (e) {
-        console.error('[/api/roster] Failed to map player IDs:', e);
+        logger.error('[/api/roster] Failed to map player IDs', { error: e instanceof Error ? e.message : String(e) });
         // Continue without mappings
       }
     }
@@ -201,11 +202,11 @@ export async function GET(request: NextRequest) {
           );
         } else {
           const errorText = await projResponse.text().catch(() => 'Unable to read error response');
-          console.error('[roster] Projection endpoint failed:', projResponse.status, errorText);
+          logger.error('[roster] Projection endpoint failed', { status: projResponse.status, error: errorText.substring(0, 200) });
           // Continue without projections
         }
       } catch (e) {
-        console.error('[/api/roster] Failed to fetch projections:', e);
+        logger.error('[/api/roster] Failed to fetch projections', { error: e instanceof Error ? e.message : String(e) });
         // Continue without projections
       }
 
@@ -260,7 +261,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[/api/roster] Error:', error);
+    logger.error('[/api/roster] Error', { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: 'Failed to fetch roster' }, { status: 500 });
   }
 }

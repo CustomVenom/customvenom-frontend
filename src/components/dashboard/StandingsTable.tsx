@@ -57,7 +57,7 @@ export function StandingsTable({ leagueKey }: { leagueKey: string | null }) {
           setStandings([]);
         }
       } catch (err) {
-        console.error('[StandingsTable] Error fetching standings:', err);
+        logger.error('[StandingsTable] Error fetching standings', { error: err instanceof Error ? err.message : String(err) });
         setError(err instanceof Error ? err.message : 'Failed to load standings');
         setStandings([]);
       } finally {

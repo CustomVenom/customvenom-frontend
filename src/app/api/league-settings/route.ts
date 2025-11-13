@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[/api/league-settings] Error:', error);
+    logger.error('[/api/league-settings] Error', { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: 'Failed to fetch league settings' }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlatformSelector } from '@/components/PlatformSelector';
+import { logger } from '@/lib/logger';
 
 type Platform = 'yahoo' | 'espn' | 'sleeper';
 
@@ -13,7 +14,7 @@ export function ConnectLeagueButton() {
     // Yahoo is handled directly in PlatformSelector
     // Future platforms will be handled here
     if (platform !== 'yahoo') {
-      console.log('Platform not yet implemented:', platform);
+      logger.info('Platform not yet implemented', { platform });
     }
   };
 

@@ -16,7 +16,7 @@ import { LeagueContextHeader } from '@/components/LeagueContextHeader';
 import { useLeagueContext } from '@/hooks/useLeagueContext';
 import { trackFeatureInteraction, trackRiskModeChange, trackToolUsage } from '@/lib/analytics';
 import { startSitSummary } from '@/lib/summary';
-import { fetchProjections, mapApiProjectionToRow, type Row } from '@/lib/tools';
+import { fetchProjections, mapApiProjectionToRow, type Row, type ApiProjection } from '@/lib/tools';
 import { ConnectionGuard, useIsConnected } from '@/components/ConnectionGuard';
 
 function StartSitContent() {

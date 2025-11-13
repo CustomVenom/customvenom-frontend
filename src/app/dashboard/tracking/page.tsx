@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { WeeklyTrackingTable } from '@/components/tracking/WeeklyTrackingTable';
 import { useEffect, useState } from 'react';
+import { logger } from '@/lib/logger';
 
 export default function TrackingPage() {
   const [teamKey, setTeamKey] = useState<string | undefined>(undefined);
@@ -20,7 +21,7 @@ export default function TrackingPage() {
           setTeamKey(data.selection?.teamKey || undefined);
         }
       } catch (e) {
-        console.error('Failed to get team selection:', e);
+        logger.error('Failed to get team selection', { error: e instanceof Error ? e.message : String(e) });
       } finally {
         setLoading(false);
       }

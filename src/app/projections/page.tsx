@@ -31,7 +31,7 @@ const UncertaintyBand = dynamic(() => import('@/components/UncertaintyBand'), {
 });
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { type Entitlements } from '@/lib/entitlements';
-import { fetchProjections, mapApiProjectionToRow, type Row } from '@/lib/tools';
+import { fetchProjections, mapApiProjectionToRow, type Row, type ApiProjection } from '@/lib/tools';
 
 function ProjectionsPageInner() {
   const [rows, setRows] = useState<Row[]>([]);
@@ -88,7 +88,7 @@ function ProjectionsPageInner() {
           setEntitlements(userEntitlements);
         }
       } catch (error) {
-        console.error('Failed to load entitlements:', error);
+        logger.error('Failed to load entitlements', { error: error instanceof Error ? error.message : String(error) });
       }
     };
 
@@ -208,7 +208,7 @@ function ProjectionsPageInner() {
           decisions={importantDecisions}
           onDecisionClick={(decision) => {
             // Scroll to player in table or open drawer
-            console.log('Decision clicked:', decision);
+            logger.debug('Decision clicked', { decision });
           }}
         />
       )}
