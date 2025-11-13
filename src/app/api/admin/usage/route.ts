@@ -5,7 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { isAdminEmail } from '@/lib/rbac';
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || process.env.API_BASE_STAGING || 'https://api.customvenom.com';
+  process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE_STAGING'] || 'https://api.customvenom.com';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get JWT token from session (if available) or use API key
-    const token = (session as any)?.accessToken;
+    const token = (session as { accessToken?: string })?.accessToken;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
