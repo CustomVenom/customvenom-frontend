@@ -46,7 +46,7 @@ export class NFLClient extends SportClient {
       query.set('league_key', params.leagueKey);
     }
 
-    const data = await this.api.get(`/projections?${query}`) as {
+    const data = (await this.api.get(`/projections?${query}`)) as {
       schema_version?: string;
       last_refresh?: string;
       last_updated?: string;
@@ -72,7 +72,7 @@ export class NFLClient extends SportClient {
     return {
       schema_version: data.schema_version || 'v2.1',
       last_refresh: data.last_refresh || data.last_updated || new Date().toISOString(),
-      sport: data.sport || 'nfl',
+      sport: (data.sport === 'nba' ? 'nba' : 'nfl') as Sport,
       week: data.week_label || params.week,
       scoring_format: data.scoring_format || params.scoringFormat || this.getDefaultScoringFormat(),
       projections: (data.projections || []).map((proj) => ({
