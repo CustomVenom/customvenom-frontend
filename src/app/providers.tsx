@@ -15,15 +15,5 @@ export const queryClient = new QueryClient({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  // Prefetch common queries on mount (warm cache)
-  useEffect(() => {
-    // Prefetch projections for current week (if API base is available)
-    const apiBase = process.env['NEXT_PUBLIC_API_BASE'];
-    if (apiBase) {
-      // This will be handled by individual hooks, but we can prefetch here too
-      // queryClient.prefetchQuery(['projections', getCurrentWeek()]);
-    }
-  }, []);
-
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
