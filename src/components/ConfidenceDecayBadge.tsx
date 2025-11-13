@@ -7,7 +7,10 @@ interface ConfidenceDecayBadgeProps {
   };
 }
 
-export function ConfidenceDecayBadge({ confidence: _confidence, decayMetadata }: ConfidenceDecayBadgeProps) {
+export function ConfidenceDecayBadge({
+  confidence: _confidence,
+  decayMetadata,
+}: ConfidenceDecayBadgeProps) {
   if (decayMetadata.decay_applied === 0) return null;
 
   return (

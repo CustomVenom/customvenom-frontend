@@ -1,11 +1,13 @@
 // Proxy to Workers API admin usage history endpoint
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { isAdminEmail } from '@/lib/rbac';
 
 const API_BASE =
-  process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE_STAGING'] || 'https://api.customvenom.com';
+  process.env['NEXT_PUBLIC_API_BASE'] ||
+  process.env['API_BASE_STAGING'] ||
+  'https://api.customvenom.com';
 
 export async function GET(request: NextRequest) {
   try {
