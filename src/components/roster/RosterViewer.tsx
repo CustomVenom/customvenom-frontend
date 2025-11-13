@@ -75,8 +75,8 @@ export function RosterViewer() {
   const endIndex = startIndex + perPage;
 
   // Flatten grouped roster for pagination
-  const flatRoster = useMemo(() => {
-    return sortedPositions.flatMap((pos) => groupedByPosition[pos]);
+  const flatRoster = useMemo((): Player[] => {
+    return sortedPositions.flatMap((pos) => groupedByPosition[pos] || []);
   }, [sortedPositions, groupedByPosition]);
 
   const paginatedRoster = flatRoster.slice(startIndex, endIndex);
