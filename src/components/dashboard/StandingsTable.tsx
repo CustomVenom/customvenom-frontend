@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { logger } from '@/lib/logger';
 import { Table, THead, Th, TBody, Tr, Td } from '@/components/ui/Table';
 
 interface Standing {
@@ -57,7 +58,9 @@ export function StandingsTable({ leagueKey }: { leagueKey: string | null }) {
           setStandings([]);
         }
       } catch (err) {
-        logger.error('[StandingsTable] Error fetching standings', { error: err instanceof Error ? err.message : String(err) });
+        logger.error('[StandingsTable] Error fetching standings', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(err instanceof Error ? err.message : 'Failed to load standings');
         setStandings([]);
       } finally {

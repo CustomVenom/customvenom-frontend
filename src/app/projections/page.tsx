@@ -31,6 +31,7 @@ const UncertaintyBand = dynamic(() => import('@/components/UncertaintyBand'), {
 });
 import { GlossaryTip } from '@/components/ui/GlossaryTip';
 import { type Entitlements } from '@/lib/entitlements';
+import { logger } from '@/lib/logger';
 import { fetchProjections, mapApiProjectionToRow, type Row, type ApiProjection } from '@/lib/tools';
 
 function ProjectionsPageInner() {
@@ -88,7 +89,9 @@ function ProjectionsPageInner() {
           setEntitlements(userEntitlements);
         }
       } catch (error) {
-        logger.error('Failed to load entitlements', { error: error instanceof Error ? error.message : String(error) });
+        logger.error('Failed to load entitlements', {
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     };
 

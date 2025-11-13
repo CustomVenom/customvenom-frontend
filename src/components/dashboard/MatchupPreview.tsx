@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { logger } from '@/lib/logger';
 
 interface MatchupTeam {
   team_key: string;
@@ -58,7 +59,9 @@ export function MatchupPreview({
           setMatchup(null);
         }
       } catch (err) {
-        logger.error('[MatchupPreview] Error fetching matchup', { error: err instanceof Error ? err.message : String(err) });
+        logger.error('[MatchupPreview] Error fetching matchup', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(err instanceof Error ? err.message : 'Failed to load matchup');
         setMatchup(null);
       } finally {

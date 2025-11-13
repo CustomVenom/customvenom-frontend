@@ -21,7 +21,9 @@ export default function TrackingPage() {
           setTeamKey(data.selection?.teamKey || undefined);
         }
       } catch (e) {
-        logger.error('Failed to get team selection', { error: e instanceof Error ? e.message : String(e) });
+        logger.error('Failed to get team selection', {
+          error: e instanceof Error ? e.message : String(e),
+        });
       } finally {
         setLoading(false);
       }

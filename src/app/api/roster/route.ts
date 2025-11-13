@@ -133,11 +133,16 @@ export async function GET(request: NextRequest) {
           });
         } else {
           const errorText = await mapResponse.text().catch(() => 'Unable to read error response');
-          logger.error('[roster] Mapping endpoint failed', { status: mapResponse.status, error: errorText.substring(0, 200) });
+          logger.error('[roster] Mapping endpoint failed', {
+            status: mapResponse.status,
+            error: errorText.substring(0, 200),
+          });
           // Continue with unmapped players
         }
       } catch (e) {
-        logger.error('[/api/roster] Failed to map player IDs', { error: e instanceof Error ? e.message : String(e) });
+        logger.error('[/api/roster] Failed to map player IDs', {
+          error: e instanceof Error ? e.message : String(e),
+        });
         // Continue without mappings
       }
     }
@@ -202,11 +207,16 @@ export async function GET(request: NextRequest) {
           );
         } else {
           const errorText = await projResponse.text().catch(() => 'Unable to read error response');
-          logger.error('[roster] Projection endpoint failed', { status: projResponse.status, error: errorText.substring(0, 200) });
+          logger.error('[roster] Projection endpoint failed', {
+            status: projResponse.status,
+            error: errorText.substring(0, 200),
+          });
           // Continue without projections
         }
       } catch (e) {
-        logger.error('[/api/roster] Failed to fetch projections', { error: e instanceof Error ? e.message : String(e) });
+        logger.error('[/api/roster] Failed to fetch projections', {
+          error: e instanceof Error ? e.message : String(e),
+        });
         // Continue without projections
       }
 
@@ -261,7 +271,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error('[/api/roster] Error', { error: error instanceof Error ? error.message : String(error) });
+    logger.error('[/api/roster] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: 'Failed to fetch roster' }, { status: 500 });
   }
 }

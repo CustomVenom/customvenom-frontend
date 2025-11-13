@@ -45,7 +45,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error('[/api/league-settings] Error', { error: error instanceof Error ? error.message : String(error) });
+    logger.error('[/api/league-settings] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: 'Failed to fetch league settings' }, { status: 500 });
   }
 }
