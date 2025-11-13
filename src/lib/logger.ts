@@ -12,7 +12,7 @@ interface LogContext {
 
 class Logger {
   private isDevelopment(): boolean {
-    return process.env.NODE_ENV === 'development';
+    return process.env['NODE_ENV'] === 'development';
   }
 
   private formatMessage(level: string, message: string, context?: LogContext): string {
