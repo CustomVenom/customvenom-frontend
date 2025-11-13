@@ -53,7 +53,7 @@ function FaabContent() {
       const params = new URLSearchParams({
         player_id: player, // API may accept player_id or player name
         budget: budget,
-        week: leagueContext.week || '2025-10', // Use current week from context
+        week: String(leagueContext.week || '2025-10'), // Use current week from context
       });
 
       const res = await fetch(`/api/faab?${params.toString()}`, {
