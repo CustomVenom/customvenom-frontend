@@ -178,7 +178,7 @@ test.describe('UI Contract Tests', () => {
       timeout: 15000,
     });
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(200); // Playwright APIResponse.status() is a method
 
     const body = await response.json();
     // Health endpoint returns { status, message, workers_api } shape
