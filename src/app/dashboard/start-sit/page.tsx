@@ -193,7 +193,8 @@ function StartSitContent() {
     // Add to Sentry breadcrumbs if available
     if (typeof window !== 'undefined' && 'Sentry' in window) {
       try {
-        const Sentry = (window as { Sentry?: { addBreadcrumb: (breadcrumb: unknown) => void } }).Sentry;
+        const Sentry = (window as { Sentry?: { addBreadcrumb: (breadcrumb: unknown) => void } })
+          .Sentry;
         if (Sentry) {
           Sentry.addBreadcrumb({
             category: 'decision',
