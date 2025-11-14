@@ -1,10 +1,29 @@
 // Middleware for route protection
 // Handles tier-based access control and domain redirects
+// Architecture Law #4: Generates request IDs at the edge for traceability
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { logger } from '@/lib/logger';
 import { getToken } from 'next-auth/jwt';
+
+/**
+ * Generate or extract request ID
+ * Architecture Law #4: Every user request should have a unique ID at the edge
+ */
+function getOrCreateRequestId(request: NextRequest): string {
+  // Check if request ID already exists in header (from upstream)
+  const existingId = request.headers.get('x-request-id');
+  if (existingId) {
+    return existingId;
+  }
+
+  // Generate new request ID (simple UUID-like format)
+  // In production, consider using crypto.randomUUID() if available
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 15);
+  return `req-${timestamp}-${random}`;
+}
 
 // Public routes - always allowed
 const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth'];
@@ -12,6 +31,9 @@ const PUBLIC_ROUTES = ['/', '/login', '/signup', '/api/auth'];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const url = new URL(request.url);
+
+  // Generate request ID at the edge for traceability
+  const requestId = getOrCreateRequestId(request);
 
   // Force apex to www (preserve existing functionality)
   if (url.hostname === 'customvenom.com') {
@@ -55,7 +77,10 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/account')) {
     const secret = process.env['NEXTAUTH_SECRET'] || process.env['AUTH_SECRET'];
     if (!secret) {
-      logger.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET');
+      logger.error('[middleware] Missing NEXTAUTH_SECRET or AUTH_SECRET', {
+        request_id: requestId,
+        route: pathname,
+      });
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
@@ -75,7 +100,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // Allow all other routes through
-  return NextResponse.next();
+  // Add request ID to response headers for traceability
+  const response = NextResponse.next();
+  response.headers.set('x-request-id', requestId);
+  return response;
 }
 
 // Apply to all routes except static files

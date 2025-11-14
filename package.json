@@ -49,7 +49,9 @@
     "check-routes": "npx tsx scripts/check-routes.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lhci": "lhci autorun --config=./lighthouse/lighthouserc.json"
+    "lhci": "lhci autorun --config=./lighthouse/lighthouserc.json",
+    "smoke:laws": "tsx scripts/smoke-tests.ts",
+    "deploy:safe": "bash scripts/deploy-with-tests.sh"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.0",

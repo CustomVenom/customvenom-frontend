@@ -54,6 +54,24 @@ export default [
       'no-console': 'off', // Allow console statements for debugging
       'prefer-const': 'warn',
       ...reactHooks.configs.recommended.rules,
+
+      // Architecture Law #3: API is Contract, UI is Presentation
+      // Prevent frontend from calculating fantasy points or using heuristics
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: "BinaryExpression[left.type='MemberExpression'][right.type='Literal'][operator='*']",
+          message: 'Architecture Law #3: Frontend should not calculate fantasy points. Use API-provided data only. If API data is missing, show "Data unavailable" instead of using heuristics.',
+        },
+        {
+          selector: "CallExpression[callee.name='calculateFantasyPoints']",
+          message: 'Architecture Law #3: Frontend must never calculate fantasy points. All calculations happen in the Python data pipeline.',
+        },
+        {
+          selector: "CallExpression[callee.property.name='calculate']",
+          message: 'Architecture Law #3: Frontend must never calculate fantasy points. Use API-provided projections only.',
+        },
+      ],
     },
   },
 

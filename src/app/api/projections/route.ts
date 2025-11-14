@@ -91,6 +91,11 @@ export async function GET(request: NextRequest) {
     workersParams.set('sport', sport);
     workersParams.set('scoring_format', scoringFormat);
     if (leagueKey) workersParams.set('league_key', leagueKey);
+    // Pass through enhanced parameter if present
+    const enhanced = request.nextUrl.searchParams.get('enhanced');
+    if (enhanced === 'true') {
+      workersParams.set('enhanced', 'true');
+    }
 
     const upstream = await fetch(`${base}/api/projections?${workersParams.toString()}`, {
       credentials: 'include',
