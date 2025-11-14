@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PlayerSearch from '@/components/PlayerSearch';
 import { Button } from '@/components/ui/button';
-import { EmptyState } from '@/components/EmptyState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
 import { useEnhancedProjections } from '@/hooks/use-enhanced-projections';
 import { generateDecisionVerdict } from '@/lib/decision-engine';
@@ -91,8 +91,7 @@ function DecisionSimulatorContent() {
     }
 
     // Track comparison
-    trackFeatureInteraction('decision_simulator', {
-      action: 'compare',
+    trackFeatureInteraction('decision_simulator', 'compare', {
       playerA: selectedPlayerA.player_id,
       playerB: selectedPlayerB.player_id,
       has_enhancement_a: selectedPlayerA.is_enhanced,
@@ -186,6 +185,7 @@ function DecisionSimulatorContent() {
           {/* Empty State */}
           {!verdict && (
             <EmptyState
+              icon={<span>📊</span>}
               title="Select Two Players to Compare"
               description="Choose two players from your league to get an intelligent comparison with statistical confidence analysis."
             />

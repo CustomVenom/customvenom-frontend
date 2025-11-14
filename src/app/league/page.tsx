@@ -49,6 +49,14 @@ function LeagueContent() {
     );
   }
 
+  if (!standingsData.data) {
+    return (
+      <Alert variant="danger">
+        <AlertDescription>Invalid standings data format.</AlertDescription>
+      </Alert>
+    );
+  }
+
   const { standings, playoff_line } = standingsData.data;
 
   return (

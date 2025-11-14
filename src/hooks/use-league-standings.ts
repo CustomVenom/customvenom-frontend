@@ -1,7 +1,6 @@
 // React Query hook for league standings with trust headers
-import { useQuery } from '@tanstack/react-query';
 import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
-import type { ApiResponse } from '@/types/api';
+import { useTypedQuery } from '@/hooks/useTypedQuery';
 
 interface StandingsResponse {
   standings: Array<{
@@ -20,7 +19,7 @@ interface StandingsResponse {
 export function useLeagueStandings(leagueKey: string | null) {
   const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || '';
 
-  return useQuery<ApiResponse<StandingsResponse>>({
+  return useTypedQuery<StandingsResponse>({
     queryKey: ['standings', leagueKey],
     queryFn: async () => {
       if (!leagueKey) {
@@ -28,10 +27,20 @@ export function useLeagueStandings(leagueKey: string | null) {
       }
 
       const url = `${apiBase}/api/yahoo/leagues/${leagueKey}/standings`;
-      return fetchWithTrust<StandingsResponse>(url, {
+      const result = await fetchWithTrust(url, {
         credentials: 'include',
         headers: { accept: 'application/json' },
       });
+      // Transform to ApiResponse format
+      return {
+        data: result.data,
+        trust: {
+          schemaVersion: result.trust.schemaVersion ?? '',
+          lastRefresh: result.trust.lastRefresh ?? '',
+          requestId: result.trust.requestId ?? '',
+          stale: result.trust.stale ?? undefined,
+        },
+      };
     },
     enabled: !!leagueKey && !!apiBase,
     staleTime: 5 * 60 * 1000, // 5 minutes

@@ -3,17 +3,17 @@ import React from 'react';
 
 type State = { hasError: boolean; error?: Error };
 export class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
-  state: State = { hasError: false };
+  override state: State = { hasError: false };
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
+  override componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Minimal log; wire Sentry if available
     console.error('ErrorBoundary:', error, info);
     // @ts-expect-error optional Sentry
     if (typeof window !== 'undefined' && window.Sentry) window.Sentry.captureException(error);
   }
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div className="p-4 border border-red-200 rounded bg-red-50">

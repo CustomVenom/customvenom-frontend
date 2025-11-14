@@ -48,42 +48,28 @@ Open [http://localhost:3000](http://localhost:3000)
 Test the Trust Snapshot UI component against staging:
 
 ```bash
-# Install Playwright browsers
-npx playwright install
+# Set staging API base
+export NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev"
 
 # Run E2E tests
-NEXT_PUBLIC_API_BASE="https://customvenom-workers-api-staging.jdewett81.workers.dev" npm run test:e2e
+npx playwright test
 ```
 
-The test verifies that `/tools` page displays the Trust Snapshot with version and timestamp.
+## 📚 Architecture
 
-## 🎯 Features
+**Architecture Law #3: API is Contract, UI is Presentation**
 
-- **Projections** - Risk assessment and reason chips (±3.5% clamp)
-- **Auth Hardening** - Type-safe Yahoo OAuth + Stripe integration (v1.0.0)
-- **League Import** - Yahoo Fantasy integration ready
-- **Paywall** - Runtime guards for paid features
-- **UI Polish** - Density toggle, skeletons, localStorage persistence
-- **Validation** - Zod schema validation at API boundaries
+- Frontend NEVER calculates fantasy points - only displays API data
+- Use `isEnhanced()` from `src/lib/projection-utils.ts` for enhancement checks
+- All projection data comes from API responses only
 
-## 📡 API
+### Key Files
 
-Set `NEXT_PUBLIC_API_BASE` in `.env.local` (e.g., `https://api.customvenom.com`).
+- **Projection Utils**: `src/lib/projection-utils.ts` - Centralized enhancement checking
+- **Logger**: `src/lib/logger.ts` - Structured JSON logging with request IDs
+- **Middleware**: `src/middleware.ts` - Request ID generation at edge
 
-See [workers-api](../customvenom-workers-api) for backend setup.
+## 📖 Documentation
 
-## 📚 Documentation
-
-- [UI Features](./UI_FEATURES.md) - Component documentation
-- [Reasons Adapter](./REASONS_ADAPTER.md) - Validation system
-- [API Setup](./API_SETUP.md) - Backend integration
-- [Auth Setup](./AUTH_SETUP_COMPLETE.md) - NextAuth configuration
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **UI**: React 19, Tailwind CSS, Radix UI
-- **Auth**: NextAuth.js v5
-- **Database**: PostgreSQL + Prisma
-- **Payments**: Stripe
-- **Validation**: Zod
+- **Projection Utils**: `docs/PROJECTION_UTILS.md` - How to use centralized enhancement functions
+- **Architecture**: See `customvenom-workers-api/docs/ARCHITECTURE.md` for architectural laws

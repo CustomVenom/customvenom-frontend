@@ -1,3 +1,15 @@
+/**
+ * Architecture Law #1: Single Source of Truth for Types
+ *
+ * IMPORTANT: The authoritative source of truth for these types is
+ * @customvenom/contracts in the customvenom-workers-api repository.
+ *
+ * These types are kept here for frontend use, but must match the Zod schemas
+ * defined in @customvenom/contracts/src/schemas/common.ts and projections.ts
+ *
+ * When updating types, update @customvenom/contracts first, then sync here.
+ */
+
 import type { DriverComponent, Position, ScoringFormat } from './enums';
 
 export type RawStatProjection = { p10: number; p50: number; p90: number };

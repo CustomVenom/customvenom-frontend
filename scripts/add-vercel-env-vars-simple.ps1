@@ -4,24 +4,22 @@
 Write-Host "Adding Preview Environment Variables..." -ForegroundColor Cyan
 Write-Host "You will be prompted for each value. Press Enter to skip a variable.`n" -ForegroundColor Yellow
 
-# Preview variables
+# Preview variables (with actual values)
 $previewVars = @(
-    'NEXTAUTH_URL=https://your-preview-url.vercel.app',
-    'AUTH_SECRET',
-    'NEXTAUTH_SECRET',
-    'DATABASE_URL',
-    'GOOGLE_CLIENT_ID',
-    'GOOGLE_CLIENT_SECRET',
-    'NEXT_PUBLIC_API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev',
-    'API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev',
-    'STRIPE_SECRET_KEY',
-    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
-    'STRIPE_WEBHOOK_SECRET',
-    'NEXT_PUBLIC_DEMO_MODE=1',
-    'PAYWALL_DISABLED=0',
-    'TAILWIND_DISABLE_OXIDE=1',
-    'NEXT_PUBLIC_ENVIRONMENT=preview',
-    'NEXT_PUBLIC_LOGS_ENABLED=false'
+    @{Key='NEXTAUTH_URL'; Value='https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app'},
+    @{Key='AUTH_SECRET'; Value='mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U='},
+    @{Key='NEXTAUTH_SECRET'; Value='5ohrfT9jmWWrywYPeVBwsHeEhKROEg1aUrFizMJMq8o='},
+    @{Key='DATABASE_URL'; Value='postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'},
+    @{Key='GOOGLE_CLIENT_ID'; Value='294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com'},
+    @{Key='GOOGLE_CLIENT_SECRET'; Value='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'},
+    @{Key='NEXT_PUBLIC_API_BASE'; Value='https://customvenom-workers-api-staging.jdewett81.workers.dev'},
+    @{Key='API_BASE'; Value='https://customvenom-workers-api-staging.jdewett81.workers.dev'},
+    @{Key='REDIS_URL'; Value='redis://default:YckZg0Kt7NbBPvlsvWNqkhMJT2VHdaJq@redis-19421.crce220.us-east-1-4.ec2.redns.redis-cloud.com:19421'},
+    @{Key='NEXT_PUBLIC_DEMO_MODE'; Value='1'},
+    @{Key='PAYWALL_DISABLED'; Value='0'},
+    @{Key='TAILWIND_DISABLE_OXIDE'; Value='1'},
+    @{Key='NEXT_PUBLIC_ENVIRONMENT'; Value='preview'},
+    @{Key='NEXT_PUBLIC_LOGS_ENABLED'; Value='false'}
 )
 
 foreach ($var in $previewVars) {

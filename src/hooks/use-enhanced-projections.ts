@@ -5,12 +5,11 @@
  * Maps API response to EnhancedPlayerProjection format with proper null handling.
  */
 
-import { useQuery } from '@tanstack/react-query';
 import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
 import { useUserStore } from '@/lib/store';
 import { getCurrentWeek } from '@/lib/utils';
-import type { ApiResponse } from '@/types/api';
 import type { EnhancedPlayerProjection } from '@/lib/types/decision';
+import { useTypedQuery } from '@/hooks/useTypedQuery';
 
 interface ProjectionsResponse {
   projections: Array<{
@@ -52,7 +51,7 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
   const { activeSport, scoringFormat, selectedWeek } = useUserStore();
   const weekToUse = week || selectedWeek || getCurrentWeek();
 
-  return useQuery<ApiResponse<{ projections: EnhancedPlayerProjection[]; last_refresh: string }>>({
+  return useTypedQuery<{ projections: EnhancedPlayerProjection[]; last_refresh: string }>({
     queryKey: ['projections', 'enhanced', activeSport, weekToUse, scoringFormat, enhanced],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
@@ -66,10 +65,10 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
       }
 
       const url = `/api/projections?${searchParams.toString()}`;
-      const response = await fetchWithTrust<ProjectionsResponse>(url);
+      const response = await fetchWithTrust(url);
 
       // Map API response to EnhancedPlayerProjection format
-      const projections = response.data?.projections || [];
+      const projections = (response.data as ProjectionsResponse)?.projections || [];
       const enhancedProjections: EnhancedPlayerProjection[] = projections.map((p) => {
         // Determine if we have real enhancement data
         const hasRealEnhancement =
@@ -109,10 +108,10 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
           position: p.position,
           player_image_url: `/api/player-image/${p.player_id}`,
           projection,
-          enhanced_floor: hasRealEnhancement ? p.enhanced_floor : null,
-          enhanced_ceiling: hasRealEnhancement ? p.enhanced_ceiling : null,
-          statistical_confidence: hasRealEnhancement ? p.enhanced_confidence : null,
-          historical_games: hasRealEnhancement ? p.historical_games : null,
+          enhanced_floor: hasRealEnhancement ? (p.enhanced_floor ?? null) : null,
+          enhanced_ceiling: hasRealEnhancement ? (p.enhanced_ceiling ?? null) : null,
+          statistical_confidence: hasRealEnhancement ? (p.enhanced_confidence ?? null) : null,
+          historical_games: hasRealEnhancement ? (p.historical_games ?? null) : null,
           is_enhanced: hasRealEnhancement,
           enhancement_method:
             (p.enhancement_method as
@@ -124,16 +123,22 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
         };
       });
 
+      // Transform to ApiResponse format
       return {
-        ...response,
         data: {
           projections: enhancedProjections,
           last_refresh: response.data?.last_refresh || new Date().toISOString(),
         },
+        trust: {
+          schemaVersion: response.trust.schemaVersion ?? '',
+          lastRefresh: response.trust.lastRefresh ?? '',
+          requestId: response.trust.requestId ?? '',
+          stale: response.trust.stale ?? undefined,
+        },
       };
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000,
+    gcTime: 10 * 60 * 1000, // React Query v5: cacheTime renamed to gcTime
     retry: 2,
   });
 }

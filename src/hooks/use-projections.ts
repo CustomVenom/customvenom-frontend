@@ -1,10 +1,9 @@
 // React Query hook for projections with trust headers
-import { useQuery } from '@tanstack/react-query';
 import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
 import { useUserStore } from '@/lib/store';
 import { getCurrentWeek } from '@/lib/utils';
-import type { ApiResponse } from '@/types/api';
 import type { PlayerProjection } from '@/types/projections';
+import { useTypedQuery } from '@/hooks/useTypedQuery';
 
 interface ProjectionsResponse {
   projections: PlayerProjection[];
@@ -16,7 +15,7 @@ export function useProjections(week?: string) {
   const { activeSport, scoringFormat, selectedWeek } = useUserStore();
   const weekToUse = week || selectedWeek || getCurrentWeek();
 
-  return useQuery<ApiResponse<ProjectionsResponse>>({
+  return useTypedQuery<ProjectionsResponse>({
     queryKey: ['projections', activeSport, weekToUse, scoringFormat],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
@@ -28,7 +27,7 @@ export function useProjections(week?: string) {
 
       // Use Next.js API route (which proxies to Workers API or returns mock)
       const url = `/api/projections?${searchParams.toString()}`;
-      const result = await fetchWithTrust<ProjectionsResponse>(url);
+      const result = await fetchWithTrust(url);
       // Transform to ApiResponse format
       return {
         data: result.data,

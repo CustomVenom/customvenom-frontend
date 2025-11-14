@@ -16,9 +16,10 @@ This package provides TypeScript types for the frontend application.
 
 ### Current Alignment Status
 
-- ✅ `projections.ts` - Aligned with `contracts/schemas/projections.ts`
-- ✅ `enums.ts` - Aligned with `contracts` enum definitions
-- ⚠️ Other types - Review and align as needed
+- ✅ `projections.ts` - Aligned with `contracts/schemas/projections.ts` and `contracts/schemas/common.ts`
+- ✅ `enums.ts` - Aligned with `contracts/schemas/common.ts`
+- ✅ `api.ts` - Aligned with `contracts/schemas/api.ts`
+- ⚠️ Other types (mapping, league, etc.) - Frontend-specific, can remain here
 
 ### Migration Path
 

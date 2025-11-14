@@ -1,9 +1,8 @@
 // React Query hook for matchup data with trust headers
-import { useQuery } from '@tanstack/react-query';
 import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
 import { useUserStore } from '@/lib/store';
 import { getCurrentWeek } from '@/lib/utils';
-import type { ApiResponse } from '@/types/api';
+import { useTypedQuery } from '@/hooks/useTypedQuery';
 
 interface MatchupResponse {
   your_team: {
@@ -36,7 +35,7 @@ export function useMatchup(leagueKey: string | null, week?: string) {
   const weekToUse = week || selectedWeek || getCurrentWeek();
   const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || '';
 
-  return useQuery<ApiResponse<MatchupResponse>>({
+  return useTypedQuery<MatchupResponse>({
     queryKey: ['matchup', leagueKey, weekToUse],
     queryFn: async () => {
       if (!leagueKey) {
@@ -44,10 +43,20 @@ export function useMatchup(leagueKey: string | null, week?: string) {
       }
 
       const url = `${apiBase}/api/yahoo/matchup/${leagueKey}/${weekToUse}`;
-      return fetchWithTrust<MatchupResponse>(url, {
+      const result = await fetchWithTrust(url, {
         credentials: 'include',
         headers: { accept: 'application/json' },
       });
+      // Transform to ApiResponse format
+      return {
+        data: result.data,
+        trust: {
+          schemaVersion: result.trust.schemaVersion ?? '',
+          lastRefresh: result.trust.lastRefresh ?? '',
+          requestId: result.trust.requestId ?? '',
+          stale: result.trust.stale ?? undefined,
+        },
+      };
     },
     enabled: !!leagueKey && !!apiBase,
     staleTime: 5 * 60 * 1000, // 5 minutes

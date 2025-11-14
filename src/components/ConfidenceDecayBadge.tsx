@@ -19,7 +19,8 @@ export function ConfidenceDecayBadge({
       <span>
         Confidence adjusted down{' '}
         {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
-        {(decayMetadata.decay_applied * 100).toFixed(0)}% due to stale data (expires in {decayMetadata.expires_in_hours}h)
+        {(decayMetadata.decay_applied * 100).toFixed(0)}% due to stale data (expires in{' '}
+        {decayMetadata.expires_in_hours}h)
       </span>
     </div>
   );

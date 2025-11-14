@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import type { Projection } from '@customvenom/lib/adapters/projections-adapter';
-import type { Risk } from '@customvenom/lib/recommendation';
+
+type Risk = 'protect' | 'neutral' | 'chase';
 
 interface Props {
   dataset: Projection[];

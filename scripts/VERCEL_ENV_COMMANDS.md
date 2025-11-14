@@ -1,6 +1,33 @@
-# Vercel Environment Variables - Copy-Paste Commands
+# Vercel Environment Variables - Setup Guide
 
-Run these commands from the `customvenom-frontend` directory.
+## 🚀 Automated Setup (Recommended)
+
+Use the automated PowerShell scripts for idempotent, safe environment variable setup:
+
+```powershell
+# From customvenom-frontend directory
+
+# Add missing variables to both environments (idempotent - safe to run multiple times)
+.\scripts\add-vercel-env-vars-idempotent.ps1 -Environment both
+
+# Or target specific environment
+.\scripts\add-vercel-env-vars-idempotent.ps1 -Environment preview
+.\scripts\add-vercel-env-vars-idempotent.ps1 -Environment production
+
+# Update specific variables (upsert mode)
+.\scripts\add-vercel-env-vars-idempotent.ps1 -Environment production -UpsertKeys @('NEXTAUTH_URL', 'API_BASE')
+```
+
+**Features:**
+
+- ✅ **Idempotent**: Safe to run multiple times - only adds missing variables
+- ✅ **Secure**: Prompts for secrets (Google OAuth, Stripe keys) instead of hardcoding
+- ✅ **Smart**: Checks existing variables and skips duplicates
+- ✅ **Fixed**: All PowerShell syntax issues resolved (Nov 2025)
+
+## 📋 Manual Commands (Fallback)
+
+If you prefer manual setup, run these commands from the `customvenom-frontend` directory.
 
 Replace placeholders (like `YOUR_VALUE_HERE`) with actual values before running.
 
@@ -114,4 +141,3 @@ vercel env pull .env.local
 - `NEXT_PUBLIC_*` variables are automatically added to all environments (production, preview, development)
 - Secret variables should never be committed to git
 - After adding variables, redeploy: `vercel --prod`
-

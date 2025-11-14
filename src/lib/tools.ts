@@ -133,7 +133,7 @@ export function mapExplanationToReason(explanation?: {
     sources: '📊',
     reason: '💡',
   };
-  const component = componentMap[explanation.type] || '📈';
+  const component = (explanation.type && componentMap[explanation.type]) || '📈';
 
   return {
     component,

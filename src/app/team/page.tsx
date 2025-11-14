@@ -99,7 +99,7 @@ function MyTeamContent() {
 
   const normalized: RosterPlayer[] = (roster?.players ?? [])
     .map((rp: Record<string, unknown>) => toRosterPlayer(rp))
-    .filter((x): x is RosterPlayer => !!x);
+    .filter((x: RosterPlayer | null): x is RosterPlayer => !!x);
 
   type EnrichedPlayer = RosterPlayer & {
     projection: { median: number } | null;
@@ -110,7 +110,10 @@ function MyTeamContent() {
     projection: byId.get(p.player_id) ?? null,
   }));
 
-  const starters = enriched.filter((p) => p.selected_position && p.selected_position !== 'BN');
+  const starters = enriched.filter(
+    (p): p is EnrichedPlayer & { selected_position: string } =>
+      !!p.selected_position && p.selected_position !== 'BN',
+  );
   const bench = enriched.filter((p) => p.selected_position === 'BN');
   const total = starters.reduce((sum: number, p) => sum + (p.projection?.median ?? 0), 0);
 
