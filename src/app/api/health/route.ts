@@ -6,13 +6,13 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-function trustHeaders(overrides: Partial<Record<string, string>> = {}): Headers {
-  const headers = new Headers();
-  headers.set('x-schema-version', overrides['x-schema-version'] ?? 'v2.1');
-  headers.set('x-last-refresh', overrides['x-last-refresh'] ?? new Date().toISOString());
-  headers.set('x-request-id', overrides['x-request-id'] ?? `health-${Date.now()}`);
-  headers.set('x-stale', overrides['x-stale'] ?? 'false');
-  return headers;
+function trustHeaders(overrides: Partial<Record<string, string>> = {}): Record<string, string> {
+  return {
+    'x-schema-version': overrides['x-schema-version'] ?? 'v2.1',
+    'x-last-refresh': overrides['x-last-refresh'] ?? new Date().toISOString(),
+    'x-request-id': overrides['x-request-id'] ?? `health-${Date.now()}`,
+    'x-stale': overrides['x-stale'] ?? 'false',
+  };
 }
 
 export async function GET(_request: NextRequest) {
