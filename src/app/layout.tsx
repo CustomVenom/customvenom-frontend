@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Merriweather_Sans } from 'next/font/google';
+import React from 'react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 import ClientLayout from './ClientLayout';
 import './globals.css';
