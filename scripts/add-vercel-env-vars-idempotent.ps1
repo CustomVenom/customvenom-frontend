@@ -41,12 +41,23 @@ function Get-ExistingEnvVars {
     param([string]$EnvName)
 
     Write-Host "Checking existing $EnvName variables..." -ForegroundColor Gray
-    $existing = vercel env ls $EnvName --json 2>$null | ConvertFrom-Json
+    $output = vercel env ls $EnvName 2>$null
+    $keys = @()
 
-    if ($existing) {
-        return $existing.envs | ForEach-Object { $_.key } | Sort-Object -Unique
+    if ($output) {
+        # Parse the table output - extract variable names from the "name" column
+        $lines = $output -split [Environment]::NewLine
+        foreach ($line in $lines) {
+            if ($line -match '^\s+(\S+)\s+') {
+                $key = $matches[1].Trim()
+                # Skip header lines and common Vercel system variables
+                if ($key -and $key -ne 'name' -and $key -notmatch '^VERCEL_') {
+                    $keys += $key
+                }
+            }
+        }
     }
-    return @()
+    return $keys | Sort-Object -Unique
 }
 
 function Add-EnvVar {
@@ -61,20 +72,20 @@ function Add-EnvVar {
     $exists = $ExistingKeys -contains $Key
 
     if ($exists -and -not $ForceUpdate) {
-        Write-Host "  ⊙ $Key (already exists, skipping)" -ForegroundColor Gray
+        Write-Host "  [SKIP] $Key (already exists, skipping)" -ForegroundColor Gray
         return $false
     }
 
     if ($exists -and $ForceUpdate) {
-        Write-Host "  ↻ $Key (updating existing)" -ForegroundColor Yellow
+        Write-Host "  [UPDATE] $Key (updating existing)" -ForegroundColor Yellow
         # Remove first, then add
         vercel env rm $Key $EnvName --yes 2>&1 | Out-Null
     } else {
         Write-Host "  + $Key" -ForegroundColor Cyan
     }
 
-    # Check if value needs prompting (including placeholder NEXTAUTH_URL)
-    $needsPrompt = $Value -match '^(generate-random|your_|postgresql://user:password|sk_test_|pk_test_|sk_live_|pk_live_|whsec_|your-preview-url\.vercel\.app)'
+    # Check if value needs prompting (Stripe keys, Google OAuth, and other secrets)
+    $needsPrompt = $Value -match '^(sk_test_|pk_test_|sk_live_|pk_live_|whsec_|YOUR_).*your_|your_.*key|your_.*secret|YOUR_'
 
     if ($needsPrompt) {
         if ($Key -eq 'NEXTAUTH_URL' -and $Value -match 'your-preview-url') {
@@ -94,10 +105,10 @@ function Add-EnvVar {
     $Value | vercel env add $Key $EnvName 2>&1 | Out-Null
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "    ✓ Added" -ForegroundColor Green
+        Write-Host "    [OK] Added" -ForegroundColor Green
         return $true
     } else {
-        Write-Host "    ✗ Failed" -ForegroundColor Red
+        Write-Host "    [FAIL] Failed" -ForegroundColor Red
         return $false
     }
 }
@@ -109,12 +120,15 @@ function Configure-Environment {
         [string[]]$UpsertList
     )
 
-    Write-Host "`n========================================" -ForegroundColor Magenta
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Magenta
     Write-Host "Configuring $EnvName Environment" -ForegroundColor Magenta
-    Write-Host "========================================`n" -ForegroundColor Magenta
+    Write-Host "========================================" -ForegroundColor Magenta
+    Write-Host ""
 
     $existingKeys = Get-ExistingEnvVars -EnvName $EnvName
-    Write-Host "Found $($existingKeys.Count) existing variables`n" -ForegroundColor Gray
+    Write-Host "Found $($existingKeys.Count) existing variables" -ForegroundColor Gray
+    Write-Host ""
 
     $added = 0
     $skipped = 0
@@ -135,23 +149,28 @@ function Configure-Environment {
         }
     }
 
-    Write-Host "`nSummary: Added $added, Updated $updated, Skipped $skipped" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Summary: Added $added, Updated $updated, Skipped $skipped" -ForegroundColor Cyan
 }
 
 # Preview environment variables
 # NOTE: NEXTAUTH_URL found in check-vercel-env.ps1 - using actual preview URL
+# DATABASE_URL uses same Neon DB as production (shared)
+# Using single quotes to prevent PowerShell from interpreting special characters
+[string]$dbUrl = 'postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 $previewVars = @{
-    'NEXTAUTH_URL' = 'https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app'  # ✅ Actual preview URL
-    'AUTH_SECRET' = 'generate-random-32-byte-secret'
-    'NEXTAUTH_SECRET' = 'generate-random-32-byte-secret'
-    'DATABASE_URL' = 'postgresql://user:password@host:5432/database'
-    'GOOGLE_CLIENT_ID' = 'your_google_client_id.apps.googleusercontent.com'
-    'GOOGLE_CLIENT_SECRET' = 'your_google_client_secret'
+    'NEXTAUTH_URL' = 'https://customvenom-frontend-b3aoume16-incarcers-projects.vercel.app'  # Actual preview URL
+    'AUTH_SECRET' = 'mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U='  # Same as production (can share)
+    'NEXTAUTH_SECRET' = '5ohrfT9jmWWrywYPeVBwsHeEhKROEg1aUrFizMJMq8o='  # Same as production (can share)
+    'DATABASE_URL' = $dbUrl
+    'GOOGLE_CLIENT_ID' = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'  # Prompt for actual value
+    'GOOGLE_CLIENT_SECRET' = 'YOUR_GOOGLE_CLIENT_SECRET'  # Prompt for actual value
     'NEXT_PUBLIC_API_BASE' = 'https://customvenom-workers-api-staging.jdewett81.workers.dev'
     'API_BASE' = 'https://customvenom-workers-api-staging.jdewett81.workers.dev'
-    'STRIPE_SECRET_KEY' = 'sk_test_your_test_key'
-    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' = 'pk_test_your_test_key'
-    'STRIPE_WEBHOOK_SECRET' = 'whsec_your_webhook_secret'
+    'REDIS_URL' = 'redis://default:YckZg0Kt7NbBPvlsvWNqkhMJT2VHdaJq@redis-19421.crce220.us-east-1-4.ec2.redns.redis-cloud.com:19421'  # Same Redis (can share)
+    'STRIPE_SECRET_KEY' = 'sk_test_your_test_key'  # Still need test key for preview
+    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' = 'pk_test_your_test_key'  # Still need test key for preview
+    'STRIPE_WEBHOOK_SECRET' = 'whsec_your_webhook_secret'  # Still need test webhook secret
     'NEXT_PUBLIC_DEMO_MODE' = '1'
     'PAYWALL_DISABLED' = '0'
     'TAILWIND_DISABLE_OXIDE' = '1'
@@ -159,19 +178,20 @@ $previewVars = @{
     'NEXT_PUBLIC_LOGS_ENABLED' = 'false'
 }
 
-# Production environment variables
+# Production environment variables (from Vercel production environment)
 $productionVars = @{
     'NEXTAUTH_URL' = 'https://www.customvenom.com'
-    'AUTH_SECRET' = 'generate-random-32-byte-secret'
-    'NEXTAUTH_SECRET' = 'generate-random-32-byte-secret'
-    'DATABASE_URL' = 'postgresql://user:password@host:5432/database'
-    'GOOGLE_CLIENT_ID' = 'your_google_client_id.apps.googleusercontent.com'
-    'GOOGLE_CLIENT_SECRET' = 'your_google_client_secret'
+    'AUTH_SECRET' = 'mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U='  # From production
+    'NEXTAUTH_SECRET' = '5ohrfT9jmWWrywYPeVBwsHeEhKROEg1aUrFizMJMq8o='  # From production
+    'DATABASE_URL' = $dbUrl
+    'GOOGLE_CLIENT_ID' = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'  # Prompt for actual value
+    'GOOGLE_CLIENT_SECRET' = 'YOUR_GOOGLE_CLIENT_SECRET'  # Prompt for actual value
     'NEXT_PUBLIC_API_BASE' = 'https://api.customvenom.com'
     'API_BASE' = 'https://api.customvenom.com'
-    'STRIPE_SECRET_KEY' = 'sk_live_your_live_key'
-    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' = 'pk_live_your_live_key'
-    'STRIPE_WEBHOOK_SECRET' = 'whsec_your_webhook_secret'
+    'REDIS_URL' = 'redis://default:YckZg0Kt7NbBPvlsvWNqkhMJT2VHdaJq@redis-19421.crce220.us-east-1-4.ec2.redns.redis-cloud.com:19421'  # From production
+    'STRIPE_SECRET_KEY' = 'sk_live_your_live_key'  # Still need actual value
+    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY' = 'pk_live_your_live_key'  # Still need actual value
+    'STRIPE_WEBHOOK_SECRET' = 'whsec_your_webhook_secret'  # Still need actual value
     'NEXT_PUBLIC_DEMO_MODE' = '0'
     'PAYWALL_DISABLED' = '0'
     'NEXT_PUBLIC_ENVIRONMENT' = 'production'
@@ -179,9 +199,11 @@ $productionVars = @{
 }
 
 # Main execution
-Write-Host "`n========================================" -ForegroundColor Magenta
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Magenta
 Write-Host "Vercel Environment Variables (Idempotent)" -ForegroundColor Magenta
-Write-Host "========================================`n" -ForegroundColor Magenta
+Write-Host "========================================" -ForegroundColor Magenta
+Write-Host ""
 
 if ($UpsertKeys.Count -gt 0) {
     Write-Host "Upsert mode: Will update these keys if they exist:" -ForegroundColor Yellow
@@ -193,7 +215,8 @@ if ($Environment -eq 'preview' -or $Environment -eq 'both') {
     Configure-Environment -Vars $previewVars -EnvName 'preview' -UpsertList $UpsertKeys
 
     if ($Environment -eq 'both') {
-        Write-Host "`nPress Enter to continue to Production..." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Press Enter to continue to Production..." -ForegroundColor Yellow
         Read-Host
     }
 }
@@ -202,11 +225,13 @@ if ($Environment -eq 'production' -or $Environment -eq 'both') {
     Configure-Environment -Vars $productionVars -EnvName 'production' -UpsertList $UpsertKeys
 }
 
-Write-Host "`n========================================" -ForegroundColor Magenta
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Magenta
 Write-Host "Complete!" -ForegroundColor Green
-Write-Host "========================================`n" -ForegroundColor Magenta
-Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "1. Verify: vercel env ls" -ForegroundColor White
-Write-Host "2. Pull locally: vercel env pull .env.local" -ForegroundColor White
-Write-Host "3. Redeploy: vercel --prod" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Magenta
+Write-Host ""
+Write-Host 'Next steps:' -ForegroundColor Cyan
+Write-Host '1. Verify: vercel env ls' -ForegroundColor White
+Write-Host '2. Pull locally: vercel env pull .env.local' -ForegroundColor White
+Write-Host '3. Redeploy: vercel --prod' -ForegroundColor White
 
