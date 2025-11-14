@@ -1,6 +1,6 @@
 // React Query hook for league standings with trust headers
 import { useQuery } from '@tanstack/react-query';
-import { fetchWithTrust } from '@/lib/api-client';
+import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
 import type { ApiResponse } from '@/types/api';
 
 interface StandingsResponse {

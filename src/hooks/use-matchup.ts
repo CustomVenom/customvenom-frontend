@@ -1,6 +1,6 @@
 // React Query hook for matchup data with trust headers
 import { useQuery } from '@tanstack/react-query';
-import { fetchWithTrust } from '@/lib/api-client';
+import { fetchWithTrust } from '@customvenom/lib/fetch-with-trust';
 import { useUserStore } from '@/lib/store';
 import { getCurrentWeek } from '@/lib/utils';
 import type { ApiResponse } from '@/types/api';
