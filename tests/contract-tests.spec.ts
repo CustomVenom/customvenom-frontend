@@ -40,7 +40,7 @@ test.describe('UI Contract Tests', () => {
     // Wait for trust snapshot to load (aria-label="Trust Snapshot")
     // TrustSnapshot only renders when projectionsData exists
     const trustSnapshot = page.locator('[aria-label="Trust Snapshot"]');
-    
+
     // Wait for snapshot to appear with longer timeout for test isolation
     await expect(trustSnapshot).toBeVisible({ timeout: 20000 });
 
@@ -115,9 +115,9 @@ test.describe('UI Contract Tests', () => {
     // Either leagues table or error/connect message should be visible
     // Wait for any content to appear (more lenient check)
     await page.waitForTimeout(2000); // Give page time to render
-    
+
     const pageContent = await page.textContent('body');
-    const hasContent = 
+    const hasContent =
       pageContent?.toLowerCase().includes('league') ||
       pageContent?.toLowerCase().includes('error') ||
       pageContent?.toLowerCase().includes('connect') ||
