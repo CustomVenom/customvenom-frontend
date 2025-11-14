@@ -114,7 +114,12 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
           statistical_confidence: hasRealEnhancement ? p.enhanced_confidence : null,
           historical_games: hasRealEnhancement ? p.historical_games : null,
           is_enhanced: hasRealEnhancement,
-          enhancement_method: (p.enhancement_method as 'quantile_regression' | 'fallback' | 'unavailable' | undefined) || 'unavailable',
+          enhancement_method:
+            (p.enhancement_method as
+              | 'quantile_regression'
+              | 'fallback'
+              | 'unavailable'
+              | undefined) || 'unavailable',
           factors,
         };
       });
