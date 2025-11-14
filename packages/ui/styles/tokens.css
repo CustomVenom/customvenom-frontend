@@ -1,0 +1,92 @@
+/* packages/ui/styles/tokens.css */
+:root {
+  /* Z-index */
+  --z-nav: 50;
+  --z-drawer: 60;
+  --z-modal: 70;
+
+  /* Layout heights */
+  --header-h: 64px;
+  --bottom-nav-h: 64px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Typography */
+  --fs-body: clamp(14px, 1.4vw, 16px);
+  --fs-sub: clamp(12px, 1.2vw, 14px);
+  --fs-h3: clamp(16px, 2vw, 20px);
+  --fs-h2: clamp(20px, 2.5vw, 24px);
+  --fs-h1: clamp(24px, 3vw, 32px);
+
+  /* Responsive breakpoints */
+  --bp-xs: 375px;
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: 56px;
+    --bottom-nav-h: 56px;
+  }
+}
+
+/* Sticky bars and layout paddings */
+header.app {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  height: var(--header-h);
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+nav.bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  height: var(--bottom-nav-h);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+main.app {
+  min-height: calc(100vh - var(--header-h) - var(--bottom-nav-h));
+  padding-top: var(--space-4);
+  padding-bottom: calc(var(--bottom-nav-h) + var(--space-4) + env(safe-area-inset-bottom));
+}
+
+.table-scroll {
+  overflow-x: auto;
+  padding: var(--space-4);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Drawer styles */
+.drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(400px, 90vw);
+  background: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: var(--z-drawer);
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}

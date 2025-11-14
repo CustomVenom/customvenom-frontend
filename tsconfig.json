@@ -35,7 +35,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@customvenom/lib/*": ["./packages/lib/*"],
+      "@customvenom/config/*": ["./packages/config/*"],
+      "@customvenom/ui/*": ["./packages/ui/*"]
     },
     "types": ["node"]
   },

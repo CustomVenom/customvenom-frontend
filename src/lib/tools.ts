@@ -74,12 +74,42 @@ export type ApiProjectionsResponse = {
   projections: ApiProjection[];
 };
 
-// Map API explanation to frontend Reason
-export function mapExplanationToReason(explanation: ApiExplanation): Reason {
+// TypeScript guard for ApiExplanation (kept for potential future use)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function isApiExplanation(x: unknown): x is { type: string; text: string; confidence: number } {
+  return (
+    typeof x === 'object' &&
+    x !== null &&
+    'text' in x &&
+    typeof (x as { text: unknown }).text === 'string' &&
+    'confidence' in x &&
+    typeof (x as { confidence: unknown }).confidence === 'number'
+  );
+}
+
+// Extract delta percentage from text
+function extractDeltaPctFromText(text: string): number | undefined {
+  const percentMatch = text.match(/([+-]?\d+(?:\.\d+)?)\s*%/);
+  if (percentMatch && percentMatch[1]) {
+    return parseFloat(percentMatch[1]);
+  }
+  return undefined;
+}
+
+// Map API explanation to frontend Reason (null-safe)
+export function mapExplanationToReason(explanation?: {
+  type?: string;
+  text?: string;
+  confidence?: number;
+}): Reason | null {
+  if (!explanation || typeof explanation.text !== 'string') {
+    return null;
+  }
+
   const pointsMatch = explanation.text.match(/[+-](\d+\.?\d*)\s?pts?/i);
   const percentMatch = explanation.text.match(/[+-](\d+\.?\d*)%/);
 
-  let deltaPoints: number;
+  let deltaPoints: number | undefined;
   let unit: Reason['unit'] = undefined;
   if (pointsMatch && pointsMatch[0]) {
     deltaPoints = parseFloat(pointsMatch[0]);
@@ -88,7 +118,14 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
     deltaPoints = parseFloat(percentMatch[0]) / 100;
     unit = 'percent';
   } else {
-    deltaPoints = 0;
+    // Try to extract percentage from text
+    const extractedPct = extractDeltaPctFromText(explanation.text);
+    if (extractedPct !== undefined) {
+      deltaPoints = extractedPct / 100;
+      unit = 'percent';
+    } else {
+      deltaPoints = undefined; // No numeric delta found
+    }
   }
 
   const componentMap: Record<string, string> = {
@@ -100,9 +137,10 @@ export function mapExplanationToReason(explanation: ApiExplanation): Reason {
 
   return {
     component,
-    delta_points: deltaPoints,
-    confidence: explanation.confidence,
+    delta_points: deltaPoints ?? 0, // Default to 0 if no delta found
+    confidence: explanation.confidence ?? 0,
     unit,
+    hasDelta: deltaPoints !== undefined, // Flag to indicate if delta was found
   };
 }
 
@@ -120,8 +158,10 @@ export function mapApiProjectionToRow(
   const median = apiProj.median ?? apiProj.range?.p50 ?? 0;
   const ceiling = apiProj.ceiling ?? apiProj.range?.p90 ?? 0;
 
-  // Map explanations
-  const explanations = (apiProj.explanations || []).map(mapExplanationToReason);
+  // Map explanations (null-safe, filter out nulls)
+  const explanations = (apiProj.explanations || [])
+    .map(mapExplanationToReason)
+    .filter((r): r is Reason => r !== null);
 
   return {
     player_id: apiProj.player_id,

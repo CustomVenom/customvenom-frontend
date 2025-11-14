@@ -3,14 +3,19 @@ import { Inter, Merriweather_Sans } from 'next/font/google';
 
 import ClientLayout from './ClientLayout';
 import './globals.css';
+import '@customvenom/ui/styles/tokens.css';
 import Providers from './providers';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import MobileNav from '@/components/layout/MobileNav';
+import PublicTrustFooterWrapper from '@/components/trust/PublicTrustFooterWrapper';
+import { TrustProvider } from '@customvenom/lib/trust-context';
 import { SelectionProvider } from '@/lib/selection';
 
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import '@/lib/env-validator'; // Validate env vars on startup
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,6 +30,7 @@ const merri = Merriweather_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://customvenom.com'),
   title: 'Custom Venom — Fantasy Football Analytics',
   description:
     'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
@@ -51,29 +57,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${merri.variable}`}>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent dark-mode FOUC (Flash of Unstyled Content)
-              (function() {
-                try {
-                  const stored = localStorage.getItem('theme');
-                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  const shouldBeDark = stored === 'dark' || (stored === null && prefersDark);
-
-                  if (shouldBeDark) {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {
-                  // Fallback: default to dark mode for fantasy football
-                  document.documentElement.classList.add('dark');
-                }
-              })();
-            `,
-          }}
-        />
+        <script suppressHydrationWarning>
+          {`(function(){try{
+            var t = localStorage.getItem('theme') || 'dark';
+            document.documentElement.dataset.theme = t;
+          }catch(e){}})();`}
+        </script>
       </head>
       <body className="min-h-screen flex flex-col">
         <a
@@ -83,22 +72,26 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
-          <SelectionProvider>
-            <Header />
-            <ClientLayout>
-              <main
-                id="main"
-                role="main"
-                className="flex-1 mx-auto w-full max-w-6xl px-4 py-6"
-                style={{
-                  paddingTop: 'calc(1rem + env(safe-area-inset-top))',
-                  minHeight: 'calc(100vh - 4rem)', // Account for header height
-                }}
-              >
-                {children}
-              </main>
-            </ClientLayout>
-          </SelectionProvider>
+          <TrustProvider>
+            <SelectionProvider>
+              <Header />
+              <ClientLayout>
+                <main
+                  id="main"
+                  role="main"
+                  className="app flex-1 mx-auto w-full max-w-6xl px-4 py-6"
+                  style={{
+                    paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+                    minHeight: 'calc(100vh - 4rem)', // Account for header height
+                  }}
+                >
+                  {children}
+                </main>
+              </ClientLayout>
+              <MobileNav />
+              <PublicTrustFooterWrapper />
+            </SelectionProvider>
+          </TrustProvider>
         </Providers>
         <Footer />
         <Analytics />

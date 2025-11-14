@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
 import type { TrustHeaders } from '@/types/api';
+import { useTrustContext } from '@customvenom/lib/trust-context';
+import { formatSchema } from '@/lib/trust-format';
 
 type Props = {
   // Legacy props (for backward compatibility)
@@ -14,9 +16,14 @@ type Props = {
 };
 
 export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, trust }: Props) {
-  // Use trust headers if provided, otherwise fall back to legacy props
-  const schemaVersion = trust?.schemaVersion || ver || 'unknown';
-  const lastRefresh = trust?.lastRefresh || ts || new Date().toISOString();
+  // Use trust context if available (for private routes)
+  const trustContext = useTrustContext();
+
+  // Use trust headers if provided, otherwise fall back to trust context, then legacy props
+  const rawSchemaVersion = trust?.schemaVersion || trustContext?.schemaVersion || ver || 'unknown';
+  const schemaVersion = formatSchema(rawSchemaVersion);
+  const lastRefresh =
+    trust?.lastRefresh || trustContext?.lastRefresh || ts || new Date().toISOString();
   const isStale = stale !== undefined ? stale : !!trust?.stale;
 
   const formatted = lastRefresh
@@ -56,7 +63,7 @@ export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, 
       className="fixed bottom-4 right-4 bg-card border rounded-lg px-3 py-2 shadow-lg text-xs z-50"
     >
       <div className="flex items-center gap-2">
-        <span className="font-medium">Trust: v{schemaVersion}</span>
+        <span className="font-medium">Trust: {schemaVersion}</span>
         <span>•</span>
         <time dateTime={lastRefresh} title={formatted}>
           Updated {relativeTime}

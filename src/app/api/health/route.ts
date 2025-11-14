@@ -1,61 +1,86 @@
-// app/api/health/route.ts
-export const dynamic = 'force-dynamic'; // ensure no static caching
-export const revalidate = 0;
+// src/app/api/health/route.ts
+// Health check endpoint that pings Workers API and logs trust headers
 
-export async function GET() {
-  const API_BASE = process.env['API_BASE'];
-  if (!API_BASE) {
-    return new Response(JSON.stringify({ ok: false, error: 'missing_API_BASE' }), {
-      status: 500,
-      headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(_request: NextRequest) {
+  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || process.env['API_BASE'];
+
+  if (!apiBase) {
+    return NextResponse.json(
+      {
+        status: 'degraded',
+        message: 'NEXT_PUBLIC_API_BASE not configured - using mock data',
+        workers_api: null,
+      },
+      { status: 200 },
+    );
+  }
+
+  try {
+    // Ping Workers API health endpoint (or a lightweight endpoint)
+    const healthUrl = `${apiBase}/health`;
+    const response = await fetch(healthUrl, {
+      headers: {
+        Accept: 'application/json',
+      },
+      signal: AbortSignal.timeout(5000),
     });
-  }
 
-  const upstream = `${API_BASE}/health`;
-  const r = await fetch(upstream, { cache: 'no-store' });
+    const trustHeaders = {
+      'x-schema-version': response.headers.get('x-schema-version'),
+      'x-last-refresh': response.headers.get('x-last-refresh'),
+      'x-request-id': response.headers.get('x-request-id'),
+      'x-stale': response.headers.get('x-stale'),
+    };
 
-  if (!r.ok) {
-    return new Response(JSON.stringify({ ok: false, error: 'upstream_failed', status: r.status }), {
-      status: 502,
-      headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+    // Log trust headers for debugging
+    console.log('[Health Check] Workers API trust headers:', trustHeaders);
+
+    if (!response.ok) {
+      return NextResponse.json(
+        {
+          status: 'degraded',
+          message: `Workers API returned ${response.status}`,
+          workers_api: {
+            reachable: true,
+            status: response.status,
+            trust_headers: trustHeaders,
+          },
+        },
+        { status: 200 },
+      );
+    }
+
+    const data = await response.json().catch(() => ({}));
+
+    return NextResponse.json({
+      status: 'healthy',
+      message: 'Workers API is reachable',
+      workers_api: {
+        reachable: true,
+        status: response.status,
+        trust_headers: trustHeaders,
+        data: data,
+      },
     });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[Health Check] Workers API unreachable:', errorMessage);
+
+    return NextResponse.json(
+      {
+        status: 'degraded',
+        message: `Workers API unreachable: ${errorMessage}`,
+        workers_api: {
+          reachable: false,
+          error: errorMessage,
+        },
+      },
+      { status: 200 },
+    );
   }
-
-  // Expect: { ok, schema_version, last_refresh }
-  const data = await r.json();
-  const body = JSON.stringify(data);
-
-  // Start response with upstream status and clone upstream headers wholesale first
-  const res = new Response(body, {
-    status: r.status,
-    headers: r.headers,
-  });
-
-  // Ensure JSON content-type if missing
-  if (!res.headers.has('content-type')) {
-    res.headers.set('content-type', 'application/json');
-  }
-
-  // Explicitly set or re-ensure the key headers (case-insensitive on set)
-  const rid = r.headers.get('x-request-id');
-  if (rid) res.headers.set('x-request-id', rid);
-
-  const cors =
-    r.headers.get('Access-Control-Allow-Origin') || r.headers.get('access-control-allow-origin');
-  if (cors) res.headers.set('Access-Control-Allow-Origin', cors);
-
-  const cc = r.headers.get('cache-control');
-  if (cc) res.headers.set('cache-control', cc);
-
-  // Make x-request-id readable by client JS (fetch().headers.get(...))
-  const exposed = new Set(
-    (res.headers.get('Access-Control-Expose-Headers') || '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean),
-  );
-  exposed.add('x-request-id');
-  res.headers.set('Access-Control-Expose-Headers', Array.from(exposed).join(', '));
-
-  return res;
 }

@@ -166,11 +166,24 @@ function TradeAnalyzerContent() {
               >
                 <PlayerCard
                   player={{
-                    name: typeof player.name === 'string' ? player.name : (player.name as unknown as { full?: string })?.full || 'Unknown',
-                    team: player.team || (player as unknown as { editorial_team_abbr?: string }).editorial_team_abbr || '',
-                    position: player.position || (player as unknown as { display_position?: string }).display_position || '',
+                    name:
+                      typeof player.name === 'string'
+                        ? player.name
+                        : (player.name as unknown as { full?: string })?.full || 'Unknown',
+                    team:
+                      player.team ||
+                      (player as unknown as { editorial_team_abbr?: string }).editorial_team_abbr ||
+                      '',
+                    position:
+                      player.position ||
+                      (player as unknown as { display_position?: string }).display_position ||
+                      '',
                     opponent: player.opponent || null,
-                    projection: (player as unknown as { projection?: { floor: number; median: number; ceiling: number } }).projection || { floor: 0, median: 0, ceiling: 0 },
+                    projection: (
+                      player as unknown as {
+                        projection?: { floor: number; median: number; ceiling: number };
+                      }
+                    ).projection || { floor: 0, median: 0, ceiling: 0 },
                     chips: (player as unknown as { chips?: Reason[] }).chips || [],
                     confidence: (player as unknown as { confidence?: number }).confidence || 0,
                   }}

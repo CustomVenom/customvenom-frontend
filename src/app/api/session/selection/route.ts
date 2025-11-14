@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_BASE = process.env['NEXT_PUBLIC_API_BASE']!;
 
+function getCorsHeaders(): Headers {
+  const headers = new Headers();
+  const origin = process.env['NEXT_PUBLIC_SITE_URL'] || 'http://localhost:3000';
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  headers.set('Access-Control-Allow-Credentials', 'true');
+  return headers;
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
+}
+
 export async function GET(request: NextRequest) {
   const url = `${API_BASE}/api/session/selection`;
   const init: RequestInit = {
@@ -11,12 +28,11 @@ export async function GET(request: NextRequest) {
   };
   const r = await fetch(url, init);
   const body = await r.text();
-  // Echo CORS-related cookies through Next automatically; just forward status/body and JSON type
+  const headers = getCorsHeaders();
+  headers.set('content-type', r.headers.get('content-type') || 'application/json; charset=utf-8');
   return new NextResponse(body, {
     status: r.status,
-    headers: {
-      'content-type': r.headers.get('content-type') || 'application/json; charset=utf-8',
-    },
+    headers,
   });
 }
 
@@ -31,11 +47,10 @@ export async function POST(request: NextRequest) {
   };
   const r = await fetch(url, init);
   const responseBody = await r.text();
-  // Echo CORS-related cookies through Next automatically; just forward status/body and JSON type
+  const headers = getCorsHeaders();
+  headers.set('content-type', r.headers.get('content-type') || 'application/json; charset=utf-8');
   return new NextResponse(responseBody, {
     status: r.status,
-    headers: {
-      'content-type': r.headers.get('content-type') || 'application/json; charset=utf-8',
-    },
+    headers,
   });
 }

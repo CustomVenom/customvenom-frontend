@@ -1,0 +1,15 @@
+{
+  "name": "@customvenom/lib",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./trust-context": "./trust-context.tsx",
+    "./fetch-with-trust": "./fetch-with-trust.ts",
+    "./hooks/useSession": "./hooks/useSession.ts",
+    "./hooks/useYahooRoster": "./hooks/useYahooRoster.ts",
+    "./hooks/useProjections": "./hooks/useProjections.ts",
+    "./adapters/projections-adapter": "./adapters/projections-adapter.ts",
+    "./yahoo-client": "./yahoo-client.ts",
+    "./*": "./*"
+  }
+}

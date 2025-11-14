@@ -3,6 +3,7 @@
 // CRITICAL: Do NOT cache responses in KV - use React Query memory cache only
 
 import type { ApiResponse, TrustHeaders } from '@/types/api';
+import { emitTrustUpdate } from '@customvenom/lib/trust-context';
 
 interface LegacyApiResponse<T = unknown> {
   ok: boolean;
@@ -41,6 +42,12 @@ export async function fetchWithTrust<T>(
     requestId: response.headers.get('x-request-id') || 'unknown',
     stale: response.headers.get('x-stale') || undefined,
   };
+
+  // Emit trust update for TrustProvider
+  emitTrustUpdate({
+    schemaVersion: trust.schemaVersion,
+    lastRefresh: trust.lastRefresh,
+  });
 
   return { data, trust };
 }

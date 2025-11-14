@@ -15,7 +15,6 @@ interface ProjectionsResponse {
 export function useProjections(week?: string) {
   const { activeSport, scoringFormat, selectedWeek } = useUserStore();
   const weekToUse = week || selectedWeek || getCurrentWeek();
-  const apiBase = process.env['NEXT_PUBLIC_API_BASE'] || '';
 
   return useQuery<ApiResponse<ProjectionsResponse>>({
     queryKey: ['projections', activeSport, weekToUse, scoringFormat],
@@ -27,10 +26,10 @@ export function useProjections(week?: string) {
         searchParams.set('scoring_format', scoringFormat);
       }
 
-      const url = `${apiBase}/api/projections?${searchParams.toString()}`;
+      // Use Next.js API route (which proxies to Workers API or returns mock)
+      const url = `/api/projections?${searchParams.toString()}`;
       return fetchWithTrust<ProjectionsResponse>(url);
     },
-    enabled: !!apiBase,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
     retry: 1,

@@ -1,3 +1,9 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['@prisma/client', 'prisma'],
@@ -36,10 +42,18 @@ const nextConfig = {
         message: /the request of a dependency is an expression/,
       },
     ];
+    // Add path aliases for @customvenom packages
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@customvenom/lib': path.resolve(__dirname, 'packages/lib'),
+      '@customvenom/config': path.resolve(__dirname, 'packages/config'),
+      '@customvenom/ui': path.resolve(__dirname, 'packages/ui'),
+    };
     return config;
   },
   // Fix lucide-react barrel optimization by transpiling it
-  transpilePackages: ['lucide-react'],
+  // Also transpile local @customvenom packages
+  transpilePackages: ['lucide-react', '@customvenom/lib', '@customvenom/ui', '@customvenom/config'],
   // Disable barrel optimization for lucide-react
   experimental: {
     optimizePackageImports: [],

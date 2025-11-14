@@ -53,6 +53,15 @@ function getConfidenceVariant(confidence: number | undefined) {
 
 function formatChipText(chip: Reason) {
   const delta = chip.delta_points;
+  // Check if delta was actually found (hasDelta flag) or if delta is non-zero
+  const hasDelta = chip.hasDelta !== false && delta !== 0;
+
+  // If no numeric delta, show confidence instead
+  if (!hasDelta || (delta === 0 && chip.hasDelta === false)) {
+    const confPct = Math.round((chip.confidence ?? 0) * 100);
+    return `${chip.component} conf ${confPct}%`;
+  }
+
   const sign = delta > 0 ? '+' : '';
   if (chip.unit === 'points') {
     return `${chip.component} ${sign}${Math.abs(delta).toFixed(1)} pts`;
