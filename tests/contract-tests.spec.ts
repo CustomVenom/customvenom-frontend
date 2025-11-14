@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('UI Contract Tests', () => {
-  test.skip('trust snapshot renders with schema_version and last_refresh', async ({ page }) => {
+  test('trust snapshot renders with schema_version and last_refresh', async ({ page }) => {
     // Mock projections endpoint to ensure trust headers are present
     await page.route('**/api/projections*', async (route) => {
       const url = new URL(route.request().url());
@@ -58,7 +58,7 @@ test.describe('UI Contract Tests', () => {
     expect(trustSnapshot).toBeVisible();
   });
 
-  test.skip('leagues flow does not spin forever on error', async ({ page }) => {
+  test('leagues flow does not spin forever on error', async ({ page }) => {
     // Skip if Yahoo session isn't present locally and we're in CI
     const requiresSession = process.env['CI'] && !process.env['YAHOO_SESSION'];
     if (requiresSession) {
@@ -140,7 +140,7 @@ test.describe('UI Contract Tests', () => {
     expect(hasContent).toBe(true);
   });
 
-  test.skip('protection mode badge shows when x-stale=true', async ({ page }) => {
+  test('protection mode badge shows when x-stale=true', async ({ page }) => {
     // Mock API response with x-stale header
     await page.route('**/api/projections*', async (route) => {
       await route.fulfill({
