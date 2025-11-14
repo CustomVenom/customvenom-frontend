@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWithTrust } from '../fetch-with-trust';
 import { adaptProjections } from '../adapters/projections-adapter';
+import { CACHE } from '@/lib/react-query';
 
 export function useProjections({ sport, week }: { sport: 'nfl' | 'nba'; week: string }) {
   return useQuery({
@@ -17,6 +18,9 @@ export function useProjections({ sport, week }: { sport: 'nfl' | 'nba'; week: st
         last_refresh: res.trust.lastRefresh || new Date().toISOString(),
       };
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: CACHE.projections.staleTime,
+    gcTime: CACHE.projections.gcTime,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 }

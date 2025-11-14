@@ -1,5 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
+import { CACHE } from '@/lib/react-query';
 
 type CvSession =
   | { user?: { id?: string; email?: string } | null; id?: string }
@@ -51,6 +52,9 @@ export function useYahooRoster(params: {
         roster: data?.roster ?? data?.data?.roster ?? [],
       };
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: CACHE.roster.staleTime,
+    gcTime: CACHE.roster.gcTime,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 }
