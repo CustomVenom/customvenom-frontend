@@ -66,21 +66,49 @@ function MyTeamContent() {
 
   // Enrich roster with projections
   const roster = rosterData.roster;
-  type EnrichedPlayer = {
+
+  // Normalize roster players to typed structure
+  type RosterPlayer = {
     player_id: string;
-    playerId?: string;
     name: string;
     selected_position?: string;
-    position?: string;
+    [key: string]: unknown; // Allow other fields to pass through
+  };
+
+  const toRosterPlayer = (rp: Record<string, unknown>): RosterPlayer | null => {
+    const pid =
+      (typeof rp['player_id'] === 'string' && rp['player_id']) ||
+      (typeof rp['playerId'] === 'string' && rp['playerId']) ||
+      '';
+    if (!pid) return null;
+
+    let name = '';
+    if (typeof rp['player_name'] === 'string') name = rp['player_name'];
+    else if (typeof rp['name'] === 'string') name = rp['name'];
+    else if (rp['name'] && typeof (rp['name'] as { full?: string }).full === 'string')
+      name = (rp['name'] as { full: string }).full;
+    if (!name) name = 'Unknown';
+
+    const selected_position =
+      (typeof rp['selected_position'] === 'string' && rp['selected_position']) ||
+      (typeof rp['position'] === 'string' && rp['position']) ||
+      undefined;
+
+    return { player_id: pid, name, selected_position, ...rp };
+  };
+
+  const normalized: RosterPlayer[] = (roster?.players ?? [])
+    .map((rp: Record<string, unknown>) => toRosterPlayer(rp))
+    .filter((x): x is RosterPlayer => !!x);
+
+  type EnrichedPlayer = RosterPlayer & {
     projection: { median: number } | null;
   };
-  const enriched = (roster?.players || []).map((rp: Record<string, unknown>) => ({
-    ...rp,
-    player_id: (rp.player_id || rp.playerId) as string,
-    name: typeof rp.name === 'string' ? rp.name : (rp.name as { full?: string })?.full || 'Unknown',
-    selected_position: (rp.selected_position || rp.position) as string | undefined,
-    projection: byId.get((rp.player_id || rp.playerId) as string) ?? null,
-  })) as EnrichedPlayer[];
+
+  const enriched: EnrichedPlayer[] = normalized.map((p) => ({
+    ...p,
+    projection: byId.get(p.player_id) ?? null,
+  }));
 
   const starters = enriched.filter((p) => p.selected_position && p.selected_position !== 'BN');
   const bench = enriched.filter((p) => p.selected_position === 'BN');

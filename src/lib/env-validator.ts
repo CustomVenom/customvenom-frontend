@@ -9,7 +9,6 @@ export function validateEnv(isDev: boolean) {
 
   if (missing.length) {
     // Warn in dev, don't throw
-    // eslint-disable-next-line no-console
     console.warn(`Missing env vars: ${missing.join(', ')}`);
   }
 }
