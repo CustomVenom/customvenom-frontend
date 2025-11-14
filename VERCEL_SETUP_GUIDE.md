@@ -12,20 +12,43 @@
 
 ### 2. Environment Variables
 
-Add these per environment:
+**🚀 Recommended: Use Automated Script**
+
+```powershell
+# From customvenom-frontend directory
+.\scripts\add-vercel-env-vars-idempotent.ps1 -Environment both
+```
+
+This script:
+- ✅ Adds all required variables automatically
+- ✅ Prompts for secrets (Google OAuth, Stripe keys)
+- ✅ Safe to run multiple times (idempotent)
+- ✅ Skips variables that already exist
+
+**📋 Manual Setup (Alternative)**
+
+See `scripts/VERCEL_ENV_COMMANDS.md` for manual commands.
+
+**Required Variables:**
 
 **Production:**
-
 ```
 NEXT_PUBLIC_API_BASE=https://api.customvenom.com
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=false
+NEXTAUTH_URL=https://www.customvenom.com
+DATABASE_URL=postgresql://...
+AUTH_SECRET=...
+NEXTAUTH_SECRET=...
 ```
 
 **Preview:**
-
 ```
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=true
+NEXTAUTH_URL=https://your-preview-url.vercel.app
+DATABASE_URL=postgresql://...
+AUTH_SECRET=...
+NEXTAUTH_SECRET=...
 ```
 
 ### 3. Build Optimization
