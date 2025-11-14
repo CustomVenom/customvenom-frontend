@@ -18,13 +18,45 @@ export interface Chip {
   confidence: number;
 }
 
-export function adaptProjections(payload: any): Projection[] {
+interface RawProjection {
+  player_id?: string;
+  playerId?: string;
+  player_name?: string;
+  name?: string;
+  team: string;
+  position: string;
+  opponent?: string | null;
+  floor?: number;
+  median?: number;
+  ceiling?: number;
+  confidence?: number;
+  chips?: RawChip[];
+  explanations?: RawChip[];
+}
+
+interface RawChip {
+  driver?: string;
+  type?: string;
+  label?: string;
+  text?: string;
+  delta_pct?: number;
+  delta_points?: number;
+  confidence?: number;
+  confidence_score?: number;
+}
+
+interface ApiPayload {
+  projections?: RawProjection[];
+}
+
+export function adaptProjections(payload: ApiPayload | unknown): Projection[] {
   // Map canonical API envelope to UI view model
   // Apply confidence gating and chip limiting per guardrails
-  const list = Array.isArray(payload?.projections) ? payload.projections : [];
+  const apiPayload = payload as ApiPayload;
+  const list = Array.isArray(apiPayload?.projections) ? apiPayload.projections : [];
 
   return list
-    .map((raw: any) => ({
+    .map((raw: RawProjection) => ({
       playerId: raw.player_id || raw.playerId,
       name: raw.player_name || raw.name,
       team: raw.team,
@@ -45,13 +77,13 @@ function extractPct(text?: string): number | undefined {
   return m ? Number(m[1]) : undefined;
 }
 
-function adaptChips(rawChips: any[]): Chip[] {
+function adaptChips(rawChips: RawChip[] | unknown[]): Chip[] {
   const chips = Array.isArray(rawChips) ? rawChips : [];
 
   // Normalize explanations (defensive layer - accept both legacy and new shapes)
   const normalized = chips
-    .filter((c: any) => c != null && typeof c === 'object') // Filter out null, undefined, and non-objects
-    .map((c: any) => {
+    .filter((c): c is RawChip => c != null && typeof c === 'object') // Filter out null, undefined, and non-objects
+    .map((c: RawChip) => {
       // Accept both legacy (driver/label) and new (type/text) shapes
       const label =
         typeof c?.text === 'string' ? c.text : typeof c?.label === 'string' ? c.label : '';

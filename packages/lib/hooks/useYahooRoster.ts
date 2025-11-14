@@ -4,7 +4,14 @@ import { getActiveLeagueKey, getRoster } from '../yahoo-client';
 import type { CvSession } from './useSession';
 
 function getUserId(session: CvSession): string | null {
-  return session?.user?.id ?? (session as any)?.id ?? null;
+  if (session?.user?.id) {
+    return session.user.id;
+  }
+  // Handle legacy session shape where id might be at root
+  if ('id' in session && typeof session.id === 'string') {
+    return session.id;
+  }
+  return null;
 }
 
 export function useYahooRoster({ sport, session }: { sport: 'nfl' | 'nba'; session: CvSession }) {
