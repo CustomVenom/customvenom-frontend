@@ -3,7 +3,7 @@ export interface Projection {
   name: string;
   team: string;
   position: string;
-  opponent?: string | null;
+  opponent: string;
   floor: number;
   median: number;
   ceiling: number;
@@ -23,13 +23,13 @@ interface RawProjection {
   playerId?: string;
   player_name?: string;
   name?: string;
-  team: string;
-  position: string;
+  team?: string;
+  position?: string;
   opponent?: string | null;
-  floor?: number;
-  median?: number;
-  ceiling?: number;
-  confidence?: number;
+  floor?: number | string;
+  median?: number | string;
+  ceiling?: number | string;
+  confidence?: number | string;
   chips?: RawChip[];
   explanations?: RawChip[];
 }
@@ -49,26 +49,56 @@ interface ApiPayload {
   projections?: RawProjection[];
 }
 
+// Type-safe normalization helpers
+const toStr = (v: unknown, fallback = ''): string =>
+  typeof v === 'string' && v.trim() ? v : fallback;
+
+const toNum = (v: unknown, fallback = 0): number => {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string') {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  return fallback;
+};
+
 export function adaptProjections(payload: ApiPayload | unknown): Projection[] {
   // Map canonical API envelope to UI view model
   // Apply confidence gating and chip limiting per guardrails
   const apiPayload = payload as ApiPayload;
-  const list = Array.isArray(apiPayload?.projections) ? apiPayload.projections : [];
+  const list: RawProjection[] = Array.isArray(apiPayload?.projections)
+    ? apiPayload.projections
+    : [];
 
   return list
-    .map((raw: RawProjection) => ({
-      playerId: raw.player_id || raw.playerId,
-      name: raw.player_name || raw.name,
-      team: raw.team,
-      position: raw.position,
-      opponent: raw.opponent,
-      floor: raw.floor ?? 0,
-      median: raw.median ?? 0,
-      ceiling: raw.ceiling ?? 0,
-      confidence: raw.confidence ?? 0,
-      chips: adaptChips(raw.chips || raw.explanations || []),
-    }))
-    .filter((p: Projection) => p.confidence >= 0.65); // Confidence gating per guardrails
+    .map((raw: RawProjection): Projection | null => {
+      const playerId = toStr(raw.player_id ?? raw.playerId);
+      if (!playerId) return null; // Drop rows with no id
+
+      const name = toStr(raw.player_name ?? raw.name, 'Unknown');
+      const team = toStr(raw.team, '');
+      const position = toStr(raw.position, '');
+      const opponent = toStr(raw.opponent, '');
+
+      const floor = toNum(raw.floor, 0);
+      const median = toNum(raw.median, 0);
+      const ceiling = toNum(raw.ceiling, 0);
+      const confidence = toNum(raw.confidence, 0);
+
+      return {
+        playerId,
+        name,
+        team,
+        position,
+        opponent,
+        floor,
+        median,
+        ceiling,
+        confidence,
+        chips: adaptChips(raw.chips || raw.explanations || []),
+      };
+    })
+    .filter((p): p is Projection => p !== null && p.confidence >= 0.65); // Confidence gating per guardrails
 }
 
 function extractPct(text?: string): number | undefined {
