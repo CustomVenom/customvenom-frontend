@@ -154,6 +154,7 @@ export function RiskDial({ week = '2025-09' }: RiskDialProps) {
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium text-gray-800">{factor.name}</span>
                     <span className="text-sm font-semibold text-gray-600">
+                      {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
                       {Math.round(factor.score * 100)}%
                     </span>
                   </div>
@@ -161,6 +162,7 @@ export function RiskDial({ week = '2025-09' }: RiskDialProps) {
                     <div
                       className="h-2 rounded-full transition-all"
                       style={{
+                        // eslint-disable-next-line no-restricted-syntax -- Percentage formatting for bar width, not fantasy point calculation
                         width: `${factor.score * 100}%`,
                         backgroundColor:
                           factor.score > 0.8
@@ -172,7 +174,9 @@ export function RiskDial({ week = '2025-09' }: RiskDialProps) {
                     />
                   </div>
                   <div className="text-xs text-gray-500">
-                    Weight: {Math.round(factor.weight * 100)}%
+                    Weight:{' '}
+                    {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                    {Math.round(factor.weight * 100)}%
                   </div>
                 </div>
               ))}

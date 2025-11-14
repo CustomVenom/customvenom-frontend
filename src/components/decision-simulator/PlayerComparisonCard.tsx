@@ -123,12 +123,14 @@ export function PlayerComparisonCard({ player, isWinner }: PlayerComparisonCardP
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-500">Statistical Confidence</span>
             <Badge variant="venom" className="text-xs">
+              {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
               {(player.statistical_confidence * 100).toFixed(0)}%
             </Badge>
           </div>
           <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
             <div
               className="h-full bg-venom-500"
+              // eslint-disable-next-line no-restricted-syntax -- Percentage formatting for bar width, not fantasy point calculation
               style={{ width: `${player.statistical_confidence * 100}%` }}
             />
           </div>

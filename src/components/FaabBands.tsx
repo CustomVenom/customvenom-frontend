@@ -115,6 +115,7 @@ export function FaabBands({ week = '2025-09' }: FaabBandsProps) {
               </div>
               <div className="text-right">
                 <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                  {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
                   {(item.confidence * 100).toFixed(0)}%
                 </span>
               </div>

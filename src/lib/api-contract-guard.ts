@@ -73,7 +73,7 @@ export function guardProjectionSource(
  */
 export function useEnhancedOrNull(
   enhancedValue: number | null | undefined,
-  baselineValue: number | null | undefined,
+  _baselineValue: number | null | undefined,
 ): number | null {
   if (enhancedValue !== null && enhancedValue !== undefined) {
     return enhancedValue;

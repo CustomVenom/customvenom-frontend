@@ -95,6 +95,7 @@ See `customvenom-workers-api/docs/ARCHITECTURE.md` for complete architectural la
 ### ESLint Errors
 
 The ESLint config includes architectural law rules that prevent:
+
 - Fantasy point calculations
 - Heuristic fallbacks (`projection * 0.7`)
 
@@ -112,4 +113,3 @@ Fix violations or add appropriate comments.
 2. Verify environment variables are set
 3. Check for build errors in logs
 4. Ensure `vercel.json` is properly configured
-

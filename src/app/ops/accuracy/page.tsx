@@ -302,7 +302,10 @@ export default function AccuracyDashboard() {
                     <td className="p-2">{m.sport.toUpperCase()}</td>
                     <td className="p-2">{m.position || 'ALL'}</td>
                     <td className="text-right p-2">{m.total_predictions}</td>
-                    <td className="text-right p-2">{(m.hit_rate * 100).toFixed(1)}%</td>
+                    <td className="text-right p-2">
+                      {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                      {(m.hit_rate * 100).toFixed(1)}%
+                    </td>
                     <td className="text-right p-2">{m.mean_absolute_error.toFixed(2)}</td>
                     <td className="text-right p-2">{m.rmse.toFixed(2)}</td>
                     <td className="text-right p-2">{m.calibration_score.toFixed(3)}</td>

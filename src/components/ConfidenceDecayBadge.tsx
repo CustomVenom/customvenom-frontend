@@ -17,8 +17,9 @@ export function ConfidenceDecayBadge({
     <div className="flex items-center gap-2 text-xs text-orange-400">
       <span>⏱️</span>
       <span>
-        Confidence adjusted down {(decayMetadata.decay_applied * 100).toFixed(0)}% due to stale data
-        (expires in {decayMetadata.expires_in_hours}h)
+        Confidence adjusted down{' '}
+        {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+        {(decayMetadata.decay_applied * 100).toFixed(0)}% due to stale data (expires in {decayMetadata.expires_in_hours}h)
       </span>
     </div>
   );

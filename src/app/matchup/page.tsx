@@ -87,9 +87,12 @@ function MatchupContent() {
                   position: player.position,
                   opponent: null,
                   projection: {
-                    floor: player.projected_points * 0.8,
+                    // Architecture Law #3: Use API-provided values only, no calculations
+                    // API returns single projected_points value - use as median
+                    // Floor/ceiling unavailable from this endpoint - API should be enhanced
+                    floor: player.projected_points, // TODO: API should provide projected_points.floor
                     median: player.projected_points,
-                    ceiling: player.projected_points * 1.2,
+                    ceiling: player.projected_points, // TODO: API should provide projected_points.ceiling
                   },
                   chips: [],
                   confidence: 0.7,
@@ -119,9 +122,12 @@ function MatchupContent() {
                   position: player.position,
                   opponent: null,
                   projection: {
-                    floor: player.projected_points * 0.8,
+                    // Architecture Law #3: Use API-provided values only, no calculations
+                    // API returns single projected_points value - use as median
+                    // Floor/ceiling unavailable from this endpoint - API should be enhanced
+                    floor: player.projected_points, // TODO: API should provide projected_points.floor
                     median: player.projected_points,
-                    ceiling: player.projected_points * 1.2,
+                    ceiling: player.projected_points, // TODO: API should provide projected_points.ceiling
                   },
                   chips: [],
                   confidence: 0.7,

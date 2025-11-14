@@ -63,7 +63,9 @@ export default function PlayerDrawer({ playerId, projections }: Props) {
                   <div className="text-sm">{chip.label}</div>
                   <div className="text-xs text-gray-600">
                     {chip.delta_pct >= 0 ? '+' : ''}
-                    {chip.delta_pct.toFixed(1)}% • {Math.round(chip.confidence * 100)}% confidence
+                    {chip.delta_pct.toFixed(1)}% •{' '}
+                    {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                    {Math.round(chip.confidence * 100)}% confidence
                   </div>
                 </div>
               ))}
@@ -72,7 +74,10 @@ export default function PlayerDrawer({ playerId, projections }: Props) {
         )}
         <div>
           <div className="text-sm text-gray-600">Confidence</div>
-          <div className="text-lg font-semibold">{Math.round(player.confidence * 100)}%</div>
+          <div className="text-lg font-semibold">
+            {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+            {Math.round(player.confidence * 100)}%
+          </div>
         </div>
       </div>
     </div>

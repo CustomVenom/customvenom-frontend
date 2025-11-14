@@ -381,6 +381,7 @@ function RosterPageClient() {
                           )}
                           {player.mapped && player.confidence && (
                             <Badge intent="positive" className="text-xs">
+                              {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
                               {Math.round(player.confidence * 100)}% confidence
                             </Badge>
                           )}

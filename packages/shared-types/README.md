@@ -23,6 +23,7 @@ This package provides TypeScript types for the frontend application.
 ### Migration Path
 
 To fully consolidate types:
+
 1. Ensure all API contract types are defined in `@customvenom/contracts` with Zod schemas
 2. This package should re-export or mirror those types
 3. Frontend code should import from this package (not directly from contracts, since repos are separate)
@@ -32,4 +33,3 @@ To fully consolidate types:
 ```typescript
 import type { ProjectionContract, EnrichedProjection } from '@customvenom/shared-types';
 ```
-

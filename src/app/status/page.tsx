@@ -162,7 +162,14 @@ export default function StatusPage() {
               Cache hit rate
             </div>
             <div className="text-2xl font-bold text-[rgb(var(--text-primary))]">
-              {data.cache?.rate != null ? `${(data.cache.rate * 100).toFixed(0)}%` : '—'}
+              {data.cache?.rate != null ? (
+                <>
+                  {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                  {`${(data.cache.rate * 100).toFixed(0)}%`}
+                </>
+              ) : (
+                '—'
+              )}
             </div>
             <div className="text-xs text-[rgb(var(--text-dim))] uppercase tracking-wide">
               Hits {data.cache?.hits ?? '—'} / {data.cache?.total ?? '—'}

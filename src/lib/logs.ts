@@ -74,6 +74,7 @@ export function parseLogMetrics(logs: LogEntry[]): Omit<LogMetrics, 'last_update
 
   // Calculate p95 latency
   const latencies = logs.map((log) => log.duration_ms).sort((a, b) => a - b);
+  // eslint-disable-next-line no-restricted-syntax -- Calculating percentile index for operational metrics, not fantasy points
   const p95Index = Math.floor(latencies.length * 0.95);
   const p95Latency = latencies[p95Index] || 0;
 

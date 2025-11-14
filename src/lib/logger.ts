@@ -37,7 +37,8 @@ class Logger {
 
   constructor() {
     this.serviceName = 'frontend';
-    this.isDevelopment = typeof process !== 'undefined' && process.env['NODE_ENV'] === 'development';
+    this.isDevelopment =
+      typeof process !== 'undefined' && process.env['NODE_ENV'] === 'development';
   }
 
   /**
@@ -94,7 +95,7 @@ class Logger {
         break;
       default:
         console.info(jsonString);
-        // In production, could send to analytics/logging service
+      // In production, could send to analytics/logging service
     }
   }
 

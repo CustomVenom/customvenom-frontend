@@ -314,7 +314,9 @@ export default function ImportantDecisionsStrip({
 
               {/* Confidence */}
               <div className="text-xs text-gray-600 dark:text-gray-400">
-                Confidence: {(decision.confidence * 100).toFixed(0)}%
+                Confidence:{' '}
+                {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                {(decision.confidence * 100).toFixed(0)}%
               </div>
             </button>
           ))}

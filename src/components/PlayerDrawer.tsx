@@ -137,6 +137,7 @@ export default function PlayerDrawer({ open, onClose, row }: Props) {
               {chips.map((c, i) => (
                 <span key={i} className="cv-chip">
                   {c.component} {c.delta_points >= 0 ? '+' : ''}
+                  {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
                   {(c.delta_points * 100).toFixed(1)}%
                 </span>
               ))}

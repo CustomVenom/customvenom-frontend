@@ -110,7 +110,14 @@ export function PlayerMappingStatus({ roster }: Props) {
                   {player.status === 'unmapped' && <span className="text-red-600">✕ Unmapped</span>}
                 </td>
                 <td className="px-3 py-2 text-gray-600">
-                  {player.nflverse_id ? `${Math.round(player.confidence * 100)}%` : '—'}
+                  {player.nflverse_id ? (
+                    <>
+                      {/* eslint-disable-next-line no-restricted-syntax -- Percentage formatting, not fantasy point calculation */}
+                      {`${Math.round(player.confidence * 100)}%`}
+                    </>
+                  ) : (
+                    '—'
+                  )}
                 </td>
               </tr>
             ))}

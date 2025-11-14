@@ -35,7 +35,9 @@ class SmokeTestRunner {
   }
 
   async run() {
-    console.log(`${colors.cyan}${colors.bright}🧪 Running Frontend Architecture Law Smoke Tests...${colors.reset}\n`);
+    console.log(
+      `${colors.cyan}${colors.bright}🧪 Running Frontend Architecture Law Smoke Tests...${colors.reset}\n`,
+    );
 
     for (const test of this.tests) {
       try {
@@ -51,12 +53,12 @@ class SmokeTestRunner {
     }
 
     this.printSummary();
-    return this.results.every(r => r.passed);
+    return this.results.every((r) => r.passed);
   }
 
   private printSummary() {
-    const passed = this.results.filter(r => r.passed).length;
-    const failed = this.results.filter(r => !r.passed).length;
+    const passed = this.results.filter((r) => r.passed).length;
+    const failed = this.results.filter((r) => !r.passed).length;
 
     console.log(`\n${colors.bright}========================================${colors.reset}`);
     console.log(`${colors.bright}Test Summary:${colors.reset}`);
@@ -65,10 +67,14 @@ class SmokeTestRunner {
     console.log(`${colors.bright}========================================${colors.reset}`);
 
     if (failed > 0) {
-      console.log(`\n${colors.red}${colors.bright}⚠️  Some tests failed. Fix issues before deployment.${colors.reset}`);
+      console.log(
+        `\n${colors.red}${colors.bright}⚠️  Some tests failed. Fix issues before deployment.${colors.reset}`,
+      );
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}${colors.bright}🎉 All architectural law tests passed! Ready for deployment.${colors.reset}`);
+      console.log(
+        `\n${colors.green}${colors.bright}🎉 All architectural law tests passed! Ready for deployment.${colors.reset}`,
+      );
     }
   }
 }
@@ -140,8 +146,10 @@ runner.addTest('API Contract Guards', async () => {
   const guardContent = readFileSync(guardPath, 'utf-8');
 
   // Check for guard functions
-  if (!guardContent.includes('guardAgainstFantasyPointCalculation') &&
-      !guardContent.includes('guardProjectionSource')) {
+  if (
+    !guardContent.includes('guardAgainstFantasyPointCalculation') &&
+    !guardContent.includes('guardProjectionSource')
+  ) {
     throw new Error('API contract guard functions not found');
   }
 });
@@ -156,8 +164,10 @@ runner.addTest('ESLint Rules for Heuristics', async () => {
   const eslintContent = readFileSync(eslintPath, 'utf-8');
 
   // Check for architectural law rules
-  if (!eslintContent.includes('Architecture Law #3') &&
-      !eslintContent.includes('no-restricted-syntax')) {
+  if (
+    !eslintContent.includes('Architecture Law #3') &&
+    !eslintContent.includes('no-restricted-syntax')
+  ) {
     throw new Error('ESLint config missing architectural law rules');
   }
 });
@@ -167,11 +177,7 @@ runner.addTest('No Frontend Fantasy Calculations', async () => {
   const srcPath = join(process.cwd(), 'src');
 
   // Search for potential fantasy point calculations
-  const searchTerms = [
-    'calculateFantasyPoints',
-    'calculate.*point',
-    'fantasy.*calculation',
-  ];
+  const searchTerms = ['calculateFantasyPoints', 'calculate.*point', 'fantasy.*calculation'];
 
   // This is a basic check - in practice, ESLint should catch these
   // We're just verifying the guardrails are in place
@@ -223,4 +229,3 @@ runner.addTest('Next.js Build Check', async () => {
   const allPassed = await runner.run();
   process.exit(allPassed ? 0 : 1);
 })();
-

@@ -21,6 +21,7 @@ import { mapApiProjectionToRow, type Row } from '@/lib/tools';
 import { ConnectionGuard, useIsConnected } from '@/components/ConnectionGuard';
 import { useProjections } from '@/hooks/use-projections';
 import { useUserStore } from '@/lib/store';
+import { getCurrentWeek } from '@/lib/utils';
 import { PlayerCard } from '@/components/PlayerCard';
 import { TrustSnapshot } from '@/components/TrustSnapshot';
 
@@ -28,7 +29,7 @@ function StartSitContent() {
   const leagueContext = useLeagueContext();
   const isConnected = useIsConnected(leagueContext);
   const searchParams = useSearchParams();
-  const { riskTolerance, setRiskTolerance } = useUserStore();
+  const { riskTolerance, setRiskTolerance, selectedWeek } = useUserStore();
 
   // Pre-fill from URL params
   const [playerA, setPlayerA] = useState(searchParams.get('playerA') || '');
@@ -158,7 +159,7 @@ function StartSitContent() {
       chosen: winner === 'A' ? rowA.player_name : rowB.player_name,
       risk,
       timestamp: new Date().toISOString(),
-      week: projectionsData?.data?.week || 'unknown',
+      week: selectedWeek || getCurrentWeek(),
     };
 
     // POST to bubble registry API

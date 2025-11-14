@@ -41,9 +41,12 @@ function DecisionSimulatorContent() {
         team: proj.team,
         position: proj.position,
         range: {
-          p10: proj.enhanced_floor ?? proj.projection * 0.7,
+          // Architecture Law #3: Use API-provided values only, no calculations
+          // Use enhanced_floor/ceiling if available, otherwise use projection value for all bands
+          // TODO: API should provide projected_points.floor/ceiling for non-enhanced projections
+          p10: proj.enhanced_floor ?? proj.projection,
           p50: proj.projection,
-          p90: proj.enhanced_ceiling ?? proj.projection * 1.3,
+          p90: proj.enhanced_ceiling ?? proj.projection,
         },
         confidence: proj.statistical_confidence ?? undefined,
         explanations: proj.factors.map((f) => ({
