@@ -15,11 +15,12 @@ export function TrustProvider({ children }: { children: ReactNode }) {
     // Listen for trust updates from successful fetches (browser-only)
     if (typeof window === 'undefined') return;
 
-    const handler = (e: CustomEvent) => {
-      setTrust(e.detail);
+    const handler = (e: Event) => {
+      const customEvent = e as CustomEvent<TrustState>;
+      setTrust(customEvent.detail);
     };
-    window.addEventListener('trust-update', handler as any);
-    return () => window.removeEventListener('trust-update', handler as any);
+    window.addEventListener('trust-update', handler);
+    return () => window.removeEventListener('trust-update', handler);
   }, []);
 
   return <TrustContext.Provider value={trust}>{children}</TrustContext.Provider>;
