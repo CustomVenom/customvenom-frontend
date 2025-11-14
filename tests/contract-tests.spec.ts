@@ -173,13 +173,12 @@ test.describe('UI Contract Tests', () => {
   });
 
   test('health endpoint returns correct contract', async ({ page }) => {
-    // Use fetch directly to avoid timeout issues
-    const baseURL = process.env['PLAYWRIGHT_BASE_URL'] || 'http://localhost:3000';
-    const response = await fetch(`${baseURL}/api/health`, {
-      signal: AbortSignal.timeout(10000),
+    // Use page.request for better Playwright integration
+    const response = await page.request.get('/api/health', {
+      timeout: 15000,
     });
 
-    expect(response.status).toBe(200);
+    expect(response.status()).toBe(200);
 
     const body = await response.json();
     // Health endpoint returns { status, message, workers_api } shape
@@ -187,7 +186,7 @@ test.describe('UI Contract Tests', () => {
     expect(body).toHaveProperty('message');
     expect(body).toHaveProperty('workers_api');
 
-    const headers = Object.fromEntries(response.headers.entries());
+    const headers = response.headers();
 
     // Assert trust headers are present
     // If KV guards are on, allow x-stale to be either value but ensure request-id is present
