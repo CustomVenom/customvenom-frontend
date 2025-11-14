@@ -41,7 +41,7 @@ export async function GET(_request: NextRequest) {
       signal: AbortSignal.timeout(5000),
     });
 
-    const trustHeaders = {
+    const upstreamTrustHeaders = {
       'x-schema-version': response.headers.get('x-schema-version'),
       'x-last-refresh': response.headers.get('x-last-refresh'),
       'x-request-id': response.headers.get('x-request-id'),
@@ -49,7 +49,7 @@ export async function GET(_request: NextRequest) {
     };
 
     // Log trust headers for debugging
-    console.log('[Health Check] Workers API trust headers:', trustHeaders);
+    console.log('[Health Check] Workers API trust headers:', upstreamTrustHeaders);
 
     if (!response.ok) {
       return NextResponse.json(
@@ -59,14 +59,14 @@ export async function GET(_request: NextRequest) {
           workers_api: {
             reachable: true,
             status: response.status,
-            trust_headers: trustHeaders,
+            trust_headers: upstreamTrustHeaders,
           },
         },
         {
           status: 200,
           headers: trustHeaders({
             'x-stale': 'true',
-            'x-request-id': trustHeaders['x-request-id'] || `health-${Date.now()}`,
+            'x-request-id': upstreamTrustHeaders['x-request-id'] || `health-${Date.now()}`,
           }),
         },
       );
@@ -81,17 +81,17 @@ export async function GET(_request: NextRequest) {
         workers_api: {
           reachable: true,
           status: response.status,
-          trust_headers: trustHeaders,
+          trust_headers: upstreamTrustHeaders,
           data: data,
         },
       },
       {
         status: 200,
         headers: trustHeaders({
-          'x-schema-version': trustHeaders['x-schema-version'] || undefined,
-          'x-last-refresh': trustHeaders['x-last-refresh'] || undefined,
-          'x-request-id': trustHeaders['x-request-id'] || undefined,
-          'x-stale': trustHeaders['x-stale'] || undefined,
+          'x-schema-version': upstreamTrustHeaders['x-schema-version'] || undefined,
+          'x-last-refresh': upstreamTrustHeaders['x-last-refresh'] || undefined,
+          'x-request-id': upstreamTrustHeaders['x-request-id'] || undefined,
+          'x-stale': upstreamTrustHeaders['x-stale'] || undefined,
         }),
       },
     );
