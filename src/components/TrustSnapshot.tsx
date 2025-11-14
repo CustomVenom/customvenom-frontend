@@ -9,13 +9,11 @@ type Props = {
   ts?: string;
   ver?: string;
   stale?: boolean;
-  accuracy7d?: number; // 0.0-1.0, e.g., 0.91 for 91%
-  predictionsTracked?: number;
   // New: Trust headers from API response
   trust?: TrustHeaders;
 };
 
-export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, trust }: Props) {
+export function TrustSnapshot({ ts, ver, stale, trust }: Props) {
   // Use trust context if available (for private routes)
   const trustContext = useTrustContext();
 
@@ -54,8 +52,6 @@ export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, 
   };
 
   const relativeTime = formatRelativeTime(lastRefresh);
-  const accuracyText =
-    accuracy7d !== undefined ? `${Math.round(accuracy7d * 100)}% accurate` : null;
 
   return (
     <div
@@ -68,17 +64,6 @@ export function TrustSnapshot({ ts, ver, stale, accuracy7d, predictionsTracked, 
         <time dateTime={lastRefresh} title={formatted}>
           Updated {relativeTime}
         </time>
-        {accuracyText && (
-          <>
-            <span>•</span>
-            <span className="text-[rgb(var(--cv-primary))]">{accuracyText}</span>
-            {predictionsTracked !== undefined && predictionsTracked > 0 && (
-              <span className="text-[rgb(var(--text-muted))]">
-                ({predictionsTracked.toLocaleString()} predictions)
-              </span>
-            )}
-          </>
-        )}
         {isStale && (
           <span className="ml-2 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
             stale

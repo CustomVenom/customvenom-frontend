@@ -2,10 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { CACHE } from '@/lib/react-query';
 
-type CvSession =
-  | { user?: { id?: string; email?: string } | null; id?: string }
-  | null
-  | undefined;
+type CvSession = { user?: { id?: string; email?: string } | null; id?: string } | null | undefined;
 
 function getUserId(session: CvSession): string | null {
   // Hard null/undefined check first

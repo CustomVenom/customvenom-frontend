@@ -14,4 +14,3 @@ export function useAbortOnRouteChange(requests: Array<{ url: string; init?: Requ
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 }
-

@@ -9,7 +9,6 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Stat
   }
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Minimal log; wire Sentry if available
-    // eslint-disable-next-line no-console
     console.error('ErrorBoundary:', error, info);
     // @ts-expect-error optional Sentry
     if (typeof window !== 'undefined' && window.Sentry) window.Sentry.captureException(error);

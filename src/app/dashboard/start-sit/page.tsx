@@ -145,6 +145,68 @@ function StartSitContent() {
       riskAdjusted = confidence;
     }
 
+    // Log decision for debugging
+    const decisionData = {
+      playerA: {
+        id: rowA.player_id,
+        name: rowA.player_name,
+      },
+      playerB: {
+        id: rowB.player_id,
+        name: rowB.player_name,
+      },
+      chosen: winner === 'A' ? rowA.player_name : rowB.player_name,
+      risk,
+      timestamp: new Date().toISOString(),
+      week: projectionsData?.data?.week || 'unknown',
+    };
+
+    // POST to bubble registry API
+    try {
+      const response = await fetch('/api/decisions/bubble', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          decision_id: crypto.randomUUID(),
+          time: decisionData.timestamp,
+          playerA: decisionData.playerA,
+          playerB: decisionData.playerB,
+          chosen: decisionData.chosen,
+          risk: decisionData.risk,
+          pre_game: true,
+          week: decisionData.week,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to log decision');
+      }
+
+      // Log to console as backup
+      console.log('[DECISION]', decisionData);
+    } catch (error) {
+      // Fallback to console only
+      console.log('[DECISION]', decisionData);
+      console.warn('[DECISION] Failed to log to API', error);
+    }
+
+    // Add to Sentry breadcrumbs if available
+    if (typeof window !== 'undefined' && 'Sentry' in window) {
+      try {
+        const Sentry = (window as { Sentry?: { addBreadcrumb: (breadcrumb: unknown) => void } }).Sentry;
+        if (Sentry) {
+          Sentry.addBreadcrumb({
+            category: 'decision',
+            message: `Chose ${decisionData.chosen} over ${winner === 'A' ? rowB.player_name : rowA.player_name}`,
+            level: 'info',
+            data: decisionData,
+          });
+        }
+      } catch {
+        // Ignore Sentry errors
+      }
+    }
+
     setResult({
       winner,
       rowA,

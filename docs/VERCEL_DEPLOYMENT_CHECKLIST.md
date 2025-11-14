@@ -7,22 +7,26 @@
 Set these in **Vercel → Project → Settings → Environment Variables**:
 
 #### Critical (Required)
+
 - `NEXT_PUBLIC_SITE_URL` = `https://www.customvenom.com` (or your domain)
 - `DATABASE_URL` = `postgresql://user:password@host:5432/database` (valid format required, even if placeholder at build)
 - `NEXTAUTH_URL` = `https://www.customvenom.com` (must match NEXT_PUBLIC_SITE_URL)
 - `AUTH_SECRET` or `NEXTAUTH_SECRET` = `<32+ character random string>`
 
 #### API Configuration
+
 - `NEXT_PUBLIC_API_BASE` = `https://api.customvenom.com` (production) or staging URL (preview)
 - `API_BASE` = Same as NEXT_PUBLIC_API_BASE
 
 #### OAuth Providers (if used)
+
 - `GOOGLE_CLIENT_ID` = Your Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET` = Your Google OAuth client secret
 - `YAHOO_CLIENT_ID` = Your Yahoo OAuth client ID
 - `YAHOO_CLIENT_SECRET` = Your Yahoo OAuth client secret
 
 #### Stripe (if used)
+
 - `STRIPE_SECRET_KEY` = `sk_live_...` (production) or `sk_test_...` (preview)
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_...` (production) or `pk_test_...` (preview)
 - `STRIPE_WEBHOOK_SECRET` = Webhook secret from Stripe dashboard
@@ -62,17 +66,19 @@ These can be set to reduce KV usage and costs:
 ## Troubleshooting
 
 ### Build Fails
+
 - Check DATABASE_URL format (must be valid PostgreSQL connection string)
 - Verify all required env vars are set
 - Check build logs for Prisma generate errors
 
 ### Runtime Errors
+
 - Verify NEXT_PUBLIC_SITE_URL matches deployment URL
 - Check that Workers API is reachable (NEXT_PUBLIC_API_BASE)
 - Review Vercel function logs for specific errors
 
 ### Missing Data
+
 - Verify NEXT_PUBLIC_API_BASE is set correctly
 - Check Workers API health endpoint
 - Review network tab for failed API calls
-

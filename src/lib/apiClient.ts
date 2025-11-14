@@ -98,14 +98,17 @@ export class APIClient {
 
     const ctrl = new AbortController();
     this.controllers.set(key, ctrl);
-    const merged: RequestInit = { ...init, signal: ctrl.signal, credentials: init?.credentials ?? 'include' };
+    const merged: RequestInit = {
+      ...init,
+      signal: ctrl.signal,
+      credentials: init?.credentials ?? 'include',
+    };
 
-    const p = fetch(url, merged)
-      .finally(() => {
-        this.inFlight.delete(key);
-        const c = this.controllers.get(key);
-        if (c) this.controllers.delete(key);
-      });
+    const p = fetch(url, merged).finally(() => {
+      this.inFlight.delete(key);
+      const c = this.controllers.get(key);
+      if (c) this.controllers.delete(key);
+    });
 
     this.inFlight.set(key, p);
     return p;

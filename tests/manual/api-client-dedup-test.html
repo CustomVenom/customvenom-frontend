@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <title>API Client Dedup/Abort Test</title>
+    <style>
+      body {
+        font-family: monospace;
+        padding: 20px;
+      }
+      button {
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      .log {
+        background: #f0f0f0;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .info {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>API Client Dedup/Abort Test</h1>
+
+    <h2>Test 1: Request Deduplication</h2>
+    <button onclick="testDedup()">Trigger 2 Identical Requests</button>
+    <div id="dedup-log" class="log"></div>
+
+    <h2>Test 2: Abort Cleanup</h2>
+    <button onclick="testAbort()">Start Request Then Abort</button>
+    <div id="abort-log" class="log"></div>
+
+    <script type="module">
+      // Import the APIClient
+      import { apiClient } from '/src/lib/apiClient.ts';
+
+      window.testDedup = async function () {
+        const log = document.getElementById('dedup-log');
+        log.innerHTML = '<div class="info">Starting dedup test...</div>';
+
+        const url = '/api/projections?week=2025-11&sport=nfl';
+        const startTime = Date.now();
+
+        // Trigger two identical requests simultaneously
+        const p1 = apiClient.fetch(url);
+        const p2 = apiClient.fetch(url);
+
+        log.innerHTML += `<div class="info">Request 1 started at ${new Date().toISOString()}</div>`;
+        log.innerHTML += `<div class="info">Request 2 started at ${new Date().toISOString()}</div>`;
+
+        try {
+          const [r1, r2] = await Promise.all([p1, p2]);
+          const endTime = Date.now();
+
+          // Check if they're the same promise (deduplicated)
+          const isSamePromise = p1 === p2;
+          const isSameResponse = r1 === r2;
+
+          log.innerHTML += `<div class="${isSamePromise ? 'success' : 'error'}">
+          Same Promise Reference: ${isSamePromise} ${isSamePromise ? '✓' : '✗'}
+        </div>`;
+          log.innerHTML += `<div class="${isSameResponse ? 'success' : 'error'}">
+          Same Response Object: ${isSameResponse} ${isSameResponse ? '✓' : '✗'}
+        </div>`;
+          log.innerHTML += `<div class="info">Total time: ${endTime - startTime}ms</div>`;
+          log.innerHTML += `<div class="info">Status: ${r1.status}</div>`;
+        } catch (err) {
+          log.innerHTML += `<div class="error">Error: ${err.message}</div>`;
+        }
+      };
+
+      window.testAbort = async function () {
+        const log = document.getElementById('abort-log');
+        log.innerHTML = '<div class="info">Starting abort test...</div>';
+
+        const url = '/api/projections?week=2025-11&sport=nfl';
+
+        try {
+          log.innerHTML += `<div class="info">Starting request...</div>`;
+          const requestPromise = apiClient.fetch(url);
+
+          // Abort after 100ms
+          setTimeout(() => {
+            log.innerHTML += `<div class="info">Aborting request...</div>`;
+            apiClient.abort(url);
+          }, 100);
+
+          try {
+            await requestPromise;
+            log.innerHTML += `<div class="error">Request completed (should have been aborted) ✗</div>`;
+          } catch (err) {
+            if (err.name === 'AbortError') {
+              log.innerHTML += `<div class="success">Request aborted successfully ✓</div>`;
+            } else {
+              log.innerHTML += `<div class="error">Unexpected error: ${err.message}</div>`;
+            }
+          }
+        } catch (err) {
+          log.innerHTML += `<div class="error">Error: ${err.message}</div>`;
+        }
+      };
+    </script>
+  </body>
+</html>

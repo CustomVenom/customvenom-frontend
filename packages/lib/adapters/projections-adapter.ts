@@ -32,6 +32,7 @@ interface RawProjection {
   confidence?: number | string;
   chips?: RawChip[];
   explanations?: RawChip[];
+  simple_attribution?: { reason: string; confidence: 'high' | 'medium' } | null;
 }
 
 interface RawChip {
@@ -39,6 +40,7 @@ interface RawChip {
   type?: string;
   label?: string;
   text?: string;
+  description?: string; // Backend ExplanationChip uses 'description' field
   delta_pct?: number;
   delta_points?: number;
   confidence?: number;
@@ -85,6 +87,24 @@ export function adaptProjections(payload: ApiPayload | unknown): Projection[] {
       const ceiling = toNum(raw.ceiling, 0);
       const confidence = toNum(raw.confidence, 0);
 
+      // Prefer explanations array if available (full attribution), otherwise fall back to simple_attribution
+      let chips: Chip[] = [];
+      const explanationsArray = raw.explanations || raw.chips || [];
+      if (Array.isArray(explanationsArray) && explanationsArray.length > 0) {
+        // Use explanations array (full attribution with multiple drivers)
+        chips = adaptChips(explanationsArray);
+      } else if (raw.simple_attribution && raw.simple_attribution.reason) {
+        // Fall back to simple_attribution for backward compatibility
+        chips = [
+          {
+            driver: 'attribution',
+            label: raw.simple_attribution.reason,
+            delta_pct: 0, // No delta in simple attribution
+            confidence: raw.simple_attribution.confidence === 'high' ? 0.75 : 0.65,
+          },
+        ];
+      }
+
       return {
         playerId,
         name,
@@ -95,7 +115,7 @@ export function adaptProjections(payload: ApiPayload | unknown): Projection[] {
         median,
         ceiling,
         confidence,
-        chips: adaptChips(raw.chips || raw.explanations || []),
+        chips,
       };
     })
     .filter((p): p is Projection => p !== null && p.confidence >= 0.65); // Confidence gating per guardrails
@@ -114,14 +134,21 @@ function adaptChips(rawChips: RawChip[] | unknown[]): Chip[] {
   const normalized = chips
     .filter((c): c is RawChip => c != null && typeof c === 'object') // Filter out null, undefined, and non-objects
     .map((c: RawChip) => {
-      // Accept both legacy (driver/label) and new (type/text) shapes
+      // Accept both legacy (driver/label) and new (type/text/description) shapes
+      // Backend ExplanationChip uses 'description' field, frontend uses 'label' or 'text'
       const label =
-        typeof c?.text === 'string' ? c.text : typeof c?.label === 'string' ? c.label : '';
+        typeof c?.description === 'string'
+          ? c.description
+          : typeof c?.text === 'string'
+            ? c.text
+            : typeof c?.label === 'string'
+              ? c.label
+              : '';
       const confidence =
         typeof c?.confidence === 'number' ? c.confidence : (c?.confidence_score ?? 0);
       const driver = c?.driver ?? c?.type ?? 'generic';
 
-      // Extract delta_pct: prefer explicit value, then delta_points, then extract from text
+      // Extract delta_pct: prefer explicit value, then delta_points, then extract from text/description
       const delta_pct =
         typeof c?.delta_pct === 'number'
           ? c.delta_pct

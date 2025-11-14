@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+        - /url: '#main'
+    - banner [ref=e3]:
+        - generic [ref=e4]:
+            - link "Home" [ref=e6] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e8]: Custom Venom
+            - navigation "Main navigation" [ref=e9]:
+                - link "Dashboard" [ref=e10] [cursor=pointer]:
+                    - /url: /dashboard
+                - link "Roster" [ref=e11] [cursor=pointer]:
+                    - /url: /dashboard/roster
+                - link "Projections" [ref=e12] [cursor=pointer]:
+                    - /url: /projections
+                - button "Tools" [ref=e14]:
+                    - text: Tools
+                    - img [ref=e15]
+                - button "Settings" [ref=e18]:
+                    - img [ref=e19]
+            - generic [ref=e22]:
+                - button "Toggle theme" [ref=e23]:
+                    - text: 🌙
+                    - generic [ref=e24]: Dark
+                - button "Toggle density" [ref=e25]:
+                    - generic [ref=e26]: Comfortable
+                - link "Design" [ref=e27] [cursor=pointer]:
+                    - /url: /design-preview
+    - link "Skip to main content" [ref=e28] [cursor=pointer]:
+        - /url: '#main-content'
+    - status "Trust information" [ref=e29]:
+        - generic [ref=e30]: vv1
+        - generic [ref=e31]: •
+        - time [ref=e32]: 7:33 AM
+    - button "Show keyboard shortcuts" [ref=e33]: '?'
+    - main [ref=e35]:
+        - main [ref=e36]:
+            - generic [ref=e37]:
+                - navigation [ref=e39]:
+                    - link "Home" [ref=e40] [cursor=pointer]:
+                        - /url: /
+                    - generic [ref=e41]:
+                        - text: /
+                        - link "dashboard" [ref=e42] [cursor=pointer]:
+                            - /url: /dashboard
+                - generic [ref=e44]:
+                    - generic [ref=e45]:
+                        - link "Decisions" [ref=e46] [cursor=pointer]:
+                            - /url: /dashboard/decisions
+                        - link "Start/Sit" [ref=e47] [cursor=pointer]:
+                            - /url: /dashboard/start-sit
+                        - link "FAAB" [ref=e48] [cursor=pointer]:
+                            - /url: /dashboard/faab
+                        - link "Players" [ref=e49] [cursor=pointer]:
+                            - /url: /dashboard/players
+                    - generic [ref=e50]: Could not load league data. Please try again.
+                - generic [ref=e55]:
+                    - generic [ref=e56]:
+                        - heading "Connect Your Fantasy League" [level=1] [ref=e57]
+                        - paragraph [ref=e58]: Get personalized AI-powered projections, lineup recommendations, and waiver wire insights for your team.
+                    - button "Connect Your League" [ref=e60]
+                    - generic [ref=e62]:
+                        - heading "What you'll get:" [level=3] [ref=e63]
+                        - list [ref=e64]:
+                            - listitem [ref=e65]:
+                                - generic [ref=e66]: âœ“
+                                - generic [ref=e67]: AI-powered projections for your roster
+                            - listitem [ref=e68]:
+                                - generic [ref=e69]: âœ“
+                                - generic [ref=e70]: Start/Sit recommendations
+                            - listitem [ref=e71]:
+                                - generic [ref=e72]: âœ“
+                                - generic [ref=e73]: FAAB budget optimization
+                            - listitem [ref=e74]:
+                                - generic [ref=e75]: âœ“
+                                - generic [ref=e76]: Waiver wire analysis
+    - navigation [ref=e77]
+    - contentinfo [ref=e78]:
+        - generic [ref=e79]:
+            - generic [ref=e80]:
+                - generic [ref=e81]: © 2025 Custom Venom
+                - generic [ref=e84]: API OK · cache 70%
+            - navigation "Footer navigation" [ref=e85]:
+                - link "Ops" [ref=e86] [cursor=pointer]:
+                    - /url: /ops
+                - link "Status" [ref=e87] [cursor=pointer]:
+                    - /url: /status
+                - link "Design" [ref=e88] [cursor=pointer]:
+                    - /url: /design-preview
+                - link "Privacy" [ref=e89] [cursor=pointer]:
+                    - /url: /privacy
+                - link "Bluesky" [ref=e90] [cursor=pointer]:
+                    - /url: https://bsky.app
+    - generic [ref=e95] [cursor=pointer]:
+        - button "Open Next.js Dev Tools" [ref=e96]:
+            - img [ref=e97]
+        - generic [ref=e100]:
+            - button "Open issues overlay" [ref=e101]:
+                - generic [ref=e102]:
+                    - generic [ref=e103]: '1'
+                    - generic [ref=e104]: '2'
+                - generic [ref=e105]:
+                    - text: Issue
+                    - generic [ref=e106]: s
+            - button "Collapse issues badge" [ref=e107]:
+                - img [ref=e108]
+    - alert [ref=e110]
+```

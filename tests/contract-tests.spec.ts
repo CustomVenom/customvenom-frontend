@@ -39,12 +39,14 @@ test.describe('UI Contract Tests', () => {
     await page.goto('/players', { waitUntil: 'networkidle' });
 
     // Wait for projections table or content to appear first (ensures data loaded)
-    await page.waitForSelector('table, [role="table"], .projections-table, text=Test Player', {
-      timeout: 15000,
-    }).catch(() => {
-      // Fallback: wait for any content indicating page loaded
-      return page.waitForSelector('body', { timeout: 5000 });
-    });
+    await page
+      .waitForSelector('table, [role="table"], .projections-table, text=Test Player', {
+        timeout: 15000,
+      })
+      .catch(() => {
+        // Fallback: wait for any content indicating page loaded
+        return page.waitForSelector('body', { timeout: 5000 });
+      });
 
     // Wait for trust snapshot to load (aria-label="Trust Snapshot")
     // TrustSnapshot only renders when projectionsData exists
