@@ -16,13 +16,11 @@ function getUserId(session: CvSession): string | null {
 
   // Legacy/rooted shape: session.id
   // Use Object.prototype.hasOwnProperty to avoid 'in' on possibly-null and to silence TS
-  if (
-    typeof session === 'object' &&
-    Object.prototype.hasOwnProperty.call(session, 'id') &&
-    typeof (session as any).id === 'string' &&
-    (session as any).id
-  ) {
-    return (session as any).id as string;
+  if (typeof session === 'object' && Object.prototype.hasOwnProperty.call(session, 'id')) {
+    const sessionWithId = session as { id?: string };
+    if (typeof sessionWithId.id === 'string' && sessionWithId.id) {
+      return sessionWithId.id;
+    }
   }
 
   return null;
