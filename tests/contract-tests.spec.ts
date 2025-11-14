@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('UI Contract Tests', () => {
   test('trust snapshot renders with schema_version and last_refresh', async ({ page }) => {
     // Mock projections endpoint to ensure trust headers are present
+    // Set up route BEFORE navigation for better test isolation
     await page.route('**/api/projections*', async (route) => {
       const url = new URL(route.request().url());
       const week = url.searchParams.get('week') || '2025-06';
@@ -36,6 +37,14 @@ test.describe('UI Contract Tests', () => {
     });
 
     await page.goto('/players', { waitUntil: 'networkidle' });
+
+    // Wait for projections table or content to appear first (ensures data loaded)
+    await page.waitForSelector('table, [role="table"], .projections-table, text=Test Player', {
+      timeout: 15000,
+    }).catch(() => {
+      // Fallback: wait for any content indicating page loaded
+      return page.waitForSelector('body', { timeout: 5000 });
+    });
 
     // Wait for trust snapshot to load (aria-label="Trust Snapshot")
     // TrustSnapshot only renders when projectionsData exists
