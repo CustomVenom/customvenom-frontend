@@ -42,4 +42,3 @@ export function RecommendationCard({ verdict }: RecommendationCardProps) {
     </Card>
   );
 }
-

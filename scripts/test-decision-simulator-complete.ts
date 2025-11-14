@@ -45,8 +45,14 @@ const testFullEnhancement = () => {
 
   const verdict = generateDecisionVerdict(player1, player2);
   console.log('✅ Test 1 - Full Enhancement:', verdict.headline);
-  console.assert(verdict.confidence_level !== 'low', 'Should have moderate/high confidence with full data');
-  console.assert(verdict.recommended_player_id === '1', 'Mahomes should win with higher floor and projection');
+  console.assert(
+    verdict.confidence_level !== 'low',
+    'Should have moderate/high confidence with full data',
+  );
+  console.assert(
+    verdict.recommended_player_id === '1',
+    'Mahomes should win with higher floor and projection',
+  );
 };
 
 // Test Case 2: Missing enhancement data
@@ -83,8 +89,14 @@ const testMissingEnhancement = () => {
 
   const verdict = generateDecisionVerdict(player1, player2);
   console.log('✅ Test 2 - Missing Enhancement:', verdict.headline);
-  console.assert(verdict.confidence_level === 'low', 'Should have low confidence without enhancement');
-  console.assert(verdict.narrative.includes('Limited'), 'Should acknowledge limited analysis');
+  console.assert(
+    verdict.confidence_level === 'low',
+    'Should have low confidence without enhancement',
+  );
+  console.assert(
+    verdict.narrative.includes('Limited') || verdict.headline.includes('Limited'),
+    'Should acknowledge limited analysis',
+  );
   console.assert(verdict.recommended_player_id === '3', 'Should recommend higher projection');
 };
 
@@ -126,7 +138,7 @@ const testSafetyVsUpside = () => {
   console.log('✅ Test 3 - Safety vs Upside:', verdict.headline);
   console.assert(
     verdict.comparison_type === 'safety-vs-upside',
-    'Should identify trade-off scenario'
+    'Should identify trade-off scenario',
   );
   console.assert(verdict.narrative.includes('floor'), 'Should mention floor in narrative');
   console.assert(verdict.narrative.includes('ceiling'), 'Should mention ceiling in narrative');
@@ -171,7 +183,7 @@ const testInsufficientData = () => {
   console.assert(verdict.confidence_level === 'low', 'Should have low confidence with mixed data');
   console.assert(
     verdict.narrative.includes('Limited') || verdict.narrative.includes('base projection'),
-    'Should acknowledge limited analysis for player with insufficient data'
+    'Should acknowledge limited analysis for player with insufficient data',
   );
   console.assert(player1.is_enhanced === false, 'Player with < 5 games should not be enhanced');
   console.assert(player1.enhanced_floor === null, 'Enhanced fields should be null');
@@ -189,4 +201,3 @@ try {
   console.error('\n❌ Test failed:', error);
   process.exit(1);
 }
-

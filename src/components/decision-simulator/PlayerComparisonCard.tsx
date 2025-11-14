@@ -15,10 +15,7 @@ export function PlayerComparisonCard({ player, isWinner }: PlayerComparisonCardP
   if (!player.is_enhanced) {
     return (
       <Card
-        className={cn(
-          'p-6 bg-gray-900 border',
-          isWinner ? 'border-blue-500' : 'border-gray-800'
-        )}
+        className={cn('p-6 bg-gray-900 border', isWinner ? 'border-blue-500' : 'border-gray-800')}
       >
         <div className="flex items-center space-x-4 mb-4">
           <img
@@ -74,7 +71,7 @@ export function PlayerComparisonCard({ player, isWinner }: PlayerComparisonCardP
     <Card
       className={cn(
         'p-6 bg-gray-900 border',
-        isWinner ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-800'
+        isWinner ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-800',
       )}
     >
       <div className="flex items-center space-x-4 mb-4">
@@ -116,7 +113,7 @@ export function PlayerComparisonCard({ player, isWinner }: PlayerComparisonCardP
           />
         </div>
         <div className="mt-1 text-xs text-gray-500">
-          Range: {range.toFixed(1)} pts ({((volatility * 100).toFixed(0))}% volatility)
+          Range: {range.toFixed(1)} pts ({(volatility * 100).toFixed(0)}% volatility)
         </div>
       </div>
 
@@ -161,4 +158,3 @@ export function PlayerComparisonCard({ player, isWinner }: PlayerComparisonCardP
     </Card>
   );
 }
-

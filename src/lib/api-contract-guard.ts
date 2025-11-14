@@ -15,16 +15,13 @@
  * @param context - Context for error message
  * @throws Error if value appears to be a calculated fantasy point
  */
-export function guardAgainstFantasyPointCalculation(
-  value: unknown,
-  context?: string
-): void {
+export function guardAgainstFantasyPointCalculation(value: unknown, context?: string): void {
   if (typeof value === 'number' && value > 0 && value < 100) {
     // In development, warn about potential fantasy point calculations
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       console.warn(
         `[API Contract Guard] Potential fantasy point calculation detected: ${value}${context ? ` in ${context}` : ''}. ` +
-        'Architecture Law #3: Frontend must never calculate fantasy points. Use API-provided data only.'
+          'Architecture Law #3: Frontend must never calculate fantasy points. Use API-provided data only.',
       );
     }
   }
@@ -41,7 +38,7 @@ export function guardAgainstFantasyPointCalculation(
 export function guardProjectionSource(
   projection: number | null | undefined,
   fallback: number | null | undefined,
-  fieldName: string
+  fieldName: string,
 ): number | null {
   // If API provided the projection, use it
   if (projection !== null && projection !== undefined) {
@@ -51,10 +48,10 @@ export function guardProjectionSource(
   // If fallback is provided, it means API didn't have the data
   // Architecture Law #3: Don't use heuristics, show "unavailable"
   if (fallback !== null && fallback !== undefined) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       console.warn(
         `[API Contract Guard] Fallback value used for ${fieldName}: ${fallback}. ` +
-        'Architecture Law #3: Consider showing "Data unavailable" instead of using fallback values.'
+          'Architecture Law #3: Consider showing "Data unavailable" instead of using fallback values.',
       );
     }
     // For now, allow fallback but warn in development
@@ -76,7 +73,7 @@ export function guardProjectionSource(
  */
 export function useEnhancedOrNull(
   enhancedValue: number | null | undefined,
-  baselineValue: number | null | undefined
+  baselineValue: number | null | undefined,
 ): number | null {
   if (enhancedValue !== null && enhancedValue !== undefined) {
     return enhancedValue;
@@ -86,4 +83,3 @@ export function useEnhancedOrNull(
   // Return null and let UI show "Enhanced data unavailable"
   return null;
 }
-

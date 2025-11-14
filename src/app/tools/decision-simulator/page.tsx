@@ -11,7 +11,7 @@ import { generateDecisionVerdict } from '@/lib/decision-engine';
 import type { EnhancedPlayerProjection } from '@/lib/types/decision';
 import { PlayerComparisonCard } from '@/components/decision-simulator/PlayerComparisonCard';
 import { RecommendationCard } from '@/components/decision-simulator/RecommendationCard';
-import { mapApiProjectionToRow, type Row } from '@/lib/tools';
+import type { Row } from '@/lib/tools';
 import { useToast } from '@/components/Toast';
 import { trackFeatureInteraction } from '@/lib/analytics';
 
@@ -19,9 +19,9 @@ function DecisionSimulatorContent() {
   const searchParams = useSearchParams();
   const { setMsg, Toast } = useToast();
 
-  // Pre-fill from URL params
-  const [playerA, setPlayerA] = useState(searchParams.get('playerA') || '');
-  const [playerB, setPlayerB] = useState(searchParams.get('playerB') || '');
+  // Pre-fill from URL params (for future URL syncing)
+  const [_playerA, setPlayerA] = useState(searchParams.get('playerA') || '');
+  const [_playerB, setPlayerB] = useState(searchParams.get('playerB') || '');
 
   const [selectedPlayerA, setSelectedPlayerA] = useState<EnhancedPlayerProjection | null>(null);
   const [selectedPlayerB, setSelectedPlayerB] = useState<EnhancedPlayerProjection | null>(null);
@@ -202,4 +202,3 @@ export default function DecisionSimulatorPage() {
     </ToolErrorBoundary>
   );
 }
-

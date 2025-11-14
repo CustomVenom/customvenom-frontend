@@ -21,7 +21,7 @@ function calculateDecisionScore(player: EnhancedPlayerProjection): number | null
 
   // Weight by statistical confidence
   const confidence = player.statistical_confidence || 0.5;
-  score *= (0.8 + (confidence * 0.4)); // Scale to 0.8-1.2 multiplier
+  score *= 0.8 + confidence * 0.4; // Scale to 0.8-1.2 multiplier
 
   // Adjust for volatility
   const range = player.enhanced_ceiling - player.enhanced_floor;
@@ -41,7 +41,7 @@ function calculateDecisionScore(player: EnhancedPlayerProjection): number | null
  */
 export function generateDecisionVerdict(
   playerA: EnhancedPlayerProjection,
-  playerB: EnhancedPlayerProjection
+  playerB: EnhancedPlayerProjection,
 ): DecisionVerdict {
   // Handle missing enhancement data gracefully
   if (!playerA.is_enhanced || !playerB.is_enhanced) {
@@ -51,7 +51,7 @@ export function generateDecisionVerdict(
       narrative: `Without complete statistical enhancement, we can only compare base projections. ${higherProjection.player_name} projects higher at ${higherProjection.projection.toFixed(1)} points. Consider other factors like matchups and recent form for your decision.`,
       recommended_player_id: higherProjection.player_id,
       confidence_level: 'low',
-      comparison_type: 'standard'
+      comparison_type: 'standard',
     };
   }
 
@@ -70,15 +70,17 @@ export function generateDecisionVerdict(
   const loser = scoreA > scoreB ? playerB : playerA;
 
   // Case 1: Pure Dominance
-  if (winner.projection > loser.projection &&
-      winner.enhanced_floor! > loser.enhanced_floor! &&
-      winner.enhanced_ceiling! > loser.enhanced_ceiling!) {
+  if (
+    winner.projection > loser.projection &&
+    winner.enhanced_floor! > loser.enhanced_floor! &&
+    winner.enhanced_ceiling! > loser.enhanced_ceiling!
+  ) {
     return {
       headline: `Clear Winner: ${winner.player_name}`,
       narrative: `${winner.player_name} dominates across all metrics with a higher projection (${winner.projection.toFixed(1)}), safer floor (${winner.enhanced_floor!.toFixed(1)}), and greater ceiling (${winner.enhanced_ceiling!.toFixed(1)}). This is an easy decision.`,
       recommended_player_id: winner.player_id,
       confidence_level: 'high',
-      comparison_type: 'dominant'
+      comparison_type: 'dominant',
     };
   }
 
@@ -96,14 +98,15 @@ export function generateDecisionVerdict(
       }`,
       recommended_player_id: recommendation.player_id,
       confidence_level: scoreDiff > 0.15 ? 'high' : 'moderate',
-      comparison_type: 'safety-vs-upside'
+      comparison_type: 'safety-vs-upside',
     };
   }
 
   // Case 3: Statistical Toss-up
   const scoreDiff = Math.abs(scoreA - scoreB) / Math.max(scoreA, scoreB);
   if (scoreDiff < 0.05) {
-    const moreConfident = playerA.statistical_confidence! > playerB.statistical_confidence! ? playerA : playerB;
+    const moreConfident =
+      playerA.statistical_confidence! > playerB.statistical_confidence! ? playerA : playerB;
     const lessConfident = moreConfident.player_id === playerA.player_id ? playerB : playerA;
 
     return {
@@ -111,7 +114,7 @@ export function generateDecisionVerdict(
       narrative: `Both players project nearly identically. ${moreConfident.player_name} gets a slight edge with ${(moreConfident.statistical_confidence! * 100).toFixed(0)}% statistical confidence based on ${moreConfident.historical_games} historical games versus ${lessConfident.player_name}'s ${(lessConfident.statistical_confidence! * 100).toFixed(0)}% confidence. Either choice is defensible.`,
       recommended_player_id: moreConfident.player_id,
       confidence_level: 'low',
-      comparison_type: 'toss-up'
+      comparison_type: 'toss-up',
     };
   }
 
@@ -121,7 +124,6 @@ export function generateDecisionVerdict(
     narrative: `Our analysis gives ${winner.player_name} a clear edge with a ${(scoreDiff * 100).toFixed(0)}% scoring advantage. The combination of projection (${winner.projection.toFixed(1)}), floor (${winner.enhanced_floor!.toFixed(1)}), and ${winner.statistical_confidence! > loser.statistical_confidence! ? 'higher statistical confidence' : 'favorable matchup factors'} makes this the recommended choice.`,
     recommended_player_id: winner.player_id,
     confidence_level: scoreDiff > 0.15 ? 'high' : 'moderate',
-    comparison_type: 'standard'
+    comparison_type: 'standard',
   };
 }
-

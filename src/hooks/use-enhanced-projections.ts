@@ -80,7 +80,11 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
 
         // Get projection value (median or fallback)
         const projection =
-          p.projected_points?.median ?? p.median ?? p.projected_points?.floor ?? (p as { floor?: number }).floor ?? 0;
+          p.projected_points?.median ??
+          p.median ??
+          p.projected_points?.floor ??
+          (p as { floor?: number }).floor ??
+          0;
 
         // Map explanations/reasons to DecisionFactor format
         const factors =
@@ -110,7 +114,7 @@ export function useEnhancedProjections(week?: string, enhanced = true) {
           statistical_confidence: hasRealEnhancement ? p.enhanced_confidence : null,
           historical_games: hasRealEnhancement ? p.historical_games : null,
           is_enhanced: hasRealEnhancement,
-          enhancement_method: (p.enhancement_method as any) || 'unavailable',
+          enhancement_method: (p.enhancement_method as 'quantile_regression' | 'fallback' | 'unavailable' | undefined) || 'unavailable',
           factors,
         };
       });

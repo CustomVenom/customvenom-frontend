@@ -54,4 +54,3 @@ export interface DecisionVerdict {
   confidence_level: 'high' | 'moderate' | 'low';
   comparison_type: 'dominant' | 'safety-vs-upside' | 'toss-up' | 'standard';
 }
-
