@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(_req: NextRequest) {
-
   // Mock response - replace with real Yahoo API call when ready
   const mockTransactions = [
     {
