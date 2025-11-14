@@ -20,7 +20,7 @@ export function logError(error: Error | unknown, context: ErrorContext = {}): vo
   };
 
   // Log to console in dev, could be extended to send to logging service
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     console.error('[Error Logger]', logData);
   } else {
     // In production, you might want to send to Sentry, LogRocket, etc.
@@ -37,7 +37,7 @@ export function logTrustHeaders(
     'x-stale'?: string | null;
   },
 ): void {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     console.log(`[Trust Headers] ${endpoint}:`, {
       schemaVersion: headers['x-schema-version'],
       lastRefresh: headers['x-last-refresh'],

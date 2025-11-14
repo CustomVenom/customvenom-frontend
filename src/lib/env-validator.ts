@@ -3,13 +3,13 @@
 
 const REQUIRED_ENV_VARS = {
   // Public vars that should be set in production
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_SITE_URL: process.env['NEXT_PUBLIC_SITE_URL'],
 } as const;
 
 const OPTIONAL_ENV_VARS = {
-  NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE,
-  NEXT_PUBLIC_FEATURE_NBA: process.env.NEXT_PUBLIC_FEATURE_NBA,
-  NEXT_PUBLIC_PAYWALL: process.env.NEXT_PUBLIC_PAYWALL,
+  NEXT_PUBLIC_API_BASE: process.env['NEXT_PUBLIC_API_BASE'],
+  NEXT_PUBLIC_FEATURE_NBA: process.env['NEXT_PUBLIC_FEATURE_NBA'],
+  NEXT_PUBLIC_PAYWALL: process.env['NEXT_PUBLIC_PAYWALL'],
 } as const;
 
 export function validateEnv() {
@@ -24,7 +24,7 @@ export function validateEnv() {
   }
 
   // Check optional vars and warn if missing in production
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env['NODE_ENV'] === 'production';
   if (isProduction && !OPTIONAL_ENV_VARS.NEXT_PUBLIC_API_BASE) {
     warnings.push('NEXT_PUBLIC_API_BASE not set - API calls will fail');
   }
@@ -58,6 +58,6 @@ export function validateEnv() {
 }
 
 // Run validation on module load (dev only)
-if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
+if (typeof window === 'undefined' && process.env['NODE_ENV'] !== 'production') {
   validateEnv();
 }

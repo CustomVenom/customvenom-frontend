@@ -30,7 +30,7 @@ const merri = Merriweather_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://customvenom.com'),
+  metadataBase: new URL(process.env['NEXT_PUBLIC_SITE_URL'] || 'https://customvenom.com'),
   title: 'Custom Venom — Fantasy Football Analytics',
   description:
     'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
