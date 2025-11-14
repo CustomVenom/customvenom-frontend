@@ -1,38 +1,36 @@
 'use client';
-
 import React from 'react';
 
-type Props = { children: React.ReactNode; fallback?: React.ReactNode };
-
-export class ErrorBoundary extends React.Component<Props, { hasError: boolean }> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
+type State = { hasError: boolean; error?: Error };
+export class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
+  state: State = { hasError: false };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    // Minimal log; wire Sentry if available
+    // eslint-disable-next-line no-console
+    console.error('ErrorBoundary:', error, info);
+    // @ts-expect-error optional Sentry
+    if (typeof window !== 'undefined' && window.Sentry) window.Sentry.captureException(error);
   }
-  override componentDidCatch(error: unknown) {
-    // Minimal log; do not leak details in UI
-    console.error(JSON.stringify({ scope: 'ui.error-boundary', err: String(error) }));
-  }
-  override render() {
+  render() {
     if (this.state.hasError) {
       return (
-        this.props.fallback ?? (
-          <div className="p-6 text-center space-y-4" role="alert">
-            <h2 className="text-xl font-semibold text-danger mb-2">Something went wrong</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              An unexpected error occurred. Please try again.
-            </p>
-            <button
-              onClick={() => this.setState({ hasError: false })}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors min-h-[44px]"
-            >
-              Try again
-            </button>
-          </div>
-        )
+        <div className="p-4 border border-red-200 rounded bg-red-50">
+          <h2 className="font-semibold">Something went wrong</h2>
+          <details className="mt-2 text-sm whitespace-pre-wrap">
+            <summary>Error details</summary>
+            {this.state.error?.toString() ?? 'Unknown'}
+          </details>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-3 py-2 bg-red-600 text-white rounded"
+            aria-label="Reload page"
+          >
+            Reload
+          </button>
+        </div>
       );
     }
     return this.props.children;

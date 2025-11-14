@@ -76,37 +76,39 @@ export default function RootLayout({
         </script>
       </head>
       <body className="min-h-screen flex flex-col">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-[rgb(var(--cv-primary))] focus:text-[#0A0E1A] focus:px-3 focus:py-1 focus:rounded focus:z-50 focus:font-semibold focus:shadow-lg"
-        >
-          Skip to main content
-        </a>
-        <Providers>
-          <TrustProvider>
-            <SelectionProvider>
-              <Header />
-              <ClientLayout>
-                <main
-                  id="main"
-                  role="main"
-                  className="app flex-1 mx-auto w-full max-w-6xl px-4 py-6"
-                  style={{
-                    paddingTop: 'calc(1rem + env(safe-area-inset-top))',
-                    minHeight: 'calc(100vh - 4rem)', // Account for header height
-                  }}
-                >
-                  {children}
-                </main>
-              </ClientLayout>
-              <MobileNav />
-              <PublicTrustFooterWrapper />
-            </SelectionProvider>
-          </TrustProvider>
-        </Providers>
-        <Footer />
-        <Analytics />
-        <SpeedInsights />
+        <ErrorBoundary>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-[rgb(var(--cv-primary))] focus:text-[#0A0E1A] focus:px-3 focus:py-1 focus:rounded focus:z-50 focus:font-semibold focus:shadow-lg"
+          >
+            Skip to main content
+          </a>
+          <Providers>
+            <TrustProvider>
+              <SelectionProvider>
+                <Header />
+                <ClientLayout>
+                  <main
+                    id="main"
+                    role="main"
+                    className="app flex-1 mx-auto w-full max-w-6xl px-4 py-6"
+                    style={{
+                      paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+                      minHeight: 'calc(100vh - 4rem)', // Account for header height
+                    }}
+                  >
+                    {children}
+                  </main>
+                </ClientLayout>
+                <MobileNav />
+                <PublicTrustFooterWrapper />
+              </SelectionProvider>
+            </TrustProvider>
+          </Providers>
+          <Footer />
+          <Analytics />
+          <SpeedInsights />
+        </ErrorBoundary>
       </body>
     </html>
   );
