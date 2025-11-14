@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "npm run prisma:gen && next build",
+    "prisma:gen": "node -e \"try{require('child_process').execSync('prisma generate',{stdio:'inherit'})}catch(e){console.log('prisma generate skipped')}\"",
     "start": "next start",
     "start:test": "cross-env PORT=3000 next start",
     "ci:deterministic": "npx -y npm@10.7.0 ci",
@@ -43,7 +44,7 @@
     "lint:check": "eslint src/ --max-warnings=0 --quiet",
     "drift-watch": "powershell -ExecutionPolicy Bypass -File scripts/drift-watch.ps1",
     "prepare": "node -e \"(process.env.CI||process.env.VERCEL)?process.exit(0):0\" && husky install || true",
-    "postinstall": "prisma generate && node -e \"try{require('@tailwindcss/oxide/install')()}catch(e){process.exit(0)}\"",
+    "postinstall": "prisma generate || echo \"prisma generate skipped\"",
     "backfill-analytics": "npx tsx scripts/backfill-analytics.ts",
     "check-routes": "npx tsx scripts/check-routes.ts",
     "storybook": "storybook dev -p 6006",

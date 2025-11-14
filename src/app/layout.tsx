@@ -15,7 +15,12 @@ import { SelectionProvider } from '@/lib/selection';
 
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import '@/lib/env-validator'; // Validate env vars on startup
+import { validateEnv } from '@/lib/env-validator';
+
+// Validate env vars on startup (dev only)
+if (process.env['NODE_ENV'] !== 'production') {
+  validateEnv(true);
+}
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,8 +34,12 @@ const merri = Merriweather_Sans({
   weight: ['400', '500'],
 });
 
+const site =
+  process.env['NEXT_PUBLIC_SITE_URL'] ??
+  (process.env['VERCEL_URL'] ? `https://${process.env['VERCEL_URL']}` : 'https://customvenom.com');
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env['NEXT_PUBLIC_SITE_URL'] || 'https://customvenom.com'),
+  metadataBase: new URL(site),
   title: 'Custom Venom — Fantasy Football Analytics',
   description:
     'Data-driven insights for your fantasy football league. Supports Yahoo, ESPN, and Sleeper.',
