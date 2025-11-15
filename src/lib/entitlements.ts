@@ -2,10 +2,22 @@
  * User Entitlements Helper
  *
  * Checks user subscription/entitlement status from API.
- * Uses @customvenom/contracts schema for type safety.
+ * Type definition matches @customvenom/contracts schema for consistency.
  */
 
-import type { Entitlements } from '@customvenom/contracts';
+/**
+ * User entitlements type (matches @customvenom/contracts schema)
+ * Note: Defined locally since frontend and workers-api are separate repos
+ */
+export type Entitlements = {
+  plan: 'free' | 'pro';
+  features: {
+    nba: boolean;
+    optimizer: boolean;
+    league_specific: boolean;
+  };
+  expires_at?: string | null;
+};
 
 /**
  * Check user entitlements from API
