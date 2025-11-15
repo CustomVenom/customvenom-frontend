@@ -20,7 +20,6 @@
 ```
 
 This script:
-
 - ✅ Adds all required variables automatically
 - ✅ Prompts for secrets (Google OAuth, Stripe keys)
 - ✅ Safe to run multiple times (idempotent)
@@ -33,7 +32,6 @@ See `scripts/VERCEL_ENV_COMMANDS.md` for manual commands.
 **Required Variables:**
 
 **Production:**
-
 ```
 NEXT_PUBLIC_API_BASE=https://api.customvenom.com
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=false
@@ -44,7 +42,6 @@ NEXTAUTH_SECRET=...
 ```
 
 **Preview:**
-
 ```
 NEXT_PUBLIC_API_BASE=https://customvenom-workers-api-staging.jdewett81.workers.dev
 NEXT_PUBLIC_ENABLE_MULTI_SPORT=true

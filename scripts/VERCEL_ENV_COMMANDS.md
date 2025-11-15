@@ -19,7 +19,6 @@ Use the automated PowerShell scripts for idempotent, safe environment variable s
 ```
 
 **Features:**
-
 - ✅ **Idempotent**: Safe to run multiple times - only adds missing variables
 - ✅ **Secure**: Prompts for secrets (Google OAuth, Stripe keys) instead of hardcoding
 - ✅ **Smart**: Checks existing variables and skips duplicates
