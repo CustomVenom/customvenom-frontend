@@ -103,7 +103,7 @@ export class NBAClient extends SportClient {
     // Phase 1: Check configuration flag or health endpoint
     // For now, return false until NBA data pipeline is complete
     // When implemented, check:
-    // 1. Configuration flag: process.env.NEXT_PUBLIC_NBA_ENABLED === 'true'
+    // 1. Configuration flag: process.env['NEXT_PUBLIC_NBA_ENABLED'] === 'true'
     // 2. Optionally check /health endpoint for NBA availability
     return false; // NBA not ready yet - will be true once data pipeline is complete
   }
