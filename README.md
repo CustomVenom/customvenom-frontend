@@ -20,8 +20,8 @@ React 19 + Next.js 15 frontend for fantasy football projections and decision too
 
 **Setup Guides:**
 
-- [STRIPE_PREVIEW_SETUP.md](./STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
-- [YAHOO_OAUTH_SETUP.md](./YAHOO_OAUTH_SETUP.md) - Yahoo sign-in + league import
+- [Stripe Preview Setup](./docs/setup/STRIPE_PREVIEW_SETUP.md) - Stripe test checkout
+- [Yahoo OAuth Implementation](./docs/implementation/YAHOO_OAUTH_IMPLEMENTATION.md) - Yahoo sign-in + league import
 
 ## 🎨 Styling
 
@@ -71,5 +71,13 @@ npx playwright test
 
 ## 📖 Documentation
 
-- **Projection Utils**: `docs/PROJECTION_UTILS.md` - How to use centralized enhancement functions
+All documentation is consolidated in the `docs/` folder:
+
+- **[Documentation Index](./docs/README.md)** - Complete documentation overview
+- **[Projection Utils](./docs/PROJECTION_UTILS.md)** - How to use centralized enhancement functions
+- **[Developer Guide](./docs/guides/DEVELOPER_GUIDE.md)** - Development workflows and patterns
+- **[Quick Reference](./docs/guides/QUICK_REFERENCE.md)** - Commands and quick patterns
+- **[Troubleshooting](./docs/guides/TROUBLESHOOTING.md)** - Common issues and fixes
+- **[Setup Guides](./docs/setup/)** - Environment setup (Vercel, Stripe, OAuth, etc.)
+- **[Implementation Guides](./docs/implementation/)** - Feature implementation details
 - **Architecture**: See `customvenom-workers-api/docs/ARCHITECTURE.md` for architectural laws

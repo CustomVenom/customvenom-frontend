@@ -19,9 +19,17 @@
 - **[TROUBLESHOOTING.md](./guides/TROUBLESHOOTING.md)** - Common issues & fixes
 - **[QUICK_REFERENCE.md](./guides/QUICK_REFERENCE.md)** - One-page cheat sheet
 
-### [features/](./features/) - Feature Documentation
+### [setup/](./setup/) - Setup Guides
 
-- (Ready for feature-specific docs)
+- Environment setup guides (Vercel, Stripe, OAuth, DNS, etc.)
+
+### [implementation/](./implementation/) - Implementation Guides
+
+- Feature implementation details and guides
+
+### [archive/](./archive/) - Archived Documentation
+
+- Historical documentation moved during consolidation
 
 ---
 
