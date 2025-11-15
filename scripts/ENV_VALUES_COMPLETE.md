@@ -8,8 +8,8 @@ All production values have been found and added to scripts:
 - **AUTH_SECRET**: `mrCsQrchjWR2ZbJodgFQO9OTH1ksOnw/W+STFu5wj3U=` ✅
 - **NEXTAUTH_SECRET**: `5ohrfT9jmWWrywYPeVBwsHeEhKROEg1aUrFizMJMq8o=` ✅
 - **DATABASE_URL**: `postgresql://neondb_owner:npg_itg7c6XSIGQe@ep-quiet-frog-ad4o9gki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require` ✅ (Neon)
-- **GOOGLE_CLIENT_ID**: `294409641665-58nk9ngpglaq7e3v99bpckupr780lpsj.apps.googleusercontent.com` ✅
-- **GOOGLE_CLIENT_SECRET**: `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` ✅
+- **GOOGLE_CLIENT_ID**: `<YOUR_GOOGLE_CLIENT_ID>` ✅
+- **GOOGLE_CLIENT_SECRET**: `<YOUR_GOOGLE_CLIENT_SECRET>` ✅
 - **API_BASE**: `https://api.customvenom.com` ✅
 - **NEXT_PUBLIC_API_BASE**: `https://api.customvenom.com` ✅
 - **REDIS_URL**: `redis://default:YckZg0Kt7NbBPvlsvWNqkhMJT2VHdaJq@redis-19421.crce220.us-east-1-4.ec2.redns.redis-cloud.com:19421` ✅
