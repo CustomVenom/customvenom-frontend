@@ -59,7 +59,7 @@ function createLogObject(level: string, message: string, context?: LogContext): 
  */
 export function info(message: string, context?: LogContext): void {
   const log = createLogObject('info', message, context);
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     console.log(JSON.stringify(log));
   }
   // Phase 2: Wire to Cloudflare Logpush
@@ -70,7 +70,7 @@ export function info(message: string, context?: LogContext): void {
  */
 export function warn(message: string, context?: LogContext): void {
   const log = createLogObject('warn', message, context);
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     console.warn(JSON.stringify(log));
   }
   // Phase 2: Wire to Cloudflare Logpush
@@ -85,7 +85,7 @@ export function error(message: string, error?: Error | unknown, context?: LogCon
     error: error instanceof Error ? error.message : String(error),
     stack: error instanceof Error ? error.stack : undefined,
   });
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     console.error(JSON.stringify(log));
   }
   // Phase 2: Wire to Cloudflare Logpush
