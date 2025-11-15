@@ -9,6 +9,7 @@ import { TrustSnapshot } from '@/components/TrustSnapshot';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import { ToolErrorBoundary } from '@/components/ToolErrorBoundary';
+import { isEnhanced, getFloor, getCeiling } from '@/lib/projection-utils';
 
 function MatchupContent() {
   const sessionResult = useSession();

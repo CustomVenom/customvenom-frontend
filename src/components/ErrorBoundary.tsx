@@ -8,8 +8,13 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Stat
     return { hasError: true, error };
   }
   override componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Minimal log; wire Sentry if available
-    console.error('ErrorBoundary:', error, info);
+    // Use structured logging adapter
+    import('@/lib/logs').then(({ error: logError }) => {
+      logError('ErrorBoundary caught error', error, {
+        route: 'ErrorBoundary',
+        componentStack: info.componentStack
+      });
+    });
     // @ts-expect-error optional Sentry
     if (typeof window !== 'undefined' && window.Sentry) window.Sentry.captureException(error);
   }

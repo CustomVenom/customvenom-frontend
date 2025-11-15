@@ -80,7 +80,9 @@ function RosterPageClient() {
       setData(rosterData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load roster');
-      console.error('[RosterPage] Error:', err);
+      import('@/lib/logs').then(({ error: logError }) => {
+        logError('[RosterPage] Error fetching roster', err, { route: '/dashboard/roster' });
+      });
     } finally {
       setLoading(false);
     }
@@ -141,7 +143,14 @@ function RosterPageClient() {
       })
     : [];
 
-  const isPro = false; // TODO: Get from subscription/entitlements API if needed
+  // Check entitlements (defaults to free tier if API unavailable)
+  const [entitlements, setEntitlements] = useState<{ plan: 'free' | 'pro' }>({ plan: 'free' });
+  useEffect(() => {
+    import('@/lib/entitlements').then(({ checkEntitlements }) => {
+      checkEntitlements().then((ent) => setEntitlements({ plan: ent.plan }));
+    });
+  }, []);
+  const isPro = entitlements.plan === 'pro';
   const connected = yahooConnected;
 
   // Check session first
