@@ -1,6 +1,8 @@
-# ⚡ Quick Reference Card
+# ⚡ Quick Reference Card — Frontend
 
-**One-page cheat sheet for daily development**
+**Frontend-specific commands and patterns**
+
+**See**: [Root QUICK_REFERENCE.md](../../../../QUICK_REFERENCE.md) for unified cross-repo commands
 
 ---
 
