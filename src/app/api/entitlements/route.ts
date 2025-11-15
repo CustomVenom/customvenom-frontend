@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { getEntitlements } from '@/lib/entitlements';
+import { checkEntitlements } from '@/lib/entitlements';
 
 export async function GET() {
   try {
-    const entitlements = await getEntitlements();
+    const entitlements = await checkEntitlements();
     return NextResponse.json(entitlements);
   } catch (error) {
     console.error('Error fetching entitlements:', error);

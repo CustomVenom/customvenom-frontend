@@ -14,7 +14,7 @@ import { RecommendationCard } from '@/components/decision-simulator/Recommendati
 import type { Row } from '@/lib/tools';
 import { useToast } from '@/components/Toast';
 import { trackFeatureInteraction } from '@/lib/analytics';
-import { isEnhanced, getFloor, getCeiling } from '@/lib/projection-utils';
+import { isEnhanced, getFloor, getCeiling, type ProjectionWithEnhancement } from '@/lib/projection-utils';
 
 function DecisionSimulatorContent() {
   const searchParams = useSearchParams();
@@ -45,9 +45,9 @@ function DecisionSimulatorContent() {
           // Architecture Law #3: Use API-provided values only, no calculations
           // Use enhanced_floor/ceiling if available via isEnhanced() helper
           // If not enhanced, show median-only with clear label
-          p10: isEnhanced(proj) ? getFloor(proj, proj.projection) : proj.projection,
+          p10: isEnhanced(proj as ProjectionWithEnhancement) ? getFloor(proj as ProjectionWithEnhancement & { floor?: number }, proj.projection) : proj.projection,
           p50: proj.projection,
-          p90: isEnhanced(proj) ? getCeiling(proj, proj.projection) : proj.projection,
+          p90: isEnhanced(proj as ProjectionWithEnhancement) ? getCeiling(proj as ProjectionWithEnhancement & { ceiling?: number }, proj.projection) : proj.projection,
         },
         confidence: proj.statistical_confidence ?? undefined,
         explanations: proj.factors.map((f) => ({

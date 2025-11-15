@@ -11,7 +11,16 @@ import {
 } from '@/lib/analytics';
 import type { AnalyticsEvent } from '@/lib/analytics';
 import { getCacheStats } from '@/lib/cache';
-import { type Entitlements } from '@/lib/entitlements';
+// Entitlements type - using local definition since @customvenom/contracts not available in frontend
+type Entitlements = {
+  plan: 'free' | 'pro';
+  features?: {
+    nba?: boolean;
+    optimizer?: boolean;
+    league_specific?: boolean;
+    analytics?: boolean;
+  };
+};
 
 interface MetricsData {
   totalEvents: number;
@@ -69,7 +78,7 @@ export default function MetricsPage() {
   }, [loadMetrics]);
 
   // Access check - Pro or Admin required
-  if (entitlements && !entitlements.features.analytics) {
+  if (entitlements && !entitlements.features?.analytics) {
     return (
       <main className="mx-auto max-w-4xl px-4 py-6">
         <h1 className="text-2xl font-bold mb-4">Analytics Metrics</h1>
@@ -78,18 +87,18 @@ export default function MetricsPage() {
           <div className="flex items-center gap-3 mb-3">
             <span className="text-3xl">🔒</span>
             <h2 className="text-xl font-semibold">
-              {entitlements.isFree ? 'Pro Feature' : 'Access Restricted'}
+              {entitlements.plan === 'free' ? 'Pro Feature' : 'Access Restricted'}
             </h2>
           </div>
 
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            {entitlements.isFree
+            {entitlements.plan === 'free'
               ? 'Analytics metrics are available to Pro subscribers and above.'
               : 'You do not have permission to access this feature.'}
           </p>
 
           <div className="flex gap-3">
-            {entitlements.isFree && (
+            {entitlements.plan === 'free' && (
               <Link href="/go-pro" className="cv-btn-primary">
                 Upgrade to Pro
               </Link>
