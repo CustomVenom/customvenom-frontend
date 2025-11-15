@@ -55,7 +55,6 @@ npm run dev
       "@/*": ["src/*"],
       "@customvenom/lib/*": ["../../packages/lib/*"],
       "@customvenom/ui/*": ["../../packages/ui/*"],
-      "@customvenom/config/*": ["../../packages/config/*"]
     }
   }
 }
@@ -65,7 +64,7 @@ npm run dev
 
 ```jsx
 export default {
-  transpilePackages: ['@customvenom/lib', '@customvenom/ui', '@customvenom/config'],
+  transpilePackages: ['@customvenom/lib', '@customvenom/ui'],
   // experimental: { outputFileTracingRoot: __dirname } // optional if root confusion warnings appear
 };
 ```
