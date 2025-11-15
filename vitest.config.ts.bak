@@ -23,6 +23,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@customvenom/lib': path.resolve(__dirname, './packages/lib'),
+      '@customvenom/config': path.resolve(__dirname, './packages/config'),
       '@customvenom/ui': path.resolve(__dirname, './packages/ui'),
     },
   },

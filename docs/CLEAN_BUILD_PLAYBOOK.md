@@ -54,7 +54,7 @@ npm run dev
     "paths": {
       "@/*": ["src/*"],
       "@customvenom/lib/*": ["../../packages/lib/*"],
-      "@customvenom/ui/*": ["../../packages/ui/*"],
+      "@customvenom/ui/*": ["../../packages/ui/*"]
     }
   }
 }
